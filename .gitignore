@@ -1,0 +1,11 @@
+test/CustomCmdName
+test/CustomType
+test/DupShort
+test/External
+test/ManualMulti
+test/NoPositional
+test/PerParam
+test/ReturnEmpty
+test/ReturnInt
+test/ReturnString
+test/UserDispIdCollide
