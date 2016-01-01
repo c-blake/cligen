@@ -105,7 +105,7 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "optPos",`optPos`,
-                              "options", alignTable(`tabId`) ]
+                              "options", alignTable(`tabId`, len(`prefixId`)) ]
     if `helpId`[len(`helpId`) - 1] != '\l':     # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -155,7 +155,7 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { },
-usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped =
+usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options"): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call said dispatcher; Usage is the same as the dispatchGen() macro.
   result = newStmtList()

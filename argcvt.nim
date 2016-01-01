@@ -1,5 +1,6 @@
 from parseutils import parseInt, parseFloat
-from strutils   import `%`, join, split
+from strutils   import `%`, join, split, wordWrap, repeat
+from termwidth  import terminalWidth
 
 proc keys*(parNm: string, shrt: string): string =
   result = if len(shrt) > 0: "--$1=, -$2=" % [ parNm, shrt ]
@@ -15,13 +16,22 @@ proc addPrefix*(prefix: string, multiline=""): string =
   for line in multiline.split("\n"):
     result &= prefix & line & "\n"
 
-proc alignTable*(tab: seq[array[0..3, string]]): string =
-    ##XXX Placeholder for a real tabulator (one that discovers terminal width,
-    ## max col widths & nicely flows last output column at terminal boundary).
-    result = "  "                           # two initial spaces
-    for perPar in tab:
-      result &= perPar.join("\t") & "\n  "
-    result.setLen(result.len - 2)           # Chop two trailing spaces.
+proc alignTable*(tab: seq[array[0..3, string]],
+                 prefixLen=0, colGap=2, min4th=16): string =
+  result = ""
+  var wCol: array[0 .. 3, int]
+  for row in tab:
+    for c in 0 .. 2: wCol[c] = max(wCol[c], row[c].len)
+  var wTerm = terminalWidth() - prefixLen
+  var leader = wCol[0] + wCol[1] + wCol[2] + 3 * colGap
+  wCol[3] = max(min4th, wTerm - leader)
+  for row in tab:
+    for c in 0 .. 2:
+      result &= row[c] & repeat(" ", wCol[c] - row[c].len + colGap)
+    var wrapped = wordWrap(row[3], maxLineWidth = wCol[3]).split("\n")
+    result &= wrapped[0] & "\n"
+    for j in 1 ..< len(wrapped):
+      result &= repeat(" ", leader) & wrapped[j] & "\n"
 
 ## argParse and argHelp are a pair of related overloaded template helpers for
 ## each supported Nim type of optional parameter.  You may define new ones for

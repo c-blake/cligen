@@ -12,7 +12,15 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
 
 when isMainModule:
   import cligen, os
-  dispatchGen(demo, doc="  This does the demo.")
+  dispatchGen(demo, doc="  This does the demo.", help = {
+              "alpha" : "This is a very long parameter help string which " &
+                        "ordinarily should be auto-wrapped by alignTable " &
+                        "into a multi-line format unless you have eagle " &
+                        "eyes, a gigantic monitor, or maybe a little bit of " &
+                        "both. :-)",
+              "beta" : "This is more modest, but might still wrap around " &
+                       "once or twice or so.",
+              "verb" : "on=chatty, off=quiet. 'Nuff said." })
   dispatchGen(show, doc="  This shows me something.")
   var pars = commandLineParams()
   var subcmd = pars[0]
@@ -22,6 +30,7 @@ when isMainModule:
   of "--help":
       echo "Usage:\n  ManualMulti demo|show [subcommand-args]\n"
       echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
+      # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
       let use = "ManualMulti $command $optPos\n$doc\nOptions:\n$options"
       discard dispatchdemo(cmdline = @[ "--help" ], prefix="    ", usage=use)
       discard dispatchshow(cmdline = @[ "--help" ], prefix="    ", usage=use)
