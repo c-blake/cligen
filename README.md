@@ -107,6 +107,10 @@ requires such separators.  Many other option parsers do not require separators,
 especially for short options.  So, it's easy to forget. [ Those other parsers
 have ways to specify that an option is non-bool and should take an argument. ]
 
+It is possible to relax this constraint to any proc that has *exactly one*
+supported, non-defaulted seq[T] anywhere in the argument list.  The str->val
+machinery for optional arguments can simply be re-applied to positionals.
+
 Exit Code Behavior (more on Rule 2)
 -----------------------------------
 Commands/programs/processes return integer codes to indicate exit status (only
@@ -194,6 +198,10 @@ long-ish and includes what many might deem "basic features" :-)
    always using parseopt2. Can roll own more traditionally Unix-y backend.  Can
    infer that only bool options can not expect arguments, and can be combined
    like "ls -lt" while non-bool options require vals and need no :|= separator.
+
+ - We can relax catching positionals in seq[string] to seq[T] for any T that
+   argParse/argHelp can deal with. Can pass argParse key=""|nil to distinguish.
+   But better user error msgs might come from new argParse with int "key" param.
 
  - It might be nice to provide control over what dialect is used to translate
    "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)
