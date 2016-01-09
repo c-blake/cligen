@@ -202,21 +202,18 @@ long-ish and includes what many might deem "basic features" :-)
  - We can relax catching positionals in seq[string] to seq[T] for any T that
    argParse/argHelp can deal with. Can pass argParse key=""|nil to distinguish.
    But better user error msgs might come from new argParse with int "key" param.
+   Could also do better about making undefaulted non-seq params mandatory args.
+   Could also use argv "--" separator to relax the "only one seq" requirement.
 
  - It might be nice to provide control over what dialect is used to translate
    "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)
    or maybe most Nim-like to just accept all such dialects? { Maybe all that's
    needed is a strutils.normalize() that takes out "-" as well as "_". }
 
- - In Nim, ##-doc comments are the norm rather than doc strings as in Python.
-   Present issues with Nim getImpl and/or my ignorance prevent easy/afterthought
-   collection of such text.  Pragma macros can get the text, but my guess is
-   the driving idea behind getImpl of user-driven inlining led to unnecessary
-   (and for cligen undesirable) stripping of comment nodes.  In the not too
-   distant future maybe such extraction can build usage/help out of existing
-   API doc comments. E.g., a param <-> semantic help could be lifted from API
-   code looking like:
-     proc demo(foo=1,         ## critical flag..
-               bar=2): int =  ## nobody cares)
-   and maybe the first big ## mentioning `foo`, `bar`, etc. that gets into
-   the help.  This could really lessen the need for doc= (and/or help=).
+ - In Nim, `##`-doc comments are the norm rather than doc strings as in Python.
+   Pragma macros can get the comment text, but getImpl cannot due to .comment
+   not being copied around.  https://github.com/nim-lang/Nim/issues/3690
+   Araq favors fixing propagation (but also a bigger .comment->.strVal change).
+   Once resolved, we can default doc=ThatText.  In Nim, ThatText usually will
+   describe overall operation and parameter semantics.  This implies that in a
+   very common-case merely dispatch(myapi) would be all that was needed.
