@@ -67,11 +67,14 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   let posId: NimNode =                  # id for positional command args|nil
     if lispRepr(fpars[^1][1]) == "BracketExpr(Sym(seq), Sym(string))":
       fpars[^1][0] else: nil            #XXX should have more "type-y" test
+  let posIx = if posId != nil: len(fpars) - 1 else: -1
   let numPars = len(fpars) - (if posId == nil: 0 else: 1)
   let shOpt = dupBlock(fpars, numPars, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
   for i in 1 ..< len(fpars):            # No locals/imports begin w/"dispatcher"
     spars[i][0] = ident("dispatcher" & $(fpars[i][0]))
+    if fpars[i][2].kind == nnkEmpty and i != posIx:
+      error("parameter `" & $(fpars[i][0]) & "` has no default value")
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdlineId = ident("cmdline")      # gen proc parameter
