@@ -125,8 +125,13 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   let sls = result[0][4][^1][0]     # [stlist][4imports+proc][stlist][stlist]
   var nonOpt: NimNode
   if posIx != -1:                   # Catch non-option arguments
-    var posId = spars[posIx][0]     #XXX call argParse on `key`; E.g. seq[int]
-    nonOpt = newNimNode(nnkElse).add(quote do: `posId`.add(key))
+    let posId = spars[posIx][0]
+    let tmpId = ident("tmp" & $posId)
+    nonOpt = newNimNode(nnkElse).add(quote do:
+        var `tmpId` = `posId`
+        `tmpId`.setLen(1)
+        argParse(`tmpId`[0], "slot i", key, "positional\n")
+        `posId`.add(`tmpId`[0]))
   else:
     nonOpt = newNimNode(nnkElse).add(quote do:
       argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))

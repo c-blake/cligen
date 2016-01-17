@@ -11,3 +11,4 @@ test/ReturnString
 test/UserDispIdCollide
 test/target
 test/EarlySeq
+test/SeqInt
