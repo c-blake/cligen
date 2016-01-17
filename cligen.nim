@@ -92,8 +92,8 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   preLoop.add(quote do:
     var `tabId`: seq[array[0..3, string]] =
       @[ [ "--help, -?", "", "", "print this help message" ] ])
-  var optPos = if posIx == -1: " [optional-params]" else:
-                               " [optional-params] [" & $(fpars[posIx][0]) & "]"
+  var optPos = if posIx == -1: "[optional-params]" else:
+                               "[optional-params] [" & $(fpars[posIx][0]) & "]"
   for i in 1 ..< len(fpars):
     let idef = fpars[i]
     let sdef = spars[i]
