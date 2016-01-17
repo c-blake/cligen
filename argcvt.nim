@@ -76,7 +76,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: char,
 
 # int
 template argParse*(dst: int, key: string, val: string, help: string) =
-  if parseInt(val, dst) == 0:
+  if parseInt(strip(val), dst) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
            [ val, key, help ])
 
@@ -86,7 +86,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int,
 
 # float
 template argParse*(dst: float, key: string, val: string, help: string) =
-  if parseFloat(val, dst) == 0:
+  if parseFloat(strip(val), dst) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting float\n$3" %
            [ val, key, help ])
 
