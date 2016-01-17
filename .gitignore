@@ -10,3 +10,4 @@ test/ReturnInt
 test/ReturnString
 test/UserDispIdCollide
 test/target
+test/EarlySeq

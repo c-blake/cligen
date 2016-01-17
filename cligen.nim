@@ -28,17 +28,18 @@ proc parseShorts(shorts: NimNode): Table[string, char] =
       let sh: char = char((losh[1][1]).intVal)
       result[lo] = sh
 
-proc dupBlock(fpars: NimNode, numPars: int,
+proc dupBlock(fpars: NimNode, posIx: int,
               userSpec: Table[string, char]): Table[string, char] =
   ## Compute a table giving the short option for any long option, being
   ## careful to only allow one such short option if the 1st letters of
   ## two or more long options collide.
-  result = initTable[string, char]()        # short option for param
+  result = initTable[string, char]()         # short option for param
   var used: set[char] = {}                   # used shorts; bit vector ok
   for lo, sh in userSpec:
     result[lo] = sh
     used.incl(sh)
-  for i in 1 ..< numPars:                    # [0] is proc, not desired here
+  for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
+    if i == posIx: continue                  # positionals get no option char
     let parNm = $(fpars[i][0])
     let sh = parNm[0]                        # abbreviation is 1st character
     if sh notin used and parNm notin result: # still available
@@ -54,27 +55,31 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   ##
   ## For a large class of user procs in Nim, anything critical to such dispatch
   ## can be inferred.  User semantics/help round out the info for a nice CLI.
-  ## The only real constraints are 1) the last proc param must be a seq[string]
-  ## *if* you want to receive non-option/positional args, 2) no return type or
-  ## return is int-like, and 3) Every param type has an argParse/argHelp in
-  ## scope.  argcvt.nim defines argParse/Help for many types, though.
+  ## Constraints are: 1) only one proc param may be a seq[T] *if* you want to
+  ## receive non-option/positional args, 2) no return type|int-like return, and
+  ## 3) Every param type has an argParse/argHelp in scope (argcvt.nim defines
+  ## argParse/Help for many types, though).
 
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
   let fpars = formalParams(pro.symbol.getImpl)
   let proNm = $pro                      # Name of wrappred proc
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
-  let posId: NimNode =                  # id for positional command args|nil
-    if lispRepr(fpars[^1][1]) == "BracketExpr(Sym(seq), Sym(string))":
-      fpars[^1][0] else: nil            #XXX should have more "type-y" test
-  let posIx = if posId != nil: len(fpars) - 1 else: -1
-  let numPars = len(fpars) - (if posId == nil: 0 else: 1)
-  let shOpt = dupBlock(fpars, numPars, parseShorts(short))
+  var posIx = -1                        # param slot for positional cmd args|-1
+  for i in 1 ..< len(fpars):            #XXX more "type-y" test for seq[T]
+    if lispRepr(fpars[i][1])[0..21] == "BracketExpr(Sym(seq), ":
+      if posIx != -1:                   #??? "--" <==> multiple seq[T]s
+        error("Currently cligen supports only one seq[T] parameter.")
+      posIx = i
+  let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
   for i in 1 ..< len(fpars):            # No locals/imports begin w/"dispatcher"
     spars[i][0] = ident("dispatcher" & $(fpars[i][0]))
-    if fpars[i][2].kind == nnkEmpty and i != posIx:
-      error("parameter `" & $(fpars[i][0]) & "` has no default value")
+    if fpars[i][2].kind == nnkEmpty:
+      if i == posIx:                    # No initializer; Add @[]
+        spars[posIx][2] = prefix(newNimNode(nnkBracket), "@")
+      else:
+        error("parameter `" & $(fpars[i][0]) & "` has no default value")
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdlineId = ident("cmdline")      # gen proc parameter
@@ -87,7 +92,9 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   preLoop.add(quote do:
     var `tabId`: seq[array[0..3, string]] =
       @[ [ "--help, -?", "", "", "print this help message" ] ])
-  for i in 1 ..< numPars:
+  var optPos = if posIx == -1: " [optional-params]" else:
+                               " [optional-params] [" & $(fpars[posIx][0]) & "]"
+  for i in 1 ..< len(fpars):
     let idef = fpars[i]
     let sdef = spars[i]
     preLoop.add(newNimNode(nnkVarSection).add(sdef))    #Init vars
@@ -96,15 +103,8 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
     let sh = toString(shOpt.getOrDefault(parNm))        #Add to perPar help tab
     let defVal = idef[2]
     let parHelp = if parNm in helps: helps[parNm] else: "set " & parNm
-    preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `parHelp`))
-  var optPos: string
-  if posId != nil:
-    preLoop.add(quote do:
-      var `posId`: seq[string] = @[])
-    callIt.add(posId)
-    optPos = " [optional-params] [" & $posId & "]"
-  else:
-    optPos = " [optional-params]"
+    if i != posIx:
+      preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`,`parHelp`))
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "optPos",`optPos`,
@@ -124,7 +124,8 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
       `preLoop`)
   let sls = result[0][4][^1][0]     # [stlist][4imports+proc][stlist][stlist]
   var nonOpt: NimNode
-  if posId != nil:                  # Catch non-option arguments in posId
+  if posIx != -1:                   # Catch non-option arguments
+    var posId = spars[posIx][0]     #XXX call argParse on `key`; E.g. seq[int]
     nonOpt = newNimNode(nnkElse).add(quote do: `posId`.add(key))
   else:
     nonOpt = newNimNode(nnkElse).add(quote do:
@@ -132,7 +133,8 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   var optCases = newNimNode(nnkCaseStmt).add(ident("key"))
   optCases.add(newNimNode(nnkOfBranch).add(
     newStrLitNode("help"),newStrLitNode("?")).add(quote do: argRet(0,`helpId`)))
-  for i in 1 ..< numPars:           # build per-param case clauses
+  for i in 1 ..< len(fpars):        # build per-param case clauses
+    if i == posIx: continue         # skip variable len positionals
     let idef = fpars[i]
     let sdef = spars[i]
     if $idef[0] in shOpt:           # both a long and short option
@@ -155,10 +157,11 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
     sls.add(quote do: `callIt`; return 0)
   else:                                     # convertible-to-int return type
     sls.add(quote do: return `callIt`)
+# echo repr(result)
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
-                help: typed = { }, short: typed = { },
-usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options"): untyped =
+                help: typed = { }, short: typed = { }, usage: string
+ ="Usage:\n  $command $optPos\n$doc\nOptions:\n$options"): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call said dispatcher; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
