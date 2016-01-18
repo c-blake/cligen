@@ -1,32 +1,28 @@
 cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
 This approach to CLIs comes from Andrey Mikhaylenko's nice Python argh module.
-To my knowledge, argh was the first software with the great insight that a CLI
-generator could be so automatic.  It does require a programming language with
-both rich enough call syntax and powerful enough introspection -- like Nim.
-Much as with Python, an intuitive subset of ordinary Nim calls maps pretty
-cleanly onto command calls, both syntactically and semantically.
+Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly
+onto command calls, syntactically and semantically.  That subset is basically
+any proc with A) all parameters having default values with B) one sequence
+parameter identified to capture the positional argument list and C) a return
+type of int or no return type at all.  proc definitions following this
+"command-like convention" directly imply a command interface which cligen can
+automatically generate.
 
-That subset is basically any proc with all parameters having default values and
-maybe a final param to catch some positional argument list and a return type of
-int or no return type at all.  proc definitions in that convention directly
-imply a command interface..All we need to do is extract metadata, generate a
-parser, and call the proc.  Less "command conventional" styles of proc still
-need some manually written entry point that does follow the simple convention.
-
-This approach has both great DoNot Repeat Yourself ("DRY", or relatedly "a few
+This approach has both great Don't Repeat Yourself ("DRY", or relatedly "a few
 points of edit") properties.  It also has nice "loose coupling" properties.
 `cligen` need not even be *present on the system* unless you are compiling a
 CLI executable.  Conversely, the wrapped routine does not need to be in the
-same module or even a writable file or know anything about `cligen`.  Learning
-curve/cognitive load is all just about as painless as possible.
+same module or even a writable file or know anything about `cligen`.  The
+learning curve/cognitive load is all just about as painless as possible.
+This approach shines most when you want to maintain an API/CLI in parallel.
 
 Enough Background..Get To The Good Stuff!
 -----------------------------------------
 In Nim terms, adding a CLI can be as easy as:
 ```nim
 proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
-  #Some existing API call with all params defaulted but for a final seq[string]
+  ##Some existing API call with all params defaulted but for a final seq[string]
   result = 1          # Of course, real code would have real logic here
 
 when isMainModule:
@@ -69,10 +65,19 @@ with some named-argument string interpolation:
            prefix="   "))   # indent the whole message a few spaces.
 ```
 
-That's basically it.  If there is no all-defaulted maybe-seq[string] entry point
-then just write one in ordinary Nim style.  Many users who have read this far
-can start using cligen without further delay.  The rest of this document may be
-useful later, though.
+The same basic command-argument-to-native type converters that are used for
+option values will be applied to convert positional arguments to seq[T] values:
+```nim
+proc foobar(mynums: seq[int], foo=1, bar=2.0, verb=false): int =
+  ##Some API call with all params defaulted but for an initial seq[int]
+  result = 1          # Of course, real code would have real logic here
+when isMainModule:
+  import cligen; dispatch(foobar)
+```
+That's basically it.  If an all-defaulted-but-for-a-seq[T] entry point is not
+already part of your API, you will have to add one in ordinary Nim style and
+`dispatch()` that.  Many users who have read this far can start using cligen
+without further delay.  The rest of this document may be useful later, though.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
@@ -84,11 +89,12 @@ already by example/off-hand mention, and the last of which you could guess:
    
  0b. No parameter of a wrapped proc can can be named "help" (collision!)
    
- 1. If the last proc parameter is seq[string], it catches non-option arguments
+ 1. Zero or one params has explicit type seq[T] to catch non-option arguments.
 
  2. Wrapped procs must have no return or a return type convertible to int.
    
  3. All param types used must have argParse, argHelp support (see Extending..)
+    This includes the type T in seq[T] for non-option/positionals.
 
 That's about it.  `cligen` supports the most likely Nim types (int, float, ..)
 out of the box, and the system can be extended pretty easily.  Elaboration on
@@ -96,20 +102,15 @@ these rules may be helpful when/if you run into harder cases.
 
 Forbidding positional command arguments (more on Rule 1)
 -------------------------------------------------------
-If there is no final seq[string], cligen infers that only optional command
-parameters are legal.  The name of the seq parameter does not matter, only its
-final position and its type.  When there is no positional argument catcher,
-providing non-option arguments is a command syntax error and reported as such.
-
-This syntax error also commonly occurs when a command user forgets the [:|=] to
-separate an option and its value.  Nim's parsopt2, the current cligen backend,
-requires such separators.  Many other option parsers do not require separators,
-especially for short options.  So, it's easy to forget. [ Those other parsers
-have ways to specify that an option is non-bool and should take an argument. ]
-
-It is possible to relax this constraint to any proc that has *exactly one*
-supported, non-defaulted seq[T] anywhere in the argument list.  The str->val
-machinery for optional arguments can simply be re-applied to positionals.
+When there is no explicit `seq[T]` parameter, cligen infers that only optional
+command parameters are legal.  The name of the seq parameter does not matter,
+only that it's type slot is non-empty and a seq[].  When there is no positional
+argument catcher, providing non-option arguments is a command syntax error and
+reported as such.  This non-option syntax error also commonly occurs when a
+command user forgets the [:|=] to separate an option and its value.  Nim's
+parsopt2, the current cligen backend, requires such separators.  It's easy to
+forget since many other option parsers do not require separators, especially
+for short options.
 
 Exit Code Behavior (more on Rule 2)
 -----------------------------------
@@ -139,15 +140,17 @@ and argHelp for any new Nim parameter types you want.  Basically, argParse
 parses a string into a Nim value and argHelp provides simple guidance on what
 that syntax is for command users.
 
-For example, you might want to receive a seq[string] parameter.  The input will
-be a command option value string.  So, you need some user friendly convention,
-such as comma-separated-value list. Teaching cligen what to do goes like this:
+For example, you might want to receive a seq[string] parameter inside a single
+argument/option value.  So, you need some user friendly convention to convert
+a single string to a sequence of them, such as a comma-separated-value list.
+
+Teaching cligen what to do goes like this:
 ```nim
-proc demo(stuff = @[ "abc", "def" ]): int =
+proc demo(stuff = @[ "abc", "def" ], opt1=true, foo=2): int =
   return len(stuff)
 
 when isMainModule:
-  import strutils, argcvt   # argcvt.keys deals with missing short opts
+  import strutils, cligen, argcvt  # argcvt.keys deals with missing short opts
 
   template argParse(dst: seq[string], key: string, val: string, help: string) =
     dst = val.split(",")
@@ -156,10 +159,15 @@ when isMainModule:
                    parNm: string, sh: string, parHelp: string) =
     helpT.add([keys(parNm, sh), "CSV", "\"" & defVal.join(",") & "\"", parHelp])
 
-  import cligen; dispatch(demo, doc="NOTE: CSV=comma-separated value list")
+  dispatch(demo, doc="NOTE: CSV=comma-separated value list")
 ```
 Of course, you often want more input validation than this.  See argcvt.nim in
 the cligen package for the currently supported types and more details.
+
+Note also that, since `stuff` is a seq and there can be only one `seq[T]` for
+positionals, type inference for `stuff=@[...]` in `demo()` is required.  A
+non-empty type for `stuff` would generate either an error or the unintended
+syntax of command --foo=3 "a,b,c" "d,e,f" (rather than --stuff="a,b,c").
 
 Related Work
 ============
@@ -199,11 +207,10 @@ long-ish and includes what many might deem "basic features" :-)
    infer that only bool options can not expect arguments, and can be combined
    like "ls -lt" while non-bool options require vals and need no :|= separator.
 
- - We can relax catching positionals in seq[string] to seq[T] for any T that
-   argParse/argHelp can deal with. Can pass argParse key=""|nil to distinguish.
-   But better user error msgs might come from new argParse with int "key" param.
-   Could also do better about making undefaulted non-seq params mandatory args.
-   Could also use argv "--" separator to relax the "only one seq" requirement.
+ - Make un-defaulted non-seq proc params into mandatory command args in-order
+   and converted, binding leftovers to the seq[T]?  Better user error msgs for
+   positional argParse failures.  Could also use argv "--" separator to allow
+   multiple positional sequences.
 
  - It might be nice to provide control over what dialect is used to translate
    "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)
