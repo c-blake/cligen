@@ -128,10 +128,14 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
     let posId = spars[posIx][0]
     let tmpId = ident("tmp" & $posId)
     nonOpt = newNimNode(nnkElse).add(quote do:
-        var `tmpId` = `posId`
-        `tmpId`.setLen(1)
-        argParse(`tmpId`[0], "slot i", key, "positional\n")
-        `posId`.add(`tmpId`[0]))
+      var rewind = false            # This complex machinery is so that..
+      if len(`posId`) == 0:         #..tmp = pos[0] type inference works.
+        `posId`.setLen(1)
+        rewind = true
+      var `tmpId` = `posId`[0]
+      argParse(`tmpId`, "slot i", key, "positional\n")
+      if rewind: `posId`.setLen(0)
+      `posId`.add(`tmpId`))
   else:
     nonOpt = newNimNode(nnkElse).add(quote do:
       argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
