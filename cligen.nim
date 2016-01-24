@@ -13,7 +13,6 @@ proc formalParamExpand(fpars: NimNode): NimNode =
     for i in 0 ..< len(idefs) - 3:
       result.add(newIdentDefs(idefs[i], idefs[^2]))
     result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
-  echo repr(result)
 
 proc formalParams(n: NimNode): NimNode =
   ## Extract formal parameter list from the return value of .symbol.getImpl
