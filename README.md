@@ -104,8 +104,8 @@ for short options.  `cligen` may someday grow the ability to specify which proc
 parameter catches optional positional arguments (rather than inferring that
 parameter from being the only/first explicit `seq[T]`).
 
-Extending `cligen` to support new optional parameter types (more on Rule 2)
----------------------------------------------------------------------------
+Extending `cligen` to support new parameter types (more on Rule 2)
+------------------------------------------------------------------
 You can extend the set of supported parameter conversion types by defining a
 couple helper templates before invoking `dispatch`.  All you need do is define a
 compatible `argParse` and `argHelp` for any new Nim parameter types you want.
