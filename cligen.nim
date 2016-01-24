@@ -59,10 +59,11 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
   ##
   ## For a large class of user procs in Nim, anything critical to such dispatch
   ## can be inferred.  User semantics/help round out the info for a nice CLI.
-  ## Constraints are: 1) only one proc param may be a seq[T] *if* you want to
-  ## receive non-option/positional args, 2) no return type|int-like return, and
-  ## 3) Every param type has an argParse/argHelp in scope (argcvt.nim defines
-  ## argParse/Help for many types, though).
+  ## Constraints: 1) only one proc param may be explicitly a seq[T] if you want
+  ## to receive an unnamed/positional arg list, 2) Every param type has an
+  ## argParse/argHelp in scope (argcvt.nim defines argParse/Help for many
+  ## types, though).  Non-int return types are discarded since commands can
+  ## only return (usually 1-byte) integer codes to the operating system.
 
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
@@ -120,7 +121,7 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "args",`args`,
                               "options", alignTable(`tabId`, len(`prefixId`)) ]
-    if `helpId`[len(`helpId`) - 1] != '\l':     # ensure newline @end of help
+    if `helpId`[^1] != '\l':            # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
       `helpId` = addPrefix(`prefixId`, `helpId`) )
@@ -187,7 +188,9 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
   if fpars[0].kind == nnkEmpty:             # pure proc/no return type
     sls.add(quote do: `callIt`; return 0)
   else:                                     # convertible-to-int return type
-    sls.add(quote do: return `callIt`)
+    sls.add(quote do:
+       when compiles(int(`callIt`)): return `callIt`
+       else: discard `callIt`; return 0)
 # echo repr(result)
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",

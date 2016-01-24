@@ -1,25 +1,17 @@
 cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
 This approach to CLIs comes from Andrey Mikhaylenko's nice Python argh module.
-Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly
-onto command calls, syntactically and semantically.  That subset is basically
-any proc with a return type of int (or convertible to int) or no return type
-at all.  A proc definition following this "command-like convention" directly
-implies a command-line interface which `cligen` can generate automatically.
-Argument string-to-Nim value converters need to exist for each type, too.
+Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly onto
+command calls, syntactically and semantically.  For Nim, that subset is any
+non-generic proc with non-var parameters typed either by default value inference
+or explicit types (i.e., not like `foo(b: auto)`).  The proc must also have some
+seq[T] *if* it wants to receive a variable list of optional positional arguments
+after optional and specific mandatory arguments.  For such procs, `cligen` can
+automatically generate a command-line interface complete with long and short
+options and a nice-ish help message.
 
-This approach to command-line interfaces has both great Don't Repeat Yourself
-("DRY", or relatedly "a few points of edit") properties.  It also has nice
-"loose coupling" properties.  `cligen` need not even be *present on the system*
-unless you are compiling a CLI executable.  Conversely, the wrapped routine
-need not be in the same module or even a writable file or know anything about
-`cligen`.  The learning curve/cognitive load is all about as painless as
-possible - mostly learning what sort of proc is "command-like" enough (and
-various more minor controls).  This approach really shines when you want to
-maintain an API/CLI in parallel.
-
-Enough Background..Get To The Good Stuff!
------------------------------------------
+Enough Generalities...Show me examples!
+---------------------------------------
 In Nim terms, adding a CLI can be as easy as:
 ```nim
 proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
@@ -76,73 +68,49 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:
   import cligen; dispatch(foobar)
 ```
-That's basically it.  If a "command-like" entry point is not already part of
-your API, you will have to write one in ordinary Nim style and `dispatch()`
-that.  Many users who have read this far can start using `cligen` without
-further delay.  The rest of this document may be useful later, though.
+That's basically it.  Many users who have read this far can start using `cligen`
+without further delay.  The rest of this document may be useful later, though.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
 There are only a few very easy rules to learn:
 
- 0. No parameter of a wrapped proc can can be named "help" (collision!)
+ 0. No parameter of a wrapped proc can can be named "help" (name collision!)
    
  1. Zero or one params has explicit type seq[T] to catch positional arguments.
-
- 2. Wrapped procs must have no return or a return type convertible to int.
    
- 3. All param types used must have argParse, argHelp support (see Extending..)
+ 2. All param types used must have argParse, argHelp support (see Extending..)
     This includes the type T in seq[T] for non-option/positionals.
 
-That's about it.  `cligen` supports the most likely Nim types (int, float, ..)
-out of the box, and the system can be extended pretty easily.  Elaboration on
-these rules may be helpful when/if you run into harder cases.
+ 3. Only basic procs supported -- no 'auto' types, 'var' types, generics, etc.
 
-Forbidding positional command arguments (more on Rule 1)
--------------------------------------------------------
+That's about it.  `cligen` supports most basic Nim types (int, float, ..) out
+of the box, and the system can be extended pretty easily to user-defined types.
+Elaboration on these rules may be helpful when/if you run into harder cases.
+
+Forbidding optional positional command arguments (more on Rule 1)
+-----------------------------------------------------------------
 When there is no explicit `seq[T]` parameter, `cligen` infers that only optional
-command parameters are legal.  The name of the seq parameter does not matter,
-only that it's type slot is non-empty and a seq[].  When there is no positional
-argument catcher, providing non-option arguments is a command syntax error and
-reported as such.  This non-option syntax error also commonly occurs when a
-command user forgets the [:|=] to separate an option and its value.  Nim's
-parsopt2, the current `cligen` backend, requires such separators.  It's easy to
-forget since many other option parsers do not require separators, especially
-for short options.
+command parameters (or specifically positioned mandatory parameters) are legal.
+The name of the seq parameter does not matter, only that it's type slot is
+non-empty and syntactically `seq[SOMETHING]` as opposed to some type alias/etc.
+that happens to be a `seq`.  When there is no positional argument catcher and
+no mandatory arguments, providing non-option arguments is a command syntax error
+and reported as such.  This non-option syntax error also commonly occurs when
+a command user forgets the [:|=] to separate an option and its value.  Nim's
+parseopt2, the current `cligen` back end, requires such separators.  It's easy
+to forget since many other option parsers do not require separators, especially
+for short options.  `cligen` may someday grow the ability to specify which proc
+parameter catches optional positional arguments (rather than inferring that
+parameter from being the only/first explicit `seq[T]`).
 
-`cligen` could grow the ability for an override specifying which parameter
-catches optional positional arguments to support more Nim procs (rather than
-inferring that parameter from being the only or first explicit `seq[T]`).
-
-Exit Code Behavior (more on Rule 2)
------------------------------------
-Commands/programs/processes return integer codes to indicate exit status (only
-the lowest order byte is significant on many OSes).  All command-line syntax
-errors cause programs to exit with status 1.  If there is no return type then
-zero is returned to indicate a successful exit (unless an exception is thrown).
-If the return type of the wrapped proc is not int, Nim will try to apply any
-in-scope converter.  If there is no converter toInt(rtype) the macro will fail
-with an error of the form "got (rtype) but expected 'int'" with the line number
-of macro invocation.
-
-While there may be some "when compiles()" magic that could fall back to discard
-the return value and return zero for non-convertible-to-int's, it may be wiser
-to make dispatch() users think a little about mapping non-integer return values
-to exit codes.  Defining a little wrapper proc that returns an int (or has no
-return) may be easier or clearer than defining a converter, but that does mean
-when you add a parameter to your entry point proc you have to add it in two
-places which isn't very DRY.  Meh.  If popular demand ensues, discarding
-non-convertible-to-int's isn't so hard or so bad.  Another future direction
-might be to echo the result to the standard output (perhaps just for `string`
-return types).
-
-Extending `cligen` to support new optional parameter types (more on Rule 3)
+Extending `cligen` to support new optional parameter types (more on Rule 2)
 ---------------------------------------------------------------------------
-You can extend the set of supported types by defining a couple helper templates
-before invoking `dispatch`.  All you need do is define a compatible `argParse`
-and `argHelp` for any new Nim parameter types you want.  Basically, `argParse`
-parses a string into a Nim value and `argHelp` provides simple guidance on what
-that syntax is for command users.
+You can extend the set of supported parameter conversion types by defining a
+couple helper templates before invoking `dispatch`.  All you need do is define a
+compatible `argParse` and `argHelp` for any new Nim parameter types you want.
+Basically, `argParse` parses a string into a Nim value and `argHelp` provides
+simple guidance on what that syntax is for command users.
 
 For example, you might want to receive a `seq[string]` parameter inside a single
 argument/option value.  So, you need some user friendly convention to convert
@@ -173,26 +141,37 @@ positionals, type inference for `stuff=@[...]` in the above example is required.
 Using `(stuff: seq[string] = @[...],...)` would yield either an error or the
 unintended syntax (`command --foo=3 "a,b,c" "d,e,f"` rather than `--stuff="a,b,c"`).
 
-Related Work
-============
-`docopt` has similar DRY features and provides superior control over help
-messages and richer command line syntax -- mutually exclusive choices and such.
-Basically, `docopt` is a command-syntax centric CLI framework while `cligen` is
-native-syntax/API-centric.  Downsides to `docopt` are the need to learn its view
-of command-syntax and having "less natural" parameter access/docopt API calls
-all over user code.  Implied/inferred CLIs also require a stronger programming
-language (at least parameter default values).  `cligen` encourages preserving
-"Nim import access" to provided functionality.  Thusly, complex usages can be
-driven by other Nim programs rather than messier shell scripts (once the
-complexity makes command script/shell language limitations bothersome).
+Exit Code Behavior
+==================
+Commands return integer codes to operating systems to indicate exit status
+(only the lowest order byte is significant on many OSes).  Conventionally, zero
+status indicates a successful exit.  If the return type of the proc wrapped by
+dispatch is int or convertible to int then that value will be propagated to
+become the exit code.  Otherwise the return of the wrapped proc is discarded.
+Command-line syntax errors cause programs to exit with status 1 and print a help
+message.
+
+More Motivation
+===============
+There are so many CLI parser frameworks out there...Why do we need yet another?
+This approach to command-line interfaces has both great Don't Repeat Yourself
+("DRY", or relatedly "a few points of edit") properties.  It also has nice
+"loose coupling" properties.  `cligen` need not even be *present on the system*
+unless you are compiling a CLI executable.  Conversely, wrapped routines need
+not be in the same module, modifiable, or know anything about `cligen`.  This
+approach is great when you want to maintain both an API and a CLI in parallel.
+More generally, `cligen` encourages preserving API/"Nim import"-access to any
+provided functionality.  When so preserved, this allows complex usages to be
+driven by other Nim programs rather than shell scripts (once usage complexity
+makes scripting language limitations annoying).  Finally, and perhaps most
+importantly, the learning curve/cognitive load and even the extra program text
+for a CLI is all about as painless as possible - mostly learning what kind of
+proc is "command-like" enough, various minor controls/arguments to `dispatch` to
+enhance the help message, and the "binding/translation" between proc and command
+parameters The last is helped a lot by the auto-generated help message.
 
 Future directions/TODO
 ======================
-I felt `cligen` was useful enough right now to release.  That said..the TODO is
-long-ish and includes what many might deem "basic features" :-)
-
- - Handle (a,b: string) params via helper proc cvting to (a: string, b: string)
-
  - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
    maybe a new param to double-space optionally (extra \n between optTab rows).
    [dispatch getting to be a pretty fat interface, but formatting usually is.]
