@@ -8,14 +8,15 @@ at all.  A proc definition following this "command-like convention" directly
 implies a command-line interface which `cligen` can generate automatically.
 Argument string-to-Nim value converters need to exist for each type, too.
 
-This approach has both great Don't Repeat Yourself ("DRY", or relatedly "a few
-points of edit") properties.  It also has nice "loose coupling" properties.
-`cligen` need not even be *present on the system* unless you are compiling a
-CLI executable.  Conversely, the wrapped routine need not be be in the same
-module or even a writable file or know anything about `cligen`.  The learning
-curve/cognitive load is all about as painless as possible - mostly learning
-what sort of proc is "command-like" enough (and various more minor controls).
-This approach really shines when you want to maintain an API/CLI in parallel.
+This approach to command-line interfaces has both great Don't Repeat Yourself
+("DRY", or relatedly "a few points of edit") properties.  It also has nice
+"loose coupling" properties.  `cligen` need not even be *present on the system*
+unless you are compiling a CLI executable.  Conversely, the wrapped routine
+need not be in the same module or even a writable file or know anything about
+`cligen`.  The learning curve/cognitive load is all about as painless as
+possible - mostly learning what sort of proc is "command-like" enough (and
+various more minor controls).  This approach really shines when you want to
+maintain an API/CLI in parallel.
 
 Enough Background..Get To The Good Stuff!
 -----------------------------------------
