@@ -31,7 +31,7 @@ when isMainModule:
       echo "Usage:\n  ManualMulti demo|show [subcommand-args]\n"
       echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
       # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
-      let use = "ManualMulti $command $optPos\n$doc\nOptions:\n$options"
+      let use = "ManualMulti $command $args\n$doc\nOptions:\n$options"
       discard dispatchdemo(cmdline = @[ "--help" ], prefix="    ", usage=use)
       discard dispatchshow(cmdline = @[ "--help" ], prefix="    ", usage=use)
       quit(0)
