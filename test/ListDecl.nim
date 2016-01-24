@@ -1,4 +1,4 @@
-proc demo(args: seq[int], alpha, beta: float = 1.0, verb=false): int =
+proc demo(args: seq[int], alpha, beta: float = 1, verb=false): int =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb
   for i, arg in args: echo "positional[", i, "]: ", repr(arg)

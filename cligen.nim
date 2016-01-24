@@ -125,7 +125,7 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
     if i notin mandatory and i != posIx:
       let parNm = $idef[0]
       let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
-      let defVal = idef[2]
+      let defVal = sdef[0]
       let parHelp = if parNm in helps: helps[parNm] else: "set " & parNm
       preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`,`parHelp`))
   preLoop.add(quote do:                 # build one large help string
