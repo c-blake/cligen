@@ -1,14 +1,25 @@
-import macros, tables, sets
+import macros, tables
 
 proc toString(c: char): string =
   result = newStringOfCap(1)
   if c != '\0': result.add(c)
 
+proc formalParamExpand(fpars: NimNode): NimNode =
+  ## a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
+  result = newNimNode(nnkFormalParams)
+  result.add(fpars[0])                                  # just copy ret value
+  for declIx in 1 ..< len(fpars):
+    let idefs = fpars[declIx]
+    for i in 0 ..< len(idefs) - 3:
+      result.add(newIdentDefs(idefs[i], idefs[^2]))
+    result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
+  echo repr(result)
+
 proc formalParams(n: NimNode): NimNode =
   ## Extract formal parameter list from the return value of .symbol.getImpl
   for kid in n:
     if kid.kind == nnkFormalParams:
-      return kid
+      return formalParamExpand(kid)
   error "formalParams requires a proc argument."
   return nil
 
