@@ -3,28 +3,26 @@ cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 This approach to CLIs comes from Andrey Mikhaylenko's nice Python argh module.
 Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly
 onto command calls, syntactically and semantically.  That subset is basically
-any proc with A) all parameters having default values with B) one sequence
-parameter identified to capture the positional argument list and C) a return
-type of int or no return type at all.  A proc definition following this
-"command-like convention" directly implies a command-line interface which
-`cligen` can generate automatically.
+any proc with a return type of int (or convertible to int) or no return type
+at all.  A proc definition following this "command-like convention" directly
+implies a command-line interface which `cligen` can generate automatically.
+Argument string-to-Nim value converters need to exist for each type, too.
 
 This approach has both great Don't Repeat Yourself ("DRY", or relatedly "a few
 points of edit") properties.  It also has nice "loose coupling" properties.
 `cligen` need not even be *present on the system* unless you are compiling a
-CLI executable.  Conversely, the wrapped routine does not need to be in the
-same module or even a writable file or know anything about `cligen`.  The
-learning curve/cognitive load is all about as painless as possible - mostly
-just learning what sort of proc is "command-like" enough (and various more
-minor controls).  This approach really shines when you want to maintain an
-API/CLI in parallel.
+CLI executable.  Conversely, the wrapped routine need not be be in the same
+module or even a writable file or know anything about `cligen`.  The learning
+curve/cognitive load is all about as painless as possible - mostly learning
+what sort of proc is "command-like" enough (and various more minor controls).
+This approach really shines when you want to maintain an API/CLI in parallel.
 
 Enough Background..Get To The Good Stuff!
 -----------------------------------------
 In Nim terms, adding a CLI can be as easy as:
 ```nim
 proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
-  ##Some existing API call with all params defaulted but for a final seq[string]
+  ##Some existing API call
   result = 1          # Of course, real code would have real logic here
 
 when isMainModule:
@@ -63,35 +61,32 @@ If you don't like the help message as-is, you can re-order it however you like
 with some named-argument string interpolation:
 ```nim
   dispatch(foobar,          # swap place of doc string and options table
-           usage="Use:\n$command $optPos\nOptions:\n$options\n$doc\n",
+           usage="Use:\n$command $args\nOptions:\n$options\n$doc\n",
            prefix="   "))   # indent the whole message a few spaces.
 ```
 
-The same basic command-argument-to-native type converters that are used for
-option values will be applied to convert positional arguments to seq[T] values:
+The same basic command-argument-to-native type converters used for option
+values will be applied to convert optional positional arguments to seq[T]
+values or mandatory positional arguments to their native values:
 ```nim
-proc foobar(mynums: seq[int], foo=1, bar=2.0, verb=false): int =
-  ##Some API call with all params defaulted but for an initial seq[int]
+proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
+  ##Some API call
   result = 1          # Of course, real code would have real logic here
 when isMainModule:
   import cligen; dispatch(foobar)
 ```
-That's basically it.  If an all-defaulted-but-for-a-seq[T] entry point is not
-already part of your API, you will have to add one in ordinary Nim style and
-`dispatch()` that.  Many users who have read this far can start using `cligen`
-without further delay.  The rest of this document may be useful later, though.
+That's basically it.  If a "command-like" entry point is not already part of
+your API, you will have to write one in ordinary Nim style and `dispatch()`
+that.  Many users who have read this far can start using `cligen` without
+further delay.  The rest of this document may be useful later, though.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
-There are only a few very easy rules to learn, two of which are obvious enough
-to not even warrant Natural numbers ;-), two of which you may have intuited
-already by example/off-hand mention, and the last of which you could guess:
+There are only a few very easy rules to learn:
 
- 0a. Optional params get default values (Um, how else can the be optional?)
+ 0. No parameter of a wrapped proc can can be named "help" (collision!)
    
- 0b. No parameter of a wrapped proc can can be named "help" (collision!)
-   
- 1. Zero or one params has explicit type seq[T] to catch non-option arguments.
+ 1. Zero or one params has explicit type seq[T] to catch positional arguments.
 
  2. Wrapped procs must have no return or a return type convertible to int.
    
@@ -113,6 +108,10 @@ command user forgets the [:|=] to separate an option and its value.  Nim's
 parsopt2, the current `cligen` backend, requires such separators.  It's easy to
 forget since many other option parsers do not require separators, especially
 for short options.
+
+`cligen` could grow the ability for an override specifying which parameter
+catches optional positional arguments to support more Nim procs (rather than
+inferring that parameter from being the only or first explicit `seq[T]`).
 
 Exit Code Behavior (more on Rule 2)
 -----------------------------------
@@ -169,28 +168,29 @@ Of course, you often want more input validation than this.  See `argcvt.nim` in
 the `cligen` package for the currently supported types and more details.
 
 Note also that, since `stuff` is a `seq` and there can be only one `seq[T]` for
-positionals, type inference for `stuff=@[...]` in `demo` is required.  Using
-`(stuff: seq[string] = @[...],...)` would yield either an error or unintended
-syntax (`command --foo=3 "a,b,c" "d,e,f"` rather than `--stuff="a,b,c"`).
+positionals, type inference for `stuff=@[...]` in the above example is required.
+Using `(stuff: seq[string] = @[...],...)` would yield either an error or the
+unintended syntax (`command --foo=3 "a,b,c" "d,e,f"` rather than `--stuff="a,b,c"`).
 
 Related Work
 ============
 `docopt` has similar DRY features and provides superior control over help
 messages and richer command line syntax -- mutually exclusive choices and such.
-Basically, `docopt` is a command-centric CLI framework while `cligen` is more
-API-centric.  The downside to `docopt` is learning its "code-ized" POSIX help
-string syntax and having "less natural" parameter access/docopt API calls all
-over user code.  There are surely pros and cons.  Implied/inferred CLIs also
-require a stronger programming language (at least parameter defaults).  `cligen`
-encourages people to preserve "Nim import access" to provided functionalities.
-Simple uses get simple commands.  Complex usages and composition with other
-code can be driven by Nim programs rather than messier shell scripts (once the
+Basically, `docopt` is a command-syntax centric CLI framework while `cligen` is
+native-syntax/API-centric.  Downsides to `docopt` are the need to learn its view
+of command-syntax and having "less natural" parameter access/docopt API calls
+all over user code.  Implied/inferred CLIs also require a stronger programming
+language (at least parameter default values).  `cligen` encourages preserving
+"Nim import access" to provided functionality.  Thusly, complex usages can be
+driven by other Nim programs rather than messier shell scripts (once the
 complexity makes command script/shell language limitations bothersome).
 
 Future directions/TODO
 ======================
 I felt `cligen` was useful enough right now to release.  That said..the TODO is
 long-ish and includes what many might deem "basic features" :-)
+
+ - Handle (a,b: string) params via helper proc cvting to (a: string, b: string)
 
  - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
    maybe a new param to double-space optionally (extra \n between optTab rows).
@@ -200,18 +200,17 @@ long-ish and includes what many might deem "basic features" :-)
    if there is no such parameter.  Etc.
 
  - Automate git/nimble-like multi-dispatch. Not so bad..See test/ManualMulti.nim
-   Because subcmds are a hard boundary in argv, this needs to do its own opt/arg
-   parsing and hard-stop at the first non-option or at least valid subcmd names.
+   To separate global and local optionals, must break out of getopt after last
+   non-optional is processed/pass remainder of cmdline to subcmd.
 
  - Would be nice to provide control over option parsing backend instead of just
    always using parseopt2. Can roll own more traditionally Unix-y backend.  Can
    infer that only bool options can not expect arguments, and can be combined
    like "ls -lt" while non-bool options require vals and need no :|= separator.
 
- - Make un-defaulted non-seq proc params into mandatory command args in-order
-   and converted, binding leftovers to the seq[T]?  Better user error msgs for
-   positional argParse failures.  Could also use argv "--" separator to allow
-   multiple positional sequences.
+ - Could use argv "--" separator to allow multiple positional sequences.  Could
+   also allow user override in dispatchGen arg to specify which proc param gets
+   bound to the optional positionals.
 
  - It might be nice to provide control over what dialect is used to translate
    "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)

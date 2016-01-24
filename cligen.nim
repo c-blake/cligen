@@ -46,9 +46,13 @@ proc dupBlock(fpars: NimNode, posIx: int,
       result[parNm] = sh
       used.incl(sh)
 
+proc postInc*(x: var int): int =
+  result = x
+  inc(x)
+
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {},
-usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped =
+usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
   ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
@@ -73,13 +77,20 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
       posIx = i
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
+  var mandatory = newSeq[int]()
+  var mandHelp = ""
   for i in 1 ..< len(fpars):            # No locals/imports begin w/"dispatcher"
     spars[i][0] = ident("dispatcher" & $(fpars[i][0]))
     if fpars[i][2].kind == nnkEmpty:
       if i == posIx:                    # No initializer; Add @[]
         spars[posIx][2] = prefix(newNimNode(nnkBracket), "@")
       else:
-        error("parameter `" & $(fpars[i][0]) & "` has no default value")
+        if fpars[i][1].kind == nnkEmpty:
+          error("parameter `" & $(fpars[i][0]) &
+                "` has neither type nor default value")
+        mandatory.add(i)
+        mandHelp &= " {" & $fpars[i][0] & ":" & $fpars[i][1] & "}"
+  let posNoId = ident("posNo")          # positional arg number
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdlineId = ident("cmdline")      # gen proc parameter
@@ -92,27 +103,29 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
   preLoop.add(quote do:
     var `tabId`: seq[array[0..3, string]] =
       @[ [ "--help, -?", "", "", "print this help message" ] ])
-  var optPos = if posIx == -1: "[optional-params]" else:
-                               "[optional-params] [" & $(fpars[posIx][0]) & "]"
+  var args = "[optional-params]" & mandHelp &
+             (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
   for i in 1 ..< len(fpars):
     let idef = fpars[i]
     let sdef = spars[i]
     preLoop.add(newNimNode(nnkVarSection).add(sdef))    #Init vars
     callIt.add(sdef[0])                                 #Add to call
-    let parNm = $idef[0]
-    let sh = toString(shOpt.getOrDefault(parNm))        #Add to perPar help tab
-    let defVal = idef[2]
-    let parHelp = if parNm in helps: helps[parNm] else: "set " & parNm
-    if i != posIx:
+    if i notin mandatory and i != posIx:
+      let parNm = $idef[0]
+      let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
+      let defVal = idef[2]
+      let parHelp = if parNm in helps: helps[parNm] else: "set " & parNm
       preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`,`parHelp`))
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
-    var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "optPos",`optPos`,
+    var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "args",`args`,
                               "options", alignTable(`tabId`, len(`prefixId`)) ]
     if `helpId`[len(`helpId`) - 1] != '\l':     # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
       `helpId` = addPrefix(`prefixId`, `helpId`) )
+  preLoop.add(quote do:
+    var `posNoId` = 0)
   result.add(quote do:                  # initial parser-dispatcher proc header
     from os        import commandLineParams
     from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix
@@ -123,21 +136,30 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
                  `prefixId`=""): int =
       `preLoop`)
   let sls = result[0][4][^1][0]     # [stlist][4imports+proc][stlist][stlist]
-  var nonOpt: NimNode
-  if posIx != -1:                   # Catch non-option arguments
-    let posId = spars[posIx][0]
-    let tmpId = ident("tmp" & $posId)
-    nonOpt = newNimNode(nnkElse).add(quote do:
-      var rewind = false            # This complex machinery is so that..
-      if len(`posId`) == 0:         #..tmp = pos[0] type inference works.
-        `posId`.setLen(1)
-        rewind = true
-      var `tmpId` = `posId`[0]
-      argParse(`tmpId`, "slot i", key, "positional\n")
-      if rewind: `posId`.setLen(0)
-      `posId`.add(`tmpId`))
+  var nonOpt: NimNode = newNimNode(nnkElse)
+  if posIx != -1 or len(mandatory) > 0:     # code to parse non-option args
+    nonOpt.add(newNimNode(nnkCaseStmt).add(quote do: postInc(`posNoId`)))
+    for i, ix in mandatory:
+      let hlp = newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
+      nonOpt[0].add(newNimNode(nnkOfBranch).add(newIntLitNode(i)).add(
+        newCall("argParse", spars[ix][0], hlp, ident("key"), helpId)))
+    if posIx != -1:                         # mandatory + optional positionals
+      let posId = spars[posIx][0]
+      let tmpId = ident("tmp" & $posId)
+      nonOpt[0].add(newNimNode(nnkElse).add(quote do:
+        var rewind = false                  # Ugly machinery is so tmp=pos[0]..
+        if len(`posId`) == 0:               #..type inference works.
+          `posId`.setLen(1)
+          rewind = true
+        var `tmpId` = `posId`[0]
+        argParse(`tmpId`, "positional $" & $`posNoId`, key, "positional\n")
+        if rewind: `posId`.setLen(0)
+        `posId`.add(`tmpId`)))
+    else:                                   # only mandatory (no positionals)
+      nonOpt[0].add(newNimNode(nnkElse).add(quote do:
+        argRet(1, "Optional positional arguments unexpected\n" & `helpId`)))
   else:
-    nonOpt = newNimNode(nnkElse).add(quote do:
+    nonOpt.add(quote do:
       argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
   var optCases = newNimNode(nnkCaseStmt).add(ident("key"))
   optCases.add(newNimNode(nnkOfBranch).add(
@@ -170,7 +192,7 @@ usage: string="Usage:\n  $command $optPos\n$doc\nOptions:\n$options\n"): untyped
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
- ="Usage:\n  $command $optPos\n$doc\nOptions:\n$options"): untyped =
+ ="Usage:\n  $command $args\n$doc\nOptions:\n$options"): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call said dispatcher; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
