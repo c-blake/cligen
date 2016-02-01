@@ -25,8 +25,8 @@ when isMainModule:
   var pars = commandLineParams()
   var subcmd = pars[0]
   case pars[0]
-  of "demo": quit(dispatchdemo(cmdline = pars[1..high(pars)]))
-  of "show": quit(dispatchshow(cmdline = pars[1..high(pars)]))
+  of "demo": quit(dispatchdemo(cmdline = pars[1..^1]))
+  of "show": quit(dispatchshow(cmdline = pars[1..^1]))
   of "--help":
       echo "Usage:\n  ManualMulti demo|show [subcommand-args]\n"
       echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
