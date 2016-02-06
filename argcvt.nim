@@ -52,6 +52,8 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
   let keys = if len(sh) > 0: "--$1, -$2" % [ parNm, sh ] # bools take no arg
              else          : "--" & parNm
   helpT.add([ keys, "toggle", $defVal, parHelp ]) # .join("\t") & "\n  "
+  shortBool.add(sh)
+  longBool.add(parNm)
 
 # string
 template argParse*(dst: string, key: string, val: string, help: string) =
@@ -93,15 +95,3 @@ template argParse*(dst: float, key: string, val: string, help: string) =
 template argHelp*(helpT: seq[array[0..3, string]], defVal: float,
                   parNm: string, sh: string, parHelp: string) =
   helpT.add([ keys(parNm, sh), "float", $defVal, parHelp ])
-
-## Nim stdlib getopt should just grow an optional param (no reason not to).
-## For now, just have it here for multicmds. When stdlib fixed getopt2->getopt.
-import os, parseopt2
-export parseopt2
-
-iterator getopt2*(cmdline: seq[string]=commandLineParams()): GetoptResult =
-  var p = initOptParser(cmdline)
-  while true:
-    next(p)
-    if p.kind == cmdEnd: break
-    yield (p.kind, p.key, p.val)

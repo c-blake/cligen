@@ -61,8 +61,10 @@ proc postInc*(x: var int): int =
   inc(x)
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
-                   help: typed= {}, short: typed= {},
-usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
+                   help: typed= {}, short: typed= {}, usage: string
+="Usage:\n  $command $args\n$doc\nOptions:\n$options\n",
+                   requireSeparator: bool = false,
+                   stopWords: seq[string] = @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
   ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
@@ -108,12 +110,16 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
   let tabId = ident("tab")              # local help table var
   let helpId = ident("help")            # local help table var
   let prefixId = ident("prefix")        # local help prefix param
+  let shortBoolId = ident("shortBool")  # local list of arg-free short opts
+  let longBoolId = ident("longBool")    # local list of arg-free long opts
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
   var preLoop = newStmtList()           # preLoop: init vars & build help str
   preLoop.add(quote do:
     var `tabId`: seq[array[0..3, string]] =
-      @[ [ "--help, -?", "", "", "print this help message" ] ])
+      @[ [ "--help, -?", "", "", "print this help message" ] ]
+    var `shortBoolId`: string = ""      # argHelp(..,bool,..) updates these
+    var `longBoolId`: seq[string] = @[ ])
   var args = "[optional-params]" & mandHelp &
              (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
   for i in 1 ..< len(fpars):
@@ -140,7 +146,7 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
   result.add(quote do:                  # initial parser-dispatcher proc header
     from os        import commandLineParams
     from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix
-    from argcvt    import getopt2, cmdLongOption, cmdShortOption #XXX parseopt2
+    from parseopt3 import getopt, cmdLongOption, cmdShortOption
     import strutils # import join, `%`
     proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),
                  `docId`: string = `doc`, `usageId`: string = `usage`,
@@ -190,8 +196,9 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
     argRet(1, "Bad option: \"" & key & "\"\n" & `helpId`)))
   sls.add(                          # set up getopt loop & attach case clauses
     newNimNode(nnkForStmt).add(ident("kind"), ident("key"), ident("val"),
-      newCall("getopt2", cmdlineId), newStmtList(
-        newNimNode(nnkCaseStmt).add(ident("kind"),
+      newCall("getopt", cmdlineId, shortBoolId, longBoolId,
+                        requireSeparator, stopWords),
+        newStmtList(newNimNode(nnkCaseStmt).add(ident("kind"),
           newNimNode(nnkOfBranch).add(ident("cmdLongOption"),
                                       ident("cmdShortOption"),
                                       newStmtList(optCases)), nonOpt))))
@@ -205,9 +212,12 @@ usage: string="Usage:\n  $command $args\n$doc\nOptions:\n$options\n"): untyped =
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
- ="Usage:\n  $command $args\n$doc\nOptions:\n$options"): untyped =
+="Usage:\n  $command $args\n$doc\nOptions:\n$options",
+                requireSeparator: bool = false,
+                stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call said dispatcher; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
-  result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage))
+  result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
+                                         requireSeparator, stopWords))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
