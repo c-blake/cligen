@@ -77,7 +77,8 @@ proc do_short(p: var OptParser) =
     return                                              # continue w/same param
   if p.requireSep and p.moreShort[0] notin seps:    # No optarg in reqSep mode
     return
-  p.pos += 1
+  if p.moreShort.len != 0:              # only advance if haven't already
+    p.pos += 1
   if p.moreShort[0] in seps:            # shift off maybe-optional separator
     p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len > 0:               # same param argument is trailing text
