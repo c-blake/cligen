@@ -71,9 +71,10 @@ when isMainModule:
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay.  The rest of this document may be useful later, though.
 
-Note that by default, dispatchGen sets requireSeparator=false which results in
-more traditional POSIX command line parsers, i.e. ``-abcdBar`` or `-abcd Bar``
-or ``--delta Bar`` or `--delta=Bar`` all being acceptable command syntax.
+By default, dispatchGen sets requireSeparator=false which results in more
+traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
+library.  Specifically, ``-abcdBar`` or `-abcd Bar`` or ``--delta Bar`` or
+``--delta=Bar`` are all acceptable syntax for command options.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
