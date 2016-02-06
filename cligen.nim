@@ -62,7 +62,7 @@ proc postInc*(x: var int): int =
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
-="Usage:\n  $command $args\n$doc\nOptions:\n$options\n",
+="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                    requireSeparator: bool = false,
                    stopWords: seq[string] = @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
@@ -212,7 +212,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
-="Usage:\n  $command $args\n$doc\nOptions:\n$options",
+="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                 requireSeparator: bool = false,
                 stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
