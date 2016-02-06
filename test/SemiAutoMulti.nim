@@ -25,20 +25,21 @@ when isMainModule:
 
   dispatchGen(show, doc="  This shows me something.")
 
-  #XXX Top-level getopt loop currently eats all options.
-  proc multi(beta=1, subcmd: string, subcmdArgs: seq[string]): int =
-    case subcmd
-    of "demo": quit(dispatch_demo(cmdline = subcmdArgs))
-    of "show": quit(dispatch_show(cmdline = subcmdArgs))
+  proc multi(beta=1, subcmd: seq[string]): int =
+    echo "globalbeta:", beta
+    let arg0 = if subcmd.len > 0: subcmd[0] else: "help"
+    case arg0
+    of "demo": quit(dispatch_demo(cmdline = subcmd[1..^1]))
+    of "show": quit(dispatch_show(cmdline = subcmd[1..^1]))
     of "help":
-        echo "Usage:\n  ManualMulti demo|show [subcommand-args]\n"
+        echo "Usage:\n  SemiAutoMulti demo|show|help [subcommand-args]\n"
         echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
         # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
-        let use = "ManualMulti $command $args\n$doc\nOptions:\n$options"
+        let use = "SemiAutoMulti [globalOpts] $command $args\n$doc\nOptions:\n$options"
         discard dispatch_demo(cmdline = @[ "--help" ], prefix="    ", usage=use)
         discard dispatch_show(cmdline = @[ "--help" ], prefix="    ", usage=use)
         quit(0)
     else: echo "unknown subcommand: ", subcmd
     quit(1)
 
-  dispatch(multi)
+  dispatch(multi, stopWords = @[ "demo", "show", "help" ])
