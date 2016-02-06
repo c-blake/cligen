@@ -73,7 +73,7 @@ without further delay.  The rest of this document may be useful later, though.
 
 By default, dispatchGen sets requireSeparator=false which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
-library.  Specifically, ``-abcdBar`` or `-abcd Bar`` or ``--delta Bar`` or
+library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
 ``--delta=Bar`` are all acceptable syntax for command options.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
