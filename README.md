@@ -4,11 +4,11 @@ This approach to CLIs comes from Andrey Mikhaylenko's nice Python argh module.
 Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly onto
 command calls, syntactically and semantically.  For Nim, that subset is any
 non-generic proc with non-var parameters typed either by default value inference
-or explicit types (i.e., not like `foo(b: auto)`).  The proc must also have some
-seq[T] *if* it wants to receive a variable list of optional positional arguments
-after optional and specific mandatory arguments.  For such procs, `cligen` can
-automatically generate a command-line interface complete with long and short
-options and a nice-ish help message.
+or by explicit types (i.e., not like `foo(b: auto)`).  The proc must also have
+some seq[T] *if* it wants to receive a variable list of optional positional
+parameters after optional and specific mandatory parameters.  For such procs,
+`cligen` can automatically generate a nice-ish command-line interface complete
+with long and short options and a nice-ish help message.
 
 Enough Generalities...Show me examples!
 ---------------------------------------
@@ -37,7 +37,7 @@ Options:
 Other invocations (foobar --foo=2 --bar=2.7 ...) all work as you would expect.
 
 When you feel like producing a better help string, tack on some parameter-keyed
-metadata with Nim's association-list literals and maybe throw in an more overall
+metadata with Nim's association-list literals and maybe throw in a more overall
 description of operation doc string for before the options table:
 ```nim
   dispatch(foobar, doc = "Deletes no positional-params!",
@@ -58,9 +58,9 @@ with some named-argument string interpolation:
            prefix="   "))   # indent the whole message a few spaces.
 ```
 
-The same basic command-argument-to-native type converters used for option
-values will be applied to convert optional positional arguments to seq[T]
-values or mandatory positional arguments to their native values:
+The same basic string-to-native type converters used for option values will be
+applied to convert optional positional arguments to seq[T] values or mandatory
+positional arguments to values of their types:
 ```nim
 proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
   ##Some API call
@@ -70,6 +70,10 @@ when isMainModule:
 ```
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay.  The rest of this document may be useful later, though.
+
+Note that by default, dispatchGen sets requireSeparator=false which results in
+more traditional POSIX command line parsers, i.e. ``-abcdBar`` or `-abcd Bar``
+or ``--delta Bar`` or `--delta=Bar`` all being acceptable command syntax.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
@@ -90,19 +94,20 @@ Elaboration on these rules may be helpful when/if you run into harder cases.
 
 Forbidding optional positional command arguments (more on Rule 1)
 -----------------------------------------------------------------
-When there is no explicit `seq[T]` parameter, `cligen` infers that only optional
-command parameters (or specifically positioned mandatory parameters) are legal.
+When there is no explicit `seq[T]` parameter, `cligen` infers that only option
+command parameters or specifically positioned mandatory parameters are legal.
 The name of the seq parameter does not matter, only that it's type slot is
 non-empty and syntactically `seq[SOMETHING]` as opposed to some type alias/etc.
-that happens to be a `seq`.  When there is no positional argument catcher and
-no mandatory arguments, providing non-option arguments is a command syntax error
-and reported as such.  This non-option syntax error also commonly occurs when
-a command user forgets the [:|=] to separate an option and its value.  Nim's
-parseopt2, the current `cligen` back end, requires such separators.  It's easy
-to forget since many other option parsers do not require separators, especially
-for short options.  `cligen` may someday grow the ability to specify which proc
-parameter catches optional positional arguments (rather than inferring that
-parameter from being the only/first explicit `seq[T]`).
+that happens to be a `seq`.  When there is no positional parameter catcher and
+no mandatory parameters, providing non-option parameters is a command syntax
+error and reported as such.  `cligen` may someday grow the ability to specify
+which proc parameter catches optional command positional parameters (rather
+than inferring that parameter from being the only/first explicit `seq[T]`).
+
+This non-option syntax error also commonly occurs when requireSeparator=true is
+passed and traditional Nim parseopt2-like command syntax is in force.  In that
+case a command user may forget the [:|=] required to separate an option and its
+value.  The default posix-style backend does not require separators.
 
 Extending `cligen` to support new parameter types (more on Rule 2)
 ------------------------------------------------------------------
@@ -168,25 +173,28 @@ importantly, the learning curve/cognitive load and even the extra program text
 for a CLI is all about as painless as possible - mostly learning what kind of
 proc is "command-like" enough, various minor controls/arguments to `dispatch` to
 enhance the help message, and the "binding/translation" between proc and command
-parameters The last is helped a lot by the auto-generated help message.
+parameters.  The last is helped a lot by the auto-generated help message.
 
 Future directions/TODO
 ======================
+ - Automate git/nimble-like multi-dispatch. Not so bad..See test/ManualMulti.nim
+   To separate global and local optionals, must break out of getopt after last
+   non-optional is processed/pass remainder of cmdline to subcmd.
+
+ - In Nim, `##`-doc comments are the norm rather than doc strings as in Python.
+   Pragma macros can get the comment text, but getImpl cannot due to .comment
+   not being copied around.  https://github.com/nim-lang/Nim/issues/3690
+   Araq favors fixing propagation (but also a bigger .comment->.strVal change).
+   Once resolved, we can default doc=ThatText.  In Nim, ThatText usually will
+   describe overall operation and parameter semantics.  This implies that in a
+   very common-case merely dispatch(myapi) would be all that was needed.
+
  - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
    maybe a new param to double-space optionally (extra \n between optTab rows).
    [dispatch getting to be a pretty fat interface, but formatting usually is.]
 
  - Better error reporting. E.g., help={"foo" : "stuff"} silently ignores "foo"
    if there is no such parameter.  Etc.
-
- - Automate git/nimble-like multi-dispatch. Not so bad..See test/ManualMulti.nim
-   To separate global and local optionals, must break out of getopt after last
-   non-optional is processed/pass remainder of cmdline to subcmd.
-
- - Would be nice to provide control over option parsing backend instead of just
-   always using parseopt2. Can roll own more traditionally Unix-y backend.  Can
-   infer that only bool options can not expect arguments, and can be combined
-   like "ls -lt" while non-bool options require vals and need no :|= separator.
 
  - Could use argv "--" separator to allow multiple positional sequences.  Could
    also allow user override in dispatchGen arg to specify which proc param gets
@@ -196,11 +204,3 @@ Future directions/TODO
    "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)
    or maybe most Nim-like to just accept all such dialects? { Maybe all that's
    needed is a strutils.normalize() that takes out "-" as well as "_". }
-
- - In Nim, `##`-doc comments are the norm rather than doc strings as in Python.
-   Pragma macros can get the comment text, but getImpl cannot due to .comment
-   not being copied around.  https://github.com/nim-lang/Nim/issues/3690
-   Araq favors fixing propagation (but also a bigger .comment->.strVal change).
-   Once resolved, we can default doc=ThatText.  In Nim, ThatText usually will
-   describe overall operation and parameter semantics.  This implies that in a
-   very common-case merely dispatch(myapi) would be all that was needed.
