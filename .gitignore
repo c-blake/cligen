@@ -16,3 +16,4 @@ test/Mandatory
 test/MandatoryNoPos
 test/ReturnNonInt
 test/ListDecl
+test/MultiFlag
