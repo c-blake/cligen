@@ -118,8 +118,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   preLoop.add(quote do:
     var `tabId`: seq[array[0..3, string]] =
       @[ [ "--help, -?", "", "", "print this help message" ] ]
-    var `shortBoolId`: string = ""      # argHelp(..,bool,..) updates these
-    var `longBoolId`: seq[string] = @[ ])
+    var `shortBoolId`: string = "?"     # argHelp(..,bool,..) updates these
+    var `longBoolId`: seq[string] = @[ "help" ])
   var args = "[optional-params]" & mandHelp &
              (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
   for i in 1 ..< len(fpars):
