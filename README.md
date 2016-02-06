@@ -178,9 +178,7 @@ parameters.  The last is helped a lot by the auto-generated help message.
 
 Future directions/TODO
 ======================
- - Automate git/nimble-like multi-dispatch. Not so bad..See test/ManualMulti.nim
-   To separate global and local optionals, must break out of getopt after last
-   non-optional is processed/pass remainder of cmdline to subcmd.
+ - Automate git/nimble-like multi-dispatch (see ManualMulti, SemiAutoMulti.nim)
 
  - In Nim, `##`-doc comments are the norm rather than doc strings as in Python.
    Pragma macros can get the comment text, but getImpl cannot due to .comment
