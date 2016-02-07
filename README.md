@@ -1,6 +1,6 @@
 cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
-This approach to CLIs comes from Andrey Mikhaylenko's nice Python argh module.
+This approach to CLIs comes from Andrey Mikhaylenko's nice Python module 'argh'.
 Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly onto
 command calls, syntactically and semantically.  For Nim, that subset is any
 non-generic proc with non-var parameters typed either by default value inference
