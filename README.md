@@ -94,22 +94,19 @@ That's about it.  `cligen` supports most basic Nim types (int, float, ..) out
 of the box, and the system can be extended pretty easily to user-defined types.
 Elaboration on these rules may be helpful when/if you run into harder cases.
 
-Forbidding optional positional command arguments (more on Rule 1)
------------------------------------------------------------------
+Optional positional command arguments (more on Rule 1)
+------------------------------------------------------
 When there is no explicit `seq[T]` parameter, `cligen` infers that only option
 command parameters or specifically positioned mandatory parameters are legal.
 The name of the seq parameter does not matter, only that it's type slot is
 non-empty and syntactically `seq[SOMETHING]` as opposed to some type alias/etc.
-that happens to be a `seq`.  When there is no positional parameter catcher and
-no mandatory parameters, providing non-option parameters is a command syntax
-error and reported as such.  `cligen` may someday grow the ability to specify
-which proc parameter catches optional command positional parameters (rather
-than inferring that parameter from being the only/first explicit `seq[T]`).
+that happens to be a `seq`.
 
-This non-option syntax error also commonly occurs when requireSeparator=true is
-passed and traditional Nim parseopt2-like command syntax is in force.  In that
-case a command user may forget the [:|=] required to separate an option and its
-value.  The default posix-style backend does not require separators.
+When there is no positional parameter catcher and no mandatory parameters, it
+is a command syntax error to provide non-option parameters and reported as such.
+This non-option syntax error also commonly occurs when requireSeparator=true
+and traditional Nim parseopt2-like command syntax is in force.  In that case a
+command user may forget the [:|=] required to separate an option and its value.
 
 Extending `cligen` to support new parameter types (more on Rule 2)
 ------------------------------------------------------------------
@@ -187,6 +184,9 @@ Future directions/TODO
 
  - Better error reporting. E.g., help={"foo" : "stuff"} silently ignores "foo"
    if there is no such parameter.  Etc.
+
+ - Add ability to specify which proc param catches optional positional params
+   (rather than inferring from being the only/first explicit `seq[T]` param).
 
  - Could use argv "--" separator to allow multiple positional sequences.  Could
    also allow user override in dispatchGen arg to specify which proc param gets
