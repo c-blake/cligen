@@ -36,32 +36,35 @@ type
     longBools: seq[string]    # long options not requiring optarg
     stopWords: seq[string]    # special literal parameters that act like "--"
     requireSep: bool          # require separator between option key & val
+    sepChars: set[char]
     kind*: CmdLineKind        ## the detected command line token
     key*, val*: TaintedString ## key and value pair; ``key`` is the option
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
-const seps: set[char] = { ':', '=' }
-
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortBools: string = nil,
                     longBools: seq[string] = nil,
                     requireSeparator=false,  # true imitates stdlib parseopt2
+                    sepChars: string= "=:",
                     stopWords: seq[string] = @[]): OptParser =
   ## Initializes option parses. `cmdline` should not contain parameter 0,
   ## typically the program name.  If `cmdline` is not given, default to program
   ## parameters. `shortBools` and `longBools` specify respectively one-letter
   ## and long option keys that do _not_ take arguments.  If `requireSeparator`
-  ## is true, then option keys and values must be separated by ":" or "=" in
-  ## either short or long contexts.  If requireSeparator==false, the parser
-  ## knows only non-bool option keys expect args and users may say ``-aboVal``
-  ## or ``-o Val`` or ``--opt Val`` [ as well as the ``-o:Val``|``--opt=Val``
-  ## style which always works ].  Parameters following either "--" or any
-  ## literal parameter in stopWords are never interpreted as options.
+  ## is true, then option keys and values must be separated by an element of
+  ## sepChars ("=" or ":" by default) in either short or long contexts.  If
+  ## requireSeparator==false, the parser knows only non-bool option keys will
+  ## expect args and users may say ``-aboVal`` or ``-o Val`` or ``--opt Val``
+  ## [ as well as the ``-o=Val``|``--opt=Val`` style which always works ].
+  ## Parameters following either "--" or any literal parameter in stopWords are
+  ## never interpreted as options.
   result.cmd = @cmdline                 #XXX is @ necessary?  Does that copy?
   result.shortBools = shortBools
   result.longBools = longBools
   result.requireSep = requireSeparator
+  for c in sepChars:
+    result.sepChars.incl(c)
   result.stopWords = stopWords
   result.moreShort = ""
   result.optsDone = false
@@ -75,11 +78,11 @@ proc do_short(p: var OptParser) =
     p.pos += 1
   if p.shortBools != nil and p.key in p.shortBools:     # no opt argument =>
     return                                              # continue w/same param
-  if p.requireSep and p.moreShort[0] notin seps:    # No optarg in reqSep mode
+  if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
   if p.moreShort.len != 0:              # only advance if haven't already
     p.pos += 1
-  if p.moreShort[0] in seps:            # shift off maybe-optional separator
+  if p.moreShort[0] in p.sepChars:      # shift off maybe-optional separator
     p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len > 0:               # same param argument is trailing text
     p.val = p.moreShort
@@ -96,7 +99,7 @@ proc do_long(p: var OptParser) =
   p.val = nil
   let param = p.cmd[p.pos]
   p.pos += 1                            # always consume at least 1 param
-  let sep = find(param, seps)           # only very first occurrence of delim
+  let sep = find(param, p.sepChars)     # only very first occurrence of delim
   if sep == 2:
     echo "Empty long option key at param", p.pos - 1, " (\"", param, "\")"
     p.key = nil
@@ -130,8 +133,8 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = nil
-    if p.cmd[p.pos] in p.stopWords:       #Step4: check for stop word
-      p.optsDone = true                   # should only hit Step3 henceforth
+    if p.cmd[p.pos] in p.stopWords:     #Step4: check for stop word
+      p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
     return
   if p.cmd[p.pos].startsWith("--"):     #Step5: "--*"
@@ -156,9 +159,9 @@ type
 
 iterator getopt*(cmdline=commandLineParams(), shortBools: string = nil,
                  longBools: seq[string] = nil, requireSeparator=true,
-                 stopWords: seq[string] = @[]): GetoptResult =
+                 sepChars="=:", stopWords: seq[string] = @[]): GetoptResult =
   var p = initOptParser(cmdline, shortBools, longBools, requireSeparator,
-                        stopWords)
+                        sepChars, stopWords)
   while true:
     next(p)
     if p.kind == cmdEnd: break
