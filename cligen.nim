@@ -56,12 +56,14 @@ proc dupBlock(fpars: NimNode, posIx: int,
       result[parNm] = sh
       used.incl(sh)
 
-proc collectComments(buf: var string, n: NimNode) =
+proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
   if n.len > 1:
-    for kid in n: collectComments(buf, kid)
+    for kid in n: collectComments(buf, kid, depth + 1)
   else:
-    if n.kind == nnkCommentStmt:
-      if n.strVal != nil: buf.add(n.strVal)
+    if n.kind == nnkCommentStmt and depth < 5:
+      if n.strVal != nil:
+        buf.add(" ")
+        buf.add(n.strVal)
 
 proc postInc*(x: var int): int =
   result = x
