@@ -56,6 +56,13 @@ proc dupBlock(fpars: NimNode, posIx: int,
       result[parNm] = sh
       used.incl(sh)
 
+proc collectComments(buf: var string, n: NimNode) =
+  if n.len > 1:
+    for kid in n: collectComments(buf, kid)
+  else:
+    if n.kind == nnkCommentStmt:
+      if n.strVal != nil: buf.add(n.strVal)
+
 proc postInc*(x: var int): int =
   result = x
   inc(x)
@@ -79,7 +86,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
-  let fpars = formalParams(pro.symbol.getImpl)
+  let impl = pro.symbol.getImpl
+  let fpars = formalParams(impl)
+  var cmtDoc: string = $doc
+  if cmtDoc == nil or cmtDoc.len == 0:  # allow caller to override commentDoc
+    collectComments(cmtDoc, impl)
   let proNm = $pro                      # Name of wrappred proc
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
   var posIx = -1                        # param slot for positional cmd args|-1
@@ -150,7 +161,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import strutils # import join, `%`
     proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),
-                 `docId`: string = `doc`, `usageId`: string = `usage`,
+                 `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`=""): int =
       `preLoop`)
   let sls = result[0][4][^1][0]     # [stlist][4imports+proc][stlist][stlist]

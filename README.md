@@ -27,12 +27,13 @@ run ./foobar --help to get a minimal (but not so useless) help message:
 ```
 Usage:
   foobar [optional-params] [paths]
-Options:
-  --help, -?                    print this help message
-  --foo=, -f=   int     1       set foo
-  --bar=, -b=   float   2.0     set bar
-  --baz=        string  "hi"    set baz
-  --verb, -v    toggle  false   set verb
+Some existing API call
+Options (opt&arg sep by :,=,spc):
+--help, -?                  print this help message
+--foo=, -f=  int     1      set foo
+--bar=, -b=  float   2.0    set bar
+--baz=       string  "hi"   set baz
+--verb, -v   toggle  false  set verb
 ```
 Other invocations (foobar --foo=2 --bar=2.7 ...) all work as you would expect.
 
@@ -179,14 +180,6 @@ parameters.  The last is helped a lot by the auto-generated help message.
 Future directions/TODO
 ======================
  - Automate git/nimble-like multi-dispatch (see ManualMulti, SemiAutoMulti.nim)
-
- - In Nim, `##`-doc comments are the norm rather than doc strings as in Python.
-   Pragma macros can get the comment text, but getImpl cannot due to .comment
-   not being copied around.  https://github.com/nim-lang/Nim/issues/3690
-   Araq favors fixing propagation (but also a bigger .comment->.strVal change).
-   Once resolved, we can default doc=ThatText.  In Nim, ThatText usually will
-   describe overall operation and parameter semantics.  This implies that in a
-   very common-case merely dispatch(myapi) would be all that was needed.
 
  - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
    maybe a new param to double-space optionally (extra \n between optTab rows).
