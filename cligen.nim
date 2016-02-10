@@ -1,4 +1,4 @@
-import macros, tables
+import macros, tables, parseopt3
 
 proc toString(c: char): string =
   result = newStringOfCap(1)
@@ -112,6 +112,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let prefixId = ident("prefix")        # local help prefix param
   let shortBoolId = ident("shortBool")  # local list of arg-free short opts
   let longBoolId = ident("longBool")    # local list of arg-free long opts
+  let keyId = ident("key")              # local option key
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
   var preLoop = newStmtList()           # preLoop: init vars & build help str
@@ -146,7 +147,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   result.add(quote do:                  # initial parser-dispatcher proc header
     from os        import commandLineParams
     from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix
-    from parseopt3 import getopt, cmdLongOption, cmdShortOption
+    from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import strutils # import join, `%`
     proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),
                  `docId`: string = `doc`, `usageId`: string = `usage`,
@@ -159,7 +160,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     for i, ix in mandatory:
       let hlp = newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
       nonOpt[0].add(newNimNode(nnkOfBranch).add(newIntLitNode(i)).add(
-        newCall("argParse", spars[ix][0], hlp, ident("key"), helpId)))
+        newCall("argParse", spars[ix][0], hlp, keyId, helpId)))
     if posIx != -1:                         # mandatory + optional positionals
       let posId = spars[posIx][0]
       let tmpId = ident("tmp" & $posId)
@@ -178,7 +179,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   else:
     nonOpt.add(quote do:
       argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
-  var optCases = newNimNode(nnkCaseStmt).add(ident("key"))
+  var optCases = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
   optCases.add(newNimNode(nnkOfBranch).add(
     newStrLitNode("help"),newStrLitNode("?")).add(quote do: argRet(0,`helpId`)))
   for i in 1 ..< len(fpars):        # build per-param case clauses
@@ -186,17 +187,18 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     if i in mandatory: continue     # skip mandator arguments
     let idef = fpars[i]
     let sdef = spars[i]
+    let lopt = optionNormalize($idef[0])
     if $idef[0] in shOpt:           # both a long and short option
       optCases.add(newNimNode(nnkOfBranch).add(
-        newStrLitNode($idef[0]), newStrLitNode(toString(shOpt[$idef[0]]))).add(
-          newCall("argParse", sdef[0], ident("key"), ident("val"), helpId)))
+        newStrLitNode(lopt), newStrLitNode(toString(shOpt[$idef[0]]))).add(
+          newCall("argParse", sdef[0], keyId, ident("val"), helpId)))
     else:                           # only a long option
-      optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode($idef[0])).add(
-          newCall("argParse", sdef[0], ident("key"), ident("val"), helpId)))
+      optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(
+          newCall("argParse", sdef[0], keyId, ident("val"), helpId)))
   optCases.add(newNimNode(nnkElse).add(quote do:
     argRet(1, "Bad option: \"" & key & "\"\n" & `helpId`)))
   sls.add(                          # set up getopt loop & attach case clauses
-    newNimNode(nnkForStmt).add(ident("kind"), ident("key"), ident("val"),
+    newNimNode(nnkForStmt).add(ident("kind"), keyId, ident("val"),
       newCall("getopt", cmdlineId, shortBoolId, longBoolId,
                         requireSeparator, sepChars, stopWords),
         newStmtList(newNimNode(nnkCaseStmt).add(ident("kind"),

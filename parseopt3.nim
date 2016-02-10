@@ -154,6 +154,24 @@ proc next*(p: var OptParser) =
       p.moreShort = p.cmd[p.pos][1..^1] # slice out the initial "-"
       do_short(p)
 
+proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
+  ## Normalizes option key `s`.
+  ##
+  ## That means to convert all but first char to lower case and remove any
+  ## chars in wordSeparators ('_' and '-') by default.
+  result = newString(s.len)
+  var wordSeps: set[char]
+  for c in wordSeparators: wordSeps.incl(c)
+  var j = 0
+  for i in 0..len(s) - 1:
+    if s[i] in {'A'..'Z'}:
+      result[j] = chr(ord(s[i]) + (ord('a') - ord('A')))
+      inc j
+    elif s[i] notin wordSeps:
+      result[j] = s[i]
+      inc j
+  if j != s.len: setLen(result, j)
+
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
 

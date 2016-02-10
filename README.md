@@ -198,8 +198,3 @@ Future directions/TODO
  - Could use argv "--" separator to allow multiple positional sequences.  Could
    also allow user override in dispatchGen arg to specify which proc param gets
    bound to the optional positionals.
-
- - It might be nice to provide control over what dialect is used to translate
-   "multiWord" parameter idents command syntax ("--multi-word", --multi_word,..)
-   or maybe most Nim-like to just accept all such dialects? { Maybe all that's
-   needed is a strutils.normalize() that takes out "-" as well as "_". }
