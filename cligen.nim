@@ -183,6 +183,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     newStrLitNode("help"),newStrLitNode("?")).add(quote do: argRet(0,`helpId`)))
   for i in 1 ..< len(fpars):        # build per-param case clauses
     if i == posIx: continue         # skip variable len positionals
+    if i in mandatory: continue     # skip mandator arguments
     let idef = fpars[i]
     let sdef = spars[i]
     if $idef[0] in shOpt:           # both a long and short option
