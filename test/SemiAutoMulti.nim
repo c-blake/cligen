@@ -25,8 +25,9 @@ when isMainModule:
 
   dispatchGen(show, doc="  This shows me something.")
 
-  proc multi(beta=1, subcmd: seq[string]): int =
+  proc multi(beta=1, item="", subcmd: seq[string]): int =
     echo "globalbeta:", beta
+    echo "globalitem:", item
     let arg0 = if subcmd.len > 0: subcmd[0] else: "help"
     case arg0
     of "demo": quit(dispatch_demo(cmdline = subcmd[1..^1]))
