@@ -185,9 +185,6 @@ Future directions/TODO
  - Better error reporting. E.g., help={"foo" : "stuff"} silently ignores "foo"
    if there is no such parameter.  Etc.
 
- - Add ability to specify which proc param catches optional positional params
-   (rather than inferring from being the only/first explicit `seq[T]` param).
-
  - Could use argv "--" separator to allow multiple positional sequences.  Could
    also allow user override in dispatchGen arg to specify which proc param gets
    bound to the optional positionals.
