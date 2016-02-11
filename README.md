@@ -69,8 +69,8 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:
   import cligen; dispatch(foobar)
 ```
-Want to expose two or more procs into a command with subcommands a la git
-or nimble?  Just use `dispatchMulti`:
+Want to expose two or more procs into a command with subcommands a la `git`
+or `nimble`?  Just use `dispatchMulti`:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
@@ -79,12 +79,13 @@ proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
 when isMainModule:
   import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
 ```
-Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
-Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``
+Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``.  Each [] list
+in `dispatchMulti` is the argument list for each sub-`dispatch` and can be used
+to tune the command syntax and help strings in the same way.
 
 That's basically it.  Many users who have read this far can start using `cligen`
-without further delay, entering illegal commands to get help messages to learn
-the basic mappings.  The rest of this document may be useful later, though.
+without further delay, simply entering illegal commands or `--help` to get help
+messages that exhibit the basic mappings.
 
 By default, dispatchGen sets requireSeparator=false which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
@@ -95,9 +96,9 @@ Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
 There are only a few very easy rules to learn:
 
- 0. No parameter of a wrapped proc can can be named "help" (name collision!)
+ 0. No parameter of a wrapped proc can be named "help" (name collision!)
    
- 1. Zero or one params has explicit type seq[T] to catch positional arguments.
+ 1. Zero or 1 params has explicit type seq[T] to catch optional positional args.
    
  2. All param types used must have argParse, argHelp support (see Extending..)
     This includes the type T in seq[T] for non-option/positionals.
@@ -105,8 +106,7 @@ There are only a few very easy rules to learn:
  3. Only basic procs supported -- no 'auto' types, 'var' types, generics, etc.
 
 `cligen` supports most basic Nim types (int, float, ..) out of the box, and the
-system can be extended pretty easily to user-defined types.  Elaboration this
-may be helpful when/if you run into harder cases.
+system can be extended pretty easily to user-defined types.
 
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------
