@@ -1,6 +1,6 @@
 [Package]
 name        = "cligen"
-version     = "0.8.5"
+version     = "0.9.0"
 author      = "Charles Blake"
 description = "Infer & generate command-line interace/option/argument parser"
 license     = "MIT/ISC"
