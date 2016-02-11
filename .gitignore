@@ -1,3 +1,4 @@
+*.swp
 test/CustomCmdName
 test/CustomType
 test/DupShort
@@ -18,3 +19,4 @@ test/ReturnNonInt
 test/ListDecl
 test/MultiFlag
 test/SemiAutoMulti
+test/FullyAutoMulti

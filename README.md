@@ -69,8 +69,22 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:
   import cligen; dispatch(foobar)
 ```
+Want to expose two or more procs into a command with subcommands a la git
+or nimble?  Just use `dispatchMulti`:
+```nim
+proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
+  ##Some API call
+proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
+  ##Some other API call
+when isMainModule:
+  import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
+```
+Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
+Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``
+
 That's basically it.  Many users who have read this far can start using `cligen`
-without further delay.  The rest of this document may be useful later, though.
+without further delay, entering illegal commands to get help messages to learn
+the basic mappings.  The rest of this document may be useful later, though.
 
 By default, dispatchGen sets requireSeparator=false which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
@@ -90,9 +104,9 @@ There are only a few very easy rules to learn:
 
  3. Only basic procs supported -- no 'auto' types, 'var' types, generics, etc.
 
-That's about it.  `cligen` supports most basic Nim types (int, float, ..) out
-of the box, and the system can be extended pretty easily to user-defined types.
-Elaboration on these rules may be helpful when/if you run into harder cases.
+`cligen` supports most basic Nim types (int, float, ..) out of the box, and the
+system can be extended pretty easily to user-defined types.  Elaboration this
+may be helpful when/if you run into harder cases.
 
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------
@@ -176,8 +190,6 @@ parameters.  The last is helped a lot by the auto-generated help message.
 
 Future directions/TODO
 ======================
- - Automate git/nimble-like multi-dispatch (see ManualMulti, SemiAutoMulti.nim)
-
  - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
    maybe a new param to double-space optionally (extra \n between optTab rows).
    [dispatch getting to be a pretty fat interface, but formatting usually is.]

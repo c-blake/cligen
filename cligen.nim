@@ -1,4 +1,4 @@
-import macros, tables, parseopt3
+import macros, tables, parseopt3, strutils, os
 
 proc toString(c: char): string =
   result = newStringOfCap(1)
@@ -65,6 +65,18 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(" ")
         buf.add(n.strVal)
 
+proc isExplicitSeq(typeSlot: NimNode): bool =
+  # Test if a proc param typeSlot is explicitly spelled "seq[SOMETHING]" to
+  # identify which parameter maps to optional positional arguments.
+  result = false
+  let lispRep = lispRepr(typeSlot)
+  if lispRep.startsWith("BracketExpr(Sym(seq), "):
+    return true
+  if lispRep.startsWith("Call(OpenSymChoice(Sym([]), "):
+    var simplified = typeSlot.copyNimTree()
+    simplified[0] = simplified[0][0]
+    return lispRepr(simplified).startsWith("Call(Sym([]), Sym(seq), ")
+
 proc postInc*(x: var int): int =
   ## Similar to post-fix `++` in C languages: yield initial val, then increment
   result = x
@@ -100,7 +112,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
   var posIx = -1                        # param slot for positional cmd args|-1
   for i in 1 ..< len(fpars):            #XXX more "type-y" test for seq[T]
-    if lispRepr(fpars[i][1])[0..21] == "BracketExpr(Sym(seq), ":
+    if isExplicitSeq(fpars[i][1]):      #XXX or just let user specify posIx/id?
       if posIx != -1:                   #??? "--" <==> multiple seq[T]s
         error("Currently cligen supports only one seq[T] parameter.")
       posIx = i
@@ -227,7 +239,6 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     sls.add(quote do:
        when compiles(int(`callIt`)): return `callIt`
        else: discard `callIt`; return 0)
-# echo repr(result)
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
@@ -240,3 +251,47 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
   result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
                                          requireSeparator, sepChars, stopWords))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
+
+macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
+  ## A convenience wrapper to both generate a multi-command dispatcher and then
+  ## call quit(said dispatcher); pass []s of argument lists for dispatchGen(),
+  ## E.g., dispatchMulti([demo, short={"dryRun":"n"}], [real, cmdName="go"]).
+  result = newStmtList()
+  for p in procBrackets:
+    var c = newCall("dispatchGen")
+    copyChildrenTo(p, c)
+    result.add(c)
+  let arg0Id = ident("arg0")
+  let restId = ident("rest")
+  let dashHelpId = ident("dashHelp")
+  let multiId = ident("multi")
+  let subcmdsId = ident("subcmds")
+  var multiDef = newStmtList()
+  multiDef.add(quote do:
+    proc `multiId`(dummy=1, dummy2=2, subcmd: seq[string]) =
+      let n = subcmd.len
+      let `arg0Id` = if n > 0: subcmd[0] else: "help"
+      let `restId`: seq[string] = if n > 1: subcmd[1..<n] else: @[ ])
+  var cases = multiDef[0][0][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
+  var helps = (quote do:
+        echo "Usage:  This is a multiple-dispatch cmd.  Usage is like\n"
+        echo "    $1 subcommand [subcommand-opts & args]\n" % [ paramstr(0) ]
+        echo "where subcommand syntaxes are as follows:\n"
+        let `dashHelpId` = @[ "--help" ])
+  for p in procBrackets:
+    let disp = "dispatch_" & $p[0]
+    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode($(p[0]))).add(
+      newCall("quit", newCall(disp, restId))))
+    helps.add(newNimNode(nnkDiscardStmt).add(
+      newCall(disp, dashHelpId,
+              newNimNode(nnkExprEqExpr).add(ident("prefix"),
+                                            newStrLitNode("    ")))))
+  cases[^1].add(newNimNode(nnkElse).add(helps))
+  result.add(multiDef)
+  result.add(quote do:
+    var `subcmdsId`: seq[string] = @[ ])
+  for p in procBrackets:
+    result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
+  result.add(newCall("dispatch", multiId,
+                     newNimNode(nnkExprEqExpr).add(ident("stopWords"),
+                                                   subcmdsId)))
