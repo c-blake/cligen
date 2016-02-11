@@ -11,7 +11,7 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
   return 42
 
 when isMainModule:
-  import cligen, os
+  import cligen
 
   dispatchGen(demo, doc="  This does the demo.", help = {
               "alpha" : "This is a very long parameter help string which " &
