@@ -86,6 +86,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ## argParse/argHelp in scope (argcvt.nim defines argParse/Help for many
   ## types, though).  Non-int return types are discarded since commands can
   ## only return (usually 1-byte) integer codes to the operating system.
+  ##
+  ## Proc parameters and option keys are normalized so that command users may
+  ## spell multi-word option keys flexibly as in ``--dry-Run``|``--dryrun``.
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
   let impl = pro.symbol.getImpl
