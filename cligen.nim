@@ -5,7 +5,7 @@ proc toString(c: char): string =
   if c != '\0': result.add(c)
 
 proc formalParamExpand(fpars: NimNode): NimNode =
-  ## a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
+  # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
   result = newNimNode(nnkFormalParams)
   result.add(fpars[0])                                  # just copy ret value
   for declIx in 1 ..< len(fpars):
@@ -15,7 +15,7 @@ proc formalParamExpand(fpars: NimNode): NimNode =
     result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
 
 proc formalParams(n: NimNode): NimNode =
-  ## Extract formal parameter list from the return value of .symbol.getImpl
+  # Extract formal parameter list from the return value of .symbol.getImpl
   for kid in n:
     if kid.kind == nnkFormalParams:
       return formalParamExpand(kid)
@@ -23,7 +23,7 @@ proc formalParams(n: NimNode): NimNode =
   return nil
 
 proc parseHelps(helps: NimNode): Table[string, string] =
-  ## Compute a table giving the help text for any parameter
+  # Compute a table giving the help text for any parameter
   result = initTable[string, string]()
   for ph in helps:
       let p: string = (ph[1][0]).strVal
@@ -31,7 +31,7 @@ proc parseHelps(helps: NimNode): Table[string, string] =
       result[p] = h
 
 proc parseShorts(shorts: NimNode): Table[string, char] =
-  ## Compute a table giving the user-specified short option for any parameter
+  # Compute a table giving the user-specified short option for any parameter
   result = initTable[string, char]()
   for losh in shorts:
       let lo: string = (losh[1][0]).strVal
@@ -40,9 +40,9 @@ proc parseShorts(shorts: NimNode): Table[string, char] =
 
 proc dupBlock(fpars: NimNode, posIx: int,
               userSpec: Table[string, char]): Table[string, char] =
-  ## Compute a table giving the short option for any long option, being
-  ## careful to only allow one such short option if the 1st letters of
-  ## two or more long options collide.
+  # Compute a table giving the short option for any long option, being
+  # careful to only allow one such short option if the 1st letters of
+  # two or more long options collide.
   result = initTable[string, char]()         # short option for param
   var used: set[char] = {}                   # used shorts; bit vector ok
   for lo, sh in userSpec:
@@ -66,6 +66,7 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(n.strVal)
 
 proc postInc*(x: var int): int =
+  ## Similar to post-fix `++` in C languages: yield initial val, then increment
   result = x
   inc(x)
 
@@ -80,12 +81,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ##
   ## For a large class of user procs in Nim, anything critical to such dispatch
   ## can be inferred.  User semantics/help round out the info for a nice CLI.
-  ## Constraints: 1) only one proc param may be explicitly a seq[T] if you want
+  ## Constraints: 1) only one proc param may be an explicit seq[T] if you want
   ## to receive an unnamed/positional arg list, 2) Every param type has an
   ## argParse/argHelp in scope (argcvt.nim defines argParse/Help for many
   ## types, though).  Non-int return types are discarded since commands can
   ## only return (usually 1-byte) integer codes to the operating system.
-
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
   let impl = pro.symbol.getImpl
@@ -232,7 +232,7 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 requireSeparator: bool = false, sepChars = "=:",
                 stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
-  ## call said dispatcher; Usage is the same as the dispatchGen() macro.
+  ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
                                          requireSeparator, sepChars, stopWords))
