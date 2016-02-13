@@ -86,7 +86,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
 ="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                    requireSeparator: bool = false, sepChars = "=:",
-                   stopWords: seq[string] = @[]): untyped =
+                   stopWords: seq[string] = @[], echoResult:bool=false): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
   ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
@@ -98,6 +98,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ## argParse/argHelp in scope (argcvt.nim defines argParse/Help for many
   ## types, though).  Non-int return types are discarded since commands can
   ## only return (usually 1-byte) integer codes to the operating system.
+  ## However, if `echoResult`==true the generated dispatch echos the result of
+  ## the wrapped proc and always returns 0.
   ##
   ## Proc parameters and option keys are normalized so that command users may
   ## spell multi-word option keys flexibly as in ``--dry-Run``|``--dryrun``.
@@ -237,19 +239,22 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     sls.add(quote do: `callIt`; return 0)
   else:                                     # convertible-to-int return type
     sls.add(quote do:
-       when compiles(int(`callIt`)): return `callIt`
-       else: discard `callIt`; return 0)
+       if `echoResult`:
+         echo `callIt`; return 0
+       else:
+         when compiles(int(`callIt`)): return `callIt`
+         else: discard `callIt`; return 0)
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
 ="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                 requireSeparator: bool = false, sepChars = "=:",
-                stopWords: seq[string] = @[]): untyped =
+                stopWords: seq[string] = @[], echoResult: bool=false): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
-                                         requireSeparator, sepChars, stopWords))
+                     requireSeparator, sepChars, stopWords, echoResult))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =

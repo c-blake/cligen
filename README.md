@@ -69,6 +69,14 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:
   import cligen; dispatch(foobar)
 ```
+
+Is the return value not an 8-bit integer or for some other reason it makes more
+sense to echo the result of the proc?  Just pass ``echoResult=true``:
+```nim
+import cligen, strutils   # generate a CLI for Nim stdlib's editDistance
+dispatch(editDistance, echoResult=true)
+```
+
 Want to expose two or more procs into a command with subcommands a la `git`
 or `nimble`?  Just use `dispatchMulti`:
 ```nim
