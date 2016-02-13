@@ -20,3 +20,5 @@ test/ListDecl
 test/MultiFlag
 test/SemiAutoMulti
 test/FullyAutoMulti
+test/AllTypes
+test/EchoResult
