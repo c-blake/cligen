@@ -37,6 +37,11 @@ Options (opt&arg sep by :,=,spc):
 ```
 Other invocations (foobar --foo=2 --bar=2.7 ...) all work as you would expect.
 
+By default, dispatchGen has ``requireSeparator=false`` which results in more
+traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
+library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
+``--delta=Bar`` are all acceptable syntax for command options.
+
 When you feel like producing a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals and maybe throw in a more overall
 description of operation doc string for before the options table:
@@ -94,11 +99,6 @@ to tune the command syntax and help strings in the same way.
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
 messages that exhibit the basic mappings.
-
-By default, dispatchGen sets requireSeparator=false which results in more
-traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
-library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
-``--delta=Bar`` are all acceptable syntax for command options.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
