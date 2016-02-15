@@ -32,11 +32,11 @@ when defined(windows):  # No idea if this even compiles on Windows
 
   proc terminalWidth*(): int =
     var w: int = 0
-    w = terminalWidthLowLevel(getStdHandle(STD_INPUT_HANDLE))
+    w = terminalWidth(getStdHandle(STD_INPUT_HANDLE))
     if w > 0: return w
-    w = terminalWidthLowLevel(getStdHandle(STD_OUTPUT_HANDLE))
+    w = terminalWidth(getStdHandle(STD_OUTPUT_HANDLE))
     if w > 0: return w
-    w = terminalWidthLowLevel(getStdHandle(STD_ERROR_HANDLE))
+    w = terminalWidth(getStdHandle(STD_ERROR_HANDLE))
     if w > 0: return w
     return 80
 else:
