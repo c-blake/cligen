@@ -77,6 +77,9 @@ proc isExplicitSeq(typeSlot: NimNode): bool =
     simplified[0] = simplified[0][0]
     return lispRepr(simplified).startsWith("Call(Sym([]), Sym(seq), ")
 
+proc newParam(id: string, rhs: NimNode): NimNode =
+    return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
+
 proc postInc*(x: var int): int =
   ## Similar to post-fix `++` in C languages: yield initial val, then increment
   result = x
@@ -84,9 +87,10 @@ proc postInc*(x: var int): int =
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
-="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+                   prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
-                   stopWords: seq[string] = @[], echoResult:bool=false): untyped =
+                   stopWords: seq[string] = @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
   ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
@@ -166,8 +170,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`,`parHelp`))
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
-    var `helpId`=`usageId` % ["doc",`docId`, "command",cName, "args",`args`,
-                              "options", alignTable(`tabId`, len(`prefixId`)) ]
+    var `helpId`=`usageId` % [ "prelude", `prelude`, "doc", `docId`,
+                               "command", cName, "args", `args`,
+                               "options", alignTable(`tabId`, len(`prefixId`)) ]
     if `helpId`[^1] != '\l':            # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -247,14 +252,15 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
-="Usage:\n  $command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+                prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
-                stopWords: seq[string] = @[], echoResult: bool=false): untyped =
+                stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
-                     requireSeparator, sepChars, stopWords, echoResult))
+                     prelude, echoResult, requireSeparator, sepChars, stopWords))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
@@ -265,6 +271,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
+    c.add(newParam("prelude", newStrLitNode("")))
     result.add(c)
   let arg0Id = ident("arg0")
   let restId = ident("rest")
@@ -273,14 +280,15 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let subcmdsId = ident("subcmds")
   var multiDef = newStmtList()
   multiDef.add(quote do:
-    proc `multiId`(dummy=1, dummy2=2, subcmd: seq[string]) =
+    import os
+    proc `multiId`(subcmd: seq[string]) =
       let n = subcmd.len
       let `arg0Id` = if n > 0: subcmd[0] else: "help"
       let `restId`: seq[string] = if n > 1: subcmd[1..<n] else: @[ ])
-  var cases = multiDef[0][0][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
+  var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
         echo "Usage:  This is a multiple-dispatch cmd.  Usage is like\n"
-        echo "    $1 subcommand [subcommand-opts & args]\n" % [ paramstr(0) ]
+        echo "    $1 subcommand [subcommand-opts & args]\n" % [ paramStr(0) ]
         echo "where subcommand syntaxes are as follows:\n"
         let `dashHelpId` = @[ "--help" ])
   for p in procBrackets:
@@ -288,9 +296,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode($(p[0]))).add(
       newCall("quit", newCall(disp, restId))))
     helps.add(newNimNode(nnkDiscardStmt).add(
-      newCall(disp, dashHelpId,
-              newNimNode(nnkExprEqExpr).add(ident("prefix"),
-                                            newStrLitNode("    ")))))
+      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("    ")))))
   cases[^1].add(newNimNode(nnkElse).add(helps))
   result.add(multiDef)
   result.add(quote do:
@@ -298,5 +304,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
   result.add(newCall("dispatch", multiId,
-                     newNimNode(nnkExprEqExpr).add(ident("stopWords"),
-                                                   subcmdsId)))
+                     newParam("stopWords", subcmdsId),
+                     newParam("cmdName", newCall("paramStr", newIntLitNode(0))),
+                     newParam("usage",
+                     quote do:
+    "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\nRun top-level command with subcommand help to get a full help message.")))
