@@ -22,8 +22,8 @@ when isMainModule:
   import cligen
   dispatch(foobar)    # Yep..It can really be this simple!
 ```
-Compile it to foobar (assuming nim c foobar.nim is appropriate, say) and then
-run ./foobar --help to get a minimal (but not so useless) help message:
+Compile it to foobar (assuming ``nim c foobar.nim`` is appropriate, say) and then
+run ``./foobar --help`` to get a minimal (but not so useless) help message:
 ```
 Usage:
   foobar [optional-params] [paths]
@@ -35,7 +35,7 @@ Options (opt&arg sep by :,=,spc):
 --baz=       string  "hi"   set baz
 --verb, -v   toggle  false  set verb
 ```
-Other invocations (foobar --foo=2 --bar=2.7 ...) all work as you would expect.
+Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 
 By default, dispatchGen has ``requireSeparator=false`` which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
@@ -93,8 +93,9 @@ when isMainModule:
   import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
 ```
 Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``.  Each [] list
-in `dispatchMulti` is the argument list for each sub-`dispatch` and can be used
-to tune the command syntax and help strings in the same way.
+in `dispatchMulti` is the argument list for each sub-`dispatch` tune the command
+syntax and help strings in the same way as ``dispatch``.  ``./cmd --help`` will
+emit a brief help message and ``./cmd help`` emits a more comprehensive message.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
