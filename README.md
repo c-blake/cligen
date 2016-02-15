@@ -195,16 +195,3 @@ for a CLI is all about as painless as possible - mostly learning what kind of
 proc is "command-like" enough, various minor controls/arguments to `dispatch` to
 enhance the help message, and the "binding/translation" between proc and command
 parameters.  The last is helped a lot by the auto-generated help message.
-
-Future directions/TODO
-======================
- - Might be nice to be able to pass through (from dispatch) colGap, min4th, and
-   maybe a new param to double-space optionally (extra \n between optTab rows).
-   [dispatch getting to be a pretty fat interface, but formatting usually is.]
-
- - Better error reporting. E.g., help={"foo" : "stuff"} silently ignores "foo"
-   if there is no such parameter.  Etc.
-
- - Could use argv "--" separator to allow multiple positional sequences.  Could
-   also allow user override in dispatchGen arg to specify which proc param gets
-   bound to the optional positionals.
