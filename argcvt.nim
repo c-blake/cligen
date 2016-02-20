@@ -17,7 +17,7 @@ proc addPrefix*(prefix: string, multiline=""): string =
     result &= prefix & line & "\n"
 
 proc alignTable*(tab: seq[array[0..3, string]],
-                 prefixLen=0, colGap=2, min4th=16): string =
+                 prefixLen=0, colGap=2, min4th=16, rowSep=""): string =
   result = ""
   var wCol: array[0 .. 3, int]
   for row in tab:
@@ -32,6 +32,7 @@ proc alignTable*(tab: seq[array[0..3, string]],
     result &= wrapped[0] & "\n"
     for j in 1 ..< len(wrapped):
       result &= repeat(" ", leader) & wrapped[j] & "\n"
+    result &= rowSep
 
 ## argParse and argHelp are a pair of related overloaded template helpers for
 ## each supported Nim type of optional parameter.  You may define new ones for
