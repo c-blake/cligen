@@ -21,7 +21,8 @@ when isMainModule:
                         "both. :-)",
               "beta" : "This is more modest, but might still wrap around " &
                        "once or twice or so.",
-              "verb" : "on=chatty, off=quiet. 'Nuff said." })
+              "verb" : "on=chatty, off=quiet. 'Nuff said." },
+              helpTabColumnGap=3, helpTabMinLast=20, helpTabRowSep="\n")
 
   dispatchGen(show, doc="  This shows me something.")
 
