@@ -90,23 +90,33 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 ="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
+                   helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
                    stopWords: seq[string] = @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
   ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
   ##
-  ## For a large class of user procs in Nim, anything critical to such dispatch
-  ## can be inferred.  User semantics/help round out the info for a nice CLI.
-  ## Constraints: 1) only one proc param may be an explicit seq[T] if you want
-  ## to receive an unnamed/positional arg list, 2) Every param type has an
-  ## argParse/argHelp in scope (argcvt.nim defines argParse/Help for many
-  ## types, though).  Non-int return types are discarded since commands can
-  ## only return (usually 1-byte) integer codes to the operating system.
-  ## However, if `echoResult`==true the generated dispatch echos the result of
-  ## the wrapped proc and always returns 0.
+  ## For a large class of procs in Nim, anything critical to such dispatch can
+  ## be inferred.  User semantics/help round out the info for a reasonable CLI.
+  ## Constraints: 1) only one proc param may be an explicit seq[T] which catches
+  ## the unnamed/positional arg list, 2) Each param type has an argParse/argHelp
+  ## in scope (argcvt.nim defines argParse/Help for many basic types, though).
+  ## Non-int return types are discarded since commands can only return (usually
+  ## 1-byte) integer codes to OSes.  However, if `echoResult` is true then the
+  ## generated dispatch echos the result of the wrapped proc and returns 0.
   ##
   ## Proc parameters and option keys are normalized so that command users may
   ## spell multi-word option keys flexibly as in ``--dry-Run``|``--dryrun``.
+  ##
+  ## If `requireSeparator` is true, both long and short options need an element
+  ## of `sepChars` (":=" by default) before option values (if there are any).
+  ##
+  ## `stopWords` is a seq[string] of words beyond which ``-`` or ``--`` will no
+  ## longer signify an option (like the common sole ``--`` command argument).
+  ##
+  ## `helpTabColumnGap` and `helpTabMinLast` control format parameters of the
+  ## options help table, and `helpTabRowSep` ("" by default) separates rows.
+
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
   let impl = pro.symbol.getImpl
@@ -171,8 +181,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % [ "prelude", `prelude`, "doc", `docId`,
-                               "command", cName, "args", `args`,
-                               "options", alignTable(`tabId`, len(`prefixId`)) ]
+                   "command", cName, "args", `args`, "options",
+                      alignTable(`tabId`, len(`prefixId`),
+                                 `helpTabColumnGap`, `helpTabMinLast`, `helpTabRowSep`) ]
     if `helpId`[^1] != '\l':            # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -255,12 +266,14 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
 ="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
+                helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
                 stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
-                     prelude, echoResult, requireSeparator, sepChars, stopWords))
+                     prelude, echoResult, requireSeparator, sepChars,
+                     helpTabColumnGap, helpTabMinLast, helpTabRowSep, stopWords))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
