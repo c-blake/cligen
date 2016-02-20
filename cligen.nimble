@@ -1,5 +1,5 @@
 # Package
-version     = "0.9.3"
+version     = "0.9.4"
 author      = "Charles Blake"
 description = "Infer & generate command-line interace/option/argument parser"
 license     = "MIT/ISC"
