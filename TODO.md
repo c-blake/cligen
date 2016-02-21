@@ -8,6 +8,8 @@
   a basis for a totally distinct dispatchGen that takes such bindings rather
   than inferring them from the proc signature.
 
+  Allow an option to drop the type column from the help message.
+
   Better error reporting. E.g., ``help={"foo" : "stuff"}`` silently ignores the
   ``"foo"`` if there is no such parameter.  Etc.
 
