@@ -51,9 +51,9 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
                   parNm: string, sh: string, parHelp: string) =
   let keys = if len(sh) > 0: "--$1, -$2" % [ parNm, sh ] # bools take no arg
              else          : "--" & parNm
-  helpT.add([ keys, "toggle", $defVal, parHelp ]) # .join("\t") & "\n  "
-  shortBool.add(sh)
-  longBool.add(parNm)
+  helpT.add([ keys, "toggle", $defVal, parHelp ])
+  shortBool.add(sh)                 # only bools can elide option arguments..
+  longBool.add(parNm)               #..and so only those should add to *Bool.
 
 # string
 template argParse*(dst: string, key: string, val: string, help: string) =
