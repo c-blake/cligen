@@ -84,7 +84,7 @@ template argParse*(dst: char, key: string, val: string, help: string) =
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: char,
                   parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "char", $defVal, parHelp ])
+  helpT.add([ keys(parNm, sh), "char", repr(defVal), parHelp ])
 
 # int
 template argParse*(dst: int, key: string, val: string, help: string) =
