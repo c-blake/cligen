@@ -4,16 +4,15 @@
   mechanism to package up parameter subsets like Python's ``**kwargs``.
 
   Might be nice to have dispatchMulti be able to take long<->in-scope variable
-  bindings to provide global options <-> variables.  This approach might also be
-  a basis for a totally distinct dispatchGen that takes such bindings rather
+  bindings to provide global options <-> variables.  This approach might also
+  be a basis for a totally distinct dispatchGen that takes such bindings rather
   than inferring them from the proc signature.
-
-  Allow an option to drop the type column from the help message.
 
   Better error reporting. E.g., ``help={"foo" : "stuff"}`` silently ignores the
   ``"foo"`` if there is no such parameter.  Etc.
 
-  The help table itself could be more "text template"-ish.
+  The help table itself could be more "text template"-ish and/or allow an option
+  to drop the type/default columns.
 
   Could use argv "--" separator to allow multiple positional sequences.  Could
   also allow user override in dispatchGen arg to specify which proc param gets
