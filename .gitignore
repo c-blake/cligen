@@ -1,4 +1,5 @@
 *.swp
+*.ndb
 test/CustomCmdName
 test/CustomType
 test/DupShort
