@@ -1,6 +1,6 @@
 from parseutils import parseInt, parseFloat
 from strutils   import `%`, join, split, wordWrap, repeat
-from termwidth  import terminalWidth
+from terminal   import terminalWidth
 
 proc keys*(parNm: string, shrt: string): string =
   result = if len(shrt) > 0: "--$1=, -$2=" % [ parNm, shrt ]

@@ -18,6 +18,4 @@
   also allow user override in dispatchGen arg to specify which proc param gets
   bound to the optional positionals.
 
-  Should try to get ``termwidth`` into Nim stdlib.  Seems very generally useful.
-
   Should at least ask if there is any interest in parseopt3.nim in stdlib.
