@@ -1,44 +1,50 @@
-## This is a more featureful API-compatibile replacement for stdlib's parseopt2.
+## This is a more featureful replacement for stdlib's parseopt2.  It should be
+## drop-in compatible if ``requireSeparator=true`` is passed to ``getopt`` or
+## ``initOptParser``.  Even with the default ``requireSeparator=false`` it is
+## "mostly" the same - accepting yet not requiring users to use a separator.
 ##
 ## In addition to parseopt2 features, this version also provides flexibility
-## over requiring separators between option keys & option values, as per
-## traditional "Unix-like" command syntax.  What characters may be used as
-## separators is also tunable.
+## over requiring separators between option keys and option values, as per
+## traditional "Unix-like" command syntax, allows changing separator chars,
+## fully supports short and long options with **and without** option values,
+## and eases building "git-like" multiple command parsing.
+##
+## Supported command syntax is (here '=' and ':' may be any char in
+## ``sepChars``):
+##
+## 1. short option bundles: ``-abx``  (where a, b, x ARE IN `shortBools`)
+##
+## 1a. bundles with one final value: ``-abc:Bar``, ``-abc=Bar``, ``-c Bar``,
+## ``-abcBar`` (where ``c`` is NOT IN ``shortBools``)
+##
+## 2. long options with values: ``--foo:bar``, ``--foo=bar``, ``--foo bar``
+## (where `foo` is NOT IN ``longBools``)
+##
+## 2a. long options without vals: ``--baz`` (where ``baz`` IS IN ``longBools``)
+##
+## 3. command parameters: everything else | anything after "--" or a stop word.
+##
+## The "key-value-separator-free" forms above require appropriate ``shortBools``
+## and ``longBools`` lists for boolean flags.  Note that valueless-keys only
+## make sense for boolean options.
+##
+## A notable subtlety is when the first character of an option value is one of
+## ``sepChars``.  Even if ``requireSeparator`` is ``false``, passing such option
+## values requires either A) putting the value in the next command parameter,
+## as in ``"-c :"`` or B) prefixing the value with an element of ``sepChars``,
+## as in ``-c=:`` or ``-c::``.
 ##
 ## To ease "nested" command-line parsing (such as with git where they may be
 ## early global options, a subcommand and later subcommand options), this
 ## version also supports a set of "stop words" - special whole command
 ## parameters preventing any subsequent parameters being interpreted as
-## options.  This features makes it easy to fully process a command line and
+## options.  This feature makes it easy to fully process a command line and
 ## then re-process its tail rather than mandating breaking out at a stop word
-## with a manual test. Stop words are basically just like the usual "--" which
-## this parser also supports automatically.  Such stop words (or "--" for that
-## matter) can still be the *arguments* to any options - only usage as a
-## primary command argument acts as a stop.
-##
-## Supported command syntax is:
-##
-## 1. short options - ``-abx``  (where a, b, x are names in `shortBools`)
-##
-## 1a. short opts with args ``-abc:Bar``, ``-abc=Bar``, ``-c Bar``, ``-abcBar``
-## (where ``c`` is definitely not in `shortBools`)
-##
-## 2. long options - ``--foo:bar``, ``--foo=bar``, ``--foo bar`` (where `foo`
-## is not in `longBools`)
-##
-## 2a. long options without args - ``--baz`` (where ``baz`` is in `longBools`)
-##
-## 3. command arguments - everything else | anything after "--" or a stopword.
-##
-## The "key-value-separator-free" forms above require appropriate `shortBools`
-## and `longBools` lists for boolean flags.
-##
-## There is one subtlety in that, even if requireSeparator==false, to pass a
-## separator character as the first or only character of an option argument (in
-## the very same command argument as the key) users must separate option keys
-## and values.  You can think of that like self-quoting as in ``-c::``|``-c==``,
-## though ``-c=:`` or ``-c:=`` also work.  Such delimiting is not necessary if
-## the option argument is in the next parameter, ``-c :``.
+## with a manual test. Stop words are basically just like the Unix "--" (which
+## this parser also supports automatically even if "--" is not in stopWords).
+## Such stop words (or "--" for that matter) can still be the **values** to
+## any options.  Only usage as a non-option command parameter acts to stop
+## possible option-treatment of later parameters.
 
 import os, strutils
 
