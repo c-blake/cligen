@@ -1,6 +1,8 @@
 #!/bin/sh
-for n in test/[A-Z]*; do
+( for n in test/[A-Z]*.nim; do
   echo "Test: $n"
   nim c "$@" --run $n --help 2>&1 | grep -v '^CC:'
   echo "===================================="
-done
+done ) | grep -v 'Warning: \(expr\|stmt\) is deprecated' |
+         grep -v '^Hint: ' > test/out 
+diff test/ref test/out
