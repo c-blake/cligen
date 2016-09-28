@@ -27,6 +27,7 @@ when isMainModule:
   dispatchGen(show, doc="  This shows me something.")
 
   proc multi(beta=1, item="", subcmd: seq[string]): int =
+    ## Run command with no parameters for a full help message.
     echo "globalbeta:", beta
     echo "globalitem:", item
     let arg0 = if subcmd.len > 0: subcmd[0] else: "help"
