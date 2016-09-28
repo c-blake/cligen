@@ -182,8 +182,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % [ "prelude", `prelude`, "doc", `docId`,
                    "command", cName, "args", `args`, "options",
-                      alignTable(`tabId`, len(`prefixId`),
-                                 `helpTabColumnGap`, `helpTabMinLast`, `helpTabRowSep`) ]
+                    addPrefix("  ", alignTable(`tabId`, len(`prefixId`) + 2,
+                              `helpTabColumnGap`, `helpTabMinLast`, `helpTabRowSep`)) ]
     if `helpId`[^1] != '\l':            # ensure newline @end of help
       `helpId` &= "\n"
     if len(`prefixId`) > 0:             # to indent help in a multicmd context
