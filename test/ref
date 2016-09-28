@@ -1,0 +1,286 @@
+Test: test/AllTypes.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with parameters of all basic types.
+Options (opt&arg sep by :,=,spc):
+--help, -?                  print this help message
+--aa, -a    toggle   false  set aa
+--bb=, -b=  string   "hi"   set bb
+--cc=, -c=  string   "ho"   set cc
+--dd=, -d=  char     'X'    set dd
+--ee=, -e=  int      1      set ee
+--ff=, -f=  int8     2      set ff
+--gg=, -g=  int16    3      set gg
+--hh=, -h=  int32    4      set hh
+--ii=, -i=  int64    5      set ii
+--jj=, -j=  uint     6      set jj
+--kk=, -k=  uint8    7      set kk
+--ll=, -l=  uint16   8      set ll
+--mm=, -m=  uint32   9      set mm
+--nn=, -n=  uint64   10     set nn
+--oo=, -o=  float    11.0   set oo
+--pp=, -p=  float32  12.0   set pp
+--qq=, -q=  float    13.0   set qq
+====================================
+Test: test/CustomCmdName.nim
+Usage:
+  deeeemo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/CustomType.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                      print this help message
+--alpha=, -a=  int     1        set alpha
+--verb, -v     toggle  false    set verb
+--stuff=, -s=  CSV     "ab,cd"  set stuff
+====================================
+Test: test/DupShort.nim
+Usage:
+  demo [optional-params]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -z=  int     1      set alpha
+--abc=, -a=    float   2.0    set abc
+--aaah         toggle  false  set aaah
+--aloha=       string  ""     set aloha
+====================================
+Test: test/EarlySeq.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/EchoResult.nim
+Usage:
+  editDistance [optional-params] {a:string} {b:string}
+ Returns the edit distance between `a` and `b`.
+
+This uses the `Levenshtein`:idx: distance algorithm with only a linear
+memory overhead.  This implementation is highly optimized!
+Options (opt&arg sep by :,=,spc):
+--help, -?      print this help message
+====================================
+Test: test/External.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/FullyAutoMulti.nim
+Usage:
+  /home/cb/pkg/nim/cligen/test/FullyAutoMulti {subcommand}
+where {subcommand} is one of:
+  demo show
+Run top-level command with subcommand help to get a full help message.
+====================================
+Test: test/ListDecl.nim
+Usage:
+  demo [optional-params] {alpha:float} [args]
+ demo entry point with varied, meaningless parameters.
+Options (opt&arg sep by :,=,spc):
+--help, -?                   print this help message
+--beta=, -b=  float   1.0    set beta
+--verb, -v    toggle  false  set verb
+====================================
+Test: test/Mandatory.nim
+Usage:
+  demo [optional-params] {alpha:int} {item:string} [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                   print this help message
+--beta=, -b=  float   2.0    set beta
+--verb, -v    toggle  false  set verb
+====================================
+Test: test/MandatoryNoPos.nim
+Usage:
+  demo [optional-params] {alpha:int} {item:string}
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                   print this help message
+--beta=, -b=  float   2.0    set beta
+--verb, -v    toggle  false  set verb
+====================================
+Test: test/ManualMulti.nim
+Usage:
+  ManualMulti demo|show [subcommand-args]
+
+    This is a multiple-dispatch cmd.  Subcommand syntax:
+
+    ManualMulti demo [optional-params] [files]
+      This does the demo.
+    Options:
+    --help, -?                    print this help message
+    --alpha=, -a=  int     1      This is a very long parameter help string
+                                  which ordinarily should be auto-wrapped by
+                                  alignTable into a multi-line format unless you
+                                  have eagle eyes, a gigantic monitor, or maybe
+                                  a little bit of both. :-)
+    --beta=, -b=   float   2.0    This is more modest, but might still wrap
+                                  around once or twice or so.
+    --verb, -v     toggle  false  on=chatty, off=quiet. 'Nuff said.
+    --item=, -i=   string  ""     set item
+    
+    ManualMulti show [optional-params] [paths]
+      This shows me something.
+    Options:
+    --help, -?                    print this help message
+    --gamma=, -g=  int     1      set gamma
+    --iota=, -i=   float   2.0    set iota
+    --verb, -v     toggle  false  set verb
+    
+====================================
+Test: test/MultiFlag.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.
+Options (opt&arg sep by :,=,spc):
+--help, -?                   print this help message
+--alpha, -a   toggle  false  set alpha
+--beta=, -b=  int     2      set beta
+--verb, -v    toggle  false  set verb
+====================================
+Test: test/NoPositional.nim
+Usage:
+  demo [optional-params]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/PerParam.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -z=  int     1      growth constant
+--beta=, -b=   float   2.0    shrink target
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/ReturnEmpty.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/ReturnInt.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/ReturnNonInt.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/ReturnString.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   float   2.0    set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/SemiAutoMulti.nim
+Usage:
+  multi [optional-params] [subcmd]
+ Run command with no parameters for a full help message.
+Options (opt&arg sep by :,=,spc):
+--help, -?                print this help message
+--beta=, -b=  int     1   set beta
+--item=, -i=  string  ""  set item
+====================================
+Test: test/SeqInt.nim
+Usage:
+  demo [optional-params] [args]
+ demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+Options (opt&arg sep by :,=,spc):
+--help, -?                    print this help message
+--alpha=, -a=  int     1      set alpha
+--beta=, -b=   char    '\10'  set beta
+--verb, -v     toggle  false  set verb
+--item=, -i=   string  ""     set item
+====================================
+Test: test/UserDispIdCollide.nim
+Usage:
+  demo [optional-params] [args]
+ This tests if things work when a wrapped user-proc uses identifiers also
+used in our generated dispatch proc.
+Options (opt&arg sep by :,=,spc):
+--help, -?                           print this help message
+--usage=, -u=    int     1           set usage
+--cmdline=, -c=  string  "bad name"  set cmdline
+--getopt=, -g=   string  "ho"        set getopt
+====================================
