@@ -28,12 +28,13 @@ run ``./foobar --help`` to get a minimal (but not so useless) help message:
 Usage:
   foobar [optional-params] [paths]
 Some existing API call
+
 Options (opt&arg sep by :,=,spc):
---help, -?                  print this help message
---foo=, -f=  int     1      set foo
---bar=, -b=  float   2.0    set bar
---baz=       string  "hi"   set baz
---verb, -v   toggle  false  set verb
+  --help, -?                  print this help message
+  --foo=, -f=  int     1      set foo
+  --bar=, -b=  float   2.0    set bar
+  --baz=       string  "hi"   set baz
+  --verb, -v   toggle  false  set verb
 ```
 Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 
@@ -42,7 +43,7 @@ traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
 library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
 ``--delta=Bar`` are all acceptable syntax for command options.
 
-When you feel like producing a better help string, tack on some parameter-keyed
+When you want to produce a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals and maybe throw in a more overall
 description of operation doc string for before the options table:
 ```nim
