@@ -19,3 +19,20 @@
   bound to the optional positionals.
 
   Should at least ask if there is any interest in parseopt3.nim in stdlib.
+
+  Would be nice to give dispatch a 'suppress' list to block certain parameters
+  from CLI modification.
+
+  Should be able to take optional params from user-spec environ var/dotfile
+
+  Should be able to have a meta parameter like cls -s style option where a
+  single command-parameter is yet another source of a whole argv-subset.
+
+  This is really advanced and goes beyond most CLI apis, but it might also be
+  nice to have input data from stdin auto-converted to an iterator/seq and an
+  output convention for emitting to stdout [ e.g., a designated output seq
+  parameter with seq.add -> (seq.add; echo) and maybe some designated input
+  parameter and a flag as to whether to merge argv/stdin as sources of inputs,
+  etc. ].  Can also generalize text IO to binary/RPC/other serialized formats.
+  If output/input format are "compatible"/inverses this might let a module of
+  similar procs be compilable into a multi-command that was very pipelinable.
