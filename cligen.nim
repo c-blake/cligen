@@ -263,7 +263,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
-="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc\n\nOptions(opt&arg sep by :,=,spc):\n$options",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
