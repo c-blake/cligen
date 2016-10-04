@@ -33,6 +33,7 @@ when isMainModule:
       # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
       let use = "ManualMulti $command $args\n$doc\nOptions:\n$options"
       discard dispatchdemo(cmdline = @[ "--help" ], prefix="    ", usage=use)
+      echo ""
       discard dispatchshow(cmdline = @[ "--help" ], prefix="    ", usage=use)
       quit(0)
   else: echo "unknown subcommand: ", subcmd
