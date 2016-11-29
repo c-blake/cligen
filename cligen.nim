@@ -124,6 +124,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   var cmtDoc: string = $doc
   if cmtDoc == nil or cmtDoc.len == 0:  # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
+    cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrappred proc
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
   var posIx = -1                        # param slot for positional cmd args|-1

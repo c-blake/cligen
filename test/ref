@@ -1,7 +1,7 @@
 Test: test/AllTypes.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with parameters of all basic types.
+demo entry point with parameters of all basic types.
 
 Options(opt&arg sep by :,=,spc):
   --help, -?                  print this help message
@@ -26,7 +26,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/CustomCmdName.nim
 Usage:
   deeeemo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -40,7 +40,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/CustomType.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -53,7 +53,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/DupShort.nim
 Usage:
   demo [optional-params]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -67,7 +67,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/EarlySeq.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -81,7 +81,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/EchoResult.nim
 Usage:
   editDistance [optional-params] {a:string} {b:string}
- Returns the edit distance between `a` and `b`.
+Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.  This implementation is highly optimized!
@@ -92,7 +92,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/External.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -113,7 +113,7 @@ Run top-level command with subcommand help to get a full help message.
 Test: test/ListDecl.nim
 Usage:
   demo [optional-params] {alpha:float} [args]
- demo entry point with varied, meaningless parameters.
+demo entry point with varied, meaningless parameters.
 
 Options(opt&arg sep by :,=,spc):
   --help, -?                   print this help message
@@ -123,7 +123,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/Mandatory.nim
 Usage:
   demo [optional-params] {alpha:int} {item:string} [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -135,7 +135,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/MandatoryNoPos.nim
 Usage:
   demo [optional-params] {alpha:int} {item:string}
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -175,7 +175,7 @@ Usage:
 Test: test/MultiFlag.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.
+demo entry point with varied, meaningless parameters.
 
 Options(opt&arg sep by :,=,spc):
   --help, -?                   print this help message
@@ -186,7 +186,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/NoPositional.nim
 Usage:
   demo [optional-params]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -200,7 +200,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/PerParam.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -214,7 +214,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/ReturnEmpty.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -228,7 +228,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/ReturnInt.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -242,7 +242,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/ReturnNonInt.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -256,7 +256,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/ReturnString.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -270,7 +270,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/SemiAutoMulti.nim
 Usage:
   multi [optional-params] [subcmd]
- Run command with no parameters for a full help message.
+Run command with no parameters for a full help message.
 
 Options(opt&arg sep by :,=,spc):
   --help, -?                print this help message
@@ -280,7 +280,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/SeqInt.nim
 Usage:
   demo [optional-params] [args]
- demo entry point with varied, meaningless parameters.  A Nim invocation
+demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
@@ -294,7 +294,7 @@ Options(opt&arg sep by :,=,spc):
 Test: test/UserDispIdCollide.nim
 Usage:
   demo [optional-params] [args]
- This tests if things work when a wrapped user-proc uses identifiers also
+This tests if things work when a wrapped user-proc uses identifiers also
 used in our generated dispatch proc.
 
 Options(opt&arg sep by :,=,spc):
