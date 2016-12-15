@@ -1,5 +1,5 @@
 from parseutils import parseInt, parseFloat
-from strutils   import `%`, join, split, wordWrap, repeat
+from strutils   import `%`, join, split, wordWrap, repeat, escape
 from terminal   import terminalWidth
 
 proc keys*(parNm: string, shrt: string): string =
@@ -66,7 +66,7 @@ template argParse*(dst: string, key: string, val: string, help: string) =
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: string,
                   parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "string", "\"" & defVal & "\"", parHelp ])
+  helpT.add([keys(parNm, sh), "string", escape(defVal), parHelp])
 
 # cstring
 template argParse*(dst: cstring, key: string, val: string, help: string) =
@@ -76,7 +76,7 @@ template argParse*(dst: cstring, key: string, val: string, help: string) =
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: cstring,
                   parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "string", "\"" & $defVal & "\"", parHelp ])
+  helpT.add([keys(parNm, sh), "string", escape($defVal), parHelp])
 
 # char
 template argParse*(dst: char, key: string, val: string, help: string) =
