@@ -232,16 +232,16 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   for i in 1 ..< len(fpars):        # build per-param case clauses
     if i == posIx: continue         # skip variable len positionals
     if i in mandatory: continue     # skip mandator arguments
-    let idef = fpars[i]
-    let sdef = spars[i]
-    let lopt = optionNormalize($idef[0])
-    if $idef[0] in shOpt:           # both a long and short option
+    let parNm  = $fpars[i][0]
+    let lopt   = optionNormalize(parNm)
+    let apCall = newCall("argParse", spars[i][0], keyId, ident("val"), helpId)
+    if parNm in shOpt:              # both a long and short option
+      let parShOpt = $shOpt.getOrDefault(parNm) #XXX shOpt[parNm] fails~20170205
       optCases.add(newNimNode(nnkOfBranch).add(
-        newStrLitNode(lopt), newStrLitNode(toString(shOpt[$idef[0]]))).add(
-          newCall("argParse", sdef[0], keyId, ident("val"), helpId)))
+        newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
     else:                           # only a long option
-      optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(
-          newCall("argParse", sdef[0], keyId, ident("val"), helpId)))
+      optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
+
   optCases.add(newNimNode(nnkElse).add(quote do:
     argRet(1, "Bad option: \"" & key & "\"\n" & `helpId`)))
   sls.add(                          # set up getopt loop & attach case clauses
