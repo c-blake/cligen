@@ -236,7 +236,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     let lopt   = optionNormalize(parNm)
     let apCall = newCall("argParse", spars[i][0], keyId, ident("val"), helpId)
     if parNm in shOpt:              # both a long and short option
-      let parShOpt = $shOpt.getOrDefault(parNm) #XXX shOpt[parNm] fails~20170205
+      when defined(cligenBracketLookup):
+        let parShOptC = shOpt[parNm]              #XXX fails~20170205
+      else:
+        let parShOptC = shOpt.getOrDefault(parNm) #XXX workaround
+      let parShOpt  = $parShOptC
       optCases.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
     else:                           # only a long option
