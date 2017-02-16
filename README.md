@@ -138,7 +138,6 @@ simple guidance on what that syntax is for command users.
 For example, you might want to receive a `seq[string]` parameter inside a single
 argument/option value.  So, you need some user friendly convention to convert
 a single string to a sequence of them, such as a comma-separated-value list.
-
 Teaching `cligen` what to do goes like this:
 ```nim
 proc demo(stuff = @[ "abc", "def" ], opt1=true, foo=2): int =
