@@ -177,8 +177,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       let parNm = $idef[0]
       let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
       let defVal = sdef[0]
-      let parHelp = if parNm in helps: helps[parNm] else: "set " & parNm
-      preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`,`parHelp`))
+      let hlp = if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
+      preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`))
   preLoop.add(quote do:                 # build one large help string
     let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
     var `helpId`=`usageId` % [ "prelude", `prelude`, "doc", `docId`,
@@ -236,16 +236,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     let lopt   = optionNormalize(parNm)
     let apCall = newCall("argParse", spars[i][0], keyId, ident("val"), helpId)
     if parNm in shOpt:              # both a long and short option
-      when defined(cligenBracketLookup):
-        let parShOptC = shOpt[parNm]              #XXX fails~20170205
-      else:
-        let parShOptC = shOpt.getOrDefault(parNm) #XXX workaround
-      let parShOpt  = $parShOptC
+      let parShOpt = $shOpt.getOrDefault(parNm)
       optCases.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
     else:                           # only a long option
       optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
-
   optCases.add(newNimNode(nnkElse).add(quote do:
     argRet(1, "Bad option: \"" & key & "\"\n" & `helpId`)))
   sls.add(                          # set up getopt loop & attach case clauses
