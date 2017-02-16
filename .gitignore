@@ -23,4 +23,5 @@ test/SemiAutoMulti
 test/FullyAutoMulti
 test/AllTypes
 test/EchoResult
+test/TwoNondefaultedSeq
 test/out

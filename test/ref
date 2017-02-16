@@ -291,6 +291,18 @@ Options(opt&arg sep by :,=,spc):
   --verb, -v     toggle  false  set verb
   --item=, -i=   string  ""     set item
 ====================================
+Test: test/TwoNondefaultedSeq.nim
+TwoNondefaultedSeq.nim(21, 11) template/generic instantiation from here
+/home/cb/pkg/nim/cligen/cligen.nim(76, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. The type of the latter likely needs a custom argParse template. [User]
+Usage:
+  demo [optional-params] {stuff:seq[string]} [args]
+demo entry point with varied, meaningless parameters.
+
+Options(opt&arg sep by :,=,spc):
+  --help, -?                    print this help message
+  --alpha=, -a=  int     1      set alpha
+  --verb, -v     toggle  false  set verb
+====================================
 Test: test/UserDispIdCollide.nim
 Usage:
   demo [optional-params] [args]
