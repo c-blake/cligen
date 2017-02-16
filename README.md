@@ -159,11 +159,6 @@ when isMainModule:
 Of course, you often want more input validation than this.  See `argcvt.nim` in
 the `cligen` package for the currently supported types and more details.
 
-Note also that, since `stuff` is a `seq` and there can be only one `seq[T]` for
-positionals, type inference for `stuff=@[...]` in the above example is required.
-Using `(stuff: seq[string] = @[...],...)` would yield either an error or the
-unintended syntax (`command --foo=3 "a,b,c" "d,e,f"` rather than `--stuff="a,b,c"`).
-
 Exit Code Behavior
 ==================
 Commands return integer codes to operating systems to indicate exit status
