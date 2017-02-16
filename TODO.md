@@ -26,6 +26,9 @@
   Should be able to have a meta parameter like cls -s style option where a
   single command-parameter is yet another source of a whole argv-subset.
 
+  Should be able to specify for some seq params that they are populated by
+  repeated option key instances (like the include path of cc -I).
+
   This is really advanced and goes beyond most CLI apis, but it might also be
   nice to have input data from stdin auto-converted to an iterator/seq and an
   output convention for emitting to stdout [ e.g., a designated output seq
