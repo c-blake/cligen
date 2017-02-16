@@ -114,8 +114,8 @@ system can be extended pretty easily to user-defined types.
 
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------
-When there is no explicit `seq[T]` parameter, `cligen` infers that only option
-command parameters or specifically positioned mandatory parameters are legal.
+When there is no `seq[T]` parameter, `cligen` infers that only option command
+parameters or specifically positioned mandatory parameters are legal.
 The name of the seq parameter does not matter, only that it's type slot is
 non-empty and semantically `seq[SOMETHING]`.  When more than one such parameter
 is in the proc signature, the first receives positional command args unless
