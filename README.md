@@ -184,9 +184,9 @@ This approach to command-line interfaces has both great Don't Repeat Yourself
 unless you are compiling a CLI executable.  Similarly, wrapped routines need
 not be in the same module, modifiable, or know anything about `cligen`.  This
 approach is great when you want to maintain both an API and a CLI in parallel.
-More generally, `cligen` encourages preserving API/"Nim import"-access to any
-provided functionality.  When so preserved, this simplifies complex uses being
-driven by other Nim programs rather than shell scripts (once usage complexity
+Such easy dual API/CLI maintenance encourages preserving access to functionality
+via API/"Nim import".  When so preserved, this then eases complex uses being
+driven by other Nim programs rather than by shell scripts (once usage complexity
 makes scripting language limitations annoying).  Finally, and perhaps most
 importantly, the learning curve/cognitive load and even the extra program text
 for a CLI is all about as painless as possible - mostly learning what kind of
