@@ -14,9 +14,7 @@
   The help table itself could be more "text template"-ish and/or allow an option
   to drop the type/default columns.
 
-  Could use argv "--" separator to allow multiple positional sequences.  Could
-  also allow user override in dispatchGen arg to specify which proc param gets
-  bound to the optional positionals.
+  Could use argv "--" separator to allow multiple positional sequences.
 
   Should at least ask if there is any interest in parseopt3.nim in stdlib.
 

@@ -2,25 +2,16 @@ cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
 This approach to CLIs comes from Andrey Mikhaylenko's nice Python module 'argh'.
 Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly onto
-command calls, syntactically and semantically.  For Nim, that subset is any
-non-generic proc with non-var parameters typed either by default value inference
-or by explicit types (i.e., not like `foo(b: auto)`).  The proc must also have
-some seq[T] *if* it wants to receive a variable list of optional positional
-parameters after optional and specific mandatory parameters.  For such procs,
-`cligen` can automatically generate a nice-ish command-line interface complete
-with long and short options and a nice-ish help message.
-
-Enough Generalities...Show me examples!
----------------------------------------
-In Nim terms, adding a CLI can be as easy as:
+command calls, syntactically and semantically.  For such procs, `cligen` can
+automatically generate a command-line interface complete with long and short
+options and a nice help message.  In Nim terms, adding a CLI can be as easy as
+adding a single line of code:
 ```nim
 proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
   ##Some existing API call
   result = 1          # Of course, real code would have real logic here
 
-when isMainModule:
-  import cligen
-  dispatch(foobar)    # Yep..It can really be this simple!
+when isMainModule: import cligen; dispatch(foobar)    # Whoa...Just one line??
 ```
 Compile it to foobar (assuming ``nim c foobar.nim`` is appropriate, say) and then
 run ``./foobar --help`` to get a minimal (but not so useless) help message:
@@ -41,15 +32,18 @@ Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 By default, dispatchGen has ``requireSeparator=false`` which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
 library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
-``--delta=Bar`` are all acceptable syntax for command options.
+``--delta=Bar`` are all acceptable syntax for command options.  Additionally,
+long option keys can be spelled flexibly as in ``--dry-run-please`` much like
+Nim's style-insensitive identifiers.
 
 When you want to produce a better help string, tack on some parameter-keyed
-metadata with Nim's association-list literals and maybe throw in a more overall
-description of operation doc string for before the options table:
+metadata with Nim's association-list literals:
 ```nim
-  dispatch(foobar, doc = "Deletes no positional-params!",
-           help = { "foo" : "the beginning", "bar" : "the rate" })
+  dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
+Often this is all that is required to have a capable and user-friendly CLI,
+but some more controls are provided for more subtle use cases.
+
 If you want to manually control the short option for a parameter, you can
 just override it with the 5th|short= macro parameter:
 ```nim
@@ -108,7 +102,7 @@ There are only a few very easy rules to learn:
 
  0. No parameter of a wrapped proc can be named "help" (name collision!)
    
- 1. Zero or 1 params has explicit type seq[T] to catch optional positional args.
+ 1. Zero or 1 params has type seq[T] to catch optional positional args.
    
  2. All param types used must have argParse, argHelp support (see Extending..)
     This includes the type T in seq[T] for non-option/positionals.
@@ -123,8 +117,9 @@ Optional positional command arguments (more on Rule 1)
 When there is no explicit `seq[T]` parameter, `cligen` infers that only option
 command parameters or specifically positioned mandatory parameters are legal.
 The name of the seq parameter does not matter, only that it's type slot is
-non-empty and syntactically `seq[SOMETHING]` as opposed to some type alias/etc.
-that happens to be a `seq`.
+non-empty and semantically `seq[SOMETHING]`.  When more than one such parameter
+is in the proc signature, the first receives positional command args unless
+you override that choice with the ``positional`` argument to ``dispatchGen``.
 
 When there is no positional parameter catcher and no mandatory parameters, it
 is a command syntax error to provide non-option parameters and reported as such.
@@ -174,10 +169,11 @@ Exit Code Behavior
 Commands return integer codes to operating systems to indicate exit status
 (only the lowest order byte is significant on many OSes).  Conventionally, zero
 status indicates a successful exit.  If the return type of the proc wrapped by
-dispatch is int or convertible to int then that value will be propagated to
-become the exit code.  Otherwise the return of the wrapped proc is discarded.
-Command-line syntax errors cause programs to exit with status 1 and print a help
-message.
+dispatch is int (or convertible to int) then that value will be propagated to
+become the exit code.  Otherwise the return of the wrapped proc is discarded
+unless ``echoResult=true`` is passed in which case the result is printed as
+long as there is a type to string/``$`` converter in scope.  Command-line
+syntax errors cause programs to exit with status 1 and print a help message.
 
 More Motivation
 ===============
