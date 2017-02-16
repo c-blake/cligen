@@ -65,17 +65,19 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(" ")
         buf.add(n.strVal)
 
-proc isExplicitSeq(typeSlot: NimNode): bool =
-  # Test if a proc param typeSlot is explicitly spelled "seq[SOMETHING]" to
-  # identify which parameter maps to optional positional arguments.
-  result = false
-  let lispRep = lispRepr(typeSlot)
-  if lispRep.startsWith("BracketExpr(Sym(seq), "):
-    return true
-  if lispRep.startsWith("Call(OpenSymChoice(Sym([]), "):
-    var simplified = typeSlot.copyNimTree()
-    simplified[0] = simplified[0][0]
-    return lispRepr(simplified).startsWith("Call(Sym([]), Sym(seq), ")
+proc posIxGet(fpars: NimNode): int =
+  ## Find the proc param to map to optional positional arguments of a command.
+  result = -1
+  for i in 1 ..< len(fpars):
+    let idef = fpars[i]     # First typed & non-defaulted seq; Allow override?
+    if idef[1].kind != nnkEmpty and idef[2].kind == nnkEmpty and
+       typeKind(getType(idef[1])) == ntySequence:
+      if result != -1:      # Allow multiple seq[T]s via "--" separators?
+        warning("cligen only supports one seq param for positional args; using"&
+                " `" & $fpars[result][0] & "`, not `" & $fpars[i][0] & "`. The"&
+                " type of the latter likely needs a custom argParse template.")
+      else:
+        result = i
 
 proc newParam(id: string, rhs: NimNode): NimNode =
     return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
@@ -127,16 +129,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrappred proc
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
-  var posIx = -1                        # param slot for positional cmd args|-1
-  for i in 1 ..< len(fpars):            #XXX more "type-y" test for seq[T]
-    if isExplicitSeq(fpars[i][1]):      #XXX or just let user specify posIx/id?
-      if posIx != -1:                   #??? "--" <==> multiple seq[T]s
-        error("Currently cligen supports only one seq[T] parameter.")
-      posIx = i
+  let posIx = posIxGet(fpars)           # param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
-  var mandatory = newSeq[int]()
-  var mandHelp = ""
+  var mandatory = newSeq[int]()         # At the same time, build metadata on..
+  var mandHelp = ""                     #..non-defaulted/mandatory parameters.
   for i in 1 ..< len(fpars):            # No locals/imports begin w/"dispatcher"
     spars[i][0] = ident("dispatcher" & $(fpars[i][0]))
     if fpars[i][2].kind == nnkEmpty:
@@ -145,9 +142,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       else:
         if fpars[i][1].kind == nnkEmpty:
           error("parameter `" & $(fpars[i][0]) &
-                "` has neither type nor default value")
+                "` has neither a type nor a default value")
         mandatory.add(i)
-        mandHelp &= " {" & $fpars[i][0] & ":" & $fpars[i][1] & "}"
+        mandHelp &= " {" & $fpars[i][0] & ":" & $repr(fpars[i][1]) & "}"
   let posNoId = ident("posNo")          # positional arg number
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
