@@ -65,17 +65,27 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(" ")
         buf.add(n.strVal)
 
-proc posIxGet(fpars: NimNode): int =
-  ## Find the proc param to map to optional positional arguments of a command.
+proc findByName(parNm: string, fpars: NimNode): int =
   result = -1
+  if len(parNm) == 0: return
   for i in 1 ..< len(fpars):
-    let idef = fpars[i]     # First typed & non-defaulted seq; Allow override?
+    if $fpars[i][0] == parNm:
+      result = i
+      break
+  if result == -1:
+    warning("specified positional argument `" & parNm & "` not found")
+
+proc posIxGet(positional: NimNode, fpars: NimNode): int =
+  ## Find the proc param to map to optional positional arguments of a command.
+  result = findByName(positional.strVal, fpars)
+  let doWrn = result == -1        # do not warn if positional is specified
+  for i in 1 ..< len(fpars):
+    let idef = fpars[i]           # 1st typed,non-defaulted seq; Allow override?
     if idef[1].kind != nnkEmpty and idef[2].kind == nnkEmpty and
        typeKind(getType(idef[1])) == ntySequence:
-      if result != -1:      # Allow multiple seq[T]s via "--" separators?
+      if result != -1 and doWrn:  # Allow multiple seq[T]s via "--" separators?
         warning("cligen only supports one seq param for positional args; using"&
-                " `" & $fpars[result][0] & "`, not `" & $fpars[i][0] & "`. The"&
-                " type of the latter likely needs a custom argParse template.")
+                " `" & $fpars[result][0] & "`, not `" & $fpars[i][0] & "`.")
       else:
         result = i
 
@@ -93,22 +103,23 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
                    helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
-                   stopWords: seq[string] = @[]): untyped =
+                   stopWords: seq[string] = @[], positional = ""): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
-  ## `help` is expected to be seq[(paramNm, string)] of per-parameter help.
-  ## `short` is expected to be seq[(paramNm, char)] of per-parameter short opts.
+  ## Parameters without defaults in the proc become mandatory command arguments
+  ## while those with default values become command options.  Proc parameters
+  ## and option keys are normalized so that command users may spell multi-word
+  ## option keys flexibly as in ``--dry-Run``|``--dryrun``.  Each proc parameter
+  ## type must have in-scope argParse and argHelp templates (argcvt.nim defines
+  ## argParse/Help for many basic types).
   ##
-  ## For a large class of procs in Nim, anything critical to such dispatch can
-  ## be inferred.  User semantics/help round out the info for a reasonable CLI.
-  ## Constraints: 1) only one proc param may be an explicit seq[T] which catches
-  ## the unnamed/positional arg list, 2) Each param type has an argParse/argHelp
-  ## in scope (argcvt.nim defines argParse/Help for many basic types, though).
-  ## Non-int return types are discarded since commands can only return (usually
-  ## 1-byte) integer codes to OSes.  However, if `echoResult` is true then the
-  ## generated dispatch echos the result of the wrapped proc and returns 0.
+  ## `help` is a seq[(paramNm,str)] of per-param help, eg. {"quiet":"be quiet"}.
+  ## Very often, only these user-given help strings are needed for a decent CLI.
   ##
-  ## Proc parameters and option keys are normalized so that command users may
-  ## spell multi-word option keys flexibly as in ``--dry-Run``|``--dryrun``.
+  ## `short` is a seq[(paramNm,char)] of per-parameter single-char option keys.
+  ##
+  ## Non-int return types are discarded since programs can only return integer
+  ## exit codes (usually 1-byte) to OSes.  However, if `echoResult` is true
+  ## then generated dispatchers echo the result of wrapped procs and return 0.
   ##
   ## If `requireSeparator` is true, both long and short options need an element
   ## of `sepChars` (":=" by default) before option values (if there are any).
@@ -118,6 +129,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ##
   ## `helpTabColumnGap` and `helpTabMinLast` control format parameters of the
   ## options help table, and `helpTabRowSep` ("" by default) separates rows.
+  ##
+  ## By default, `cligen` maps the first non-defaulted seq[] proc parameter to
+  ## any non-option/positional command args.  `positional` selects another.
 
   result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
@@ -129,7 +143,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrappred proc
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
-  let posIx = posIxGet(fpars)           # param slot for positional cmd args|-1
+  let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
@@ -264,13 +278,14 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
-                stopWords: seq[string] = @[]): untyped =
+                stopWords: seq[string] = @[], positional = ""): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
-  result.add(newCall("dispatchGen", pro, cmdName, doc, help, short, usage,
-                     prelude, echoResult, requireSeparator, sepChars,
-                     helpTabColumnGap, helpTabMinLast, helpTabRowSep, stopWords))
+  result.add(newCall(
+    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
+    requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
+    stopWords, positional))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
