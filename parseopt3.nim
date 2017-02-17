@@ -190,13 +190,14 @@ proc next*(p: var OptParser) =
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ## Normalizes option key `s`.
   ##
-  ## That means to convert all but first char to lower case and remove any
+  ## That means to convert ALL BUT FIRST char to lower case and remove any
   ## chars in wordSeparators ('_' and '-') by default.
   result = newString(s.len)
   var wordSeps: set[char]
   for c in wordSeparators: wordSeps.incl(c)
-  var j = 0
-  for i in 0..len(s) - 1:
+  result[0] = s[0]
+  var j = 1
+  for i in 1..len(s) - 1:
     if s[i] in {'A'..'Z'}:
       result[j] = chr(ord(s[i]) + (ord('a') - ord('A')))
       inc j
