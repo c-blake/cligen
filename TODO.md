@@ -21,11 +21,6 @@
   Would be nice to give dispatch a 'suppress' list to block certain parameters
   from CLI modification.
 
-  Should be able to take optional params from user-spec environ var/dotfile
-
-  Should be able to have a meta parameter like cls -s style option where a
-  single command-parameter is yet another source of a whole argv-subset.
-
   Should be able to specify for some seq params that they are populated by
   repeated option key instances (like the include path of cc -I).
 
