@@ -34,17 +34,16 @@
 ## as in ``"-c :"`` or B) prefixing the value with an element of ``sepChars``,
 ## as in ``-c=:`` or ``-c::``.
 ##
-## To ease "nested" command-line parsing (such as with git where they may be
-## early global options, a subcommand and later subcommand options), this
-## version also supports a set of "stop words" - special whole command
-## parameters preventing any subsequent parameters being interpreted as
-## options.  This feature makes it easy to fully process a command line and
-## then re-process its tail rather than mandating breaking out at a stop word
-## with a manual test. Stop words are basically just like the Unix "--" (which
-## this parser also supports automatically even if "--" is not in stopWords).
-## Such stop words (or "--" for that matter) can still be the **values** to
-## any options.  Only usage as a non-option command parameter acts to stop
-## possible option-treatment of later parameters.
+## To ease "nested" command-line parsing (such as with git where there may be
+## early global options, a subcommand and later subcommand options), this parser
+## also supports a set of "stop words" - special whole command parameters that
+## prevent any subsequent parameters being interpreted as options.  This feature
+## makes it easy to fully process a command line and then re-process its tail
+## rather than mandating breaking out at a stop word with a manual test.  Stop
+## words are basically just like the Unix "--" (which this parser also supports
+## even if "--" is not in stopWords).  Such stop words (or "--") can still be
+## the **values** to any options.  Only usage as a non-option command parameter
+## acts to stop possible option-treatment of later parameters.
 
 import os, strutils
 
