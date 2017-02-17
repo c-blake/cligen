@@ -266,6 +266,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
        else:
          when compiles(int(`callIt`)): return `callIt`
          else: discard `callIt`; return 0)
+  when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
@@ -329,3 +330,4 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
                      newParam("usage",
                      quote do:
     "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\nRun top-level command with subcommand help to get a full help message.")))
+  when defined(printMultiDisp): echo repr(result)  # maybe print generated code
