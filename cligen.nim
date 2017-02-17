@@ -92,11 +92,6 @@ proc posIxGet(positional: NimNode, fpars: NimNode): int =
 proc newParam(id: string, rhs: NimNode): NimNode =
     return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
-proc postInc*(x: var int): int =
-  ## Similar to post-fix `++` in C languages: yield initial val, then increment
-  result = x
-  inc(x)
-
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
 ="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
@@ -204,7 +199,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     var `posNoId` = 0)
   result.add(quote do:                  # initial parser-dispatcher proc header
     from os        import commandLineParams
-    from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix
+    from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix, postInc
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import strutils # import join, `%`
     proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),

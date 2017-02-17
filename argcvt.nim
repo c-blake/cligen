@@ -2,6 +2,11 @@ from parseutils import parseInt, parseFloat
 from strutils   import `%`, join, split, wordWrap, repeat, escape
 from terminal   import terminalWidth
 
+proc postInc*(x: var int): int =
+  ## Similar to post-fix `++` in C languages: yield initial val, then increment
+  result = x
+  inc(x)
+
 proc keys*(parNm: string, shrt: string): string =
   result = if len(shrt) > 0: "--$1=, -$2=" % [ parNm, shrt ]
            else            : "--" & parNm & "="
