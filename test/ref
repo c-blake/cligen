@@ -105,10 +105,11 @@ Options(opt&arg sep by :,=,spc):
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
-  /home/cb/pkg/nim/cligen/test/FullyAutoMulti {subcommand}
+  *TODO* {subcommand}
 where {subcommand} is one of:
   demo show
-Run top-level command with subcommand help to get a full help message.
+Run top-level cmd with the subcmd "help" to get full help text.
+Run a subcommand with --help to see only help for that.
 ====================================
 Test: test/ListDecl.nim
 Usage:

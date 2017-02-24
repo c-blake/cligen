@@ -97,8 +97,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 ="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
-                   helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
-                   stopWords: seq[string] = @[], positional = ""): untyped =
+                   helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
+                   stopWords: seq[string] = @[], positional = "",
+                   argPre:seq[string]= @[], argPost:seq[string]= @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -128,7 +129,6 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ## By default, `cligen` maps the first non-defaulted seq[] proc parameter to
   ## any non-option/positional command args.  `positional` selects another.
 
-  result = newStmtList()                # The generated dispatch proc
   let helps = parseHelps(help)
   let impl = pro.symbol.getImpl
   let fpars = formalParams(impl)
@@ -137,6 +137,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     collectComments(cmtDoc, impl)
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrappred proc
+  let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = !("dispatch" & $pro)      # Name of dispatch wrapper
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
@@ -164,108 +165,142 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let shortBoolId = ident("shortBool")  # local list of arg-free short opts
   let longBoolId = ident("longBool")    # local list of arg-free long opts
   let keyId = ident("key")              # local option key
+  let valId = ident("val")              # local option val
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
-  var preLoop = newStmtList()           # preLoop: init vars & build help str
-  preLoop.add(quote do:
-    var `tabId`: seq[array[0..3, string]] =
-      @[ [ "--help, -?", "", "", "print this help message" ] ]
-    var `shortBoolId`: string = "?"     # argHelp(..,bool,..) updates these
-    var `longBoolId`: seq[string] = @[ "help" ])
-  var args = "[optional-params]" & mandHelp &
-             (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
-  for i in 1 ..< len(fpars):
-    let idef = fpars[i]
-    let sdef = spars[i]
-    preLoop.add(newNimNode(nnkVarSection).add(sdef))    #Init vars
-    callIt.add(sdef[0])                                 #Add to call
-    if i notin mandatory and i != posIx:
-      let parNm = $idef[0]
-      let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
-      let defVal = sdef[0]
-      let hlp = if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
-      preLoop.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`))
-  preLoop.add(quote do:                 # build one large help string
-    let cName = if len(`cmdName`) == 0: `proNm` else: `cmdName`
-    var `helpId`=`usageId` % [ "prelude", `prelude`, "doc", `docId`,
-                   "command", cName, "args", `args`, "options",
-                    addPrefix("  ", alignTable(`tabId`, len(`prefixId`) + 2,
-                              `helpTabColumnGap`, `helpTabMinLast`, `helpTabRowSep`)) ]
-    if `helpId`[^1] != '\l':            # ensure newline @end of help
-      `helpId` &= "\n"
-    if len(`prefixId`) > 0:             # to indent help in a multicmd context
-      `helpId` = addPrefix(`prefixId`, `helpId`) )
-  preLoop.add(quote do:
-    var `posNoId` = 0)
-  result.add(quote do:                  # initial parser-dispatcher proc header
-    from os        import commandLineParams
-    from argcvt    import argRet, argParse, argHelp, alignTable, addPrefix, postInc
+  let htColGap = helpTabColumnGap
+  let htMinLst = helpTabMinLast
+  let htRowSep = helpTabRowSep
+  let prlude   = prelude
+
+  proc initVars(): NimNode =            # init vars & build help str
+    result = newStmtList()
+    result.add(quote do:
+      var `tabId`: seq[array[0..3, string]] =
+        @[ [ "--help, -?", "", "", "print this help message" ] ]
+      var `shortBoolId`: string = "?"     # argHelp(..,bool,..) updates these
+      var `longBoolId`: seq[string] = @[ "help" ])
+    var args = "[optional-params]" & mandHelp &
+               (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
+    for i in 1 ..< len(fpars):
+      let idef = fpars[i]
+      let sdef = spars[i]
+      result.add(newNimNode(nnkVarSection).add(sdef))     #Init vars
+      callIt.add(sdef[0])                                 #Add to call
+      if i notin mandatory and i != posIx:
+        let parNm = $idef[0]
+        let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
+        let defVal = sdef[0]
+        let hlp = if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
+        result.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`))
+    result.add(quote do:                  # build one large help string
+      var `helpId`=`usageId` % [ "prelude", `prlude`, "doc", `docId`,
+                     "command", `cName`, "args", `args`, "options",
+                      addPrefix("  ", alignTable(`tabId`, len(`prefixId`) + 2,
+                       `htColGap`, `htMinLst`, `htRowSep`)) ]
+      if `helpId`[^1] != '\l':            # ensure newline @end of help
+        `helpId` &= "\n"
+      if len(`prefixId`) > 0:             # to indent help in a multicmd context
+        `helpId` = addPrefix(`prefixId`, `helpId`) )
+
+  proc defOptCases(): NimNode =
+    result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
+    result.add(newNimNode(nnkOfBranch).add(
+      newStrLitNode("help"),newStrLitNode("?")).add(
+        quote do: stderr.write(`helpId`); raise))
+    for i in 1 ..< len(fpars):                # build per-param case clauses
+      if i == posIx: continue                 # skip variable len positionals
+      if i in mandatory: continue             # skip mandator arguments
+      let parNm  = $fpars[i][0]
+      let lopt   = optionNormalize(parNm)
+      let apCall = newCall("argParse", spars[i][0], keyId, valId, helpId)
+      if parNm in shOpt:                      # both a long and short option
+        let parShOpt = $shOpt.getOrDefault(parNm)
+        result.add(newNimNode(nnkOfBranch).add(
+          newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
+      else:                                   # only a long option
+        result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
+    result.add(newNimNode(nnkElse).add(quote do:
+      argRet(1, "Bad option: \"" & `keyId` & "\"\n" & `helpId`)))
+
+  proc defNonOpt(): NimNode =
+    result = newStmtList()
+    if posIx != -1 or len(mandatory) > 0:     # code to parse non-option args
+      result.add(newNimNode(nnkCaseStmt).add(quote do: postInc(`posNoId`)))
+      for i, ix in mandatory:
+        let hlp = newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
+        result[0].add(newNimNode(nnkOfBranch).add(newIntLitNode(i)).add(
+          newCall("argParse", spars[ix][0], hlp, keyId, helpId)))
+      if posIx != -1:                         # mandatory + optional positionals
+        let posId = spars[posIx][0]
+        let tmpId = ident("tmp" & $posId)
+        result[0].add(newNimNode(nnkElse).add(quote do:
+          var rewind = false                  #Ugly machinery is so tmp=pos[0]..
+          if len(`posId`) == 0:               #..type inference works.
+            `posId`.setLen(1)
+            rewind = true
+          var `tmpId` = `posId`[0]
+          argParse(`tmpId`, "positional $" & $`posNoId`, `keyId`, "positional\n")
+          if rewind: `posId`.setLen(0)
+          `posId`.add(`tmpId`)))
+      else:                                   # only mandatory (no positionals)
+        result[0].add(newNimNode(nnkElse).add(quote do:
+          argRet(1, "Optional positional arguments unexpected\n" & `helpId`)))
+    else:
+      result.add(quote do:
+        argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
+
+  let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
+  proc callParser(): NimNode =
+    result = quote do:
+      var exitCode = 0
+      if `argPreP` != nil and len(`argPreP`) > 0:
+        exitCode += parser(`argPreP`)
+      exitCode += parser()
+      if `argPostP` != nil and len(`argPostP`) > 0:
+        exitCode += parser(`argPostP`)
+      if exitCode != 0:
+        return exitCode
+
+  let echoResultP = echoResult              #XXX ShouldBeUnnecessary
+  proc callWrapped(): NimNode =
+    if fpars[0].kind == nnkEmpty:           # pure proc/no return type
+      result = quote do:
+        `callIt`; return 0
+    else:                                   # convertible-to-int return type
+      result = quote do:
+         if `echoResultP`:
+           echo `callIt`; return 0
+         else:
+           when compiles(int(`callIt`)): return `callIt`
+           else: discard `callIt`; return 0
+
+  let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
+  let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
+  result = quote do:
+    from os     import commandLineParams
+    from argcvt import argRet, argParse, argHelp, alignTable, addPrefix, postInc
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import strutils # import join, `%`
     proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`=""): int =
-      `preLoop`)
-  let sls = result[0][4][^1][0]     # [stlist][4imports+proc][stlist][stlist]
-  var nonOpt: NimNode = newNimNode(nnkElse)
-  if posIx != -1 or len(mandatory) > 0:     # code to parse non-option args
-    nonOpt.add(newNimNode(nnkCaseStmt).add(quote do: postInc(`posNoId`)))
-    for i, ix in mandatory:
-      let hlp = newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
-      nonOpt[0].add(newNimNode(nnkOfBranch).add(newIntLitNode(i)).add(
-        newCall("argParse", spars[ix][0], hlp, keyId, helpId)))
-    if posIx != -1:                         # mandatory + optional positionals
-      let posId = spars[posIx][0]
-      let tmpId = ident("tmp" & $posId)
-      nonOpt[0].add(newNimNode(nnkElse).add(quote do:
-        var rewind = false                  # Ugly machinery is so tmp=pos[0]..
-        if len(`posId`) == 0:               #..type inference works.
-          `posId`.setLen(1)
-          rewind = true
-        var `tmpId` = `posId`[0]
-        argParse(`tmpId`, "positional $" & $`posNoId`, key, "positional\n")
-        if rewind: `posId`.setLen(0)
-        `posId`.add(`tmpId`)))
-    else:                                   # only mandatory (no positionals)
-      nonOpt[0].add(newNimNode(nnkElse).add(quote do:
-        argRet(1, "Optional positional arguments unexpected\n" & `helpId`)))
-  else:
-    nonOpt.add(quote do:
-      argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
-  var optCases = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
-  optCases.add(newNimNode(nnkOfBranch).add(
-    newStrLitNode("help"),newStrLitNode("?")).add(quote do: argRet(0,`helpId`)))
-  for i in 1 ..< len(fpars):        # build per-param case clauses
-    if i == posIx: continue         # skip variable len positionals
-    if i in mandatory: continue     # skip mandator arguments
-    let parNm  = $fpars[i][0]
-    let lopt   = optionNormalize(parNm)
-    let apCall = newCall("argParse", spars[i][0], keyId, ident("val"), helpId)
-    if parNm in shOpt:              # both a long and short option
-      let parShOpt = $shOpt.getOrDefault(parNm)
-      optCases.add(newNimNode(nnkOfBranch).add(
-        newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
-    else:                           # only a long option
-      optCases.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
-  optCases.add(newNimNode(nnkElse).add(quote do:
-    argRet(1, "Bad option: \"" & key & "\"\n" & `helpId`)))
-  sls.add(                          # set up getopt loop & attach case clauses
-    newNimNode(nnkForStmt).add(ident("kind"), keyId, ident("val"),
-      newCall("getopt", cmdlineId, shortBoolId, longBoolId,
-                        requireSeparator, sepChars, stopWords),
-        newStmtList(newNimNode(nnkCaseStmt).add(ident("kind"),
-          newNimNode(nnkOfBranch).add(ident("cmdLongOption"),
-                                      ident("cmdShortOption"),
-                                      newStmtList(optCases)), nonOpt))))
-  if fpars[0].kind == nnkEmpty:             # pure proc/no return type
-    sls.add(quote do: `callIt`; return 0)
-  else:                                     # convertible-to-int return type
-    sls.add(quote do:
-       if `echoResult`:
-         echo `callIt`; return 0
-       else:
-         when compiles(int(`callIt`)): return `callIt`
-         else: discard `callIt`; return 0)
+      `iniVar`
+      proc parser(args=`cmdlineId`): int =
+        var `posNoId` = 0
+        for kind,`keyId`,`valId` in
+            getopt(args, `shortBoolId`, `longBoolId`,
+                   `requireSeparator`, `sepChars`, `stopWords`):
+          case kind
+              of cmdLongOption, cmdShortOption:
+                `optCases`
+              else:
+                `nonOpt`
+      try:
+        `callPrs`
+        `callWrapd`
+      except:
+        discard
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
@@ -274,14 +309,15 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
-                stopWords: seq[string] = @[], positional = ""): untyped =
+                stopWords: seq[string] = @[], positional = "",
+                argPre:seq[string] = @[], argPost:seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
     requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
-    stopWords, positional))
+    stopWords, positional, argPre, argPost))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
@@ -326,8 +362,14 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
   result.add(newCall("dispatch", multiId,
                      newParam("stopWords", subcmdsId),
-                     newParam("cmdName", newCall("paramStr", newIntLitNode(0))),
+# Not all shells set argv[0] to the invoking cmd. So, the below both fails with
+# new dispatchGen factoring due to Nim bug/limit & is also not quite right. XXX
+#                    newParam("cmdName", newCall("paramStr", newIntLitNode(0))),
+                     newParam("cmdName", newStrLitNode("*TODO*")),
                      newParam("usage",
                      quote do:
-    "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\nRun top-level command with subcommand help to get a full help message.")))
+    "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " &
+      join(`subcmdsId`, " ") & "\n" &
+      "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
+      "Run a subcommand with --help to see only help for that.")))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
