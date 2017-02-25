@@ -105,7 +105,7 @@ Options(opt&arg sep by :,=,spc):
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
-  *TODO* {subcommand}
+  FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo show
 Run top-level cmd with the subcmd "help" to get full help text.

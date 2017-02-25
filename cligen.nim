@@ -320,10 +320,10 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
     stopWords, positional, argPre, argPost))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
-macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
+macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
-  ## call quit(said dispatcher); pass []s of argument lists for dispatchGen(),
-  ## E.g., dispatchMulti([demo, short={"dryRun":"n"}], [real, cmdName="go"]).
+  ## call quit(said dispatcher); procBrackets=arg lists for dispatchGen(), e.g,
+  ## dispatchMulti(cmdName="multi", [foo,short={"dryRun":"n"}], [bar,doc="Um"]).
   result = newStmtList()
   for p in procBrackets:
     var c = newCall("dispatchGen")
@@ -360,13 +360,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     var `subcmdsId`: seq[string] = @[ ])
   for p in procBrackets:
     result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
-  result.add(newCall("dispatch", multiId,
-                     newParam("stopWords", subcmdsId),
-# Not all shells set argv[0] to the invoking cmd. So, the below both fails with
-# new dispatchGen factoring due to Nim bug/limit & is also not quite right. XXX
-#                    newParam("cmdName", newCall("paramStr", newIntLitNode(0))),
-                     newParam("cmdName", newStrLitNode("*TODO*")),
-                     newParam("usage",
+  result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
+                     newParam("cmdName", cmdName), newParam("usage",
                      quote do:
     "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " &
       join(`subcmdsId`, " ") & "\n" &
