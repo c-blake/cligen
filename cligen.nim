@@ -97,7 +97,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 ="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
-                   helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
+                   helpTabColumnGap: int=2, helpTabMinLast: int=16,
+                   helpTabRowSep: string="",
                    stopWords: seq[string] = @[], positional = "",
                    argPre:seq[string]= @[], argPost:seq[string]= @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
@@ -189,9 +190,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       callIt.add(sdef[0])                                 #Add to call
       if i notin mandatory and i != posIx:
         let parNm = $idef[0]
-        let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar help tab
+        let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar helpTab
         let defVal = sdef[0]
-        let hlp = if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
+        let hlp=if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
         result.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`))
     result.add(quote do:                  # build one large help string
       var `helpId`=`usageId` % [ "prelude", `prlude`, "doc", `docId`,
@@ -228,7 +229,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     if posIx != -1 or len(mandatory) > 0:     # code to parse non-option args
       result.add(newNimNode(nnkCaseStmt).add(quote do: postInc(`posNoId`)))
       for i, ix in mandatory:
-        let hlp = newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
+        let hlp=newStrLitNode("non-option " & $i & " (" & $(fpars[ix][0]) & ")")
         result[0].add(newNimNode(nnkOfBranch).add(newIntLitNode(i)).add(
           newCall("argParse", spars[ix][0], hlp, keyId, helpId)))
       if posIx != -1:                         # mandatory + optional positionals
@@ -240,7 +241,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
             `posId`.setLen(1)
             rewind = true
           var `tmpId` = `posId`[0]
-          argParse(`tmpId`, "positional $" & $`posNoId`, `keyId`, "positional\n")
+          argParse(`tmpId`, "positional $" & $`posNoId`, `keyId`,"positional\n")
           if rewind: `posId`.setLen(0)
           `posId`.add(`tmpId`)))
       else:                                   # only mandatory (no positionals)
@@ -248,7 +249,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
           argRet(1, "Optional positional arguments unexpected\n" & `helpId`)))
     else:
       result.add(quote do:
-        argRet(1, `proNm` & " does not expect non-option arguments\n" & `helpId`))
+       argRet(1,`proNm` & " does not expect non-option arguments\n" & `helpId`))
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
