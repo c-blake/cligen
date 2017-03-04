@@ -294,7 +294,7 @@ Options(opt&arg sep by :,=,spc):
 ====================================
 Test: test/TwoNondefaultedSeq.nim
 TwoNondefaultedSeq.nim(21, 11) template/generic instantiation from here
-/home/cb/pkg/nim/cligen/cligen.nim(87, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+/home/cb/pkg/nim/cligen/cligen.nim(92, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [optional-params] {stuff:seq[string]} [args]
 demo entry point with varied, meaningless parameters.

@@ -77,13 +77,18 @@ proc findByName(parNm: string, fpars: NimNode): int =
 
 proc posIxGet(positional: NimNode, fpars: NimNode): int =
   ## Find the proc param to map to optional positional arguments of a command.
-  result = findByName(positional.strVal, fpars)
-  let doWrn = result == -1        # do not warn if positional is specified
+  if len(positional.strVal) > 0:
+    result = findByName(positional.strVal, fpars)
+    if result == -1:
+      error("requested positional argument catcher " & positional.strVal &
+            " is not in formal parameter list")
+    return
+  result = -1                     # No optional positional arg param yet found
   for i in 1 ..< len(fpars):
     let idef = fpars[i]           # 1st typed,non-defaulted seq; Allow override?
     if idef[1].kind != nnkEmpty and idef[2].kind == nnkEmpty and
        typeKind(getType(idef[1])) == ntySequence:
-      if result != -1 and doWrn:  # Allow multiple seq[T]s via "--" separators?
+      if result != -1:            # Allow multiple seq[T]s via "--" separators?
         warning("cligen only supports one seq param for positional args; using"&
                 " `" & $fpars[result][0] & "`, not `" & $fpars[i][0] & "`.")
       else:
@@ -131,6 +136,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ## any non-option/positional command args.  `positional` selects another.
 
   let helps = parseHelps(help)
+  #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
+  #XXX needs either to accessed at top-level or assigned in a shadow local.
   let impl = pro.symbol.getImpl
   let fpars = formalParams(impl)
   var cmtDoc: string = $doc
@@ -159,8 +166,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let posNoId = ident("posNo")          # positional arg number
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
-  let cmdlineId = ident("cmdline")      # gen proc parameter
-  let tabId = ident("tab")              # local help table var
+  let cmdLineId = ident("cmdline")      # gen proc parameter
   let helpId = ident("help")            # local help table var
   let prefixId = ident("prefix")        # local help prefix param
   let shortBoolId = ident("shortBool")  # local list of arg-free short opts
@@ -176,10 +182,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
   proc initVars(): NimNode =            # init vars & build help str
     result = newStmtList()
+    let tabId = ident("tab")            # local help table var
     result.add(quote do:
       var `tabId`: seq[array[0..3, string]] =
         @[ [ "--help, -?", "", "", "print this help message" ] ]
-      var `shortBoolId`: string = "?"     # argHelp(..,bool,..) updates these
+      var `shortBoolId`: string = "?"   # argHelp(..,bool,..) updates these
       var `longBoolId`: seq[string] = @[ "help" ])
     var args = "[optional-params]" & mandHelp &
                (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
@@ -283,11 +290,11 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     from argcvt import argRet, argParse, argHelp, alignTable, addPrefix, postInc
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import strutils # import join, `%`
-    proc `disNm`(`cmdlineId`: seq[string] = commandLineParams(),
+    proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`=""): int =
       `iniVar`
-      proc parser(args=`cmdlineId`): int =
+      proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
         for kind,`keyId`,`valId` in
             getopt(args, `shortBoolId`, `longBoolId`,
