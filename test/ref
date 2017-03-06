@@ -340,3 +340,9 @@ Options(opt&arg sep by :,=,spc):
   --cmdline=, -c=  string  "bad name"  set cmdline
   --getopt=, -g=   string  "ho"        set getopt
 ====================================
+Usage:  This is a multiple-dispatch cmd.  Usage is like
+
+  ./test/FullyAutoMulti subcommand [subcommand-opts & args]
+
+where subcommand syntaxes are as follows:
+

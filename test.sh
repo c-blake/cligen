@@ -5,6 +5,8 @@ export COLUMNS=80
   echo "Test: $n"
   nim c "$@" --run $n --help 2>&1 | grep -v '^CC:'
   echo "===================================="
-done ) | grep -v 'Warning: \(expr\|stmt\) is deprecated' |
-         grep -v '^Hint: ' > test/out 
+ done
+ ./test/FullyAutoMulti help) |
+   grep -v 'Warning: \(expr\|stmt\) is deprecated' |
+   grep -v '^Hint: ' > test/out 
 diff test/ref test/out
