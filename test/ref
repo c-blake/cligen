@@ -346,3 +346,20 @@ Usage:  This is a multiple-dispatch cmd.  Usage is like
 
 where subcommand syntaxes are as follows:
 
+  demo [optional-params] [files]
+  demo entry point with varied, meaningless parameters.
+  
+  Options(opt&arg sep by :,=,spc):
+    --help, -?                    print this help message
+    --alpha=, -a=  int     1      set alpha
+    --beta=, -b=   float   2.0    set beta
+    --verb, -v     toggle  false  on=chatty, off=quiet
+    --item=, -i=   string  ""     set item
+  show [optional-params] [paths]
+  show entry point with varied, meaningless parameters.
+  
+  Options(opt&arg sep by :,=,spc):
+    --help, -?                    print this help message
+    --gamma=, -z=  int     1      set gamma
+    --iota=, -i=   float   2.0    set iota
+    --verb, -v     toggle  false  set verb

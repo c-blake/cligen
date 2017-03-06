@@ -6,7 +6,7 @@ export COLUMNS=80
   nim c "$@" --run $n --help 2>&1 | grep -v '^CC:'
   echo "===================================="
  done
- ./test/FullyAutoMulti help) |
+ ./test/FullyAutoMulti help 2>&1 ) |
    grep -v 'Warning: \(expr\|stmt\) is deprecated' |
    grep -v '^Hint: ' > test/out 
 diff test/ref test/out
