@@ -99,7 +99,7 @@ proc newParam(id: string, rhs: NimNode): NimNode =
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
-="${prelude}$command $args\n$doc\n\nOptions(opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc  Options(opt&arg sep by :,=,spc):\n$options",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
                    helpTabColumnGap: int=2, helpTabMinLast: int=16,
@@ -202,9 +202,10 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
         let hlp=if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
         result.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`))
     result.add(quote do:                  # build one large help string
-      var `helpId`=`usageId` % [ "prelude", `prlude`, "doc", `docId`,
+      let indentDoc = addPrefix(`prefixId`, `docId`)
+      var `helpId`=`usageId` % [ "prelude", `prlude`, "doc", indentDoc,
                      "command", `cName`, "args", `args`, "options",
-                      addPrefix("  ", alignTable(`tabId`, len(`prefixId`) + 2,
+                     addPrefix(`prefixId` & "  ", alignTable(`tabId`, 2*len(`prefixId`)+2,
                        `htColGap`, `htMinLst`, `htRowSep`)) ]
       if `helpId`[^1] != '\l':            # ensure newline @end of help
         `helpId` &= "\n"
@@ -313,7 +314,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
-="${prelude}$command $args\n$doc\n\nOptions(opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc  Options(opt&arg sep by :,=,spc):\n$options",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
@@ -352,9 +353,9 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
       let `restId`: seq[string] = if n > 1: subcmd[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
-        echo "Usage:  This is a multiple-dispatch cmd.  Usage is like\n"
-        echo "  $1 subcommand [subcommand-opts & args]\n" % [ paramStr(0) ]
-        echo "where subcommand syntaxes are as follows:\n"
+        echo "Usage:  This is a multiple-dispatch cmd.  Usage is like"
+        echo "  $1 subcommand [subcommand-opts & args]" % [ paramStr(0) ]
+        echo "where subcommand syntaxes are as follows:"
         let `dashHelpId` = @[ "--help" ])
   for p in procBrackets:
     let disp = "dispatch_" & $p[0]
