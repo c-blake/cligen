@@ -19,10 +19,12 @@ template argRet*(code: int, msg: string) =
 proc addPrefix*(prefix: string, multiline=""): string =
   result = ""
   var lines = multiline.split("\n")
-  for line in lines[0 .. ^2]:
-    result &= prefix & line & "\n"
-  if len(lines[^1]) > 0:
-    result &= prefix & lines[^1] & "\n"
+  if len(lines) > 1:
+    for line in lines[0 .. ^2]:
+      result &= prefix & line & "\n"
+  if len(lines) > 0:
+    if len(lines[^1]) > 0:
+      result &= prefix & lines[^1] & "\n"
 
 proc alignTable*(tab: seq[array[0..3, string]],
                  prefixLen=0, colGap=2, min4th=16, rowSep=""): string =
