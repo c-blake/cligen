@@ -152,8 +152,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
   var mandHelp = ""                     #..non-defaulted/mandatory parameters.
-  for i in 1 ..< len(fpars):            # No locals/imports begin w/"dispatcher"
-    spars[i][0] = ident("dispatcher" & $(fpars[i][0]))
+  for i in 1 ..< len(fpars):
+    spars[i][0] = ident($(fpars[i][0]) & "cligenDispatcher") # unique suffix
     if fpars[i][2].kind == nnkEmpty:
       if i == posIx:                    # No initializer; Add @[]
         spars[posIx][2] = prefix(newNimNode(nnkBracket), "@")

@@ -23,6 +23,20 @@ Options(opt&arg sep by :,=,spc):
   --pp=, -p=  float32  12.0   set pp
   --qq=, -q=  float    13.0   set qq
 ====================================
+Test: test/CaseDistinguised.nim
+Usage:
+  demo [optional-params]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+
+Options(opt&arg sep by :,=,spc):
+  --help, -?                    print this help message
+  --alpha=, -z=  int     1      set alpha
+  --Abc=, -A=    float   2.0    set Abc
+  --aaah, -a     toggle  false  set aaah
+  --aloha=       string  ""     set aloha
+====================================
 Test: test/CustomCmdName.nim
 Usage:
   deeeemo [optional-params] [args]
