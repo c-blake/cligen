@@ -99,7 +99,7 @@ proc newParam(id: string, rhs: NimNode): NimNode =
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
-="${prelude}$command $args\n$doc\nOptions (opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc\n\nOptions(opt&arg sep by :,=,spc):\n$options",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
                    helpTabColumnGap: int=2, helpTabMinLast: int=16,
@@ -353,7 +353,7 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
         echo "Usage:  This is a multiple-dispatch cmd.  Usage is like\n"
-        echo "    $1 subcommand [subcommand-opts & args]\n" % [ paramStr(0) ]
+        echo "  $1 subcommand [subcommand-opts & args]\n" % [ paramStr(0) ]
         echo "where subcommand syntaxes are as follows:\n"
         let `dashHelpId` = @[ "--help" ])
   for p in procBrackets:
@@ -361,7 +361,7 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
     cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode($(p[0]))).add(
       newCall("quit", newCall(disp, restId))))
     helps.add(newNimNode(nnkDiscardStmt).add(
-      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("    ")))))
+      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("  ")))))
   cases[^1].add(newNimNode(nnkElse).add(helps))
   result.add(multiDef)
   result.add(quote do:
