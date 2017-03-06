@@ -99,7 +99,7 @@ proc newParam(id: string, rhs: NimNode): NimNode =
 
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
-="${prelude}$command $args\n$doc  Options(opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
                    helpTabColumnGap: int=2, helpTabMinLast: int=16,
@@ -169,6 +169,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let helpId = ident("help")            # local help table var
   let prefixId = ident("prefix")        # local help prefix param
+  let subSepId = ident("subSep")        # sub cmd help separator
   let shortBoolId = ident("shortBool")  # local list of arg-free short opts
   let longBoolId = ident("longBool")    # local list of arg-free long opts
   let keyId = ident("key")              # local option key
@@ -205,8 +206,10 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       let indentDoc = addPrefix(`prefixId`, `docId`)
       var `helpId`=`usageId` % [ "prelude", `prlude`, "doc", indentDoc,
                      "command", `cName`, "args", `args`, "options",
-                     addPrefix(`prefixId` & "  ", alignTable(`tabId`, 2*len(`prefixId`)+2,
-                       `htColGap`, `htMinLst`, `htRowSep`)) ]
+                     addPrefix(`prefixId` & "  ",
+                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
+                                          `htColGap`, `htMinLst`, `htRowSep`)),
+                     "sep", `subSepId` ]
       if `helpId`[^1] != '\l':            # ensure newline @end of help
         `helpId` &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -293,7 +296,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     import strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
-                 `prefixId`=""): int =
+                 `prefixId`="", `subSepId`=""): int =
       `iniVar`
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
@@ -314,7 +317,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 help: typed = { }, short: typed = { }, usage: string
-="${prelude}$command $args\n$doc  Options(opt&arg sep by :,=,spc):\n$options",
+="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
@@ -355,14 +358,18 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
   var helps = (quote do:
         echo "Usage:  This is a multiple-dispatch cmd.  Usage is like"
         echo "  $1 subcommand [subcommand-opts & args]" % [ paramStr(0) ]
-        echo "where subcommand syntaxes are as follows:"
+        echo "where subcommand syntaxes are as follows:\n"
         let `dashHelpId` = @[ "--help" ])
+  var cnt = 0
   for p in procBrackets:
+    inc(cnt)
     let disp = "dispatch_" & $p[0]
     cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode($(p[0]))).add(
       newCall("quit", newCall(disp, restId))))
+    let sep = if cnt < len(procBrackets): "\n" else: ""
     helps.add(newNimNode(nnkDiscardStmt).add(
-      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("  ")))))
+      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("  ")),
+              newParam("subSep", newStrLitNode(sep)))))
   cases[^1].add(newNimNode(nnkElse).add(helps))
   result.add(multiDef)
   result.add(quote do:
