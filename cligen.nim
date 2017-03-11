@@ -312,7 +312,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
         `callPrs`
         `callWrapd`
       except:
-        discard
+        raise
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string="", doc: string="",
