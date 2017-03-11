@@ -168,6 +168,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let helpId = ident("help")            # local help table var
+  let HelpOnlyId = ident("HelpOnly")    # local just help exception
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
   let shortBoolId = ident("shortBool")  # local list of arg-free short opts
@@ -219,7 +220,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"),newStrLitNode("?")).add(
-        quote do: stderr.write(`helpId`); raise))
+        quote do: stderr.write(`helpId`); raise newException(`HelpOnlyId`,"")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       if i in mandatory: continue             # skip mandator arguments
@@ -297,6 +298,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): int =
+      type `HelpOnlyId` = object of Exception
       `iniVar`
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
@@ -311,7 +313,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       try:
         `callPrs`
         `callWrapd`
-      except:
+      except `HelpOnlyId`:
         discard
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
