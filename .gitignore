@@ -26,4 +26,6 @@ test/AllTypes
 test/EchoResult
 test/TwoNondefaultedSeq
 test/TwoNondefaultedSeqSwap
+test/BlockedShort
+test/NoShort
 test/out
