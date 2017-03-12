@@ -22,6 +22,19 @@ demo entry point with parameters of all basic types.
   --pp=, -p=  float32  12.0   set pp
   --qq=, -q=  float    13.0   set qq
 ====================================
+Test: test/BlockedShort.nim
+Usage:
+  demo [optional-params]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  --help, -?                 print this help message
+  --alpha=    int     1      set alpha
+  --abc=      float   2.0    set abc
+  --aaah, -a  toggle  false  set aaah
+  --aloha=    string  ""     set aloha
+====================================
 Test: test/CaseDistinguised.nim
 Usage:
   demo [optional-params]
@@ -202,6 +215,19 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --verb, -v     toggle  false  set verb
   --item=, -i=   string  ""     set item
 ====================================
+Test: test/NoShort.nim
+Usage:
+  demo [optional-params]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  --help, -?                 print this help message
+  --alpha=    int     1      set alpha
+  --abc=      float   2.0    set abc
+  --aaah      toggle  false  set aaah
+  --aloha=    string  ""     set aloha
+====================================
 Test: test/PerParam.nim
 Usage:
   demo [optional-params] [args]
@@ -291,7 +317,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/TwoNondefaultedSeq.nim
 TwoNondefaultedSeq.nim(21, 11) template/generic instantiation from here
-/home/cb/pkg/nim/cligen/cligen.nim(92, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+/home/cb/pkg/nim/cligen/cligen.nim(95, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [optional-params] {stuff:seq[string]} [args]
 demo entry point with varied, meaningless parameters.

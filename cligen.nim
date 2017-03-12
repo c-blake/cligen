@@ -44,6 +44,7 @@ proc dupBlock(fpars: NimNode, posIx: int,
   # careful to only allow one such short option if the 1st letters of
   # two or more long options collide.
   result = initTable[string, char]()         # short option for param
+  if "" in userSpec: return                  # Empty string key==>no short opts
   var used: set[char] = {}                   # used shorts; bit vector ok
   for lo, sh in userSpec:
     result[lo] = sh
@@ -55,6 +56,8 @@ proc dupBlock(fpars: NimNode, posIx: int,
     if sh notin used and parNm notin result: # still available
       result[parNm] = sh
       used.incl(sh)
+  for k, v in result:
+    if v == '\0': result.del(k)
 
 proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
   if n.len > 1:
