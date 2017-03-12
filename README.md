@@ -33,8 +33,8 @@ By default, dispatchGen has ``requireSeparator=false`` which results in more
 traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
 library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
 ``--delta=Bar`` are all acceptable syntax for command options.  Additionally,
-long option keys can be spelled flexibly as in ``--dry-run-please`` much like
-Nim's style-insensitive identifiers.
+long option keys can be spelled flexibly, e.g. ``--dry-run`` or ``--dryRun``,
+much like Nim's style-insensitive identifiers.
 
 When you want to produce a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals:
