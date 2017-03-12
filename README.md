@@ -49,7 +49,9 @@ just override it with the 5th|short= macro parameter:
 ```nim
   dispatch(foobar, short = { "bar" : 'r' }))
 ```
-With that, "bar" will get 'r' while "baz" will get 'b'.
+With that, "bar" will get 'r' while "baz" will get 'b' as short options.
+To suppress some long option getting a short option at all, specify ``'\0'`` for
+its short key.  To suppress all short options, give ``short`` a key of ``""``.
 
 If you don't like the help message as-is, you can re-order it however you like
 with some named-argument string interpolation:
