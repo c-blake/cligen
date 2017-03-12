@@ -102,17 +102,15 @@ Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
 There are only a few very easy rules to learn:
 
- 0. No parameter of a wrapped proc can be named "help" (name collision!)
-   
  1. Zero or 1 params has type seq[T] to catch optional positional args.
    
  2. All param types used must have argParse, argHelp support (see Extending..)
     This includes the type T in seq[T] for non-option/positionals.
 
  3. Only basic procs supported -- no 'auto' types, 'var' types, generics, etc.
-
-`cligen` supports most basic Nim types (int, float, ..) out of the box, and the
-system can be extended pretty easily to user-defined types.
+   
+ 4. No param of a wrapped proc can be named "help" and there can be no '?' user
+    short option key. (Name collisions!)
 
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------
@@ -131,6 +129,9 @@ command user may forget the [:|=] required to separate an option and its value.
 
 Extending `cligen` to support new parameter types (more on Rule 2)
 ------------------------------------------------------------------
+`cligen` supports most basic Nim types (int, float, ..) out of the box, and the
+system can be extended pretty easily to user-defined types.
+
 You can extend the set of supported parameter conversion types by defining a
 couple helper templates before invoking `dispatch`.  All you need do is define a
 compatible `argParse` and `argHelp` for any new Nim parameter types you want.
