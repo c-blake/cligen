@@ -347,7 +347,7 @@ used in our generated dispatch proc.
   --getopt=, -g=   string  "ho"        set getopt
 ====================================
 Usage:  This is a multiple-dispatch cmd.  Usage is like
-  ./test/FullyAutoMulti subcommand [subcommand-opts & args]
+  FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files]

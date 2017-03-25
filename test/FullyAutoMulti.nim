@@ -12,6 +12,5 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
 
 when isMainModule:
   import cligen
-  dispatchMulti(cmdName = "FullyAutoMulti",
-                [ demo, help = { "verb": "on=chatty, off=quiet" } ],
+  dispatchMulti([ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, short = { "gamma": 'z' } ])

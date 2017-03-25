@@ -337,16 +337,19 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
     stopWords, positional, argPre, argPost))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
-macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
+macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
   ## call quit(said dispatcher); procBrackets=arg lists for dispatchGen(), e.g,
-  ## dispatchMulti(cmdName="multi", [foo,short={"dryRun":"n"}], [bar,doc="Um"]).
+  ## dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ]).
   result = newStmtList()
   for p in procBrackets:
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     c.add(newParam("prelude", newStrLitNode("")))
     result.add(c)
+  let fileParen = lineinfo(procBrackets)  # Infer multi-cmd name from lineinfo
+  let xOpPar = rfind(fileParen, ".nim(") - 1
+  let srcBase = newStrLitNode(if xOpPar < 0: "??" else: fileParen[0 .. xOpPar])
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -362,7 +365,7 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
         echo "Usage:  This is a multiple-dispatch cmd.  Usage is like"
-        echo "  $1 subcommand [subcommand-opts & args]" % [ paramStr(0) ]
+        echo "  $1 subcommand [subcommand-opts & args]" % [ `srcBase` ]
         echo "where subcommand syntaxes are as follows:\n"
         let `dashHelpId` = @[ "--help" ])
   var cnt = 0
@@ -382,8 +385,7 @@ macro dispatchMulti*(cmdName="?", procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
   result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
-                     newParam("cmdName", cmdName), newParam("usage",
-                     quote do:
+                     newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " &
       join(`subcmdsId`, " ") & "\n" &
       "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &

@@ -80,14 +80,14 @@ dispatch(editDistance, echoResult=true)
 ```
 
 Want to expose two or more procs into a command with subcommands a la `git`
-or `nimble`?  Just use `dispatchMulti`:
+or `nimble`?  Just use `dispatchMulti` in, say, a `cmd.nim` file:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
 proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
   ##Some other API call
 when isMainModule:
-  import cligen; dispatchMulti("mymulti", [foo, short={"verb", 'v'}], [bar])
+  import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
 ```
 Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``.  Each [] list
 in `dispatchMulti` is the argument list for each sub-`dispatch` tune the command
