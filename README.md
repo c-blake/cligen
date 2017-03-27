@@ -90,7 +90,7 @@ when isMainModule:
   import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
 ```
 Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``.  Each [] list
-in `dispatchMulti` is the argument list for each sub-`dispatch` tune the command
+in `dispatchMulti` is the argument list for each sub-`dispatch`.  Tune command
 syntax and help strings in the same way as ``dispatch``.  ``./cmd --help`` will
 emit a brief help message and ``./cmd help`` emits a more comprehensive message.
 
