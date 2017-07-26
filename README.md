@@ -176,7 +176,7 @@ More Motivation
 ===============
 There are so many CLI parser frameworks out there...Why do we need yet another?
 This approach to command-line interfaces has both great Don't Repeat Yourself
-("DRY", or relatedly "a few points of edit") properties.  It also has nice
+("DRY", or relatedly "a few points of edit") properties and also has nice
 "loose coupling" properties.  `cligen` need not even be *present on the system*
 unless you are compiling a CLI executable.  Similarly, wrapped routines need
 not be in the same module, modifiable, or know anything about `cligen`.  This
