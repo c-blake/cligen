@@ -303,6 +303,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                  `prefixId`="", `subSepId`=""): int =
       type `HelpOnlyId` = object of Exception
       `iniVar`
+      {.push hint[XDeclaredButNotUsed]: off.}
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
         for kind,`keyId`,`valId` in
@@ -313,6 +314,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                 `optCases`
               else:
                 `nonOpt`
+      {.pop.}
       try:
         `callPrs`
         `callWrapd`
