@@ -11,9 +11,6 @@
   Better error reporting. E.g., ``help={"foo" : "stuff"}`` silently ignores the
   ``"foo"`` if there is no such parameter.  Etc.
 
-  The help table itself could be more "text template"-ish and/or allow an option
-  to drop the type/default columns.
-
   Could use argv "--" separator to allow multiple positional sequences.
 
   Should at least ask if there is any interest in parseopt3.nim in stdlib.

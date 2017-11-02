@@ -26,20 +26,22 @@ proc addPrefix*(prefix: string, multiline=""): string =
     if len(lines[^1]) > 0:
       result &= prefix & lines[^1] & "\n"
 
-proc alignTable*(tab: seq[array[0..3, string]],
-                 prefixLen=0, colGap=2, min4th=16, rowSep=""): string =
+proc alignTable*(tab: seq[array[0..3, string]], prefixLen=0,
+                 colGap=2, minLast=16, rowSep="", cols = @[0,1,2,3]): string =
   result = ""
   var wCol: array[0 .. 3, int]
+  let last = cols[^1]
   for row in tab:
-    for c in 0 .. 2: wCol[c] = max(wCol[c], row[c].len)
+    for c in cols[0 .. ^2]: wCol[c] = max(wCol[c], row[c].len)
   var wTerm = terminalWidth() - prefixLen
-  var leader = wCol[0] + wCol[1] + wCol[2] + 3 * colGap
-  wCol[3] = max(min4th, wTerm - leader)
+  var leader = (cols.len - 1) * colGap
+  for c in cols[0 .. ^2]: leader += wCol[c]
+  wCol[last] = max(minLast, wTerm - leader)
   for row in tab:
-    for c in 0 .. 2:
+    for c in cols[0 .. ^2]:
       result &= row[c] & repeat(" ", wCol[c] - row[c].len + colGap)
-    var wrapped = wordWrap(row[3], maxLineWidth = wCol[3]).split("\n")
-    result &= wrapped[0] & "\n"
+    var wrapped = wordWrap(row[last], maxLineWidth = wCol[last]).split("\n")
+    result &= (if wrapped.len > 0: wrapped[0] else: "") & "\n"
     for j in 1 ..< len(wrapped):
       result &= repeat(" ", leader) & wrapped[j] & "\n"
     result &= rowSep

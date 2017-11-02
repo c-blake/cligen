@@ -100,13 +100,19 @@ proc posIxGet(positional: NimNode, fpars: NimNode): int =
 proc newParam(id: string, rhs: NimNode): NimNode =
     return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
+const helpTabOption*  = 0
+const helpTabType*    = 1
+const helpTabDefault* = 2
+const helpTabDescrip* = 3
+
 macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    help: typed= {}, short: typed= {}, usage: string
 ="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = "=:",
                    helpTabColumnGap: int=2, helpTabMinLast: int=16,
-                   helpTabRowSep: string="",
+                   helpTabRowSep: string="", helpTabColumns: seq[int] = @[
+                    helpTabOption, helpTabType, helpTabDefault, helpTabDescrip],
                    stopWords: seq[string] = @[], positional = "",
                    argPre:seq[string]= @[], argPost:seq[string]= @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
@@ -134,6 +140,9 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ##
   ## `helpTabColumnGap` and `helpTabMinLast` control format parameters of the
   ## options help table, and `helpTabRowSep` ("" by default) separates rows.
+  ## `helpTabColumns` selects columns to format and is a seq of some subset of
+  ## `{ helpTabOption, helpTabType, helpTabDefault, helpTabDescrip }`, though
+  ## only the final column in a help table row auto-word-wraps.
   ##
   ## By default, `cligen` maps the first non-defaulted seq[] proc parameter to
   ## any non-option/positional command args.  `positional` selects another.
@@ -183,6 +192,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let htColGap = helpTabColumnGap
   let htMinLst = helpTabMinLast
   let htRowSep = helpTabRowSep
+  let htCols   = helpTabColumns
   let prlude   = prelude
 
   proc initVars(): NimNode =            # init vars & build help str
@@ -212,7 +222,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                      "command", `cName`, "args", `args`, "options",
                      addPrefix(`prefixId` & "  ",
                                alignTable(`tabId`, 2*len(`prefixId`) + 2,
-                                          `htColGap`, `htMinLst`, `htRowSep`)),
+                                          `htColGap`, `htMinLst`, `htRowSep`,
+                                          `htCols`)),
                      "sep", `subSepId` ]
       if `helpId`[^1] != '\l':            # ensure newline @end of help
         `helpId` &= "\n"
@@ -328,6 +339,8 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = "=:",
                 helpTabColumnGap=2, helpTabMinLast=16, helpTabRowSep="",
+                helpTabColumns = @[ helpTabOption, helpTabType, helpTabDefault,
+                                    helpTabDescrip ],
                 stopWords: seq[string] = @[], positional = "",
                 argPre:seq[string] = @[], argPost:seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
@@ -336,7 +349,7 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
     requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
-    stopWords, positional, argPre, argPost))
+    helpTabColumns, stopWords, positional, argPre, argPost))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
