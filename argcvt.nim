@@ -7,9 +7,9 @@ proc postInc*(x: var int): int =
   result = x
   inc(x)
 
-proc keys*(parNm: string, shrt: string): string =
-  result = if len(shrt) > 0: "--$1=, -$2=" % [ parNm, shrt ]
-           else            : "--" & parNm & "="
+proc keys*(parNm: string, shrt: string, argSep="="): string =
+  result = if len(shrt) > 0: "--$1$3, -$2$3" % [ parNm, shrt, argSep ]
+           else            : "--" & parNm & argSep
 
 template argRet*(code: int, msg: string) =
   ## argRet is a simple space-saving template to write msg and return a code.
@@ -61,9 +61,7 @@ template argParse*(dst: bool, key: string, val: string, help: string) =
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
                   parNm: string, sh: string, parHelp: string) =
-  let keys = if len(sh) > 0: "--$1, -$2" % [ parNm, sh ] # bools take no arg
-             else          : "--" & parNm
-  helpT.add([ keys, "toggle", $defVal, parHelp ])
+  helpT.add([ keys(parNm, sh, argSep=""), "toggle", $defVal, parHelp ])
   shortBool.add(sh)                 # only bools can elide option arguments..
   longBool.add(parNm)               #..and so only those should add to *Bool.
 
