@@ -8,7 +8,7 @@ proc postInc*(x: var int): int =
   inc(x)
 
 proc keys*(parNm: string, shrt: string, argSep="="): string =
-  result = if len(shrt) > 0: "--$1$3, -$2$3" % [ parNm, shrt, argSep ]
+  result = if len(shrt) > 0: "-$1$3, --$2$3" % [ shrt, parNm, argSep ]
            else            : "--" & parNm & argSep
 
 template argRet*(code: int, msg: string) =
