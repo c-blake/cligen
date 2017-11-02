@@ -130,6 +130,19 @@ where {subcommand} is one of:
 Run top-level cmd with the subcmd "help" to get full help text.
 Run a subcommand with --help to see only help for that.
 ====================================
+Test: test/HelpTabCols.nim
+Usage:
+  demo [optional-params] [args]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  --help, -?     print this help message  
+  --alpha=, -z=  growth constant          1
+  --beta=, -b=   shrink target            2.0
+  --verb, -v     set verb                 false
+  --item=, -i=   set item                 ""
+====================================
 Test: test/ListDecl.nim
 Usage:
   demo [optional-params] {alpha:float} [args]
