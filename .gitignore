@@ -28,4 +28,5 @@ test/TwoNondefaultedSeq
 test/TwoNondefaultedSeqSwap
 test/BlockedShort
 test/NoShort
+test/HelpTabCols
 test/out
