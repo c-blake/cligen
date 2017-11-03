@@ -21,11 +21,11 @@ Usage:
 Some existing API call
 
 Options (opt&arg sep by :,=,spc):
-  --help, -?                  print this help message
-  --foo=, -f=  int     1      set foo
-  --bar=, -b=  float   2.0    set bar
+  -?, --help                  print this help message
+  -f=, --foo=  int     1      set foo
+  -b=, --bar=  float   2.0    set bar
   --baz=       string  "hi"   set baz
-  --verb, -v   toggle  false  set verb
+  -v, --verb   toggle  false  set verb
 ```
 Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 
