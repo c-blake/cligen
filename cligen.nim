@@ -4,21 +4,28 @@ proc toString(c: char): string =
   result = newStringOfCap(1)
   if c != '\0': result.add(c)
 
-proc formalParamExpand(fpars: NimNode): NimNode =
+proc toStrSeq(strSeqInitializer: NimNode): seq[string] =
+  result = newSeq[string]()
+  for kid in strSeqInitializer[1]:
+    result.add($kid)
+
+proc formalParamExpand(fpars: NimNode, suppress: seq[string]= @[]): NimNode =
   # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
   result = newNimNode(nnkFormalParams)
   result.add(fpars[0])                                  # just copy ret value
   for declIx in 1 ..< len(fpars):
     let idefs = fpars[declIx]
     for i in 0 ..< len(idefs) - 3:
-      result.add(newIdentDefs(idefs[i], idefs[^2]))
-    result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
+      if $idefs[i] notin suppress:
+        result.add(newIdentDefs(idefs[i], idefs[^2]))
+    if $idefs[^3] notin suppress:
+      result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
 
-proc formalParams(n: NimNode): NimNode =
+proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
   # Extract formal parameter list from the return value of .symbol.getImpl
   for kid in n:
     if kid.kind == nnkFormalParams:
-      return formalParamExpand(kid)
+      return formalParamExpand(kid, suppress)
   error "formalParams requires a proc argument."
   return nil
 
@@ -114,7 +121,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                    helpTabRowSep: string="", helpTabColumns: seq[int] = @[
                     helpTabOption, helpTabType, helpTabDefault, helpTabDescrip],
                    stopWords: seq[string] = @[], positional = "",
-                   argPre:seq[string]= @[], argPost:seq[string]= @[]): untyped =
+                   argPre:seq[string]= @[], argPost:seq[string]= @[],
+                   suppress:seq[string]= @[]): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -146,17 +154,24 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ##
   ## By default, `cligen` maps the first non-defaulted seq[] proc parameter to
   ## any non-option/positional command args.  `positional` selects another.
+  ##
+  ## `argPre` & `argPost` are sources of cmdLine-like data, e.g. from a split
+  ## environment variable value, applied pre/post the actual command line.
+  ##
+  ## `suppress` is a list of names of formal parameters to NOT include in the
+  ## parsing/assigning system.  Such names are effectively pinned to whatever
+  ## their default values are.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
   #XXX needs either to accessed at top-level or assigned in a shadow local.
   let impl = pro.symbol.getImpl
-  let fpars = formalParams(impl)
+  let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
   if cmtDoc == nil or cmtDoc.len == 0:  # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
     cmtDoc = strip(cmtDoc)
-  let proNm = $pro                      # Name of wrappred proc
+  let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = toNimIdent("dispatch" & $pro) # Name of dispatch wrapper
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
@@ -209,7 +224,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       let idef = fpars[i]
       let sdef = spars[i]
       result.add(newNimNode(nnkVarSection).add(sdef))     #Init vars
-      callIt.add(sdef[0])                                 #Add to call
+      callIt.add(newNimNode(nnkExprEqExpr).add(idef[0], sdef[0])) #Add to call
       if i notin mandatory and i != posIx:
         let parNm = $idef[0]
         let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar helpTab
@@ -342,14 +357,15 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                 helpTabColumns = @[ helpTabOption, helpTabType, helpTabDefault,
                                     helpTabDescrip ],
                 stopWords: seq[string] = @[], positional = "",
-                argPre:seq[string] = @[], argPost:seq[string] = @[]): untyped =
+                argPre:seq[string] = @[], argPost:seq[string] = @[],
+                suppress:seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
     requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
-    helpTabColumns, stopWords, positional, argPre, argPost))
+    helpTabColumns, stopWords, positional, argPre, argPost, suppress))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =

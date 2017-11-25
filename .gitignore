@@ -30,3 +30,4 @@ test/BlockedShort
 test/NoShort
 test/HelpTabCols
 test/out
+test/Suppress

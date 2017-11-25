@@ -15,9 +15,6 @@
 
   Should at least ask if there is any interest in parseopt3.nim in stdlib.
 
-  Would be nice to give dispatch a 'suppress' list to block certain parameters
-  from CLI modification.
-
   Should be able to specify for some seq params that they are populated by
   repeated option key instances (like the include path of cc -I).
 

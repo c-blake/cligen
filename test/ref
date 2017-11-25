@@ -328,9 +328,20 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -v, --verb     toggle  false  set verb
   -i=, --item=   string  ""     set item
 ====================================
+Test: test/Suppress.nim
+Usage:
+  demo [optional-params] [args]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  --help, -?                 print this help message
+  -a=, --alpha=  int    1    growth constant
+  -b=, --beta=   float  2.0  shrink target
+====================================
 Test: test/TwoNondefaultedSeq.nim
 TwoNondefaultedSeq.nim(21, 11) template/generic instantiation from here
-/home/cb/pkg/nim/cligen/cligen.nim(95, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+/home/cb/pkg/nim/cligen/cligen.nim(102, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [optional-params] {stuff:seq[string]} [args]
 demo entry point with varied, meaningless parameters.
