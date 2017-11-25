@@ -191,6 +191,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
         mandatory.add(i)
         mandHelp &= " {" & $fpars[i][0] & ":" & $repr(fpars[i][1]) & "}"
   let posNoId = ident("posNo")          # positional arg number
+  let keyCountId = ident("keyCount")    # positional arg number
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
@@ -323,7 +324,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     from os     import commandLineParams
     from argcvt import argRet, argParse, argHelp, alignTable, addPrefix, postInc
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
-    import strutils # import join, `%`
+    import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): int =
@@ -332,6 +333,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       {.push hint[XDeclaredButNotUsed]: off.}
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
+        var `keyCountId` = initCountTable[string]()
         for kind,`keyId`,`valId` in
             getopt(args, `shortBoolId`, `longBoolId`,
                    `requireSeparator`, `sepChars`, `stopWords`):
