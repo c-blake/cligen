@@ -105,7 +105,7 @@ Usage:
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
-memory overhead.  This implementation is highly optimized!
+memory overhead.
   Options(opt-arg sep :|=|spc):
   --help, -?      print this help message
 ====================================
