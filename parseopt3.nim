@@ -1,51 +1,73 @@
-## This is a more featureful replacement for stdlib's parseopt2.  It should be
-## drop-in compatible if ``requireSeparator=true`` is passed to ``getopt`` or
-## ``initOptParser``.  Even with the default ``requireSeparator=false`` it is
-## "mostly" the same - accepting yet not requiring users to use a separator.
+#
+#
+#            Nim's Runtime Library
+#        (c) Copyright 2015 Andreas Rumpf
+#
+#    See the file "copying.txt", included in this
+#    distribution, for details about the copyright.
+#
+
+## This module provides the standard Nim command line parser.
+## It supports one convenience iterator over all command line options and some
+## lower-level features.
+## Supported command syntax (here ``=`` | ``:`` may be any char in ``sepChars``):
 ##
-## In addition to parseopt2 features, this version also provides flexibility
-## over requiring separators between option keys and option values, as per
-## traditional "Unix-like" command syntax, allows changing separator chars,
-## fully supports short and long options with **and without** option values,
-## and eases building "git-like" multiple command parsing.
-##
-## Supported command syntax is (here '=' and ':' may be any char in
-## ``sepChars``):
-##
-## 1. short option bundles: ``-abx``  (where a, b, x ARE IN `shortBools`)
+## 1. short option bundles: ``-abx``  (where a, b, x *are in* `shortNoArg`)
 ##
 ## 1a. bundles with one final value: ``-abc:Bar``, ``-abc=Bar``, ``-c Bar``,
-## ``-abcBar`` (where ``c`` is NOT IN ``shortBools``)
+## ``-abcBar`` (where ``c`` is *not in* ``shortNoArg``)
 ##
 ## 2. long options with values: ``--foo:bar``, ``--foo=bar``, ``--foo bar``
-## (where `foo` is NOT IN ``longBools``)
+## (where ``foo`` is *not in* ``longNoArg``)
 ##
-## 2a. long options without vals: ``--baz`` (where ``baz`` IS IN ``longBools``)
+## 2a. long options without vals: ``--baz`` (where ``baz`` *is in* ``longNoArg``)
 ##
 ## 3. command parameters: everything else | anything after "--" or a stop word.
 ##
-## The "key-value-separator-free" forms above require appropriate ``shortBools``
-## and ``longBools`` lists for boolean flags.  Note that valueless-keys only
-## make sense for boolean options.
+## The above is a *superset* of usual POSIX command syntax - it should accept
+## any POSIX-inspired input, but it also accepts more forms/styles. (Note that
+## POSIX is not super strict about this part of the standard.  See:
+## http://pubs.opengroup.org/onlinepubs/009604499/basedefs/xbd_chap12.html)
+##
+## When ``optionNormalize(key)`` is used, command authors provide command users
+## additional flexibility to ``--spell_multi-word_options -aVarietyOfWays
+## --as-Per_User-Preference``.  This is similar to Nim style-insensitive
+## identifier syntax, but by default allows dash ('-') as well as underscore
+## ('_') word separation.
+##
+## The "separator free" forms above require appropriate ``shortNoArg`` and
+## ``longNoArg`` lists to designate option keys that take no argument (as well
+## as ``requireSeparator == false``).
 ##
 ## A notable subtlety is when the first character of an option value is one of
 ## ``sepChars``.  Even if ``requireSeparator`` is ``false``, passing such option
 ## values requires either A) putting the value in the next command parameter,
 ## as in ``"-c :"`` or B) prefixing the value with an element of ``sepChars``,
-## as in ``-c=:`` or ``-c::``.
+## as in ``-c=:`` or ``-c::``.  Both choices fit into common quoting styles.
+## It seems likely a POSIX-habituated end-user's second guess (after ``"-c:"``
+## errored out with "argument expected") would just work as they expected.
+## POSIX itself encourages authors & users to use the ``"-c :"`` form anyway.
+## This small deviation lets this parser accept valid invocations with the
+## original Nim option parser command syntax (with the same semantics), easing
+## transition.
 ##
-## To ease "nested" command-line parsing (such as with git where there may be
+## To ease "nested" command-line parsing (such as with "git" where there may be
 ## early global options, a subcommand and later subcommand options), this parser
 ## also supports a set of "stop words" - special whole command parameters that
 ## prevent any subsequent parameters being interpreted as options.  This feature
 ## makes it easy to fully process a command line and then re-process its tail
 ## rather than mandating breaking out at a stop word with a manual test.  Stop
-## words are basically just like the Unix "--" (which this parser also supports
-## even if "--" is not in stopWords).  Such stop words (or "--") can still be
-## the **values** to any options.  Only usage as a non-option command parameter
-## acts to stop possible option-treatment of later parameters.
+## words are basically just like a POSIX "--" (which this parser also supports -
+## even if "--" is not in ``stopWords``).  Such stop words (or "--") can still
+## be the **values** of option arguments.  Only usage as a non-option command
+## parameter acts to stop possible option-treatment of later parameters.
 
-import os, strutils
+{.push debugger: off.}
+
+include "system/inclrtl"
+
+import
+  os, strutils
 
 type
   CmdLineKind* = enum         ## the detected command line token
@@ -59,27 +81,29 @@ type
     pos: int                  # current command parameter to inspect
     moreShort: string         # carry over short flags to process
     optsDone: bool            # "--" has been seen
-    shortBools: string        # 1-letter options not requiring optarg
-    longBools: seq[string]    # long options not requiring optarg
+    shortNoArg: string        # 1-letter options not requiring optarg
+    longNoArg: seq[string]    # long options not requiring optarg
     stopWords: seq[string]    # special literal parameters that act like "--"
     requireSep: bool          # require separator between option key & val
-    sepChars: set[char]
+    sepChars: set[char]       # all the chars that can be valid separators
     kind*: CmdLineKind        ## the detected command line token
     key*, val*: TaintedString ## key and value pair; ``key`` is the option
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
-proc initOptParser*(cmdline: seq[string] = commandLineParams(),
-                    shortBools: string = nil,
-                    longBools: seq[string] = nil,
-                    requireSeparator=false,  # true imitates stdlib parseopt2
+{.deprecated: [TCmdLineKind: CmdLineKind, TOptParser: OptParser].}
+
+proc initOptParser*(cmdline: seq[string],
+                    shortNoArg: string = nil,
+                    longNoArg: seq[string] = nil,
+                    requireSeparator=false,  # true imitates old parseopt2
                     sepChars: string= "=:",
-                    stopWords: seq[string] = @[]): OptParser =
+                    stopWords: seq[string] = @[]): OptParser {.rtl.} =
   ## Initializes a command line parse. `cmdline` should not contain parameter 0,
   ## typically the program name.  If `cmdline` is not given, default to current
   ## program parameters.
   ##
-  ## `shortBools` and `longBools` specify respectively one-letter and long
+  ## `shortNoArg` and `longNoArg` specify respectively one-letter and long
   ## option keys that do _not_ take arguments.
   ##
   ## If `requireSeparator` is true, then option keys & values must be separated
@@ -91,15 +115,35 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ##
   ## Parameters following either "--" or any literal parameter in stopWords are
   ## never interpreted as options.
+  when not defined(createNimRtl):
+    if cmdline == nil:
+      result.cmd = commandLineParams()
+      return
+  else:
+    assert cmdline != nil, "Cannot determine command line arguments."
   result.cmd = @cmdline                 #XXX is @ necessary?  Does that copy?
-  result.shortBools = shortBools
-  result.longBools = longBools
+  result.shortNoArg = shortNoArg
+  result.longNoArg = longNoArg
   result.requireSep = requireSeparator
   for c in sepChars:
     result.sepChars.incl(c)
   result.stopWords = stopWords
   result.moreShort = ""
   result.optsDone = false
+
+proc initOptParser*(cmdline: string): OptParser {.rtl, deprecated.} =
+  ## Initalizes option parses with cmdline. Splits cmdline in on spaces
+  ## and calls initOptParser(openarray[string])
+  ## Do not use.
+  if cmdline == "": # backward compatibility
+    return initOptParser(seq[string](nil))
+  else:
+    return initOptParser(cmdline.split)
+
+when not defined(createNimRtl):
+  proc initOptParser*(): OptParser =
+    ## Initializes option parser from current command line arguments.
+    return initOptParser(commandLineParams())
 
 proc do_short(p: var OptParser) =
   p.kind = cmdShortOption
@@ -108,7 +152,7 @@ proc do_short(p: var OptParser) =
   p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len == 0:              # param exhausted; advance param
     p.pos += 1
-  if p.shortBools != nil and p.key in p.shortBools:     # no opt argument =>
+  if p.shortNoArg != nil and p.key in p.shortNoArg:     # no opt argument =>
     return                                              # continue w/same param
   if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
@@ -123,7 +167,7 @@ proc do_short(p: var OptParser) =
   if p.pos < p.cmd.len:                 # Empty moreShort; opt arg = next param
     p.val = p.cmd[p.pos]
     p.pos += 1
-  elif p.shortBools != nil:
+  elif p.shortNoArg != nil:
     echo "argument expected for option `", p.key, "` at end of params"
 
 proc do_long(p: var OptParser) =
@@ -139,11 +183,11 @@ proc do_long(p: var OptParser) =
   if sep > 2:
     p.key = param[2 .. sep-1]
     p.val = param[sep+1..^1]
-    if p.longBools != nil and p.key in p.longBools:
+    if p.longNoArg != nil and p.key in p.longNoArg:
       echo "Warning option `", p.key, "` does not expect an argument"
     return
   p.key = param[2..^1]                  # no sep; key is whole param past --
-  if p.longBools != nil and p.key in p.longBools:
+  if p.longNoArg != nil and p.key in p.longNoArg:
     return                              # No argument; done
   if p.requireSep:
     echo "Expecting option key-val separator :|= after `", p.key, "`"
@@ -151,10 +195,10 @@ proc do_long(p: var OptParser) =
   if p.pos < p.cmd.len:                 # Take opt arg from next param
     p.val = p.cmd[p.pos]
     p.pos += 1
-  elif p.longBools != nil:
+  elif p.longNoArg != nil:
     echo "argument expected for option `", p.key, "` at end of params"
 
-proc next*(p: var OptParser) =
+proc next*(p: var OptParser) {.rtl, extern: "npo2$1".} =
   if p.moreShort.len > 0:               #Step1: handle any remaining short opts
     do_short(p)
     return
@@ -170,11 +214,11 @@ proc next*(p: var OptParser) =
     p.pos += 1
     return
   if p.cmd[p.pos].startsWith("--"):     #Step5: "--*"
-    if p.cmd[p.pos].len == 2:           # terminating "--" => pure arg mode
+    if p.cmd[p.pos].len == 2:           # terminating "--" => pure param mode
       p.optsDone = true                 # should only hit Step3 henceforth
       p.pos += 1                        # skip the "--" itself, unlike stopWords
       next(p)                           # do next one so each parent next()..
-      return                            #..yields exactly 1 opt+arg|cmdarg
+      return                            #..yields exactly 1 opt+arg|cmdparam
     do_long(p)
   else:                                 #Step6: "-" but not "--" => short opt
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
@@ -187,13 +231,25 @@ proc next*(p: var OptParser) =
       do_short(p)
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
-  ## Normalizes option key `s`.
+  ## Normalizes option key `s` to allow command syntax to be style-insensitive
+  ## in a similar way to Nim identifier syntax.
   ##
-  ## That means to convert ALL BUT FIRST char to lower case and remove any
-  ## chars in wordSeparators ('_' and '-') by default.
+  ## Specifically this means to convert *all but the first* char to lower case
+  ## and remove chars in ``wordSeparators`` ('_' and '-') by default.  This way
+  ## users can type "command --my-opt-key" or "command --myOptKey" and so on.
+  ##
+  ## Example:
+  ##
+  ## .. code-block:: nim
+  ##   for kind, key, val in p.getopt():
+  ##     case kind
+  ##     of cmdLongOption, cmdShortOption:
+  ##       case optionNormalize(key)
+  ##       of "myoptkey", "m": doSomething()
   result = newString(s.len)
-  var wordSeps: set[char]
-  for c in wordSeparators: wordSeps.incl(c)
+  var wordSeps: set[char]   # compile a set[char] from ``wordSeparators``
+  for c in wordSeparators:
+    wordSeps.incl(c)
   result[0] = s[0]
   var j = 1
   for i in 1..len(s) - 1:
@@ -203,30 +259,61 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
     elif s[i] notin wordSeps:
       result[j] = s[i]
       inc j
-  if j != s.len: setLen(result, j)
+  if j != s.len:
+    setLen(result, j)
+
+proc cmdLineRest*(p: OptParser): TaintedString {.rtl, extern: "npo2$1", deprecated.} =
+  ## Returns part of command line string that has not been parsed yet.
+  ## Do not use - does not correctly handle whitespace.
+  return p.cmd[p.pos..p.cmd.len-1].join(" ")
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
 
-iterator getopt*(cmdline=commandLineParams(), shortBools: string = nil,
-                 longBools: seq[string] = nil, requireSeparator=true,
-                 sepChars="=:", stopWords: seq[string] = @[]): GetoptResult =
-  ## This is an convenience iterator for iterating over the command line.
-  ## Parameters here are the same as for initOptParser.  Example:
+{.deprecated: [TGetoptResult: GetoptResult].}
+
+iterator getopt*(p: var OptParser): GetoptResult =
+  ## This is an convenience iterator for iterating over the given OptParser object.
+  ## Example:
+  ##
   ## .. code-block:: nim
-  ##   var filename = ""
-  ##   for kind, key, val in getopt():
+  ##   var p = initOptParser("--left --debug:3 -l=4 -r:2")
+  ##   for kind, key, val in p.getopt():
   ##     case kind
+  ##     of cmdArgument:
+  ##       filename = key
   ##     of cmdLongOption, cmdShortOption:
   ##       case key
   ##       of "help", "h": writeHelp()
   ##       of "version", "v": writeVersion()
-  ##     else:              # must be non-option cmdArgument
-  ##       filename = key
-  ##   if filename == "": writeHelp()
-  var p = initOptParser(cmdline, shortBools, longBools, requireSeparator,
-                        sepChars, stopWords)
+  ##     of cmdEnd: assert(false) # cannot happen
+  ##   if filename == "":
+  ##     # no filename has been given, so we show the help:
+  ##     writeHelp()
+  p.pos = 0
   while true:
     next(p)
     if p.kind == cmdEnd: break
     yield (p.kind, p.key, p.val)
+
+when declared(paramCount):
+  iterator getopt*(cmdline=commandLineParams(), shortNoArg: string = nil,
+                   longNoArg: seq[string] = nil, requireSeparator=false,
+                   sepChars="=:", stopWords: seq[string] = @[]): GetoptResult =
+    ## This is an convenience iterator for iterating over the command line.
+    ## Parameters here are the same as for initOptParser.  Example:
+    ## See above for a more detailed example
+    ##
+    ## .. code-block:: nim
+    ##   for kind, key, val in getopt():
+    ##     # this will iterate over all arguments passed to the cmdline.
+    ##     continue
+    ##
+    var p = initOptParser(cmdline, shortNoArg, longNoArg, requireSeparator,
+                          sepChars, stopWords)
+    while true:
+      next(p)
+      if p.kind == cmdEnd: break
+      yield (p.kind, p.key, p.val)
+
+{.pop.}
