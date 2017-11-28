@@ -62,8 +62,8 @@ template argParse*(dst: bool, key: string, val: string, help: string) =
 template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
                   parNm: string, sh: string, parHelp: string) =
   helpT.add([ keys(parNm, sh, argSep=""), "toggle", $defVal, parHelp ])
-  shortBool.add(sh)                 # only bools can elide option arguments..
-  longBool.add(parNm)               #..and so only those should add to *Bool.
+  shortNoArg.add(sh)                # bool must elide option arguments.
+  longNoArg.add(parNm)              # So, add to *NoArg.
 
 # string
 template argParse*(dst: string, key: string, val: string, help: string) =
