@@ -173,7 +173,10 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
-  let disNm = toNimIdent("dispatch" & $pro) # Name of dispatch wrapper
+  when declared(toNimIdent):
+    let disNm = toNimIdent("dispatch" & $pro) # Name of dispatch wrapper
+  else:
+    let disNm = !("dispatch" & $pro)    # Name of dispatch wrapper
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
