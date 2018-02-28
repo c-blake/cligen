@@ -26,7 +26,7 @@
 ##
 ## The above is a *superset* of usual POSIX command syntax - it should accept
 ## any POSIX-inspired input, but it also accepts more forms/styles. (Note that
-## POSIX is not super strict about this part of the standard.  See:
+## POSIX itself is not super strict about this part of the standard.  See:
 ## http://pubs.opengroup.org/onlinepubs/009604499/basedefs/xbd_chap12.html)
 ##
 ## When ``optionNormalize(key)`` is used, command authors provide command users
@@ -37,7 +37,8 @@
 ##
 ## The "separator free" forms above require appropriate ``shortNoArg`` and
 ## ``longNoArg`` lists to designate option keys that take no argument (as well
-## as ``requireSeparator == false``).
+## as ``requireSeparator == false``).  If such lists are empty, the user must
+## use separators.
 ##
 ## A notable subtlety is when the first character of an option value is one of
 ## ``sepChars``.  Even if ``requireSeparator`` is ``false``, passing such option
