@@ -70,7 +70,7 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
   if n.len > 1:
     for kid in n: collectComments(buf, kid, depth + 1)
   else:
-    if n.kind == nnkCommentStmt and depth < 5:
+    if n.kind == nnkCommentStmt and depth < 4:
       if n.strVal != nil:
         buf.add(" ")
         buf.add(n.strVal)
