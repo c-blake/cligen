@@ -65,8 +65,6 @@
 
 {.push debugger: off.}
 
-include "system/inclrtl"
-
 import
   os, strutils
 
@@ -99,7 +97,7 @@ proc initOptParser*(cmdline: seq[string],
                     longNoArg: seq[string] = nil,
                     requireSeparator=false,  # true imitates old parseopt2
                     sepChars: string= "=:",
-                    stopWords: seq[string] = @[]): OptParser {.rtl.} =
+                    stopWords: seq[string] = @[]): OptParser =
   ## Initializes a command line parse. `cmdline` should not contain parameter 0,
   ## typically the program name.  If `cmdline` is not given, default to current
   ## program parameters.
@@ -116,12 +114,9 @@ proc initOptParser*(cmdline: seq[string],
   ##
   ## Parameters following either "--" or any literal parameter in stopWords are
   ## never interpreted as options.
-  when not defined(createNimRtl):
-    if cmdline == nil:
-      result.cmd = commandLineParams()
-      return
-  else:
-    assert cmdline != nil, "Cannot determine command line arguments."
+  if cmdline == nil:
+    result.cmd = commandLineParams()
+    return
   result.cmd = cmdline
   result.shortNoArg = shortNoArg
   result.longNoArg = longNoArg
@@ -132,19 +127,17 @@ proc initOptParser*(cmdline: seq[string],
   result.moreShort = ""
   result.optsDone = false
 
-proc initOptParser*(cmdline: string): OptParser {.rtl, deprecated.} =
-  ## Initalizes option parses with cmdline. Splits cmdline in on spaces
-  ## and calls initOptParser(openarray[string])
-  ## Do not use.
+proc initOptParser*(cmdline: string): OptParser =
+  ## Initalizes option parses with cmdline.  Splits cmdline in on spaces and
+  ## calls initOptParser(openarray[string]).  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
     return initOptParser(seq[string](nil))
   else:
     return initOptParser(cmdline.split)
 
-when not defined(createNimRtl):
-  proc initOptParser*(): OptParser =
-    ## Initializes option parser from current command line arguments.
-    return initOptParser(commandLineParams())
+proc initOptParser*(): OptParser =
+  ## Initializes option parser from current command line arguments.
+  return initOptParser(commandLineParams())
 
 proc do_short(p: var OptParser) =
   p.kind = cmdShortOption
@@ -199,7 +192,7 @@ proc do_long(p: var OptParser) =
   elif p.longNoArg != nil:
     echo "argument expected for option `", p.key, "` at end of params"
 
-proc next*(p: var OptParser) {.rtl, extern: "npo2$1".} =
+proc next*(p: var OptParser) =
   if p.moreShort.len > 0:               #Step1: handle any remaining short opts
     do_short(p)
     return
@@ -262,11 +255,6 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
       inc j
   if j != s.len:
     setLen(result, j)
-
-proc cmdLineRest*(p: OptParser): TaintedString {.rtl, extern: "npo2$1", deprecated.} =
-  ## Returns part of command line string that has not been parsed yet.
-  ## Do not use - does not correctly handle whitespace.
-  return p.cmd[p.pos..p.cmd.len-1].join(" ")
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
