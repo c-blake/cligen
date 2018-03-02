@@ -1,4 +1,5 @@
-## This module provides a Nim command line parser.
+## This module provides a Nim command line parser that is mostly API compatible
+## with the Nim standard library parseopt (and the code derives from that).
 ## It supports one convenience iterator over all command line options and some
 ## lower-level features.
 ## Supported command syntax (here ``=`` | ``:`` may be any char in ``sepChars``):
@@ -78,7 +79,7 @@ type
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
-proc initOptParser*(cmdline: seq[string],
+proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoArg: string = nil,
                     longNoArg: seq[string] = nil,
                     requireSeparator=false,  # true imitates old parseopt2
@@ -120,10 +121,6 @@ proc initOptParser*(cmdline: string): OptParser =
     return initOptParser(seq[string](nil))
   else:
     return initOptParser(cmdline.split)
-
-proc initOptParser*(): OptParser =
-  ## Initializes option parser from current command line arguments.
-  return initOptParser(commandLineParams())
 
 proc do_short(p: var OptParser) =
   p.kind = cmdShortOption
