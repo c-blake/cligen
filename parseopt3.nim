@@ -90,8 +90,6 @@ type
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
-{.deprecated: [TCmdLineKind: CmdLineKind, TOptParser: OptParser].}
-
 proc initOptParser*(cmdline: seq[string],
                     shortNoArg: string = nil,
                     longNoArg: seq[string] = nil,
@@ -258,8 +256,6 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
-
-{.deprecated: [TGetoptResult: GetoptResult].}
 
 iterator getopt*(p: var OptParser): GetoptResult =
   ## This is an convenience iterator for iterating over the given OptParser object.
