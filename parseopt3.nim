@@ -128,7 +128,7 @@ proc initOptParser*(cmdline: seq[string],
   result.optsDone = false
 
 proc initOptParser*(cmdline: string): OptParser =
-  ## Initalizes option parses with cmdline.  Splits cmdline in on spaces and
+  ## Initializes option parses with cmdline.  Splits cmdline in on spaces and
   ## calls initOptParser(openarray[string]).  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
     return initOptParser(seq[string](nil))
