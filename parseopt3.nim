@@ -1,13 +1,4 @@
-#
-#
-#            Nim's Runtime Library
-#        (c) Copyright 2015 Andreas Rumpf
-#
-#    See the file "copying.txt", included in this
-#    distribution, for details about the copyright.
-#
-
-## This module provides the standard Nim command line parser.
+## This module provides a Nim command line parser.
 ## It supports one convenience iterator over all command line options and some
 ## lower-level features.
 ## Supported command syntax (here ``=`` | ``:`` may be any char in ``sepChars``):
@@ -63,10 +54,7 @@
 ## be the **values** of option arguments.  Only usage as a non-option command
 ## parameter acts to stop possible option-treatment of later parameters.
 
-{.push debugger: off.}
-
-import
-  os, strutils
+import os, strutils
 
 type
   CmdLineKind* = enum         ## the detected command line token
@@ -300,5 +288,3 @@ when declared(paramCount):
       next(p)
       if p.kind == cmdEnd: break
       yield (p.kind, p.key, p.val)
-
-{.pop.}
