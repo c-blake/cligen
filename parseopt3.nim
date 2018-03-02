@@ -122,7 +122,7 @@ proc initOptParser*(cmdline: seq[string],
       return
   else:
     assert cmdline != nil, "Cannot determine command line arguments."
-  result.cmd = @cmdline                 #XXX is @ necessary?  Does that copy?
+  result.cmd = cmdline
   result.shortNoArg = shortNoArg
   result.longNoArg = longNoArg
   result.requireSep = requireSeparator
