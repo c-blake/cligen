@@ -1,5 +1,5 @@
 from parseutils import parseInt, parseFloat
-from strutils   import `%`, join, split, wordWrap, repeat, escape
+from strutils   import `%`, join, split, wordWrap, repeat, escape, strip
 from terminal   import terminalWidth
 
 proc postInc*(x: var int): int =
@@ -62,8 +62,8 @@ template argParse*(dst: bool, key: string, val: string, help: string) =
 template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
                   parNm: string, sh: string, parHelp: string) =
   helpT.add([ keys(parNm, sh, argSep=""), "toggle", $defVal, parHelp ])
-  shortNoArg.add(sh)                # bool must elide option arguments.
-  longNoArg.add(parNm)              # So, add to *NoArg.
+  shortNoVal.incl(sh[0])            # bool must elide option arguments.
+  longNoVal.add(parNm)              # So, add to *NoVal.
 
 # string
 template argParse*(dst: string, key: string, val: string, help: string) =

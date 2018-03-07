@@ -202,8 +202,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let HelpOnlyId = ident("HelpOnly")    # local just help exception
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
-  let shortNoArgId = ident("shortNoArg") #local list of arg-free short opts
-  let longNoArgId = ident("longNoArg")  # local list of arg-free long opts
+  let shortNoValId = ident("shortNoVal") #local list of arg-free short opts
+  let longNoValId = ident("longNoVal")  # local list of arg-free long opts
   let keyId = ident("key")              # local option key
   let valId = ident("val")              # local option val
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
@@ -220,8 +220,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     result.add(quote do:
       var `tabId`: seq[array[0..3, string]] =
         @[ [ "--help, -?", "", "", "print this help message" ] ]
-      var `shortNoArgId`: string = "?"   # argHelp(..,bool,..) updates these
-      var `longNoArgId`: seq[string] = @[ "help" ])
+      var `shortNoValId`: set[char] = {'?'}  # argHelp(..,bool,..) updates these
+      var `longNoValId`: seq[string] = @[ "help" ])
     var args = "[optional-params]" & mandHelp &
                (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
     for i in 1 ..< len(fpars):
@@ -338,7 +338,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
         for kind,`keyId`,`valId` in
-            getopt(args, `shortNoArgId`, `longNoArgId`,
+            getopt(args, `shortNoValId`, `longNoValId`,
                    `requireSeparator`, `sepChars`, `stopWords`):
           case kind
               of cmdLongOption, cmdShortOption:

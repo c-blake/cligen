@@ -4,15 +4,15 @@
 ## lower-level features.
 ## Supported command syntax (here ``=`` | ``:`` may be any char in ``sepChars``):
 ##
-## 1. short option bundles: ``-abx``  (where a, b, x *are in* `shortNoArg`)
+## 1. short option bundles: ``-abx``  (where a, b, x *are in* `shortNoVal`)
 ##
 ## 1a. bundles with one final value: ``-abc:Bar``, ``-abc=Bar``, ``-c Bar``,
-## ``-abcBar`` (where ``c`` is *not in* ``shortNoArg``)
+## ``-abcBar`` (where ``c`` is *not in* ``shortNoVal``)
 ##
 ## 2. long options with values: ``--foo:bar``, ``--foo=bar``, ``--foo bar``
-## (where ``foo`` is *not in* ``longNoArg``)
+## (where ``foo`` is *not in* ``longNoVal``)
 ##
-## 2a. long options without vals: ``--baz`` (where ``baz`` *is in* ``longNoArg``)
+## 2a. long options without vals: ``--baz`` (where ``baz`` *is in* ``longNoVal``)
 ##
 ## 3. command parameters: everything else | anything after "--" or a stop word.
 ##
@@ -27,8 +27,8 @@
 ## identifier syntax, but by default allows dash ('-') as well as underscore
 ## ('_') word separation.
 ##
-## The "separator free" forms above require appropriate ``shortNoArg`` and
-## ``longNoArg`` lists to designate option keys that take no argument (as well
+## The "separator free" forms above require appropriate ``shortNoVal`` and
+## ``longNoVal`` lists to designate option keys that take no argument (as well
 ## as ``requireSeparator == false``).  If such lists are empty, the user must
 ## use separators.
 ##
@@ -69,8 +69,8 @@ type
     pos: int                  # current command parameter to inspect
     moreShort: string         # carry over short flags to process
     optsDone: bool            # "--" has been seen
-    shortNoArg: string        # 1-letter options not requiring optarg
-    longNoArg: seq[string]    # long options not requiring optarg
+    shortNoVal: set[char]     # 1-letter options not requiring optarg
+    longNoVal: seq[string]    # long options not requiring optarg
     stopWords: seq[string]    # special literal parameters that act like "--"
     requireSep: bool          # require separator between option key & val
     sepChars: set[char]       # all the chars that can be valid separators
@@ -80,8 +80,8 @@ type
                               ## the option was given a value
 
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
-                    shortNoArg: string = nil,
-                    longNoArg: seq[string] = nil,
+                    shortNoVal: set[char] = {},
+                    longNoVal: seq[string] = nil,
                     requireSeparator=false,  # true imitates old parseopt2
                     sepChars: string= "=:",
                     stopWords: seq[string] = @[]): OptParser =
@@ -89,7 +89,7 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## typically the program name.  If `cmdline` is not given, default to current
   ## program parameters.
   ##
-  ## `shortNoArg` and `longNoArg` specify respectively one-letter and long
+  ## `shortNoVal` and `longNoVal` specify respectively one-letter and long
   ## option keys that do _not_ take arguments.
   ##
   ## If `requireSeparator` is true, then option keys & values must be separated
@@ -105,8 +105,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
     result.cmd = commandLineParams()
     return
   result.cmd = cmdline
-  result.shortNoArg = shortNoArg
-  result.longNoArg = longNoArg
+  result.shortNoVal = shortNoVal
+  result.longNoVal = longNoVal
   result.requireSep = requireSeparator
   for c in sepChars:
     result.sepChars.incl(c)
@@ -129,7 +129,7 @@ proc do_short(p: var OptParser) =
   p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len == 0:              # param exhausted; advance param
     p.pos += 1
-  if p.shortNoArg != nil and p.key in p.shortNoArg:     # no opt argument =>
+  if card(p.shortNoVal) > 0 and p.key[0] in p.shortNoVal:  # no opt argument =>
     return                                              # continue w/same param
   if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
@@ -144,7 +144,7 @@ proc do_short(p: var OptParser) =
   if p.pos < p.cmd.len:                 # Empty moreShort; opt arg = next param
     p.val = p.cmd[p.pos]
     p.pos += 1
-  elif p.shortNoArg != nil:
+  elif card(p.shortNoVal) > 0:
     echo "argument expected for option `", p.key, "` at end of params"
 
 proc do_long(p: var OptParser) =
@@ -160,11 +160,11 @@ proc do_long(p: var OptParser) =
   if sep > 2:
     p.key = param[2 .. sep-1]
     p.val = param[sep+1..^1]
-    if p.longNoArg != nil and p.key in p.longNoArg:
+    if p.longNoVal != nil and p.key in p.longNoVal:
       echo "Warning option `", p.key, "` does not expect an argument"
     return
   p.key = param[2..^1]                  # no sep; key is whole param past --
-  if p.longNoArg != nil and p.key in p.longNoArg:
+  if p.longNoVal != nil and p.key in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
     echo "Expecting option key-val separator :|= after `", p.key, "`"
@@ -172,7 +172,7 @@ proc do_long(p: var OptParser) =
   if p.pos < p.cmd.len:                 # Take opt arg from next param
     p.val = p.cmd[p.pos]
     p.pos += 1
-  elif p.longNoArg != nil:
+  elif p.longNoVal != nil:
     echo "argument expected for option `", p.key, "` at end of params"
 
 proc next*(p: var OptParser) =
@@ -267,8 +267,8 @@ iterator getopt*(p: var OptParser): GetoptResult =
     yield (p.kind, p.key, p.val)
 
 when declared(paramCount):
-  iterator getopt*(cmdline=commandLineParams(), shortNoArg: string = nil,
-                   longNoArg: seq[string] = nil, requireSeparator=false,
+  iterator getopt*(cmdline=commandLineParams(), shortNoVal: set[char] = {},
+                   longNoVal: seq[string] = nil, requireSeparator=false,
                    sepChars="=:", stopWords: seq[string] = @[]): GetoptResult =
     ## This is an convenience iterator for iterating over the command line.
     ## Parameters here are the same as for initOptParser.  Example:
@@ -279,7 +279,7 @@ when declared(paramCount):
     ##     # this will iterate over all arguments passed to the cmdline.
     ##     continue
     ##
-    var p = initOptParser(cmdline, shortNoArg, longNoArg, requireSeparator,
+    var p = initOptParser(cmdline, shortNoVal, longNoVal, requireSeparator,
                           sepChars, stopWords)
     while true:
       next(p)

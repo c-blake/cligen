@@ -15,8 +15,8 @@ when isMainModule:
     var XXverb=false
     var XXitem=""
     var XXargs: seq[string] = @[]
-    var shortNoArg: string = ""                     #only needed for argHelp()
-    var longNoArg: seq[string] = @[]
+    var shortNoVal: set[char] = {}                  #only needed for argHelp()
+    var longNoVal: seq[string] = @[]
     var tab: seq[array[0..3, string]] = @[          #2: build help
              [ "--help, -?", "", "", "print this help message" ] ]
     argHelp(tab, XXalpha, "alpha", "a", "meaning of alpha")

@@ -29,8 +29,8 @@ when isMainModule:
                     parNm: string, sh: string, parHelp: string) =
     if parNm == "verb":
       helpT.add([ keys(parNm, sh), "[bool]", $defVal, parHelp ])
-      shortNoArg.add(sh)
-      longNoArg.add(parNm)
+      shortNoVal.incl(sh[0])
+      longNoVal.add(parNm)
     else:
       helpT.add([ keys(parNm, sh), "int", $defVal, parHelp ])
 
