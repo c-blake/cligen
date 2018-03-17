@@ -373,6 +373,18 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
     helpTabColumns, stopWords, positional, argPre, argPost, suppress))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
+proc subCommandName(node: NimNode): string {.compileTime.} =
+  ## Helper for dispatchMulti. Takes as input one bracket expression containing
+  ## the command name and the arguments to dispatchGen(). Returns either the
+  ## command name (the first child of the bracket expression) or the value given
+  ## to `cmdname` argument.
+  result = $node[0]
+  for child in node:
+    if child.kind == nnkExprEqExpr:
+      if $child[0] == "cmdname":
+        result = $child[1]
+        break
+
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
   ## call quit(said dispatcher); procBrackets=arg lists for dispatchGen(), e.g,
@@ -408,7 +420,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     inc(cnt)
     let disp = "dispatch_" & $p[0]
-    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode($(p[0]))).add(
+    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode(subCommandName(p))).add(
       newCall("quit", newCall(disp, restId))))
     let sep = if cnt < len(procBrackets): "\n" else: ""
     helps.add(newNimNode(nnkDiscardStmt).add(
@@ -419,7 +431,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   result.add(quote do:
     var `subcmdsId`: seq[string] = @[ ])
   for p in procBrackets:
-    result.add(newCall("add", subcmdsId, newStrLitNode($p[0])))
+    result.add(newCall("add", subcmdsId, newStrLitNode(subCommandName(p))))
   result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " &
