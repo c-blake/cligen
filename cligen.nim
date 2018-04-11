@@ -165,7 +165,10 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
   #XXX needs either to accessed at top-level or assigned in a shadow local.
-  let impl = pro.symbol.getImpl
+  when compiles(pro.getImpl):
+    let impl = pro.getImpl
+  else:
+    let impl = pro.symbol.getImpl
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
   if cmtDoc == nil or cmtDoc.len == 0:  # allow caller to override commentDoc
@@ -173,10 +176,12 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
-  when declared(toNimIdent):
-    let disNm = toNimIdent("dispatch" & $pro) # Name of dispatch wrapper
+  when compiles(ident("dispatch" & $pro)):  # Name of dispatch wrapper
+    let disNm = ident("dispatch" & $pro)
+  elif compiles(!("dispatch" & $pro)):
+    let disNm = !("dispatch" & $pro)
   else:
-    let disNm = !("dispatch" & $pro)    # Name of dispatch wrapper
+    let disNm = toNimIdent("dispatch" & $pro)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
