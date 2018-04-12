@@ -1,8 +1,14 @@
 import macros, tables, parseopt3, strutils, os
 
 proc toString(c: char): string =
+  ## creates a string from char `c`
   result = newStringOfCap(1)
   if c != '\0': result.add(c)
+
+proc toStrLitNode*(n: NimNode): NimNode =
+  ## creates a string literal node from a char literal NimNode
+  result = newNimNode(nnkStrLit)
+  result.strVal = toString(chr(n.intVal))
 
 proc toStrSeq(strSeqInitializer: NimNode): seq[string] =
   result = newSeq[string]()
@@ -122,7 +128,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
                     helpTabOption, helpTabType, helpTabDefault, helpTabDescrip],
                    stopWords: seq[string] = @[], positional = "",
                    argPre:seq[string]= @[], argPost:seq[string]= @[],
-                   suppress:seq[string]= @[]): untyped =
+                   suppress:seq[string]= @[], shortHelp='h'): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -218,15 +224,17 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   let htRowSep = helpTabRowSep
   let htCols   = helpTabColumns
   let prlude   = prelude
+  let shortHlp = shortHelp
 
   proc initVars(): NimNode =            # init vars & build help str
     result = newStmtList()
     let tabId = ident("tab")            # local help table var
     result.add(quote do:
+      let shortH = toString(`shortHlp`)
       var `tabId`: seq[array[0..3, string]] =
-        @[ [ "--help, -?", "", "", "print this help message" ] ]
-      var `shortNoValId`: set[char] = {'?'}  # argHelp(..,bool,..) updates these
-      var `longNoValId`: seq[string] = @[ "help" ])
+        @[ [ "-" & shortH & ", --help", "", "", "print this help message" ] ]
+      var `shortNoValId`: set[char] = { shortH[0] }   # argHelp(bool) updates
+      var `longNoValId`: seq[string] = @[ "help" ])   # argHelp(bool) appends
     var args = "[optional-params]" & mandHelp &
                (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
     for i in 1 ..< len(fpars):
@@ -257,7 +265,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   proc defOptCases(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
     result.add(newNimNode(nnkOfBranch).add(
-      newStrLitNode("help"),newStrLitNode("?")).add(
+      newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do: stderr.write(`helpId`); raise newException(`HelpOnlyId`,"")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
@@ -368,14 +376,14 @@ macro dispatch*(pro: typed, cmdName: string="", doc: string="",
                                     helpTabDescrip ],
                 stopWords: seq[string] = @[], positional = "",
                 argPre:seq[string] = @[], argPost:seq[string] = @[],
-                suppress:seq[string] = @[]): untyped =
+                suppress:seq[string] = @[], shortHelp='h'): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
     requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
-    helpTabColumns, stopWords, positional, argPre, argPost, suppress))
+    helpTabColumns, stopWords, positional, argPre, argPost, suppress, shortHelp))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =

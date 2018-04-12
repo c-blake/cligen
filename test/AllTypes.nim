@@ -37,4 +37,4 @@ proc demo(aa: bool = false,
   for i, arg in args: echo "positional[", i, "]: ", repr(arg)
   return 42
 
-when isMainModule: import cligen; dispatch(demo)
+when isMainModule: import cligen; dispatch(demo, shortHelp='?')
