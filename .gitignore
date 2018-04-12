@@ -32,3 +32,4 @@ test/HelpTabCols
 test/out
 test/Suppress
 test/FancyRepeats
+test/OneCharParams

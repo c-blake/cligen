@@ -254,6 +254,16 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --aaah      toggle  false  set aaah
   --aloha=    string  ""     set aloha
 ====================================
+Test: test/OneCharParams.nim
+Usage:
+  demo [optional-params] [b]
+This tests if single character parameters work as expected
+  Options(opt-arg sep :|=|spc):
+  -h, --help                      print this help message
+  -u=, --u=   int     1           set u
+  -c=, --c=   string  "bad name"  set c
+  -g=, --g=   string  "ho"        set g
+====================================
 Test: test/PerParam.nim
 Usage:
   demo [optional-params] [args]

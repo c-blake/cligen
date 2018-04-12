@@ -273,7 +273,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
       let parNm  = $fpars[i][0]
       let lopt   = optionNormalize(parNm)
       let apCall = newCall("argParse", spars[i][0], keyId, valId, helpId)
-      if parNm in shOpt:                      # both a long and short option
+      if parNm in shOpt and lopt.len > 1:     # both a long and short option
         let parShOpt = $shOpt.getOrDefault(parNm)
         result.add(newNimNode(nnkOfBranch).add(
           newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
