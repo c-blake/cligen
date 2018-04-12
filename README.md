@@ -21,7 +21,7 @@ Usage:
 Some existing API call
 
 Options (opt&arg sep by :,=,spc):
-  -?, --help                  print this help message
+  -h, --help                  print this help message
   -f=, --foo=  int     1      set foo
   -b=, --bar=  float   2.0    set bar
   --baz=       string  "hi"   set baz
