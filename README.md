@@ -109,8 +109,7 @@ There are only a few very easy rules to learn:
 
  3. Only basic procs supported -- no 'auto' types, 'var' types, generics, etc.
    
- 4. No param of a wrapped proc can be named "help" and there can be no '?' user
-    short option key. (Name collisions!)
+ 4. No param of a wrapped proc can be named "help".  (Name collisions!)
 
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------

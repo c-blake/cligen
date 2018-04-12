@@ -167,6 +167,8 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
   ## `suppress` is a list of names of formal parameters to NOT include in the
   ## parsing/assigning system.  Such names are effectively pinned to whatever
   ## their default values are.
+  ##
+  ## `shortHelp` is a char to use for a short option key analogue of --help.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
