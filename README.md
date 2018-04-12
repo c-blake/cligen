@@ -13,8 +13,8 @@ proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
 
 when isMainModule: import cligen; dispatch(foobar)    # Whoa...Just one line??
 ```
-Compile it to foobar (assuming ``nim c foobar.nim`` is appropriate, say) and then
-run ``./foobar --help`` to get a minimal (but not so useless) help message:
+Compile it to foobar (assuming ``nim c foobar.nim`` is appropriate, say) and
+then run ``./foobar --help`` to get a minimal (but not so useless) help message:
 ```
 Usage:
   foobar [optional-params] [paths]
@@ -133,8 +133,8 @@ Extending `cligen` to support new parameter types (more on Rule 2)
 system can be extended pretty easily to user-defined types.
 
 You can extend the set of supported parameter conversion types by defining a
-couple helper templates before invoking `dispatch`.  All you need do is define a
-compatible `argParse` and `argHelp` for any new Nim parameter types you want.
+couple helper templates before invoking `dispatch`.  All you need do is define
+a compatible `argParse` and `argHelp` for any new Nim parameter types you want.
 Basically, `argParse` parses a string into a Nim value and `argHelp` provides
 simple guidance on what that syntax is for command users.
 
