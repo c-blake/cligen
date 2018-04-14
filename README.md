@@ -97,7 +97,9 @@ while ``./cmd subcommand --help`` emits just the message for ``subcommand``.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
-messages that exhibit the basic mappings.
+messages that exhibit the basic mappings.  The default help tables play well
+with automated "help to X" tools such as ``complete -F _longopt`` in bash,
+``compdef _gnu_generic`` in zsh, or the GNU ``help2man`` package.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
