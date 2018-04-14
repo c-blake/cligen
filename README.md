@@ -99,7 +99,9 @@ That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
 messages that exhibit the basic mappings.  The default help tables play well
 with automated "help to X" tools such as ``complete -F _longopt`` in bash,
-``compdef _gnu_generic`` in zsh, or the GNU ``help2man`` package.
+``compdef _gnu_generic`` in zsh, or the GNU ``help2man`` package.  There are
+also many examples in https://github.com/c-blake/cligen/tree/master/test/ that
+double as an automated test suite.
 
 Basic Requirements For A Proc To Have A Well-Inferred Command
 =============================================================
@@ -161,7 +163,11 @@ when isMainModule:
   dispatch(demo, doc="NOTE: CSV=comma-separated value list")
 ```
 Of course, you often want more input validation than this.  See `argcvt.nim` in
-the `cligen` package for the currently supported types and more details.
+the `cligen` package for the currently supported types and more details.  Due
+to ordinary Nim rules, if you dislike any of the default `argParse`/`argHelp`
+implementations for a given type then you can override them by defining your
+own in scope before invoking `dispatch`.  For example, `test/FancyRepeats.nim`
+shows how to make `int` or `seq` behavior additive.
 
 Exit Code Behavior
 ==================
