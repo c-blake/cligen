@@ -6,7 +6,7 @@ proc demo(alpha=1, verb=false, args: seq[string], stuff: seq[string]): int=
 
 when isMainModule:
   from strutils import split, `%`, join
-  from argcvt   import keys, argRet  # Little helpers
+  from argcvt   import keys, argRet, argRq  # Little helpers
 
   template argParse(dst: seq[string], key: string, val: string, help: string) =
     if val == nil:
@@ -14,8 +14,9 @@ when isMainModule:
     dst = val.split(",")
 
   template argHelp(helpT: seq[array[0..3, string]], defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string) =
-    helpT.add([keys(parNm, sh), "CSV", "\"" & defVal.join(",") & "\"", parHelp])
+                   parNm: string, sh: string, parHelp: string, rq: int) =
+    helpT.add([keys(parNm, sh), "CSV",
+               argRq(rq, "\"" & defVal.join(",") & "\""), parHelp])
 
   import cligen
   dispatch(demo)

@@ -101,13 +101,15 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/EchoResult.nim
 Usage:
-  editDistance [optional-params] {a:string} {b:string}
+  editDistance [required&optional-params]
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help      print this help message
+  -h, --help                    print this help message
+  -a=, --a=   string  REQUIRED  set a
+  -b=, --b=   string  REQUIRED  set b
 ====================================
 Test: test/External.nim
 Usage:
@@ -156,36 +158,54 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -v, --verb     set verb                 false
   -i=, --item=   set item                 ""
 ====================================
+Test: test/ImplicitDefault.nim
+Usage:
+  demo [required&optional-params] [args]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  -h, --help                        print this help message
+  -a=, --alpha=  int     MANDATORY  set alpha
+  -b=, --beta=   float   2.0        set beta
+  -v, --verb     toggle  false      set verb
+  -i=, --item=   string  ""         set item
+====================================
 Test: test/ListDecl.nim
 Usage:
-  demo [optional-params] {alpha:float} [args]
+  demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                   print this help message
-  -b=, --beta=  float   1.0    set beta
-  -v, --verb    toggle  false  set verb
+  -h, --help                       print this help message
+  -a=, --alpha=  float   REQUIRED  set alpha
+  -b=, --beta=   float   1.0       set beta
+  -v, --verb     toggle  false     set verb
 ====================================
 Test: test/Mandatory.nim
 Usage:
-  demo [optional-params] {alpha:int} {item:string} [args]
+  demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                   print this help message
-  -b=, --beta=  float   2.0    set beta
-  -v, --verb    toggle  false  set verb
+  -h, --help                       print this help message
+  -a=, --alpha=  int     REQUIRED  set alpha
+  -b=, --beta=   float   2.0       set beta
+  -v, --verb     toggle  false     set verb
+  -i=, --item=   string  REQUIRED  set item
 ====================================
 Test: test/MandatoryNoPos.nim
 Usage:
-  demo [optional-params] {alpha:int} {item:string}
+  demo [required&optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                   print this help message
-  -b=, --beta=  float   2.0    set beta
-  -v, --verb    toggle  false  set verb
+  -h, --help                       print this help message
+  -a=, --alpha=  int     REQUIRED  set alpha
+  -b=, --beta=   float   2.0       set beta
+  -v, --verb     toggle  false     set verb
+  -i=, --item=   string  REQUIRED  set item
 ====================================
 Test: test/ManualMulti.nim
 Usage:
@@ -363,24 +383,26 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float  2.0  shrink target
 ====================================
 Test: test/TwoNondefaultedSeq.nim
-TwoNondefaultedSeq.nim(21, 11) template/generic instantiation from here
+TwoNondefaultedSeq.nim(22, 11) template/generic instantiation from here
 cligen/cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
-  demo [optional-params] {stuff:seq[string]} [args]
+  demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
-  -a=, --alpha=  int     1      set alpha
-  -v, --verb     toggle  false  set verb
+  -h, --help                       print this help message
+  -a=, --alpha=  int     1         set alpha
+  -v, --verb     toggle  false     set verb
+  -s=, --stuff=  CSV     REQUIRED  set stuff
 ====================================
 Test: test/TwoNondefaultedSeqSwap.nim
 Usage:
-  demo [optional-params] {args:seq[string]} [stuff]
+  demo [required&optional-params] [stuff]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
-  -a=, --alpha=  int     1      set alpha
-  -v, --verb     toggle  false  set verb
+  -h, --help                       print this help message
+  -a=, --alpha=  int     1         set alpha
+  -v, --verb     toggle  false     set verb
+  --args=        CSV     REQUIRED  set args
 ====================================
 Test: test/UserDispIdCollide.nim
 Usage:

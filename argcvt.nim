@@ -11,6 +11,15 @@ proc keys*(parNm: string, shrt: string, argSep="="): string =
   result = if len(shrt) > 0: "-$1$3, --$2$3" % [ shrt, parNm, argSep ]
            else            : "--" & parNm & argSep
 
+var REQUIRED* = "REQUIRED"  # CLI-author can change, if desired.
+
+template argRq*(rq: int, dv: string): string =
+  ## argRq is a simple space-saving template to decide the argHelp defVal column
+  (if rq != 0:
+    REQUIRED
+  else:
+    dv)
+
 template argRet*(code: int, msg: string) =
   ## argRet is a simple space-saving template to write msg and return a code.
   stderr.write(msg)                         # if code==0 send to stdout?
@@ -60,8 +69,9 @@ template argParse*(dst: bool, key: string, val: string, help: string) =
   dst = not dst
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh, argSep=""), "toggle", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh, argSep=""),
+              "toggle", argRq(rq, $defVal), parHelp ])
   shortNoVal.incl(sh[0])            # bool must elide option arguments.
   longNoVal.add(parNm)              # So, add to *NoVal.
 
@@ -72,8 +82,8 @@ template argParse*(dst: string, key: string, val: string, help: string) =
   dst = val
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: string,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([keys(parNm, sh), "string", escape(defVal), parHelp])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([keys(parNm, sh), "string", argRq(rq, escape(defVal)), parHelp])
 
 # cstring
 template argParse*(dst: cstring, key: string, val: string, help: string) =
@@ -82,8 +92,8 @@ template argParse*(dst: cstring, key: string, val: string, help: string) =
   dst = val
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: cstring,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([keys(parNm, sh), "string", escape($defVal), parHelp])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([keys(parNm, sh), "string", argRq(rq, escape($defVal)), parHelp])
 
 # char
 template argParse*(dst: char, key: string, val: string, help: string) =
@@ -93,7 +103,7 @@ template argParse*(dst: char, key: string, val: string, help: string) =
   dst = val[0]
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: char,
-                  parNm: string, sh: string, parHelp: string) =
+                  parNm: string, sh: string, parHelp: string, rq: int) =
   helpT.add([ keys(parNm, sh), "char", repr(defVal), parHelp ])
 
 # int
@@ -103,8 +113,8 @@ template argParse*(dst: int, key: string, val: string, help: string) =
            [ (if val == nil: "nil" else: val), key, help ])
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: int,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "int", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "int", argRq(rq, $defVal), parHelp ])
 
 # int8
 template argParse*(dst: int8, key: string, val: string, help: string) =
@@ -115,8 +125,8 @@ template argParse*(dst: int8, key: string, val: string, help: string) =
   else: dst = int8(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: int8,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "int8", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "int8", argRq(rq, $defVal), parHelp ])
 
 # int16
 template argParse*(dst: int16, key: string, val: string, help: string) =
@@ -127,8 +137,8 @@ template argParse*(dst: int16, key: string, val: string, help: string) =
   else: dst = int16(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: int16,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "int16", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "int16", argRq(rq, $defVal), parHelp ])
 
 # int32
 template argParse*(dst: int32, key: string, val: string, help: string) =
@@ -139,8 +149,8 @@ template argParse*(dst: int32, key: string, val: string, help: string) =
   else: dst = int32(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: int32,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "int32", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "int32", argRq(rq, $defVal), parHelp ])
 
 # int64
 template argParse*(dst: int64, key: string, val: string, help: string) =
@@ -151,8 +161,8 @@ template argParse*(dst: int64, key: string, val: string, help: string) =
   else: dst = tmp
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: int64,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "int64", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "int64", argRq(rq, $defVal), parHelp ])
 
 # uint
 template argParse*(dst: uint, key: string, val: string, help: string) =
@@ -163,8 +173,8 @@ template argParse*(dst: uint, key: string, val: string, help: string) =
   else: dst = uint(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: uint,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "uint", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "uint", argRq(rq, $defVal), parHelp ])
 
 # uint8
 template argParse*(dst: uint8, key: string, val: string, help: string) =
@@ -175,8 +185,8 @@ template argParse*(dst: uint8, key: string, val: string, help: string) =
   else: dst = uint8(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: uint8,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "uint8", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "uint8", argRq(rq, $defVal), parHelp ])
 
 # uint16
 template argParse*(dst: uint16, key: string, val: string, help: string) =
@@ -187,8 +197,8 @@ template argParse*(dst: uint16, key: string, val: string, help: string) =
   else: dst = uint16(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: uint16,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "uint16", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "uint16", argRq(rq, $defVal), parHelp ])
 
 # uint32
 template argParse*(dst: uint32, key: string, val: string, help: string) =
@@ -199,8 +209,8 @@ template argParse*(dst: uint32, key: string, val: string, help: string) =
   else: dst = uint32(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: uint32,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "uint32", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "uint32", argRq(rq, $defVal), parHelp ])
 
 # uint64
 template argParse*(dst: uint64, key: string, val: string, help: string) =
@@ -211,8 +221,8 @@ template argParse*(dst: uint64, key: string, val: string, help: string) =
   else: dst = uint64(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: uint64,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "uint64", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "uint64", argRq(rq, $defVal), parHelp ])
 
 # float
 template argParse*(dst: float, key: string, val: string, help: string) =
@@ -221,8 +231,8 @@ template argParse*(dst: float, key: string, val: string, help: string) =
            [ (if val == nil: "nil" else: val), key, help ])
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: float,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "float", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "float", argRq(rq, $defVal), parHelp ])
 
 # float32
 template argParse*(dst: float32, key: string, val: string, help: string) =
@@ -233,8 +243,8 @@ template argParse*(dst: float32, key: string, val: string, help: string) =
   else: dst = float32(tmp)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: float32,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "float32", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "float32", argRq(rq, $defVal), parHelp ])
 
 # float64
 template argParse*(dst: float64, key: string, val: string, help: string) =
@@ -243,5 +253,5 @@ template argParse*(dst: float64, key: string, val: string, help: string) =
            [ (if val == nil: "nil" else: val), key, help ])
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: float64,
-                  parNm: string, sh: string, parHelp: string) =
-  helpT.add([ keys(parNm, sh), "float64", $defVal, parHelp ])
+                  parNm: string, sh: string, parHelp: string, rq: int) =
+  helpT.add([ keys(parNm, sh), "float64", argRq(rq, $defVal), parHelp ])

@@ -9,7 +9,7 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join
-  from argcvt   import keys, argRet  # Little helpers
+  from argcvt   import keys, argRet, argRq  # Little helpers
   from parseutils import parseInt
 
   template argParse*(dst: int, key: string, val: string, help: string) =
@@ -26,13 +26,13 @@ when isMainModule:
                [ (if val == nil: "nil" else: val), key, help ])
 
   template argHelp*(helpT: seq[array[0..3, string]], defVal: int,
-                    parNm: string, sh: string, parHelp: string) =
+                    parNm: string, sh: string, parHelp: string, rq: int) =
     if parNm == "verb":
-      helpT.add([ keys(parNm, sh), "[bool]", $defVal, parHelp ])
+      helpT.add([ keys(parNm, sh), "[bool]", argRq(rq, $defVal), parHelp ])
       shortNoVal.incl(sh[0])
       longNoVal.add(parNm)
     else:
-      helpT.add([ keys(parNm, sh), "int", $defVal, parHelp ])
+      helpT.add([ keys(parNm, sh), "int", argRq(rq, $defVal), parHelp ])
 
   template argParse(dst: seq[string], key: string, val: string, help: string) =
     if val == nil:
@@ -48,13 +48,13 @@ when isMainModule:
       dst = val.split(",")
 
   template argHelp(helpT: seq[array[0..3, string]], defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string) =
+                   parNm: string, sh: string, parHelp: string, rq: int) =
     if parNm == "stuff":                # make "stuff" a repeatable key
-      helpT.add([ keys(parNm, sh), "[CSV]", "\"" & defVal.join(",") & "\"",
-                  parHelp ])
+      helpT.add([ keys(parNm, sh), "[CSV]",
+                  argRq(rq, "\"" & defVal.join(",")) & "\"", parHelp ])
     else:
-      helpT.add([ keys(parNm, sh), "CSV", "\"" & defVal.join(",") & "\"",
-                  parHelp ])
+      helpT.add([ keys(parNm, sh), "CSV",
+                  argRq(rq, "\"" & defVal.join(",") & "\""), parHelp ])
 
   import cligen
   dispatch(demo)
