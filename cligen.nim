@@ -111,7 +111,7 @@ proc posIxGet(positional: NimNode, fpars: NimNode): int =
         result = i
 
 proc newParam(id: string, rhs: NimNode): NimNode =
-    return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
+  return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
 const helpTabOption*  = 0
 const helpTabType*    = 1
@@ -271,7 +271,7 @@ macro dispatchGen*(pro: typed, cmdName: string="", doc: string="",
         quote do: stderr.write(`helpId`); raise newException(`HelpOnlyId`,"")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
-      if i in mandatory: continue             # skip mandator arguments
+      if i in mandatory: continue             # skip mandatory arguments
       let parNm  = $fpars[i][0]
       let lopt   = optionNormalize(parNm)
       let apCall = newCall("argParse", spars[i][0], keyId, valId, helpId)
