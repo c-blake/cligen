@@ -12,7 +12,7 @@ when isMainModule:
   from argcvt   import keys, argRet, argRq  # Little helpers
   from parseutils import parseInt
 
-  template argParse*(dst: int, key: string, val: string, help: string) =
+  template argParse*(dst: int, key: string, dfl: int, val: string, help: string) =
     let Key = if key == "v": "verb" else: key
     if Key == "verb":               # make "verb" a repeatable key
       if Key in keyCount:
@@ -34,7 +34,7 @@ when isMainModule:
     else:
       helpT.add([ keys(parNm, sh), "int", argRq(rq, $defVal), parHelp ])
 
-  template argParse(dst: seq[string], key: string, val: string, help: string) =
+  template argParse(dst: seq[string], key: string, dfl: seq[string], val: string, help: string) =
     if val == nil:
       argRet(1, "Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
     let Key = if key == "s": "stuff" else: key

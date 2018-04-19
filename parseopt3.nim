@@ -129,11 +129,15 @@ proc do_short(p: var OptParser) =
   p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len == 0:              # param exhausted; advance param
     p.pos += 1
-  if card(p.shortNoVal) > 0 and p.key[0] in p.shortNoVal:  # no opt argument =>
+  if card(p.shortNoVal) > 0 and p.key[0] in p.shortNoVal:  # opt arg optional
+    if p.moreShort[0] in p.sepChars:
+      p.val = p.moreShort[1..^1]        # allow :t, =true, etc.
+      p.moreShort = ""
+      p.pos += 1
     return                                              # continue w/same param
   if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
-  if p.moreShort.len != 0:              # only advance if haven't already
+  if p.moreShort.len != 0:              # only advance if need more data
     p.pos += 1
   if p.moreShort[0] in p.sepChars:      # shift off maybe-optional separator
     p.moreShort = p.moreShort[1..^1]
@@ -145,6 +149,7 @@ proc do_short(p: var OptParser) =
     p.val = p.cmd[p.pos]
     p.pos += 1
   elif card(p.shortNoVal) > 0:
+#   if p.key[0] notin p.sepChars:
     echo "argument expected for option `", p.key, "` at end of params"
 
 proc do_long(p: var OptParser) =
@@ -160,8 +165,6 @@ proc do_long(p: var OptParser) =
   if sep > 2:
     p.key = param[2 .. sep-1]
     p.val = param[sep+1..^1]
-    if p.longNoVal != nil and p.key in p.longNoVal:
-      echo "Warning option `", p.key, "` does not expect an argument"
     return
   p.key = param[2..^1]                  # no sep; key is whole param past --
   if p.longNoVal != nil and p.key in p.longNoVal:

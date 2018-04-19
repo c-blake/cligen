@@ -202,11 +202,13 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     let disNm = toNimIdent("dispatch" & $pro)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short))
-  var spars = copyNimTree(fpars)        # Create shadow/safe prefixed params.
+  var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
+  var dpars = copyNimTree(fpars)        # Create default suffixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
   let implDef = toStrSeq(implicitDefault)
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
-    spars[i][0] = ident($(fpars[i][0]) & "cligenDispatcher") # unique suffix
+    dpars[i][0] = ident($(fpars[i][0]) & "_ParamDefault")   # unique suffix
+    spars[i][0] = ident($(fpars[i][0]) & "_ParamDispatch")  # unique suffix
     if fpars[i][2].kind == nnkEmpty:
       if i == posIx:                    # No initializer; Add @[]
         spars[posIx][2] = prefix(newNimNode(nnkBracket), "@")
@@ -257,6 +259,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       let idef = fpars[i]
       let sdef = spars[i]
       result.add(newNimNode(nnkVarSection).add(sdef))     #Init vars
+      if i != posIx:
+        result.add(newNimNode(nnkVarSection).add(dpars[i]))
       callIt.add(newNimNode(nnkExprEqExpr).add(idef[0], sdef[0])) #Add to call
       if i != posIx:
         let parNm = $idef[0]
@@ -291,9 +295,10 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
       let lopt   = optionNormalize(parNm)
-      let sp =spars[i][0]
+      let spar   = spars[i][0]
+      let dpar   = dpars[i][0]
       let apCall = quote do:
-        argParse(`sp`, `keyId`, `valId`, `helpId`)
+        argParse(`spar`, `keyId`, `dpar`, `valId`, `helpId`)
         discard delItem(`mandId`, `parNm`)
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
         let parShOpt = $shOpt.getOrDefault(parNm)
@@ -316,7 +321,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
           `posId`.setLen(1)
           rewind = true
         var `tmpId` = `posId`[0]
-        argParse(`tmpId`, "positional $" & $`posNoId`, `keyId`,"positional\n")
+        argParse(`tmpId`, "positional $" & $`posNoId`, `tmpId`, `keyId`,"positional\n")
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:

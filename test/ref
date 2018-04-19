@@ -244,7 +244,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                   print this help message
-  -a, --alpha   toggle  false  set alpha
+  -a, --alpha   toggle  true   set alpha
   -b=, --beta=  int     2      set beta
   -v, --verb    toggle  false  set verb
 ====================================

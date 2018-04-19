@@ -1,5 +1,6 @@
 from parseutils import parseInt, parseFloat
-from strutils   import `%`, join, split, wordWrap, repeat, escape, strip
+from strutils   import `%`, join, split, wordWrap, repeat, escape, strip,
+                       toLowerAscii
 from terminal   import terminalWidth
 
 proc postInc*(x: var int): int =
@@ -62,11 +63,18 @@ proc alignTable*(tab: seq[array[0..3, string]], prefixLen=0,
 ## while argHelp explains this interpretation to a command-line user.
 
 # bool
-template argParse*(dst: bool, key: string, val: string, help: string) =
+template argParse*(dst: bool, key: string, dfl: bool, val: string, help: string) =
   if len(val) > 0:
-    argRet(1, "Bool option \"$1\" not expecting argument (\"$2\")\n$3" %
-           [ key, val, help ])
-  dst = not dst
+    var v = val.toLowerAscii
+    if   v == "t" or v == "true" or v == "yes" or v == "y" or v == "1":
+      dst = true
+    elif v == "f" or v == "false" or v == "no" or v == "n" or v == "0":
+      dst = false
+    else:
+      argRet(1, "Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
+             [ key, val, help ])
+  else:               # No option arg => reverse of default (usually, ..
+    dst = not dfl     #.. but not always this means false->true)
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
                   parNm: string, sh: string, parHelp: string, rq: int) =
@@ -76,7 +84,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: bool,
   longNoVal.add(parNm)              # So, add to *NoVal.
 
 # string
-template argParse*(dst: string, key: string, val: string, help: string) =
+template argParse*(dst: string, key: string, dfl: string, val: string, help: string) =
   if val == nil:
     argRet(1, "Bad value nil for string param \"$1\"\n$2" % [ key, help ])
   dst = val
@@ -86,7 +94,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: string,
   helpT.add([keys(parNm, sh), "string", argRq(rq, escape(defVal)), parHelp])
 
 # cstring
-template argParse*(dst: cstring, key: string, val: string, help: string) =
+template argParse*(dst: cstring, key: string, dfl: cstring, val: string, help: string) =
   if val == nil:
     argRet(1, "Bad value nil for string param \"$1\"\n$2" % [ key, help ])
   dst = val
@@ -96,7 +104,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: cstring,
   helpT.add([keys(parNm, sh), "string", argRq(rq, escape($defVal)), parHelp])
 
 # char
-template argParse*(dst: char, key: string, val: string, help: string) =
+template argParse*(dst: char, key: string, dfl: char, val: string, help: string) =
   if val == nil or len(val) > 1:
     argRet(1, "Bad value nil/multi-char for char param \"$1\"\n$2" %
            [ key , help ])
@@ -107,7 +115,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: char,
   helpT.add([ keys(parNm, sh), "char", repr(defVal), parHelp ])
 
 # int
-template argParse*(dst: int, key: string, val: string, help: string) =
+template argParse*(dst: int, key: string, dfl: int, val: string, help: string) =
   if val == nil or parseInt(strip(val), dst) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
            [ (if val == nil: "nil" else: val), key, help ])
@@ -117,7 +125,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int,
   helpT.add([ keys(parNm, sh), "int", argRq(rq, $defVal), parHelp ])
 
 # int8
-template argParse*(dst: int8, key: string, val: string, help: string) =
+template argParse*(dst: int8, key: string, dfl: int8, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int8\n$3" %
@@ -129,7 +137,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int8,
   helpT.add([ keys(parNm, sh), "int8", argRq(rq, $defVal), parHelp ])
 
 # int16
-template argParse*(dst: int16, key: string, val: string, help: string) =
+template argParse*(dst: int16, key: string, dfl: int16, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int16\n$3" %
@@ -141,7 +149,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int16,
   helpT.add([ keys(parNm, sh), "int16", argRq(rq, $defVal), parHelp ])
 
 # int32
-template argParse*(dst: int32, key: string, val: string, help: string) =
+template argParse*(dst: int32, key: string, dfl: int32, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int32\n$3" %
@@ -153,7 +161,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int32,
   helpT.add([ keys(parNm, sh), "int32", argRq(rq, $defVal), parHelp ])
 
 # int64
-template argParse*(dst: int64, key: string, val: string, help: string) =
+template argParse*(dst: int64, key: string, dfl: int64, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int64\n$3" %
@@ -165,7 +173,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: int64,
   helpT.add([ keys(parNm, sh), "int64", argRq(rq, $defVal), parHelp ])
 
 # uint
-template argParse*(dst: uint, key: string, val: string, help: string) =
+template argParse*(dst: uint, key: string, dfl: uint, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting uint\n$3" %
@@ -177,7 +185,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: uint,
   helpT.add([ keys(parNm, sh), "uint", argRq(rq, $defVal), parHelp ])
 
 # uint8
-template argParse*(dst: uint8, key: string, val: string, help: string) =
+template argParse*(dst: uint8, key: string, dfl: uint8, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting uint8\n$3" %
@@ -189,7 +197,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: uint8,
   helpT.add([ keys(parNm, sh), "uint8", argRq(rq, $defVal), parHelp ])
 
 # uint16
-template argParse*(dst: uint16, key: string, val: string, help: string) =
+template argParse*(dst: uint16, key: string, dfl: uint16, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting uint16\n$3" %
@@ -201,7 +209,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: uint16,
   helpT.add([ keys(parNm, sh), "uint16", argRq(rq, $defVal), parHelp ])
 
 # uint32
-template argParse*(dst: uint32, key: string, val: string, help: string) =
+template argParse*(dst: uint32, key: string, dfl: uint32, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting uint32\n$3" %
@@ -213,7 +221,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: uint32,
   helpT.add([ keys(parNm, sh), "uint32", argRq(rq, $defVal), parHelp ])
 
 # uint64
-template argParse*(dst: uint64, key: string, val: string, help: string) =
+template argParse*(dst: uint64, key: string, dfl: uint64, val: string, help: string) =
   var tmp: int
   if val == nil or parseInt(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting uint64\n$3" %
@@ -225,7 +233,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: uint64,
   helpT.add([ keys(parNm, sh), "uint64", argRq(rq, $defVal), parHelp ])
 
 # float
-template argParse*(dst: float, key: string, val: string, help: string) =
+template argParse*(dst: float, key: string, dfl: float, val: string, help: string) =
   if val == nil or parseFloat(strip(val), dst) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting float\n$3" %
            [ (if val == nil: "nil" else: val), key, help ])
@@ -235,7 +243,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: float,
   helpT.add([ keys(parNm, sh), "float", argRq(rq, $defVal), parHelp ])
 
 # float32
-template argParse*(dst: float32, key: string, val: string, help: string) =
+template argParse*(dst: float32, key: string, dfl: float32, val: string, help: string) =
   var tmp: float
   if val == nil or parseFloat(strip(val), tmp) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting float32\n$3" %
@@ -247,7 +255,7 @@ template argHelp*(helpT: seq[array[0..3, string]], defVal: float32,
   helpT.add([ keys(parNm, sh), "float32", argRq(rq, $defVal), parHelp ])
 
 # float64
-template argParse*(dst: float64, key: string, val: string, help: string) =
+template argParse*(dst: float64, key: string, dfl: float64, val: string, help: string) =
   if val == nil or parseFloat(strip(val), dst) == 0:
     argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting float64\n$3" %
            [ (if val == nil: "nil" else: val), key, help ])

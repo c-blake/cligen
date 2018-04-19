@@ -8,7 +8,7 @@ when isMainModule:
   from strutils import split, `%`, join
   from argcvt   import keys, argRet, argRq  # Little helpers
 
-  template argParse(dst: seq[string], key: string, val: string, help: string) =
+  template argParse(dst: seq[string], key: string, dfl: seq[string], val: string, help: string) =
     if val == nil:
       argRet(1, "Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
     dst = val.split(",")

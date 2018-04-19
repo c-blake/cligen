@@ -10,19 +10,23 @@ when isMainModule:
   from argcvt    import argRet, argParse, argHelp, alignTable
   from parseopt3 import getopt, cmdLongOption, cmdShortOption
   proc dispatch_demo(cmdline=commandLineParams(), usage="Explain Me"): int =
-    var XXalpha: int=1                              #1: locals for opt params
-    var XXbeta=foo
-    var XXverb=false
-    var XXitem=""
-    var XXargs: seq[string] = @[]
+    var alphaDisp: int=1                              #1: locals for opt params
+    var alphaDfl: int=1                              #1: locals for opt params
+    var betaDisp=foo
+    var betaDfl=foo
+    var verbDisp=false
+    var verbDfl=false
+    var itemDisp=""
+    var itemDfl=""
+    var argsDisp: seq[string] = @[]
     var shortNoVal: set[char] = {}                  #only needed for argHelp()
     var longNoVal: seq[string] = @[]
     var tab: seq[array[0..3, string]] = @[          #2: build help
              [ "--help, -?", "", "", "print this help message" ] ]
-    argHelp(tab, XXalpha, "alpha", "a", "meaning of alpha")
-    argHelp(tab, XXbeta, "beta", "b", "meaning of beta")
-    argHelp(tab, XXverb, "verb", "v", "meaning of verb")
-    argHelp(tab, XXitem, "item", "i", "meaning of item")
+    argHelp(tab, alphaDisp, "alpha", "a", "meaning of alpha", 0)
+    argHelp(tab, betaDisp, "beta", "b", "meaning of beta", 0)
+    argHelp(tab, verbDisp, "verb", "v", "meaning of verb", 0)
+    argHelp(tab, itemDisp, "item", "i", "meaning of item", 0)
     var help = "Usage:\n  demo [optional-parms] [args]\nOptions:\n" &
                alignTable(tab) & usage
     if help[len(help) - 1] != '\l':                 # ensure newline @end
@@ -32,11 +36,11 @@ when isMainModule:
       of cmdLongOption, cmdShortOption:
         case key
         of "help", "?": argRet(0, help)
-        of "alpha", "a": argParse(XXalpha, key, val, help)
-        of "beta", "b": argParse(XXbeta, key, val, help)
-        of "verb", "v": argParse(XXverb, key, val, help)
-        of "item", "i": argParse(XXitem, key, val, help)
+        of "alpha", "a": argParse(alphaDisp, key, alphaDfl, val, help)
+        of "beta", "b": argParse(betaDisp, key, betaDfl, val, help)
+        of "verb", "v": argParse(verbDisp, key, verbDfl, val, help)
+        of "item", "i": argParse(itemDisp, key, itemDfl, val, help)
         else: argRet(1, "bad option: \"" & key & "\"\n" & help)
-      else: XXargs.add(key)                         #4: call wrapped procedure
-    return int(demo(XXalpha, XXbeta, XXverb, XXitem, XXargs))
+      else: argsDisp.add(key)                         #4: call wrapped procedure
+    return int(demo(alphaDisp, betaDisp, verbDisp, itemDisp, argsDisp))
   quit(dispatch_demo())
