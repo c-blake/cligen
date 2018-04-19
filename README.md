@@ -153,12 +153,14 @@ proc demo(stuff = @[ "abc", "def" ], opt1=true, foo=2): int =
 when isMainModule:
   import strutils, cligen, argcvt  # argcvt.keys deals with missing short opts
 
-  template argParse(dst: seq[string], key: string, val: string, help: string) =
+  template argParse(dst: seq[string], key: string, dfl: seq[string],
+                    val: string, help: string) =
     dst = val.split(",")
 
   template argHelp(helpT: seq[array[0..3, string]], defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string) =
-    helpT.add([keys(parNm, sh), "CSV", "\"" & defVal.join(",") & "\"", parHelp])
+                   parNm: string, sh: string, parHelp: string, rq: int) =
+    helpT.add([keys(parNm, sh), "CSV", argRq(rq, "\""&defVal.join(",")&"\""),
+               parHelp])
 
   dispatch(demo, doc="NOTE: CSV=comma-separated value list")
 ```
