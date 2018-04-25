@@ -53,14 +53,6 @@ library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
 long option keys can be spelled flexibly, e.g. ``--dry-run`` or ``--dryRun``,
 much like Nim's style-insensitive identifiers.
 
-If you don't like the help message as-is, you can re-order it however you like
-with some named-argument string interpolation:
-```nim
-  dispatch(foobar,          # swap place of doc string and options table
-           usage="Use:\n$command $args\nOptions:\n$options\n$doc\n",
-           prefix="   "))   # indent the whole message a few spaces.
-```
-
 The same basic string-to-native type converters used for option values will be
 applied to convert optional positional arguments to seq[T] values or mandatory
 positional arguments to values of their types:
