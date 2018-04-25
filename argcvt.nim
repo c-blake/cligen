@@ -123,7 +123,7 @@ template argHelp*(ht: TextTab, dfl: char; parNm, sh, parHelp: string, rq: int) =
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
 
   template argParse*(dst: T, key: string, dfl: T, val: string, help: string) =
-    block:
+    block: # {.inject.} needed to get tmp typed, but block: prevents it leaking
       var tmp {.inject.}: WideT
       if val == nil or parse(strip(val), tmp) == 0:
         argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
