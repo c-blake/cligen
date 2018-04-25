@@ -357,7 +357,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
     from os     import commandLineParams
-    from argcvt import argRet,argParse,argHelp, addPrefix,TextTab,alignTable
+    from argcvt import argRet, argParse, argHelp
+    from textUt import addPrefix, TextTab, alignTable
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),

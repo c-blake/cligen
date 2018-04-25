@@ -9,7 +9,8 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join
-  from argcvt   import keys, argRet, argRq, TextTab  # Little helpers
+  from argcvt   import keys, argRet, argRq  # Little helpers
+  from textUt   import TextTab
   from parseutils import parseInt
 
   template argParse*(dst: int, key: string, dfl: int, val: string, help: string) =
