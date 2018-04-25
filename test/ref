@@ -4,7 +4,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -?, --help                  print this help message
-  -a, --aa    toggle   false  set aa
+  -a, --aa    bool     false  set aa
   -b=, --bb=  string   "hi"   set bb
   -c=, --cc=  string   "ho"   set cc
   -d=, --dd=  char     'X'    set dd
@@ -32,7 +32,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                 print this help message
   --alpha=    int     1      set alpha
   --abc=      float   2.0    set abc
-  -a, --aaah  toggle  false  set aaah
+  -a, --aaah  bool    false  set aaah
   --aloha=    string  ""     set aloha
 ====================================
 Test: test/CaseDistinguised.nim
@@ -45,7 +45,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -z=, --alpha=  int     1      set alpha
   -A=, --Abc=    float   2.0    set Abc
-  -a, --aaah     toggle  false  set aaah
+  -a, --aaah     bool    false  set aaah
   --aloha=       string  ""     set aloha
 ====================================
 Test: test/CustomCmdName.nim
@@ -58,7 +58,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/CustomType.nim
@@ -68,10 +68,10 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                      print this help message
-  -a=, --alpha=  int     1        set alpha
-  -v, --verb     toggle  false    set verb
-  -s=, --stuff=  CSV     "ab,cd"  set stuff
+  -h, --help                    print this help message
+  -a=, --alpha=  int   1        set alpha
+  -v, --verb     bool  false    set verb
+  -s=, --stuff=  CSV   "ab,cd"  set stuff
 ====================================
 Test: test/DupShort.nim
 Usage:
@@ -83,7 +83,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -z=, --alpha=  int     1      set alpha
   -a=, --abc=    float   2.0    set abc
-  --aaah         toggle  false  set aaah
+  --aaah         bool    false  set aaah
   --aloha=       string  ""     set aloha
 ====================================
 Test: test/EarlySeq.nim
@@ -96,7 +96,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/EchoResult.nim
@@ -121,7 +121,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/FancyRepeats.nim
@@ -168,7 +168,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                        print this help message
   -a=, --alpha=  int     MANDATORY  set alpha
   -b=, --beta=   float   2.0        set beta
-  -v, --verb     toggle  false      set verb
+  -v, --verb     bool    false      set verb
   -i=, --item=   string  ""         set item
 ====================================
 Test: test/ListDecl.nim
@@ -176,10 +176,10 @@ Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
-  -a=, --alpha=  float   REQUIRED  set alpha
-  -b=, --beta=   float   1.0       set beta
-  -v, --verb     toggle  false     set verb
+  -h, --help                      print this help message
+  -a=, --alpha=  float  REQUIRED  set alpha
+  -b=, --beta=   float  1.0       set beta
+  -v, --verb     bool   false     set verb
 ====================================
 Test: test/Mandatory.nim
 Usage:
@@ -191,7 +191,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                       print this help message
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
-  -v, --verb     toggle  false     set verb
+  -v, --verb     bool    false     set verb
   -i=, --item=   string  REQUIRED  set item
 ====================================
 Test: test/MandatoryNoPos.nim
@@ -204,7 +204,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                       print this help message
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
-  -v, --verb     toggle  false     set verb
+  -v, --verb     bool    false     set verb
   -i=, --item=   string  REQUIRED  set item
 ====================================
 Test: test/ManualMulti.nim
@@ -226,27 +226,27 @@ Usage:
                                         little bit of both. :-)
           -b=, --beta=   float   2.0    This is more modest, but might still
                                         wrap around once or twice or so.
-          -v, --verb     toggle  false  on=chatty, off=quiet. 'Nuff said.
+          -v, --verb     bool    false  on=chatty, off=quiet. 'Nuff said.
           -i=, --item=   string  ""     set item
 
     ManualMulti show [optional-params] [paths]
           This shows me something.
     
     Options:
-          -h, --help                    print this help message
-          -g=, --gamma=  int     1      set gamma
-          -i=, --iota=   float   2.0    set iota
-          -v, --verb     toggle  false  set verb
+          -h, --help                   print this help message
+          -g=, --gamma=  int    1      set gamma
+          -i=, --iota=   float  2.0    set iota
+          -v, --verb     bool   false  set verb
 ====================================
 Test: test/MultiFlag.nim
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                   print this help message
-  -a, --alpha   toggle  true   set alpha
-  -b=, --beta=  int     2      set beta
-  -v, --verb    toggle  false  set verb
+  -h, --help                 print this help message
+  -a, --alpha   bool  true   set alpha
+  -b=, --beta=  int   2      set beta
+  -v, --verb    bool  false  set verb
 ====================================
 Test: test/NoPositional.nim
 Usage:
@@ -258,7 +258,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/NoShort.nim
@@ -271,7 +271,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                 print this help message
   --alpha=    int     1      set alpha
   --abc=      float   2.0    set abc
-  --aaah      toggle  false  set aaah
+  --aaah      bool    false  set aaah
   --aloha=    string  ""     set aloha
 ====================================
 Test: test/OneCharParams.nim
@@ -294,7 +294,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -z=, --alpha=  int     1      growth constant
   -b=, --beta=   float   2.0    shrink target
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/ReturnEmpty.nim
@@ -307,7 +307,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/ReturnInt.nim
@@ -320,7 +320,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/ReturnNonInt.nim
@@ -333,7 +333,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/ReturnString.nim
@@ -346,7 +346,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/SemiAutoMulti.nim
@@ -368,7 +368,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                    print this help message
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   char    '\10'  set beta
-  -v, --verb     toggle  false  set verb
+  -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 ====================================
 Test: test/Suppress.nim
@@ -389,20 +389,20 @@ Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
-  -a=, --alpha=  int     1         set alpha
-  -v, --verb     toggle  false     set verb
-  -s=, --stuff=  CSV     REQUIRED  set stuff
+  -h, --help                     print this help message
+  -a=, --alpha=  int   1         set alpha
+  -v, --verb     bool  false     set verb
+  -s=, --stuff=  CSV   REQUIRED  set stuff
 ====================================
 Test: test/TwoNondefaultedSeqSwap.nim
 Usage:
   demo [required&optional-params] [stuff]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
-  -a=, --alpha=  int     1         set alpha
-  -v, --verb     toggle  false     set verb
-  --args=        CSV     REQUIRED  set args
+  -h, --help                     print this help message
+  -a=, --alpha=  int   1         set alpha
+  -v, --verb     bool  false     set verb
+  --args=        CSV   REQUIRED  set args
 ====================================
 Test: test/UserDispIdCollide.nim
 Usage:
@@ -425,13 +425,13 @@ where subcommand syntaxes are as follows:
       -h, --help                    print this help message
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
-      -v, --verb     toggle  false  on=chatty, off=quiet
+      -v, --verb     bool    false  on=chatty, off=quiet
       -i=, --item=   string  ""     set item
   
   show [optional-params] [paths]
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
-      -h, --help                    print this help message
-      -z=, --gamma=  int     1      set gamma
-      -i=, --iota=   float   2.0    set iota
-      -v, --verb     toggle  false  set verb
+      -h, --help                   print this help message
+      -z=, --gamma=  int    1      set gamma
+      -i=, --iota=   float  2.0    set iota
+      -v, --verb     bool   false  set verb

@@ -15,10 +15,10 @@ when isMainModule:
       argRet(1, "Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
     dst = val.split(",")
 
-  template argHelp(helpT: seq[array[0..3, string]], defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string, rq: int) =
-    helpT.add([keys(parNm, sh), "CSV",
-               argRq(rq, "\"" & defVal.join(",") & "\""), parHelp])
+  template argHelp(ht: seq[seq[string]], dfl: seq[string];
+                   parNm, sh, parHelp: string, rq: int) =
+    ht.add(@[ keys(parNm, sh), "CSV",
+              argRq(rq, "\"" & dfl.join(",") & "\""), parHelp])
 
   import cligen
   dispatch(demo)

@@ -247,8 +247,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     result.add(quote do:
       let shortH = toString(`shortHlp`)
       var `mandId`: seq[string] = @[ ]
-      var `tabId`: seq[array[0..3, string]] =
-        @[ [ "-" & shortH & ", --help", "", "", "print this help message" ] ]
+      var `tabId`: TextTab =
+        @[ @[ "-" & shortH & ", --help", "", "", "print this help message" ] ]
       var `shortNoValId`: set[char] = { shortH[0] }   # argHelp(bool) updates
       var `longNoValId`: seq[string] = @[ "help" ])   # argHelp(bool) appends
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
@@ -357,7 +357,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
     from os     import commandLineParams
-    from argcvt import argRet, argParse, argHelp, alignTable, addPrefix, postInc
+    from argcvt import argRet,argParse,argHelp, postInc, addPrefix,TextTab,alignTable
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
