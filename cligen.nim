@@ -5,7 +5,7 @@ proc toString(c: char): string =
   result = newStringOfCap(1)
   if c != '\0': result.add(c)
 
-proc toStrLitNode*(n: NimNode): NimNode =
+proc toStrLitNode(n: NimNode): NimNode =
   ## creates a string literal node from a char literal NimNode
   result = newNimNode(nnkStrLit)
   result.strVal = toString(chr(n.intVal))
