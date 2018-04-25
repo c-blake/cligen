@@ -1,7 +1,13 @@
 from parseutils import parseInt, parseFloat
-from strutils   import `%`, join, split, wordWrap, repeat, escape, strip,
-                       toLowerAscii
+from strutils   import `%`, join, split, wordWrap, repeat, strip, toLowerAscii
 from terminal   import terminalWidth
+
+proc nimEscape*(s: string): string =
+  ## Until strutils gets a nimStringEscape that is not deprecated
+  result = newStringOfCap(s.len + 2 + s.len shr 2)
+  result.add('"')
+  for c in s: result.addEscapedChar(c)
+  result.add('"')
 
 proc postInc*(x: var int): int =
   ## Similar to post-fix `++` in C languages: yield initial val, then increment
@@ -91,7 +97,7 @@ template argParse*(dst: string, key: string, dfl: string, val: string, help: str
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: string,
                   parNm: string, sh: string, parHelp: string, rq: int) =
-  helpT.add([keys(parNm, sh), "string", argRq(rq, escape(defVal)), parHelp])
+  helpT.add([keys(parNm, sh), "string", argRq(rq, nimEscape(defVal)), parHelp])
 
 # cstring
 template argParse*(dst: cstring, key: string, dfl: cstring, val: string, help: string) =
@@ -101,7 +107,7 @@ template argParse*(dst: cstring, key: string, dfl: cstring, val: string, help: s
 
 template argHelp*(helpT: seq[array[0..3, string]], defVal: cstring,
                   parNm: string, sh: string, parHelp: string, rq: int) =
-  helpT.add([keys(parNm, sh), "string", argRq(rq, escape($defVal)), parHelp])
+  helpT.add([keys(parNm, sh), "string", argRq(rq, nimEscape($defVal)), parHelp])
 
 # char
 template argParse*(dst: char, key: string, dfl: char, val: string, help: string) =
