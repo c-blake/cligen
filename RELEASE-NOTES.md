@@ -23,5 +23,5 @@ There could be other types/situations for which knowing the default is useful.
 2) relates to a complete shift in the syntax for mandatory parameters to be
 keyed just as optional parameters are, but to exit with an error when not all
 are given by a command user.  See https://github.com/c-blake/cligen/issues/20
-This is more consistent syntax and also more informative to the user as to what
-they did wrong.
+This is more consistent syntax, has more consistent help text in the usage
+message and is also more informative to the user as to what they did wrong.
