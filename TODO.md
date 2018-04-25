@@ -11,8 +11,6 @@
   Better error reporting. E.g., ``help={"foo" : "stuff"}`` silently ignores the
   ``"foo"`` if there is no such parameter.  Etc.
 
-  Should at least ask if there is any interest in parseopt3.nim in stdlib.
-
   This is really advanced and goes beyond most CLI apis, but it might also be
   nice to have input data from stdin auto-converted to an iterator/seq and an
   output convention for emitting to stdout [ e.g., a designated output seq
