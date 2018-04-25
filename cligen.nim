@@ -357,7 +357,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
     from os     import commandLineParams
-    from argcvt import argRet,argParse,argHelp, postInc, addPrefix,TextTab,alignTable
+    from argcvt import argRet,argParse,argHelp, addPrefix,TextTab,alignTable
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
@@ -478,3 +478,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
       "Run a subcommand with --help to see only help for that.")))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
+
+proc postInc*(x: var int): int =
+  ## Similar to post-fix `++` in C languages: yield initial val, then increment
+  result = x
+  inc(x)

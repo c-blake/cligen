@@ -10,11 +10,6 @@ proc nimEscape*(s: string): string =
   for c in s: result.addEscapedChar(c)
   result.add('"')
 
-proc postInc*(x: var int): int =
-  ## Similar to post-fix `++` in C languages: yield initial val, then increment
-  result = x
-  inc(x)
-
 proc keys*(parNm: string, shrt: string, argSep="="): string =
   result = if len(shrt) > 0: "-$1$3, --$2$3" % [ shrt, parNm, argSep ]
            else            : "--" & parNm & argSep
