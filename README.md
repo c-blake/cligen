@@ -29,13 +29,6 @@ Options (opt&arg sep by :,=,spc):
 ```
 Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 
-By default, dispatchGen has ``requireSeparator=false`` which results in more
-traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
-library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
-``--delta=Bar`` are all acceptable syntax for command options.  Additionally,
-long option keys can be spelled flexibly, e.g. ``--dry-run`` or ``--dryRun``,
-much like Nim's style-insensitive identifiers.
-
 When you want to produce a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals:
 ```nim
@@ -52,6 +45,13 @@ just override it with the 5th|short= macro parameter:
 With that, "bar" will get 'r' while "baz" will get 'b' as short options.
 To suppress some long option getting a short option at all, specify ``'\0'`` for
 its short key.  To suppress all short options, give ``short`` a key of ``""``.
+
+By default, dispatchGen has ``requireSeparator=false`` which results in more
+traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
+library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
+``--delta=Bar`` are all acceptable syntax for command options.  Additionally,
+long option keys can be spelled flexibly, e.g. ``--dry-run`` or ``--dryRun``,
+much like Nim's style-insensitive identifiers.
 
 If you don't like the help message as-is, you can re-order it however you like
 with some named-argument string interpolation:
