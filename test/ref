@@ -1,3 +1,11 @@
+Test: test/AllSeqTypes.nim
+Usage:
+  demo [optional-params] [args]
+demo entry point with parameters of all basic types.
+  Options(opt-arg sep :|=|spc):
+  -h, --help             print this help message
+  -s=, --st=  DPSV  ","  set st
+====================================
 Test: test/AllTypes.nim
 Usage:
   demo [optional-params] [args]
@@ -383,7 +391,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float  2.0  shrink target
 ====================================
 Test: test/TwoNondefaultedSeq.nim
-TwoNondefaultedSeq.nim(22, 11) template/generic instantiation from here
+TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
 cligen/cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
@@ -392,7 +400,7 @@ demo entry point with varied, meaningless parameters.
   -h, --help                     print this help message
   -a=, --alpha=  int   1         set alpha
   -v, --verb     bool  false     set verb
-  -s=, --stuff=  CSV   REQUIRED  set stuff
+  -s=, --stuff=  DPSV  REQUIRED  set stuff
 ====================================
 Test: test/TwoNondefaultedSeqSwap.nim
 Usage:
@@ -402,7 +410,7 @@ demo entry point with varied, meaningless parameters.
   -h, --help                     print this help message
   -a=, --alpha=  int   1         set alpha
   -v, --verb     bool  false     set verb
-  --args=        CSV   REQUIRED  set args
+  --args=        DPSV  REQUIRED  set args
 ====================================
 Test: test/UserDispIdCollide.nim
 Usage:
