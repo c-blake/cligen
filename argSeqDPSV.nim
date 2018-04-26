@@ -40,12 +40,11 @@ template argParse*(dst: seq[string], key: string, dfl: seq[string],
         dst = @[ ]
       dst.add(tmp)
     of Delete:
-      if dst != nil:
-        for i, e in dst:
-          if e in tmp:
-            dst.del(i)
-      else:
+      if dst == nil:
         dst = @[ ]
+      for i, e in dst:
+        if e in tmp:
+          dst.del(i)
 
 template argHelp*(ht: seq[seq[string]], dfl: seq[string];
                   parNm, sh, parHelp: string, rq: int) =
@@ -54,6 +53,7 @@ template argHelp*(ht: seq[seq[string]], dfl: seq[string];
     var delim = "<D>"
     for delimTry in [",", "@", "%", ":", "_", "=", "~", "^" ]:
       if delimTry notin Dfl:
+        delim = delimTry
         break
     ht.add(@[ keys(parNm, sh), "DPSV",
               argRq(rq, "\"" & delim & Dfl.join(delim) & "\""), parHelp])
