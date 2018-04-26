@@ -34,3 +34,4 @@ test/Suppress
 test/FancyRepeats
 test/OneCharParams
 test/ImplicitDefault
+test/AllSeqTypes
