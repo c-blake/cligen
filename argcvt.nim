@@ -1,8 +1,9 @@
-## argParse and argHelp are a pair of related overloaded template helpers for
-## each supported Nim type of optional parameter.  You may define new ones for
-## your own custom types as needed wherever convenient in-scope of dispatch().
-## argParse determines how string arguments are interpreted into native types
-## while argHelp explains this interpretation to a command-line user.
+## ``argParse`` and ``argHelp`` are a pair of related overloaded template
+## helpers for each supported Nim type of optional parameter.  ``argParse``
+## determines how string arguments are interpreted into native types while
+## ``argHelp`` explains this interpretation to a command-line user.  You may
+## define new ones for your own custom types as needed wherever convenient
+## in-scope of ``dispatch``.
 
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, wordWrap, repeat, strip, toLowerAscii
@@ -86,7 +87,7 @@ template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
   template argParse*(dst: T, key: string, dfl: T, val: string, help: string) =
     block: # {.inject.} needed to get tmp typed, but block: prevents it leaking
       var tmp {.inject.}: WideT
-      if val == nil or parse(strip(val), tmp) == 0:
+      if val == nil or parse(strip(val), tmp) != len(strip(val)):
         argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
                [ (if val == nil: "nil" else: val), key, $T, help ])
       else: dst = T(tmp)
@@ -104,6 +105,142 @@ argParseHelpNum(BiggestUInt , parseBiggestUInt , uint8  )
 argParseHelpNum(BiggestUInt , parseBiggestUInt , uint16 )
 argParseHelpNum(BiggestUInt , parseBiggestUInt , uint32 )
 argParseHelpNum(BiggestUInt , parseBiggestUInt , uint64 )
-argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )  #floats
-argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)
-argParseHelpNum(BiggestFloat, parseBiggestFloat, float64)
+argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
+argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
+#argParseHelpNum(BiggestFloat, parseBiggestFloat, float64) #only a type alias
+
+## **PARSING ``seq[T]`` FOR NON-OS-TOKENIZED OPTION VALUES**
+##
+## This module also defines argParse/argHelp pairs for ``seq[T]`` with flexible
+## delimiting rules determined by a **necessary binding of ``seqDelimit`` in the
+## scope of ``dispatchGen``**.  You will get a compile-time error if you have
+## ``seq[T]`` parameters in wrapped ``proc`` and do not assign ``seqDelimit``.
+##
+## ``let seqDelimit = { ',', ':' }`` or ``let seqDelimit = "@"`` or ``let
+## seqDelimit = '%'`` all work.
+##
+## A less-common-than-it-should-be rule is activated by ``seqDelimit="<D>"``.
+## This is what I call delimiter-prefixed-separated-value (DPSV) format:
+##   ``<DELIM-CHAR><COMPONENT><DELIM-CHAR><COMPONENT>..``
+## E.g., for CSV the user enters ``",Howdy,Neighbor"``.  At the cost of one
+## extra character, users can choose delimiters that do not conflict with
+## body text on a case-by-case basis which makes quoting rules unneeded.
+##
+## To allow easy appending to or removing from existing sequence values,
+## the characters ``'+'`` and ``'-'`` are recognized as special prefixes. 
+## So, e.g., ``-o=,1,2,3 -o=+,4,5, -o=-3`` is equivalent to ``-o=,1,2,4,5``.
+## It is not considered an error to try to delete a non-existent value.
+##
+## ``argParseHelpSeq(myType)`` will instantiate ``argParse`` and ``argHelp``
+## for ``seq[myType]`` if you like any of the default delimiting schemes.
+##
+## The delimiting system is somewhat extensible.  If you have a new style or
+## would like to override my usage messages then you can define your own
+## ``argSeqSplitter`` and ``argSeqHelper`` anywhere before ``dispatchGen``.
+## The optional ``+-`` syntax will remain available.
+
+template argSeqSplitter*(sd: char, dst: seq[string], src: string, o: int) =
+  dst = src[o..^1].split(sd)
+
+template argSeqSplitter*(sd: set[char], dst: seq[string], src: string, o: int) =
+  dst = src[o..^1].split(sd)
+
+template argSeqSplitter*(sd: string, dst: seq[string], src: string, o: int) =
+  if sd == "<D>":                     # DELIMITER-PREFIXED Sep-Vals
+    dst = src[o+1..^1].split(sd[0])   # E.g.: ",hello,world"
+  else:
+    dst = src[o..^1].split(sd)
+
+template argSeqHelper*(sd: char, Dfl: seq[string]; typ, dfl: string) =
+  let dlm = $sd
+  typ = dlm & "SV[" & typ & "]"
+  dfl = if Dfl.len > 0: Dfl.join(dlm) else: "EMPTY"
+
+proc charClass*(s: set[char]): string =
+  result = "["
+  for c in s: result.add(c)
+  result.add("]")
+
+template argSeqHelper*(sd: set[char], Dfl: seq[string]; typ, dfl: string) =
+  let dlm = charClass(sd)
+  typ = dlm & "SV[" & typ & "]"
+  dfl = if Dfl.len > 0: Dfl.join(dlm) else: "EMPTY"
+
+template argSeqHelper*(sd: string, Dfl: seq[string]; typ, dfl: string) =
+  if sd == "<D>":
+    typ = "DPSV[" & typ & "]"
+    dfl = if Dfl.len > 0: sd & Dfl.join(sd) else: "EMPTY"
+  else:
+    typ = sd & "SV[" & typ & "]"
+    dfl = if Dfl.len > 0: Dfl.join(sd) else: "EMPTY"
+
+template argParseHelpSeq*(T: untyped): untyped =
+  template argParse*(dst: seq[T], key: string, dfl: seq[T], val, help: string)
+    {.dirty.} =  # w/o get un/ambiguous typed 'mode'
+    if val == nil:
+      argRet(1, "Bad value nil for DSV param \"$1\"\n$2" % [ key, help ])
+    block:
+      type argSeqMode = enum Set, Append, Delete
+      var mode = Set
+      var origin = 0
+      case val[0]
+      of '+': mode = Append; inc(origin)
+      of '-': mode = Delete; inc(origin)
+      else: discard
+      var tmp: seq[string]
+      argSeqSplitter(seqDelimit, tmp, $val, origin)
+      case mode
+      of Set:
+        dst = @[ ]
+        for e in tmp:
+          var eParsed: T
+          var eDefault: T
+          argParse(eParsed, key, eDefault, e, help)
+          dst.add(eParsed)
+      of Append:
+        if dst == nil: dst = @[ ]
+        for e in tmp:
+          var eParsed: T
+          var eDefault: T
+          argParse(eParsed, key, eDefault, e, help)
+          dst.add(eParsed)
+      of Delete:
+        if dst == nil: dst = @[ ]
+        var rqDel: seq[T] = @[ ]
+        for e in tmp:
+          var eParsed: T
+          var eDefault: T
+          argParse(eParsed, key, eDefault, e, help)
+          rqDel.add(eParsed)
+        for i, e in dst:
+          if e in rqDel:
+            dst.delete(i) #quadratic algo for many deletes, but preserves order
+
+  template argHelp*(ht: TextTab; dfl: seq[T]; parNm, sh, parHelp: string;
+                    rq: int) {.dirty.} = # w/o get un/ambiguous typed 'dflSeq'
+    when not declared(seqDelimit):
+      {.fatal: "Define seqDelimit to {some char|seq[char]|string|\"<D>\"}".}
+    block:
+      var typ = $T; var df: string
+      var dflSeq: seq[string] = @[ ]
+      for d in dfl: dflSeq.add($d)
+      argSeqHelper(seqDelimit, dflSeq, typ, df)
+      ht.add(@[ keys(parNm, sh), typ, argRq(rq, df), parHelp ])
+
+argParseHelpSeq(bool   )
+argParseHelpSeq(string )
+argParseHelpSeq(cstring)
+argParseHelpSeq(char   )
+argParseHelpSeq(int    )  #ints
+argParseHelpSeq(int8   )
+argParseHelpSeq(int16  )
+argParseHelpSeq(int32  )
+argParseHelpSeq(int64  )
+argParseHelpSeq(uint   )  #uints
+argParseHelpSeq(uint8  )
+argParseHelpSeq(uint16 )
+argParseHelpSeq(uint32 )
+argParseHelpSeq(uint64 )
+argParseHelpSeq(float32)  #floats
+argParseHelpSeq(float)
+#argParseHelpSeq(float64) #only a type alias

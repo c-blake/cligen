@@ -3,8 +3,35 @@ Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help             print this help message
-  -s=, --st=  DPSV  ","  set st
+  -h, --help                            print this help message
+  -b=, --bl=  ,SV[bool]     EMPTY       set bl
+  -B=, --Bl=  ,SV[bool]     false,true  set Bl
+  -s=, --s=   ,SV[string]   EMPTY       set s
+  -S=, --S=   ,SV[string]   ho,hey      set S
+  -i=, --i=   ,SV[int]      EMPTY       set i
+  -I=, --I=   ,SV[int]      1,2         set I
+  --i1=       ,SV[int8]     EMPTY       set i1
+  --I1=       ,SV[int8]     3,4         set I1
+  --i2=       ,SV[int16]    EMPTY       set i2
+  --I2=       ,SV[int16]    5,6         set I2
+  --i4=       ,SV[int32]    EMPTY       set i4
+  --I4=       ,SV[int32]    7,8         set I4
+  --i8=       ,SV[int64]    EMPTY       set i8
+  --I8=       ,SV[int64]    9,10        set I8
+  -u=, --u=   ,SV[uint]     EMPTY       set u
+  -U=, --U=   ,SV[uint]     11,12       set U
+  --u1=       ,SV[uint8]    EMPTY       set u1
+  --U1=       ,SV[uint8]    13,14       set U1
+  --u2=       ,SV[uint16]   EMPTY       set u2
+  --U2=       ,SV[uint16]   15,16       set U2
+  --u4=       ,SV[uint32]   EMPTY       set u4
+  --U4=       ,SV[uint32]   17,18       set U4
+  --u8=       ,SV[uint64]   EMPTY       set u8
+  --U8=       ,SV[uint64]   19,20       set U8
+  -f=, --f4=  ,SV[float32]  EMPTY       set f4
+  -F=, --F4=  ,SV[float32]  23.0,24.0   set F4
+  --f8=       ,SV[float]    EMPTY       set f8
+  --F8=       ,SV[float]    25.0,26.0   set F8
 ====================================
 Test: test/AllTypes.nim
 Usage:
@@ -391,26 +418,26 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float  2.0  shrink target
 ====================================
 Test: test/TwoNondefaultedSeq.nim
-TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
+TwoNondefaultedSeq.nim(10, 11) template/generic instantiation from here
 cligen/cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                     print this help message
-  -a=, --alpha=  int   1         set alpha
-  -v, --verb     bool  false     set verb
-  -s=, --stuff=  DPSV  REQUIRED  set stuff
+  -h, --help                            print this help message
+  -a=, --alpha=  int          1         set alpha
+  -v, --verb     bool         false     set verb
+  -s=, --stuff=  ,SV[string]  REQUIRED  set stuff
 ====================================
 Test: test/TwoNondefaultedSeqSwap.nim
 Usage:
   demo [required&optional-params] [stuff]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                     print this help message
-  -a=, --alpha=  int   1         set alpha
-  -v, --verb     bool  false     set verb
-  --args=        DPSV  REQUIRED  set args
+  -h, --help                            print this help message
+  -a=, --alpha=  int          1         set alpha
+  -v, --verb     bool         false     set verb
+  --args=        ,SV[string]  REQUIRED  set args
 ====================================
 Test: test/UserDispIdCollide.nim
 Usage:
