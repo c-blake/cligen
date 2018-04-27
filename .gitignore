@@ -35,3 +35,4 @@ test/FancyRepeats
 test/OneCharParams
 test/ImplicitDefault
 test/AllSeqTypes
+test/Enums

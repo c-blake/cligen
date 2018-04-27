@@ -81,6 +81,25 @@ template argParse*(dst: char, key: string, dfl: char, val, help: string) =
 template argHelp*(ht: TextTab, dfl: char; parNm, sh, parHelp: string, rq: int) =
   ht.add(@[ keys(parNm, sh), "char", repr(dfl), parHelp ])
 
+# enums
+template argParse*[T: enum](dst: T, key: string, dfl: T, val, help: string) =
+  block:
+    var found = false
+    for e in low(T)..high(T):
+      if cmpIgnoreStyle(val, $e) == 0:
+        dst = e
+        found = true
+        break
+    if not found:
+      var allEnums = ""
+      for e in low(T)..high(T): allEnums.add($e & " ")
+      allEnums.add("\n")
+      argRet(1, "Bad enum value for option \"$1\". Not in set:\n  $2\n$3" % [
+             key, allEnums, help ])
+
+template argHelp*[T: enum](ht: TextTab, dfl: T; parNm, sh, parHelp: string, rq: int) =
+  ht.add(@[ keys(parNm, sh), "enum", $dfl, parHelp ])
+
 # various numeric types
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
 
@@ -193,23 +212,20 @@ template argParseHelpSeq*(T: untyped): untyped =
       of Set:
         dst = @[ ]
         for e in tmp:
-          var eParsed: T
-          var eDefault: T
+          var eParsed, eDefault: T
           argParse(eParsed, key, eDefault, e, help)
           dst.add(eParsed)
       of Append:
         if dst == nil: dst = @[ ]
         for e in tmp:
-          var eParsed: T
-          var eDefault: T
+          var eParsed, eDefault: T
           argParse(eParsed, key, eDefault, e, help)
           dst.add(eParsed)
       of Delete:
         if dst == nil: dst = @[ ]
         var rqDel: seq[T] = @[ ]
         for e in tmp:
-          var eParsed: T
-          var eDefault: T
+          var eParsed, eDefault: T
           argParse(eParsed, key, eDefault, e, help)
           rqDel.add(eParsed)
         for i, e in dst:
@@ -244,3 +260,5 @@ argParseHelpSeq(uint64 )
 argParseHelpSeq(float32)  #floats
 argParseHelpSeq(float)
 #argParseHelpSeq(float64) #only a type alias
+#argParseHelpSeq(enum T) #XXX Fails; Natural re-impl arg(Parse|Help)*[T: enum]
+                         #XXX gets internal error: getInt. Unsupported for now.

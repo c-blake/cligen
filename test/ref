@@ -146,6 +146,16 @@ memory overhead.
   -a=, --a=   string  REQUIRED  set a
   -b=, --b=   string  REQUIRED  set b
 ====================================
+Test: test/Enums.nim
+Enums.nim(1, 31) Hint: 'blue' is declared but not used [XDeclaredButNotUsed]
+Usage:
+  demo [optional-params] [args]
+demo entry point with varied, meaningless parameters.
+  Options(opt-arg sep :|=|spc):
+  -h, --help                        print this help message
+  -b=, --background=   enum  red    background color
+  -f=, --foregrounds=  enum  green  foreround colors
+====================================
 Test: test/External.nim
 Usage:
   demo [optional-params] [args]
