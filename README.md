@@ -79,13 +79,14 @@ proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
 proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
   ##Some other API call
 when isMainModule:
-  import cligen; dispatchMulti([foo, short={"verb", 'v'}], [bar])
+  import cligen; dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
-Then a user can run ``./cmd foo -v`` or ``./cmd bar 10 1.0, 2.0``.  Each [] list
-in `dispatchMulti` is the argument list for each sub-`dispatch`.  Tune command
-syntax and help strings in the same way as ``dispatch``.  ``./cmd --help`` will
-emit a brief help message and ``./cmd help`` emits a more comprehensive message,
-while ``./cmd subcommand --help`` emits just the message for ``subcommand``.
+Then a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
+Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
+Tune command syntax and help strings in the same way as ``dispatch``.
+``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
+comprehensive message, while ``./cmd subcommand --help`` emits just the message
+for ``subcommand``.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
