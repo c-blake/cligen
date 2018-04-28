@@ -145,18 +145,19 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## extra character, users can choose delimiters that do not conflict with
 ## body text on a case-by-case basis which makes quoting rules unneeded.
 ##
-## To allow easy appending to or removing from existing sequence values,
-## the characters ``'+'`` and ``'-'`` are recognized as special prefixes. 
+## To allow easy appending to, removing from, and resetting existing sequence
+## values, ``'+'``, ``'-'``, ``'='`` are recognized as special prefix chars.
 ## So, e.g., ``-o=,1,2,3 -o=+,4,5, -o=-3`` is equivalent to ``-o=,1,2,4,5``.
+## Meanwhile, ``-o,1,2 -o:=-3 -o=++4`` makes ``o``'s value ``["-3", "+4"]``.
 ## It is not considered an error to try to delete a non-existent value.
-##
+
 ## ``argParseHelpSeq(myType)`` will instantiate ``argParse`` and ``argHelp``
 ## for ``seq[myType]`` if you like any of the default delimiting schemes.
 ##
 ## The delimiting system is somewhat extensible.  If you have a new style or
 ## would like to override my usage messages then you can define your own
 ## ``argSeqSplitter`` and ``argSeqHelper`` anywhere before ``dispatchGen``.
-## The optional ``+-`` syntax will remain available.
+## The optional ``+-=`` syntax will remain available.
 
 template argSeqSplitter*(sd: char, dst: seq[string], src: string, o: int) =
   dst = src[o..^1].split(sd)
@@ -205,6 +206,7 @@ template argParseHelpSeq*(T: untyped): untyped =
       case val[0]
       of '+': mode = Append; inc(origin)
       of '-': mode = Delete; inc(origin)
+      of '=': mode = Set; inc(origin)
       else: discard
       var tmp: seq[string]
       argSeqSplitter(seqDelimit, tmp, $val, origin)
