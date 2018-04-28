@@ -152,9 +152,9 @@ Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                        print this help message
-  -b=, --background=   enum  red    background color
-  -f=, --foregrounds=  enum  green  foreround colors
+  -h, --help                              print this help message
+  -b=, --background=   enum        red    background color
+  -f=, --foregrounds=  ,SV[Color]  green  foreround colors
 ====================================
 Test: test/External.nim
 Usage:
