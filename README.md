@@ -70,9 +70,9 @@ dispatch(editDistance, echoResult=true)
 ```
 
 If you want to expose two or more procs into a command with subcommands a la
-`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  
-Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
-Tune command syntax and help strings in the same way as ``dispatch`` as in:
+`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each []
+list in `dispatchMulti` is the argument list for each sub-`dispatch`.  Tune
+command syntax and help strings in the same way as ``dispatch`` as in:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
