@@ -38,16 +38,16 @@ Often this is all that is required to have a capable and user-friendly CLI,
 but some more controls are provided for more subtle use cases.
 
 If you want to manually control the short option for a parameter, you can
-just override it with the 5th|short= macro parameter:
+just override it with the 5th|``short=`` macro parameter:
 ```nim
   dispatch(foobar, short = { "bar" : 'r' }))
 ```
-With that, "bar" will get 'r' while "baz" will get 'b' as short options.
+With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress some long option getting a short option at all, specify ``'\0'`` for
 its short key.  To suppress all short options, give ``short`` a key of ``""``.
 
-By default, dispatchGen has ``requireSeparator=false`` which makes ``-abcdBar``,
-``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` are all acceptable syntax for
+By default, ``dispatchGen`` has ``requireSeparator=false`` making ``-abcdBar``,
+``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` all acceptable syntax for
 command options.  Additionally, long option keys can be spelled flexibly, e.g.
 ``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
 
