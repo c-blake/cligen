@@ -31,43 +31,38 @@ command user may forget the [:|=] required to separate an option and its value.
 
 Extending `cligen` to support new parameter types (more on Rule 2)
 ------------------------------------------------------------------
-`cligen` supports most basic Nim types (int, float, ..) out of the box, and the
-system can be extended pretty easily to user-defined types.
-
-You can extend the set of supported parameter conversion types by defining a
-couple helper templates before invoking `dispatch`.  All you need do is define
-a compatible `argParse` and `argHelp` for any new Nim parameter types you want.
+`cligen` supports most basic Nim types out of the box (strings, numbers, enums,
+sequences of such).  The system can be extended pretty easily to other types.
+To extend the set of supported parameter conversion types, all you need do is
+define a compatible `argParse` and `argHelp` for the new Nim parameter types.
 Basically, `argParse` parses a string into a Nim value and `argHelp` provides
-simple guidance on what that syntax is for command users.
+simple guidance on what that syntax is for command users - input & output.
 
-For example, you might want to receive a `seq[string]` parameter inside a single
-argument/option value.  So, you need some user friendly convention to convert
-a single string to a sequence of them, such as a comma-separated-value list.
-Teaching `cligen` what to do goes like this:
+For example, you might want to receive a `set[short]` parameter inside a single
+argument/option value.  So, you need some user friendly convention to convert a
+single string to a collection, such as a comma-separated-value list.  Teaching
+`cligen` what to do goes like this:
 ```nim
-proc demo(stuff = @[ "abc", "def" ], opt1=true, foo=2): int =
-  return len(stuff)
+import colors, cligen, argcvt, textUt
 
-when isMainModule:
-  import strutils, cligen, argcvt  # argcvt.keys deals with missing short opts
+proc demo(color = colBlack, opt1=true, paths: seq[string]): int =
+  echo "color=", color
 
-  template argParse(dst: seq[string], key: string, dfl: seq[string],
-                    val: string, help: string) =
-    dst = val.split(",")
+template argParse(dst: Color, key: string, dfl: Color; val, help: string) =
+  try: dst = parseColor(val)
+  except: discard
 
-  template argHelp(helpT: seq[array[0..3, string]], defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string, rq: int) =
-    helpT.add([keys(parNm, sh), "CSV", argRq(rq, "\""&defVal.join(",")&"\""),
-               parHelp])
+template argHelp(ht: TextTab; defVal: Color; parNm,sh,parHelp: string; rq: int)=
+  ht.add(@[keys(parNm, sh), "Color", argRq(rq, $defVal), parHelp])
 
-  dispatch(demo, doc="NOTE: CSV=comma-separated value list")
+dispatch(demo, doc="NOTE: colors.nim has color names")
 ```
 Of course, you often want more input validation than this.  See `argcvt.nim` in
 the `cligen` package for the currently supported types and more details.  Due
 to ordinary Nim rules, if you dislike any of the default `argParse`/`argHelp`
 implementations for a given type then you can override them by defining your
 own in scope before invoking `dispatch`.  For example, `test/FancyRepeats.nim`
-shows how to make `int` or `seq` behavior additive.
+shows how to make repeated `int` or `seq` issuance additive.
 
 Exit Code Behavior
 ==================
