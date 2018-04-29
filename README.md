@@ -46,12 +46,10 @@ With that, "bar" will get 'r' while "baz" will get 'b' as short options.
 To suppress some long option getting a short option at all, specify ``'\0'`` for
 its short key.  To suppress all short options, give ``short`` a key of ``""``.
 
-By default, dispatchGen has ``requireSeparator=false`` which results in more
-traditional POSIX command-line parsers than parseopt/parsopt2 in Nim's standard
-library.  Specifically, ``-abcdBar`` or ``-abcd Bar`` or ``--delta Bar`` or
-``--delta=Bar`` are all acceptable syntax for command options.  Additionally,
-long option keys can be spelled flexibly, e.g. ``--dry-run`` or ``--dryRun``,
-much like Nim's style-insensitive identifiers.
+By default, dispatchGen has ``requireSeparator=false`` which makes ``-abcdBar``,
+``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` are all acceptable syntax for
+command options.  Additionally, long option keys can be spelled flexibly, e.g.
+``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
 
 The same basic string-to-native type converters used for option values will be
 applied to convert optional positional arguments to seq[T] values or mandatory
@@ -64,15 +62,17 @@ when isMainModule:
   import cligen; dispatch(foobar)
 ```
 
-Is the return value not an 8-bit integer or for some other reason it makes more
-sense to echo the result of the proc?  Just pass ``echoResult=true``:
+If it makes more sense to echo the result of the proc than convert its result to
+an 8-bit exit code, just pass ``echoResult=true``:
 ```nim
 import cligen, strutils   # generate a CLI for Nim stdlib's editDistance
 dispatch(editDistance, echoResult=true)
 ```
 
-Want to expose two or more procs into a command with subcommands a la `git`
-or `nimble`?  Just use `dispatchMulti` in, say, a `cmd.nim` file:
+If you want to expose two or more procs into a command with subcommands a la
+`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  
+Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
+Tune command syntax and help strings in the same way as ``dispatch`` as in:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
@@ -81,22 +81,19 @@ proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
 when isMainModule:
   import cligen; dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
-Then a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
-Each [] list in `dispatchMulti` is the argument list for each sub-`dispatch`.
-Tune command syntax and help strings in the same way as ``dispatch``.
+With that, a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
 ``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
-messages that exhibit the basic mappings.  The default help tables play well
-with automated "help to X" tools such as ``complete -F _longopt`` in bash,
-``compdef _gnu_generic`` in zsh, or the GNU ``help2man`` package.  There are
-also many examples in https://github.com/c-blake/cligen/tree/master/test/ that
-double as an automated test suite.  Some more details are covered by
-https://github.com/c-blake/cligen/tree/master/DETAILS.md as well as
-`cligen.nim`.
+messages that exhibit the basic mappings.  Default help tables play well with
+automated "help to X" tools such as ``complete -F _longopt`` in bash, ``compdef
+_gnu_generic`` in zsh, or the GNU ``help2man`` package.  Many simple examples
+are at https://github.com/c-blake/cligen/tree/master/test/.  More details are
+covered by module documentation for ``parseopt3``, ``cligen``, ``argcvt`` as
+well as https://github.com/c-blake/cligen/tree/master/DETAILS.md.
 
 More Motivation
 ===============
@@ -107,7 +104,7 @@ This approach to command-line interfaces has both great Don't Repeat Yourself
 unless you are compiling a CLI executable.  Similarly, wrapped routines need
 not be in the same module, modifiable, or know anything about `cligen`.  This
 approach is great when you want to maintain both an API and a CLI in parallel.
-Such easy dual API/CLI maintenance encourages preserving access to functionality
+Easy dual API/CLI maintenance encourages preserving access to functionality
 via API/"Nim import".  When so preserved, this then eases complex uses being
 driven by other Nim programs rather than by shell scripts (once usage complexity
 makes scripting language limitations annoying).  Finally, and perhaps most
