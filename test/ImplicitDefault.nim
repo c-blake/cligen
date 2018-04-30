@@ -10,5 +10,4 @@ proc demo(alpha: int, beta=foo, verb=false, item: string, args: seq[string]): in
 
 when isMainModule:
   import cligen, argcvt
-  argcvt.REQUIRED = "MANDATORY"
-  dispatch(demo, implicitDefault = @[ "item" ])
+  dispatch(demo, implicitDefault = @[ "item" ], mandatoryHelp = "MANDATORY")

@@ -134,7 +134,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    stopWords: seq[string] = @[], positional = "",
                    argPre: seq[string] = @[], argPost: seq[string] = @[],
                    suppress: seq[string] = @[], shortHelp = 'h',
-                   implicitDefault: seq[string] = @[]): untyped =
+                   implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
+                   seqDelimit=","): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -178,7 +179,13 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ##
   ## `implicitDefault` is a list of formal parameter names allowed to default
   ## to the Nim default value for a type, rather than becoming mandatory, even
-  ## when they are missing an explicit initializer.
+  ## when they are missing an explicit initializer. `mandatoryHelp` is how the
+  ## default value appears in help messages for mandatory parameters.
+  ##
+  ## `delimit` decides the delimiting convention for aggregate types like `set`s
+  ## or `seq`s by assigning to `argcvt.delimit`.  Delimiting is implemented by
+  ## `argParse`/`argHelp`, though and so is very user overridable.  See
+  ## `argcvt` documentation for details on the default implementation.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
@@ -268,8 +275,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         let defVal = sdef[0]
         let hlp=if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
         let isReq = if i in mandatory: true else: false
-        result.add(quote do: argHelp(`tabId`, `defVal`, `parNm`, `sh`, `hlp`,
-                                     `isReq`))
+        result.add(quote do: `tabId`.add(argHelp(`defVal`, `parNm`, `sh`,
+                                                 `hlp`, `isReq`)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
@@ -298,7 +305,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       let spar   = spars[i][0]
       let dpar   = dpars[i][0]
       let apCall = quote do:
-        argParse(`spar`, `keyId`, `dpar`, `valId`, `helpId`)
+        if not argParse(`spar`, `keyId`, `dpar`, `valId`, `helpId`):
+          return 1
         discard delItem(`mandId`, `parNm`)
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
         let parShOpt = $shOpt.getOrDefault(parNm)
@@ -307,7 +315,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
-      argRet(1, "Bad option: \"" & `keyId` & "\"\n" & `helpId`)))
+      stderr.write("Bad option: \"" & `keyId` & "\"\n" & `helpId`)
+      return 1))
 
   proc defNonOpt(): NimNode =
     result = newStmtList()
@@ -321,12 +330,15 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
           `posId`.setLen(1)
           rewind = true
         var `tmpId` = `posId`[0]
-        argParse(`tmpId`, "positional $" & $`posNoId`, `tmpId`, `keyId`,"positional\n")
+        if not argParse(`tmpId`, "positional $" & $`posNoId`, `tmpId`, `keyId`,
+                        "positional\n"):
+          return 1
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
-       argRet(1,`proNm` & " does not expect non-option arguments\n" & `helpId`))
+        stderr.write(`proNm` & " does not expect non-option arguments\n" &
+                     `helpId`); return 1)
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
@@ -357,7 +369,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
     from os     import commandLineParams
-    from argcvt import argRet, argParse, argHelp
+    from argcvt import argParse, argHelp
     from textUt import addPrefix, TextTab, alignTable
     from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
@@ -402,7 +414,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 stopWords: seq[string] = @[], positional = "",
                 argPre: seq[string] = @[], argPost: seq[string] = @[],
                 suppress: seq[string] = @[], shortHelp = 'h',
-                implicitDefault: seq[string] = @[]): untyped =
+                implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
+                seqDelim = ","): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -410,7 +423,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
     requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
     helpTabColumns, stopWords, positional, argPre, argPost, suppress, shortHelp,
-    implicitDefault))
+    implicitDefault, mandatoryHelp, seqDelim))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =

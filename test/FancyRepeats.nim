@@ -8,54 +8,54 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
   return 42
 
 when isMainModule:
-  from strutils import split, `%`, join
-  from argcvt   import keys, argRet, argRq  # Little helpers
+  from strutils import split, `%`, join, strip
+  from argcvt   import keys, ERR, argDf  # Little helpers
   from textUt   import TextTab
   from parseutils import parseInt
 
-  template argParse*(dst: int, key: string, dfl: int, val: string, help: string) =
+  proc argParse*(dst: var int, key: string, dfl: int; val, help: string): bool =
     let Key = if key == "v": "verb" else: key
     if Key == "verb":               # make "verb" a repeatable key
-      if Key in keyCount:
+#     if Key in keyCount:
         inc(dst)
-      else:
-        dst = 1
-      keyCount.inc(Key)
+#     else:
+#       dst = 1
+#     keyCount.inc(Key)
     else:
       if val == nil or parseInt(strip(val), dst) == 0:
-        argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
+        ERR("Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
                [ (if val == nil: "nil" else: val), key, help ])
+        return false
+    return true
 
-  template argHelp*(ht: TextTab, defVal: int,
-                    parNm: string, sh: string, parHelp: string, rq: int) =
+  proc argHelp*(defVal: int, parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
     if parNm == "verb":
-      ht.add(@[ keys(parNm, sh), "[bool]", argRq(rq, $defVal), parHelp ])
-      shortNoVal.incl(sh[0])
-      longNoVal.add(parNm)
+      result = @[ keys(parNm, sh), "[bool]", argDf(rq, $defVal), parHelp ]
+#     shortNoVal.incl(sh[0])
+#     longNoVal.add(parNm)
     else:
-      ht.add(@[ keys(parNm, sh), "int", argRq(rq, $defVal), parHelp ])
+      result = @[ keys(parNm, sh), "int", argDf(rq, $defVal), parHelp ]
 
-  template argParse(dst: seq[string], key: string, dfl: seq[string], val: string, help: string) =
+  proc argParse(dst: var seq[string], key: string, dfl: seq[string]; val, help: string): bool =
     if val == nil:
-      argRet(1, "Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
+      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
+      return false
     let Key = if key == "s": "stuff" else: key
     if Key == "stuff":              # make "stuff" a repeatable key
-      if Key in keyCount:
+#     if Key in keyCount:
         dst = dst & val.split(",")
-      else:
-        dst = val.split(",")
-      keyCount.inc(Key)
+#     else:
+#       dst = val.split(",")
+#     keyCount.inc(Key)
     else:
       dst = val.split(",")
+    return true
 
-  template argHelp(ht: TextTab, defVal: seq[string],
-                   parNm: string, sh: string, parHelp: string, rq: int) =
+  proc argHelp(defVal: seq[string], parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
     if parNm == "stuff":                # make "stuff" a repeatable key
-      ht.add(@[ keys(parNm, sh), "[CSV]",
-                  argRq(rq, "\"" & defVal.join(",")) & "\"", parHelp ])
+      result = @[ keys(parNm, sh), "+CSV", argDf(rq, "\"" & defVal.join(",")) & "\"", parHelp ]
     else:
-      ht.add(@[ keys(parNm, sh), "CSV",
-                  argRq(rq, "\"" & defVal.join(",") & "\""), parHelp ])
+      result = @[ keys(parNm, sh), "CSV", argDf(rq, "\"" & defVal.join(",") & "\""), parHelp ]
 
   import cligen
   dispatch(demo)

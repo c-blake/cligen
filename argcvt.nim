@@ -1,14 +1,11 @@
-## ``argParse`` and ``argHelp`` are a pair of related overloaded template
-## helpers for each supported Nim type of optional parameter.  ``argParse``
-## determines how string arguments are interpreted into native types while
-## ``argHelp`` explains this interpretation to a command-line user.  You may
-## define new ones for your own custom types as needed wherever convenient
-## in-scope of ``dispatch``.
+## ``argParse`` determines how string arguments are interpreted into native
+## ``argHelp`` explains this interpretation to a command-line user.  Define new
+## overloads in-scope of ``dispatch`` to override these or support more types.
 
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
-from strutils   import `%`, join, split, wordWrap, repeat, strip, toLowerAscii
-from textUt     import TextTab
+from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`
+proc ERR*(x: string) = stderr.write(x)
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -22,97 +19,108 @@ proc keys*(parNm: string, shrt: string, argSep="="): string =
   result = if len(shrt) > 0: "-$1$3, --$2$3" % [ shrt, parNm, argSep ]
            else            : "--" & parNm & argSep
 
-var REQUIRED* = "REQUIRED"  # CLI-author can change, if desired.
+type argcvtParams* = object ## \
+  ## Abstraction of non-param-type arguments to `argParse` and `argHelp`.
+  ## Per-use data, then per-parameter data, then per-command/global data.
+  key: string        ## key actually used for this option
+  val: string        ## value actually given by user
+  sep: string        ## separator actually used (including before '=' text)
+  parName: string    ## long option key/parameter name
+  parSh: char        ## short key for this option key
+  parHelp: string    ## parameter help
+  parDelimit: string ## parameter delimiting convention if a `seq`, `set`, etc.
+  parReq: int        ## flag indicating parameter is mandatory
+  Mand: string       ## how a mandatory defaults is rendered in help
+  Help: string       ## the whole help string, for parse errors
 
-template argRq*(rq: int, dv: string): string =
-  ## argRq is an argHelp space-saving template to decide what default col says.
-  (if rq != 0:
-    REQUIRED
-  else:
-    dv)
-
-template argRet*(code: int, msg: string) =
-  ## argRet is an argParse space-saving template to write msg & return a code.
-  stderr.write(msg)                         # if code==0 send to stdout?
-  return code
+proc argDf*(rq: int, dv: string): string =
+  ## argDf is an argHelp space-saving template to decide what default col says.
+  (if rq != 0: "REQUIRED" else: dv)
 
 # bool
-template argParse*(dst: bool, key: string, dfl: bool, val, help: string) =
+proc argParse*(dst: var bool, key: string, dfl: bool, val, help: string): bool =
   if len(val) > 0:
     case val.toLowerAscii   # Like `strutils.parseBool` but we also accept t&f
     of "t", "true", "yes", "y", "1", "on": dst = true
     of "f", "false", "no", "n",  "0", "off": dst = false
     else:
-      argRet(1, "Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
-             [ key, val, help ])
+      ERR("Bool option \"$1\" non-boolean argument (\"$2\")\n$3"%[key,val,help])
+      return false
   else:               # No option arg => reverse of default (usually, ..
     dst = not dfl     #.. but not always this means false->true)
+  return true
 
-template argHelp*(ht: TextTab, dfl: bool; parNm, sh, parHelp: string, rq: int) =
-  ht.add(@[ keys(parNm, sh, argSep=""), "bool", argRq(rq, $dfl), parHelp ])
-  shortNoVal.incl(sh[0])            # bool must elide option arguments.
-  longNoVal.add(parNm)              # So, add to *NoVal.
+proc argHelp*(dfl: bool; parNm, sh, parHelp: string, rq: int): seq[string] =
+  result = @[ keys(parNm, sh, argSep=""), "bool", argDf(rq, $dfl), parHelp ]
+#XXX move this logic to cligen?
+# shortNoVal.incl(sh[0])            # bool can elide option arguments.
+# longNoVal.add(parNm)              # So, add to *NoVal.
 
 # string
-template argParse*(dst: string, key: string, dfl: string, val, help: string) =
+proc argParse*(dst: var string; key, dfl, val, help: string): bool =
   if val == nil:
-    argRet(1, "Bad value nil for string param \"$1\"\n$2" % [ key, help ])
+    ERR("Bad value nil for string param \"$1\"\n$2" % [ key, help ])
+    return false
   dst = val
+  return true
 
-template argHelp*(ht: TextTab, dfl: string; parNm, sh, parHelp: string, rq:int)=
-  ht.add(@[keys(parNm, sh), "string", argRq(rq, nimEscape(dfl)), parHelp])
+proc argHelp*(dfl: string; parNm, sh, parHelp: string, rq: int): seq[string] =
+  result = @[ keys(parNm, sh), "string", argDf(rq, nimEscape(dfl)), parHelp ]
 
 # cstring
-template argParse*(dst: cstring, key: string, dfl: cstring, val, help: string) =
+proc argParse*(dst: var cstring, key:string, dfl:cstring, val,help:string):bool=
   if val == nil:
-    argRet(1, "Bad value nil for string param \"$1\"\n$2" % [ key, help ])
+    ERR("Bad value nil for string param \"$1\"\n$2" % [ key, help ])
+    return false
   dst = val
+  return true
 
-template argHelp*(ht: TextTab, dfl: cstring; parNm, sh, parHelp: string,rq:int)=
-  ht.add(@[keys(parNm, sh), "string", argRq(rq, nimEscape($dfl)), parHelp])
+proc argHelp*(dfl: cstring; parNm, sh, parHelp: string, rq: int): seq[string] =
+  result = @[ keys(parNm, sh), "string", argDf(rq, nimEscape($dfl)), parHelp ]
 
 # char
-template argParse*(dst: char, key: string, dfl: char, val, help: string) =
+proc argParse*(dst: var char, key: string, dfl: char, val, help: string): bool =
   if val == nil or len(val) > 1:
-    argRet(1, "Bad value nil/multi-char for char param \"$1\"\n$2" %
-           [ key , help ])
+    ERR("Bad value nil/multi-char for char param \"$1\"\n$2" % [ key , help ])
+    return false
   dst = val[0]
+  return true
 
-template argHelp*(ht: TextTab, dfl: char; parNm, sh, parHelp: string, rq: int) =
-  ht.add(@[ keys(parNm, sh), "char", repr(dfl), parHelp ])
+proc argHelp*(dfl: char; parNm, sh, parHelp: string, rq: int): seq[string] =
+  result = @[ keys(parNm, sh), "char", repr(dfl), parHelp ]
 
 # enums
-template argParse*[T: enum](dst: T, key: string, dfl: T, val, help: string) =
-  block:
-    var found = false
-    for e in low(T)..high(T):
-      if cmpIgnoreStyle(val, $e) == 0:
-        dst = e
-        found = true
-        break
-    if not found:
-      var allEnums = ""
-      for e in low(T)..high(T): allEnums.add($e & " ")
-      allEnums.add("\n")
-      argRet(1, "Bad enum value for option \"$1\". Not in set:\n  $2\n$3" % [
-             key, allEnums, help ])
+proc argParse*[T: enum](dst: var T, key: string, dfl: T, val,help: string):bool=
+  var found = false
+  for e in low(T)..high(T):
+    if cmpIgnoreStyle(val, $e) == 0:
+      dst = e
+      found = true
+      break
+  if not found:
+    var all = ""
+    for e in low(T)..high(T): all.add($e & " ")
+    all.add("\n\n")
+    ERR("Bad enum value for option \"$1\". \"$2\" is not one of:\n  $3$4" %
+        [ key, val, all, help ])
+    return false
+  return true
 
-template argHelp*[T: enum](ht: TextTab, dfl: T; parNm, sh, parHelp: string, rq: int) =
-  ht.add(@[ keys(parNm, sh), "enum", $dfl, parHelp ])
+proc argHelp*[T: enum](dfl: T; parNm,sh,parHelp: string, rq: int): seq[string] =
+  result = @[ keys(parNm, sh), "enum", $dfl, parHelp ]
 
 # various numeric types
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
-
-  template argParse*(dst: T, key: string, dfl: T, val: string, help: string) =
-    block: # {.inject.} needed to get tmp typed, but block: prevents it leaking
-      var tmp {.inject.}: WideT
-      if val == nil or parse(strip(val), tmp) != len(strip(val)):
-        argRet(1, "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
-               [ (if val == nil: "nil" else: val), key, $T, help ])
-      else: dst = T(tmp)
-
-  template argHelp*(ht: TextTab, dfl: T; parNm, sh, parHelp: string, rq: int) =
-    ht.add(@[ keys(parNm, sh), $T, argRq(rq, $dfl), parHelp ])
+  proc argParse*(dst: var T, key: string, dfl: T; val, help: string): bool =
+    var tmp: WideT
+    if val == nil or parse(strip(val), tmp) != len(strip(val)):
+      ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
+          [ (if val == nil: "nil" else: val), key, $T, help ])
+      return false
+    dst = T(tmp)
+    return true
+  proc argHelp*(dfl: T; parNm, sh, parHelp: string, rq: int): seq[string] =
+    result = @[ keys(parNm, sh), $T, argDf(rq, $dfl), parHelp ]
 
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int    )  #ints
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int8   )
@@ -131,26 +139,25 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## **PARSING ``seq[T]`` FOR NON-OS-TOKENIZED OPTION VALUES**
 ##
 ## This module also defines argParse/argHelp pairs for ``seq[T]`` with flexible
-## delimiting rules determined by a **necessary binding of ``seqDelimit`` in the
-## scope of ``dispatchGen``**.  You will get a compile-time error if you have
-## ``seq[T]`` parameters in wrapped ``proc`` and do not assign ``seqDelimit``.
+## delimiting rules decided by the global var `delimit`.  A value of `<D>`
+## indicates delimiter-prefixed-values while a square-bracket character class
+## like `[:,]` indicates a set of chars.  Anything else indicates that the
+## whole string is the delimiter.
 ##
-## ``let seqDelimit = { ',', ':' }`` or ``let seqDelimit = "@"`` or ``let
-## seqDelimit = '%'`` all work.
-##
-## A less-common-than-it-should-be rule is activated by ``seqDelimit="<D>"``.
-## This is what I call delimiter-prefixed-separated-value (DPSV) format:
+## Delimiter-prefixed-separated-value (DPSV) format is as follows:
 ##   ``<DELIM-CHAR><COMPONENT><DELIM-CHAR><COMPONENT>..``
 ## E.g., for CSV the user enters ``",Howdy,Neighbor"``.  At the cost of one
 ## extra character, users can choose delimiters that do not conflict with
 ## body text on a case-by-case basis which makes quoting rules unneeded.
+## This may only be "friendly" to users who are programmer types, although
+## that is also true of most quoting rules. :)
 ##
 ## To allow easy appending to, removing from, and resetting existing sequence
 ## values, ``'+'``, ``'-'``, ``'='`` are recognized as special prefix chars.
 ## So, e.g., ``-o=,1,2,3 -o=+,4,5, -o=-3`` is equivalent to ``-o=,1,2,4,5``.
 ## Meanwhile, ``-o,1,2 -o:=-3 -o=++4`` makes ``o``'s value ``["-3", "+4"]``.
 ## It is not considered an error to try to delete a non-existent value.
-
+##
 ## ``argParseHelpSeq(myType)`` will instantiate ``argParse`` and ``argHelp``
 ## for ``seq[myType]`` if you like any of the default delimiting schemes.
 ##
@@ -159,34 +166,15 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## ``argSeqSplitter`` and ``argSeqHelper`` anywhere before ``dispatchGen``.
 ## The optional ``+-=`` syntax will remain available.
 
-template argSeqSplitter*(sd: char, dst: seq[string], src: string, o: int) =
-  dst = src[o..^1].split(sd)
+var delimit = ","
 
-template argSeqSplitter*(sd: set[char], dst: seq[string], src: string, o: int) =
-  dst = src[o..^1].split(sd)
-
-template argSeqSplitter*(sd: string, dst: seq[string], src: string, o: int) =
+proc argSeqSplitter*(sd: string, dst: var seq[string], src: string, o: int) =
   if sd == "<D>":                     # DELIMITER-PREFIXED Sep-Vals
     dst = src[o+1..^1].split(sd[0])   # E.g.: ",hello,world"
   else:
     dst = src[o..^1].split(sd)
 
-template argSeqHelper*(sd: char, Dfl: seq[string]; typ, dfl: string) =
-  let dlm = $sd
-  typ = dlm & "SV[" & typ & "]"
-  dfl = if Dfl.len > 0: Dfl.join(dlm) else: "EMPTY"
-
-proc charClass*(s: set[char]): string =
-  result = "["
-  for c in s: result.add(c)
-  result.add("]")
-
-template argSeqHelper*(sd: set[char], Dfl: seq[string]; typ, dfl: string) =
-  let dlm = charClass(sd)
-  typ = dlm & "SV[" & typ & "]"
-  dfl = if Dfl.len > 0: Dfl.join(dlm) else: "EMPTY"
-
-template argSeqHelper*(sd: string, Dfl: seq[string]; typ, dfl: string) =
+proc argSeqHelper*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
   if sd == "<D>":
     typ = "DPSV[" & typ & "]"
     dfl = if Dfl.len > 0: sd & Dfl.join(sd) else: "EMPTY"
@@ -194,73 +182,98 @@ template argSeqHelper*(sd: string, Dfl: seq[string]; typ, dfl: string) =
     typ = sd & "SV[" & typ & "]"
     dfl = if Dfl.len > 0: Dfl.join(sd) else: "EMPTY"
 
-template argParseHelpSeq*(T: untyped): untyped =
-  template argParse*(dst: seq[T], key: string, dfl: seq[T], val, help: string)
-    {.dirty.} =  # w/o get un/ambiguous typed 'mode'
+## seqs
+proc argParse*[T](dst: var seq[T], key: string, dfl: seq[T];
+                 val, help: string): bool =
     if val == nil:
-      argRet(1, "Bad value nil for DSV param \"$1\"\n$2" % [ key, help ])
-    block:
-      type argSeqMode = enum Set, Append, Delete
-      var mode = Set
-      var origin = 0
-      case val[0]
-      of '+': mode = Append; inc(origin)
-      of '-': mode = Delete; inc(origin)
-      of '=': mode = Set; inc(origin)
-      else: discard
-      var tmp: seq[string]
-      argSeqSplitter(seqDelimit, tmp, $val, origin)
-      case mode
-      of Set:
-        dst = @[ ]
-        for e in tmp:
-          var eParsed, eDefault: T
-          argParse(eParsed, key, eDefault, e, help)
-          dst.add(eParsed)
-      of Append:
-        if dst == nil: dst = @[ ]
-        for e in tmp:
-          var eParsed, eDefault: T
-          argParse(eParsed, key, eDefault, e, help)
-          dst.add(eParsed)
-      of Delete:
-        if dst == nil: dst = @[ ]
-        var rqDel: seq[T] = @[ ]
-        for e in tmp:
-          var eParsed, eDefault: T
-          argParse(eParsed, key, eDefault, e, help)
-          rqDel.add(eParsed)
-        for i, e in dst:
-          if e in rqDel:
-            dst.delete(i) #quadratic algo for many deletes, but preserves order
+      ERR("Bad value nil for DSV param \"$1\"\n$2" % [ key, help ])
+      return false
+    type argSeqMode = enum Set, Append, Delete
+    var mode = Set
+    var origin = 0
+    case val[0]
+    of '+': mode = Append; inc(origin)
+    of '-': mode = Delete; inc(origin)
+    of '=': mode = Set; inc(origin)
+    else: discard
+    var tmp: seq[string]
+    argSeqSplitter(delimit, tmp, $val, origin)
+    case mode
+    of Set:
+      dst = @[ ]
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        dst.add(eParsed)
+    of Append:
+      if dst == nil: dst = @[ ]
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        dst.add(eParsed)
+    of Delete:
+      if dst == nil: dst = @[ ]
+      var rqDel: seq[T] = @[ ]
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        rqDel.add(eParsed)
+      for i, e in dst:
+        if e in rqDel:
+          dst.delete(i) #quadratic algo for many deletes, but preserves order
+    return true
 
-  template argHelp*(ht: TextTab; dfl: seq[T]; parNm, sh, parHelp: string;
-                    rq: int) {.dirty.} = # w/o get un/ambiguous typed 'dflSeq'
-    when not declared(seqDelimit):
-      {.fatal: "Define seqDelimit to {some char|seq[char]|string|\"<D>\"}".}
-    block:
-      var typ = $T; var df: string
-      var dflSeq: seq[string] = @[ ]
-      for d in dfl: dflSeq.add($d)
-      argSeqHelper(seqDelimit, dflSeq, typ, df)
-      ht.add(@[ keys(parNm, sh), typ, argRq(rq, df), parHelp ])
+proc argHelp*[T](dfl: seq[T]; parNm, sh, parHelp: string; rq: int): seq[string]=
+    var typ = $T; var df: string
+    var dflSeq: seq[string] = @[ ]
+    for d in dfl: dflSeq.add($d)
+    argSeqHelper(delimit, dflSeq, typ, df)
+    result = @[ keys(parNm, sh), typ, argDf(rq, df), parHelp ]
 
-argParseHelpSeq(bool   )
-argParseHelpSeq(string )
-argParseHelpSeq(cstring)
-argParseHelpSeq(char   )
-argParseHelpSeq(int    )  #ints
-argParseHelpSeq(int8   )
-argParseHelpSeq(int16  )
-argParseHelpSeq(int32  )
-argParseHelpSeq(int64  )
-argParseHelpSeq(uint   )  #uints
-argParseHelpSeq(uint8  )
-argParseHelpSeq(uint16 )
-argParseHelpSeq(uint32 )
-argParseHelpSeq(uint64 )
-argParseHelpSeq(float32)  #floats
-argParseHelpSeq(float)
-#argParseHelpSeq(float64) #only a type alias
-#argParseHelpSeq(enum T) #XXX Fails; Natural re-impl arg(Parse|Help)*[T: enum]
-                         #XXX gets internal error: getInt. Unsupported for now.
+## sets
+proc argParse*[T](dst: var set[T], key: string, dfl: set[T];
+                 val, help: string): bool =
+    if val == nil:
+      ERR("Bad value nil for DSV param \"$1\"\n$2" % [ key, help ])
+      return false
+    type argSeqMode = enum Set, Append, Delete
+    var mode = Set
+    var origin = 0
+    case val[0]
+    of '+': mode = Append; inc(origin)
+    of '-': mode = Delete; inc(origin)
+    of '=': mode = Set; inc(origin)
+    else: discard
+    var tmp: seq[string]
+    argSeqSplitter(delimit, tmp, $val, origin)
+    case mode
+    of Set:
+      dst = {}
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        dst.incl(eParsed)
+    of Append:
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        dst.incl(eParsed)
+    of Delete:
+      for e in tmp:
+        var eParsed, eDefault: T
+        if not argParse(eParsed, key, eDefault, e, help):
+          return false
+        dst.excl(eParsed)
+    return true
+
+proc argHelp*[T](dfl: set[T]; parNm, sh, parHelp: string; rq: int): seq[string]=
+    var typ = $T; var df: string
+    var dflSeq: seq[string] = @[ ]
+    for d in dfl: dflSeq.add($d)
+    argSeqHelper(delimit, dflSeq, typ, df)
+    result = @[ keys(parNm, sh), typ, argDf(rq, df), parHelp ]
