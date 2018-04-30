@@ -8,18 +8,17 @@ proc demo(alpha=1, verb=false, stuff = @[ "ab", "cd" ], args: seq[string]): int=
 
 when isMainModule:
   from strutils import split, `%`, join
-  from argcvt   import argKeys, argDf, ERR  # Little helpers
+  from argcvt   import argcvtParams, argKeys, argDf, ERR  # Little helpers
 
-  proc argParse(dst: var seq[string], key: string, dfl: seq[string], val, help: string): bool =
-    if val == nil:
-      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
+  proc argParse(dst: var seq[string], dfl: seq[string], a: argcvtParams): bool =
+    if a.val == nil:
+      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
       return false
-    dst = val.split(",")
+    dst = a.val.split(",")
     return true
 
-  proc argHelp(dfl: seq[string]; parNm, sh, parHelp: string, rq: int): seq[string] =
-    result = @[ argKeys(parNm, sh), "CSV",
-                argDf(rq, "\"" & dfl.join(",") & "\""), parHelp ]
+  proc argHelp(dfl: seq[string]; a: argcvtParams): seq[string] =
+    result = @[ a.argKeys, "CSV", a.argDf("\"" & dfl.join(",") & "\"") ]
 
   import cligen
   dispatch(demo)

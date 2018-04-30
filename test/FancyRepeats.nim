@@ -9,53 +9,46 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from argcvt   import argKeys, argDf, ERR  # Little helpers
+  from argcvt   import argcvtParams, argKeys, argDf, ERR  # Little helpers
   from textUt   import TextTab
   from parseutils import parseInt
 
-  proc argParse*(dst: var int, key: string, dfl: int; val, help: string): bool =
-    let Key = if key == "v": "verb" else: key
-    if Key == "verb":               # make "verb" a repeatable key
-#     if Key in keyCount:
-        inc(dst)
-#     else:
-#       dst = 1
-#     keyCount.inc(Key)
+  proc argParse*(dst: var int, dfl: int; a: argcvtParams): bool =
+    if a.parNm == "verb":               # make "verb" a special kind of int
+      inc(dst)                          # that just counts its occurances
     else:
-      if val == nil or parseInt(strip(val), dst) == 0:
+      if a.val == nil or parseInt(strip(a.val), dst) == 0:
         ERR("Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
-               [ (if val == nil: "nil" else: val), key, help ])
+               [ (if a.val == nil: "nil" else: a.val), a.key, a.Help ])
         return false
     return true
 
-  proc argHelp*(defVal: int, parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
-    if parNm == "verb":
-      result = @[ argKeys(parNm, sh), "[bool]", argDf(rq, $defVal), parHelp ]
-#     shortNoVal.incl(sh[0])
-#     longNoVal.add(parNm)
+  proc argHelp*(defVal: int, a: argcvtParams): seq[string] =
+    if a.parNm == "verb":
+      result = @[ a.argKeys, "countr", a.argDf($defVal) ]
+      a.shortNoVal[].incl(a.parSh[0])
+      a.longNoVal[].add(a.parNm)
     else:
-      result = @[ argKeys(parNm, sh), "int", argDf(rq, $defVal), parHelp ]
+      result = @[ a.argKeys, "int", a.argDf($defVal) ]
 
-  proc argParse(dst: var seq[string], key: string, dfl: seq[string]; val, help: string): bool =
-    if val == nil:
-      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ key, help ])
+  proc argParse(dst: var seq[string], dfl: seq[string]; a: argcvtParams): bool =
+    if a.val == nil:
+      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
       return false
-    let Key = if key == "s": "stuff" else: key
-    if Key == "stuff":              # make "stuff" a repeatable key
-#     if Key in keyCount:
-        dst = dst & val.split(",")
-#     else:
-#       dst = val.split(",")
-#     keyCount.inc(Key)
+    if a.parNm == "stuff":              # make "stuff" a repeatable key
+      if a.parCount == 1:
+        dst = a.val.split(",")
+      else:
+        dst &= a.val.split(",")
     else:
-      dst = val.split(",")
+      dst = a.val.split(",")
     return true
 
-  proc argHelp(defVal: seq[string], parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
-    if parNm == "stuff":                # make "stuff" a repeatable key
-      result = @[ argKeys(parNm, sh), "+CSV", argDf(rq, "\"" & defVal.join(",")) & "\"", parHelp ]
+  proc argHelp(defVal: seq[string], a: argcvtParams): seq[string] =
+    if a.parNm == "stuff":              # make "stuff" a repeatable key
+      result = @[ a.argKeys, "+CSV", a.argDf("\"" & defVal.join(",")) & "\"" ]
     else:
-      result = @[ argKeys(parNm, sh), "CSV", argDf(rq, "\"" & defVal.join(",") & "\""), parHelp ]
+      result = @[ a.argKeys, "CSV", a.argDf("\"" & defVal.join(",") & "\"") ]
 
   import cligen
   dispatch(demo)
