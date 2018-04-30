@@ -147,14 +147,15 @@ memory overhead.
   -b=, --b=   string  REQUIRED  set b
 ====================================
 Test: test/Enums.nim
-Enums.nim(1, 31) Hint: 'blue' is declared but not used [XDeclaredButNotUsed]
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                              print this help message
-  -b=, --background=   enum        red    background color
-  -f=, --foregrounds=  ,SV[Color]  green  foreround colors
+  -h, --help                          print this help message
+  -b=, --bg=       enum        red    background color
+  -f=, --fgs=      ,SV[Color]  green  foreround colors
+  -c=, --cursors=  ,SV[Color]  blue   cursor colors
+  -x=, --x=        int         0      set x
 ====================================
 Test: test/External.nim
 Usage:
@@ -178,9 +179,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                      print this help message
   -a=, --alpha=  int     1        set alpha
-  -v=, --verb=   [bool]  0        set verb
+  -v=, --verb=   countr  0        set verb
   -j=, --junk=   CSV     "rs,tu"  set junk
-  -s=, --stuff=  [CSV]   "ab,cd"  set stuff
+  -s=, --stuff=  +CSV    "ab,cd"  set stuff
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
@@ -428,7 +429,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float  2.0  shrink target
 ====================================
 Test: test/TwoNondefaultedSeq.nim
-TwoNondefaultedSeq.nim(10, 11) template/generic instantiation from here
+TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
 cligen/cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
