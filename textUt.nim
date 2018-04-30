@@ -1,6 +1,5 @@
-from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
-from strutils   import `%`, join, split, wordWrap, repeat, strip, toLowerAscii
-from terminal   import terminalWidth
+from strutils import split, wordWrap, repeat
+from terminal import terminalWidth
 
 proc addPrefix*(prefix: string, multiline=""): string =
   result = ""
