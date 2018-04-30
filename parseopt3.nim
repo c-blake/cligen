@@ -74,6 +74,7 @@ type
     stopWords: seq[string]    # special literal parameters that act like "--"
     requireSep: bool          # require separator between option key & val
     sepChars: set[char]       # all the chars that can be valid separators
+    sep*: string              ## actual string separating key & value
     kind*: CmdLineKind        ## the detected command line token
     key*, val*: TaintedString ## key and value pair; ``key`` is the option
                               ## or the argument, ``value`` is not "" if
@@ -163,7 +164,11 @@ proc do_long(p: var OptParser) =
     p.key = nil
     return
   if sep > 2:
-    p.key = param[2 .. sep-1]
+    var nonIdent = sep
+    while nonIdent > 2 and param[nonIdent-1] notin IdentChars:
+      dec(nonIdent)
+    p.sep = param[nonIdent .. sep]
+    p.key = param[2 .. nonIdent-1]
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past --

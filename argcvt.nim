@@ -177,8 +177,10 @@ proc argAggSplit*[T](src: string, delim: string, a: argcvtParams): seq[T] =
     toks = src.split(delim)
   var parsed, default: T
   result = @[]
+  var acp = a
   for tok in toks:
-    if not argParse(parsed, default, a):
+    acp.val = tok
+    if not argParse(parsed, default, acp):
       result.setLen(0)
       return
     result.add(parsed)
@@ -193,51 +195,51 @@ proc argAggHelp*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
 
 ## sets
 proc argParse*[T](dst: var set[T], dfl: set[T], a: argcvtParams): bool =
-    if a.val == nil:
-      ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
-      return false
-    let parsed = argAggSplit[T](a.val, a.Delimit, a)
-    if parsed.len == 0: return false
-    case a.sep[0]                     # char on command line before [=:]
-    of '+':                           # Append Mode
-      for e in parsed: dst.incl(e)
-    of '-':                           # Delete mode
-      for e in parsed: dst.excl(e)
-    else:                             # Assign Mode
-      dst = {}
-      for e in parsed: dst.incl(e)
-    return true
+  if a.val == nil:
+    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
+    return false
+  let parsed = argAggSplit[T](a.val, a.Delimit, a)
+  if parsed.len == 0: return false
+  case a.sep[0]                     # char on command line before [=:]
+  of '+':                           # Append Mode
+    for e in parsed: dst.incl(e)
+  of '-':                           # Delete mode
+    for e in parsed: dst.excl(e)
+  else:                             # Assign Mode
+    dst = {}
+    for e in parsed: dst.incl(e)
+  return true
 
 proc argHelp*[T](dfl: set[T], a: argcvtParams): seq[string]=
-    var typ = $T; var df: string
-    var dflSeq: seq[string] = @[ ]
-    for d in dfl: dflSeq.add($d)
-    argAggHelp(a.Delimit, dflSeq, typ, df)
-    result = @[ a.argKeys, typ, a.argDf(df) ]
+  var typ = $T; var df: string
+  var dflSeq: seq[string] = @[ ]
+  for d in dfl: dflSeq.add($d)
+  argAggHelp(a.Delimit, dflSeq, typ, df)
+  result = @[ a.argKeys, typ, a.argDf(df) ]
 
 ## seqs                               XXX Add a '^' prepend mode?
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: argcvtParams): bool =
-    if a.val == nil:
-      ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
-      return false
-    let parsed = argAggSplit[T](a.val, a.Delimit, a)
-    if parsed.len == 0: return false
-    case a.sep[0]                     # char on command line before [=:]
-    of '+':                           # Append Mode
-      if dst == nil: dst = @[]
-      for e in parsed: dst.add(e)
-    of '-':                           # Delete mode
-      if dst == nil: dst = @[]
-      for i, e in dst:
-        if e in parsed: dst.delete(i)    # Quadratic algo, but preserves order
-    else:                             # Assign Mode
-      dst = @[]
-      for e in parsed: dst.add(e)
-    return true
+  if a.val == nil:
+    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
+    return false
+  let parsed = argAggSplit[T](a.val, a.Delimit, a)
+  if parsed.len == 0: return false
+  case a.sep[0]                     # char on command line before [=:]
+  of '+':                           # Append Mode
+    if dst == nil: dst = @[]
+    for e in parsed: dst.add(e)
+  of '-':                           # Delete mode
+    if dst == nil: dst = @[]
+    for i, e in dst:
+      if e in parsed: dst.delete(i)    # Quadratic algo, but preserves order
+  else:                             # Assign Mode
+    dst = @[]
+    for e in parsed: dst.add(e)
+  return true
 
 proc argHelp*[T](dfl: seq[T], a: argcvtParams): seq[string]=
-    var typ = $T; var df: string
-    var dflSeq: seq[string] = @[ ]
-    for d in dfl: dflSeq.add($d)
-    argAggHelp(a.Delimit, dflSeq, typ, df)
-    result = @[ a.argKeys, typ, a.argDf(df) ]
+  var typ = $T; var df: string
+  var dflSeq: seq[string] = @[ ]
+  for d in dfl: dflSeq.add($d)
+  argAggHelp(a.Delimit, dflSeq, typ, df)
+  result = @[ a.argKeys, typ, a.argDf(df) ]
