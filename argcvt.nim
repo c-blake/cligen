@@ -5,7 +5,7 @@
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
-proc ERR*(x: string) = stderr.write(x)
+proc ERR*(x: varargs[string, `$`]) = stderr.write(x)
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated

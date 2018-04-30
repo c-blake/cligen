@@ -80,6 +80,8 @@ type
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
+proc ERR(x: varargs[string, `$`]) = stderr.write(x)
+
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoVal: set[char] = {},
                     longNoVal: seq[string] = nil,
@@ -123,6 +125,7 @@ proc initOptParser*(cmdline: string): OptParser =
   else:
     return initOptParser(cmdline.split)
 
+#XXX To support .sep like do_long, must overhaul to move an index for chars.
 proc do_short(p: var OptParser) =
   p.kind = cmdShortOption
   p.val = nil
@@ -139,7 +142,7 @@ proc do_short(p: var OptParser) =
   if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
   if p.moreShort.len != 0:              # only advance if need more data
-    p.pos += 1
+    p.pos += 1    #XXX Seems like a bug; Above cmt inconsistent w/if condition
   if p.moreShort[0] in p.sepChars:      # shift off maybe-optional separator
     p.moreShort = p.moreShort[1..^1]
   if p.moreShort.len > 0:               # same param argument is trailing text
@@ -151,7 +154,7 @@ proc do_short(p: var OptParser) =
     p.pos += 1
   elif card(p.shortNoVal) > 0:
 #   if p.key[0] notin p.sepChars:
-    echo "argument expected for option `", p.key, "` at end of params"
+    ERR "argument expected for option `", p.key, "` at end of params"
 
 proc do_long(p: var OptParser) =
   p.kind = cmdLongOption
@@ -160,7 +163,7 @@ proc do_long(p: var OptParser) =
   p.pos += 1                            # always consume at least 1 param
   let sep = find(param, p.sepChars)     # only very first occurrence of delim
   if sep == 2:
-    echo "Empty long option key at param", p.pos - 1, " (\"", param, "\")"
+    ERR "Empty long option key at param", p.pos - 1, " (\"", param, "\")"
     p.key = nil
     return
   if sep > 2:
@@ -175,13 +178,13 @@ proc do_long(p: var OptParser) =
   if p.longNoVal != nil and p.key in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
-    echo "Expecting option key-val separator :|= after `", p.key, "`"
+    ERR "Expecting option key-val separator :|= after `", p.key, "`"
     return
   if p.pos < p.cmd.len:                 # Take opt arg from next param
     p.val = p.cmd[p.pos]
     p.pos += 1
   elif p.longNoVal != nil:
-    echo "argument expected for option `", p.key, "` at end of params"
+    ERR "argument expected for option `", p.key, "` at end of params"
 
 proc next*(p: var OptParser) =
   if p.moreShort.len > 0:               #Step1: handle any remaining short opts
