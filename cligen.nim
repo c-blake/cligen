@@ -235,8 +235,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let subSepId = ident("subSep")        # sub cmd help separator
   let shortNoValId = ident("shortNoVal") #local list of arg-free short opts
   let longNoValId = ident("longNoVal")  # local list of arg-free long opts
-  let keyId = ident("key")              # local option key
-  let valId = ident("val")              # local option val
+  let pId = ident("p")                  # local OptParser result handle
   let mandId = ident("mand")            # local list of mandatory parameters
   let apId = ident("ap")                # argcvtParams
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
@@ -300,7 +299,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `apId`.Help = addPrefix(`prefixId`, `apId`.Help))
 
   proc defOptCases(): NimNode =
-    result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`keyId`))
+    result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`pId`.key))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
@@ -312,9 +311,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       let spar   = spars[i][0]
       let dpar   = dpars[i][0]
       let apCall = quote do:
-        `apId`.key = `keyId`
-        `apId`.val = `valId`
-#       `apId`.sep = #XXX drop getopt iterator;Add OptParser field to pass 'sep'
+        `apId`.key = `pId`.key
+        `apId`.val = `pId`.val
+        `apId`.sep = `pId`.sep
         `apId`.parNm = `parNm`
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
@@ -328,7 +327,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
-      stderr.write("Bad option: \"" & `keyId` & "\"\n" & `apId`.Help)
+      stderr.write("Bad option: \"" & `pId`.key & "\"\n" & `apId`.Help)
       return 1))
 
   proc defNonOpt(): NimNode =
@@ -344,7 +343,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
           rewind = true
         var `tmpId` = `posId`[0]
         `apId`.key = "positional $" & $`posNoId`
-        `apId`.val = `keyId`
+        `apId`.val = `pId`.key
         `apId`.sep = ""
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
@@ -399,14 +398,16 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
-        for kind,`keyId`,`valId` in
-            getopt(args, `shortNoValId`, `longNoValId`,
-                   `requireSeparator`, `sepChars`, `stopWords`):
-          case kind
-              of cmdLongOption, cmdShortOption:
-                `optCases`
-              else:
-                `nonOpt`
+        var `pId` = initOptParser(args, `shortNoValId`, `longNoValId`,
+                                  `requireSeparator`, `sepChars`, `stopWords`)
+        while true:
+          next(p)
+          if p.kind == cmdEnd: break
+          case p.kind
+            of cmdLongOption, cmdShortOption:
+              `optCases`
+            else:
+              `nonOpt`
       {.pop.}
       try:
         `callPrs`
