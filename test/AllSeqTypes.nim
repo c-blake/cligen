@@ -34,13 +34,10 @@ proc demo(args: seq[string],
 
 when isMainModule:
   import cligen
-  when defined(missingSetDelim): discard
-  elif defined(stringDelim):
-    let seqDelimit = ","
-  elif defined(setDelim):
-    let seqDelimit: set[char] = { ',', ':' }
+  when defined(setDelim):
+    let d: set[char] = "[,:]"
   elif defined(DPSV):
-    let seqDelimit = "<D>"
+    let d = "<D>"
   else:
-    let seqDelimit = ','
-  dispatch(demo)
+    let d = ","
+  dispatch(demo, delimit=d)
