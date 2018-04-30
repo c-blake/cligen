@@ -9,7 +9,7 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from argcvt   import keys, ERR, argDf  # Little helpers
+  from argcvt   import argKeys, argDf, ERR  # Little helpers
   from textUt   import TextTab
   from parseutils import parseInt
 
@@ -30,11 +30,11 @@ when isMainModule:
 
   proc argHelp*(defVal: int, parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
     if parNm == "verb":
-      result = @[ keys(parNm, sh), "[bool]", argDf(rq, $defVal), parHelp ]
+      result = @[ argKeys(parNm, sh), "[bool]", argDf(rq, $defVal), parHelp ]
 #     shortNoVal.incl(sh[0])
 #     longNoVal.add(parNm)
     else:
-      result = @[ keys(parNm, sh), "int", argDf(rq, $defVal), parHelp ]
+      result = @[ argKeys(parNm, sh), "int", argDf(rq, $defVal), parHelp ]
 
   proc argParse(dst: var seq[string], key: string, dfl: seq[string]; val, help: string): bool =
     if val == nil:
@@ -53,9 +53,9 @@ when isMainModule:
 
   proc argHelp(defVal: seq[string], parNm: string, sh: string, parHelp: string, rq: int): seq[string] =
     if parNm == "stuff":                # make "stuff" a repeatable key
-      result = @[ keys(parNm, sh), "+CSV", argDf(rq, "\"" & defVal.join(",")) & "\"", parHelp ]
+      result = @[ argKeys(parNm, sh), "+CSV", argDf(rq, "\"" & defVal.join(",")) & "\"", parHelp ]
     else:
-      result = @[ keys(parNm, sh), "CSV", argDf(rq, "\"" & defVal.join(",") & "\""), parHelp ]
+      result = @[ argKeys(parNm, sh), "CSV", argDf(rq, "\"" & defVal.join(",") & "\""), parHelp ]
 
   import cligen
   dispatch(demo)

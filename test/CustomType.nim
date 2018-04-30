@@ -8,7 +8,7 @@ proc demo(alpha=1, verb=false, stuff = @[ "ab", "cd" ], args: seq[string]): int=
 
 when isMainModule:
   from strutils import split, `%`, join
-  from argcvt   import keys, ERR, argDf  # Little helpers
+  from argcvt   import argKeys, argDf, ERR  # Little helpers
 
   proc argParse(dst: var seq[string], key: string, dfl: seq[string], val, help: string): bool =
     if val == nil:
@@ -18,7 +18,7 @@ when isMainModule:
     return true
 
   proc argHelp(dfl: seq[string]; parNm, sh, parHelp: string, rq: int): seq[string] =
-    result = @[ keys(parNm, sh), "CSV",
+    result = @[ argKeys(parNm, sh), "CSV",
                 argDf(rq, "\"" & dfl.join(",") & "\""), parHelp ]
 
   import cligen
