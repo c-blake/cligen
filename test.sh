@@ -9,5 +9,5 @@ export COLUMNS=80
  ./test/FullyAutoMulti help 2>&1 ) |
    grep -v 'Warning: \(expr\|stmt\) is deprecated' |
    grep -v '^Hint: ' |
-     sed 's@.*/cligen/cligen.nim(@cligen/cligen.nim(@' > test/out
+     sed 's@.*/cligen[-a-z]*/cligen.nim(@cligen/cligen.nim(@' > test/out
 diff test/ref test/out
