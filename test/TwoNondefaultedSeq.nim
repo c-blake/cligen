@@ -6,5 +6,4 @@ proc demo(alpha=1, verb=false, args: seq[string], stuff: seq[string]): int=
 
 when isMainModule:
   import cligen
-  let seqDelimit = ','
   dispatch(demo)
