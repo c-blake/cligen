@@ -30,9 +30,9 @@ type argcvtParams* = object ## \
   parHelp: string    ## parameter help
   parDelimit: string ## parameter delimiting convention if a `seq`, `set`, etc.
   parReq: int        ## flag indicating parameter is mandatory
+  count: int         ## count of times this parameter has been invoked
   Mand: string       ## how a mandatory defaults is rendered in help
   Help: string       ## the whole help string, for parse errors
-  keyCount: ptr CountTable[string]
   shortNoVal: ptr set[char]
   longNoVal: ptr seq[string]
 
