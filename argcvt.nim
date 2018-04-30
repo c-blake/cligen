@@ -1,10 +1,10 @@
-## ``argParse`` determines how string arguments are interpreted into native
+## ``argParse`` determines how string args are interpreted into native types.
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
-from typetraits import `$`
+from typetraits import `$`  # needed for $T
 proc ERR*(x: string) = stderr.write(x)
 
 proc nimEscape*(s: string): string =
@@ -14,8 +14,8 @@ proc nimEscape*(s: string): string =
   for c in s: result.addEscapedChar(c)
   result.add('"')
 
-proc keys*(parNm: string, shrt: string, argSep="="): string =
-  ## keys(parNm, shrt, argSep) generates the option keys column in help tables
+proc argKeys*(parNm: string, shrt: string, argSep="="): string =
+  ## `argKeys` generates the option keys column in help tables
   result = if len(shrt) > 0: "-$1$3, --$2$3" % [ shrt, parNm, argSep ]
            else            : "--" & parNm & argSep
 
@@ -32,6 +32,9 @@ type argcvtParams* = object ## \
   parReq: int        ## flag indicating parameter is mandatory
   Mand: string       ## how a mandatory defaults is rendered in help
   Help: string       ## the whole help string, for parse errors
+  keyCount: ptr CountTable[string]
+  shortNoVal: ptr set[char]
+  longNoVal: ptr seq[string]
 
 proc argDf*(rq: int, dv: string): string =
   ## argDf is an argHelp space-saving template to decide what default col says.
@@ -51,7 +54,7 @@ proc argParse*(dst: var bool, key: string, dfl: bool, val, help: string): bool =
   return true
 
 proc argHelp*(dfl: bool; parNm, sh, parHelp: string, rq: int): seq[string] =
-  result = @[ keys(parNm, sh, argSep=""), "bool", argDf(rq, $dfl), parHelp ]
+  result = @[ argKeys(parNm, sh, argSep=""), "bool", argDf(rq, $dfl), parHelp ]
 #XXX move this logic to cligen?
 # shortNoVal.incl(sh[0])            # bool can elide option arguments.
 # longNoVal.add(parNm)              # So, add to *NoVal.
@@ -65,7 +68,7 @@ proc argParse*(dst: var string; key, dfl, val, help: string): bool =
   return true
 
 proc argHelp*(dfl: string; parNm, sh, parHelp: string, rq: int): seq[string] =
-  result = @[ keys(parNm, sh), "string", argDf(rq, nimEscape(dfl)), parHelp ]
+  result = @[ argKeys(parNm, sh), "string", argDf(rq, nimEscape(dfl)), parHelp ]
 
 # cstring
 proc argParse*(dst: var cstring, key:string, dfl:cstring, val,help:string):bool=
@@ -76,18 +79,18 @@ proc argParse*(dst: var cstring, key:string, dfl:cstring, val,help:string):bool=
   return true
 
 proc argHelp*(dfl: cstring; parNm, sh, parHelp: string, rq: int): seq[string] =
-  result = @[ keys(parNm, sh), "string", argDf(rq, nimEscape($dfl)), parHelp ]
+  result = @[ argKeys(parNm, sh), "string", argDf(rq, nimEscape($dfl)), parHelp ]
 
 # char
 proc argParse*(dst: var char, key: string, dfl: char, val, help: string): bool =
-  if val == nil or len(val) > 1:
-    ERR("Bad value nil/multi-char for char param \"$1\"\n$2" % [ key , help ])
+  if len(val) > 1:
+    ERR("Bad value \"$1\" for single char param \"$2\"\n$3"%[ val, key, help ])
     return false
   dst = val[0]
   return true
 
 proc argHelp*(dfl: char; parNm, sh, parHelp: string, rq: int): seq[string] =
-  result = @[ keys(parNm, sh), "char", repr(dfl), parHelp ]
+  result = @[ argKeys(parNm, sh), "char", repr(dfl), parHelp ]
 
 # enums
 proc argParse*[T: enum](dst: var T, key: string, dfl: T, val,help: string):bool=
@@ -107,7 +110,7 @@ proc argParse*[T: enum](dst: var T, key: string, dfl: T, val,help: string):bool=
   return true
 
 proc argHelp*[T: enum](dfl: T; parNm,sh,parHelp: string, rq: int): seq[string] =
-  result = @[ keys(parNm, sh), "enum", $dfl, parHelp ]
+  result = @[ argKeys(parNm, sh), "enum", $dfl, parHelp ]
 
 # various numeric types
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
@@ -120,7 +123,7 @@ template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
     dst = T(tmp)
     return true
   proc argHelp*(dfl: T; parNm, sh, parHelp: string, rq: int): seq[string] =
-    result = @[ keys(parNm, sh), $T, argDf(rq, $dfl), parHelp ]
+    result = @[ argKeys(parNm, sh), $T, argDf(rq, $dfl), parHelp ]
 
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int    )  #ints
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int8   )
@@ -136,21 +139,15 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 #argParseHelpNum(BiggestFloat, parseBiggestFloat, float64) #only a type alias
 
-## **PARSING ``seq[T]`` FOR NON-OS-TOKENIZED OPTION VALUES**
+## **PARSING seq[T], set[T], .. FOR NON-OS-TOKENIZED OPTION VALUES**
 ##
 ## This module also defines argParse/argHelp pairs for ``seq[T]`` with flexible
-## delimiting rules decided by the global var `delimit`.  A value of `<D>`
-## indicates delimiter-prefixed-values while a square-bracket character class
-## like `[:,]` indicates a set of chars.  Anything else indicates that the
-## whole string is the delimiter.
-##
-## Delimiter-prefixed-separated-value (DPSV) format is as follows:
-##   ``<DELIM-CHAR><COMPONENT><DELIM-CHAR><COMPONENT>..``
-## E.g., for CSV the user enters ``",Howdy,Neighbor"``.  At the cost of one
-## extra character, users can choose delimiters that do not conflict with
-## body text on a case-by-case basis which makes quoting rules unneeded.
-## This may only be "friendly" to users who are programmer types, although
-## that is also true of most quoting rules. :)
+## delimiting rules decided by the global var `delimit`.  A value of ``"<D>"``
+## indicates delimiter-prefixed-values (DPSV) while a square-bracket character
+## class like ``"[:,]"`` indicates a set of chars.  Anything else indicates
+## that the whole string is the delimiter.  DPSV format looks like
+## ``<DELIM-CHAR><COMPONENT><DELIM-CHAR><COMPONENT>..`` E.g., for CSV the user
+## enters ``",Howdy,Neighbor"``.
 ##
 ## To allow easy appending to, removing from, and resetting existing sequence
 ## values, ``'+'``, ``'-'``, ``'='`` are recognized as special prefix chars.
@@ -203,23 +200,20 @@ proc argParse*[T](dst: var seq[T], key: string, dfl: seq[T];
       dst = @[ ]
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         dst.add(eParsed)
     of Append:
       if dst == nil: dst = @[ ]
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         dst.add(eParsed)
     of Delete:
       if dst == nil: dst = @[ ]
       var rqDel: seq[T] = @[ ]
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         rqDel.add(eParsed)
       for i, e in dst:
         if e in rqDel:
@@ -231,7 +225,7 @@ proc argHelp*[T](dfl: seq[T]; parNm, sh, parHelp: string; rq: int): seq[string]=
     var dflSeq: seq[string] = @[ ]
     for d in dfl: dflSeq.add($d)
     argSeqHelper(delimit, dflSeq, typ, df)
-    result = @[ keys(parNm, sh), typ, argDf(rq, df), parHelp ]
+    result = @[ argKeys(parNm, sh), typ, argDf(rq, df), parHelp ]
 
 ## sets
 proc argParse*[T](dst: var set[T], key: string, dfl: set[T];
@@ -254,20 +248,17 @@ proc argParse*[T](dst: var set[T], key: string, dfl: set[T];
       dst = {}
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         dst.incl(eParsed)
     of Append:
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         dst.incl(eParsed)
     of Delete:
       for e in tmp:
         var eParsed, eDefault: T
-        if not argParse(eParsed, key, eDefault, e, help):
-          return false
+        if not argParse(eParsed, key, eDefault, e, help): return false
         dst.excl(eParsed)
     return true
 
@@ -276,4 +267,4 @@ proc argHelp*[T](dfl: set[T]; parNm, sh, parHelp: string; rq: int): seq[string]=
     var dflSeq: seq[string] = @[ ]
     for d in dfl: dflSeq.add($d)
     argSeqHelper(delimit, dflSeq, typ, df)
-    result = @[ keys(parNm, sh), typ, argDf(rq, df), parHelp ]
+    result = @[ argKeys(parNm, sh), typ, argDf(rq, df), parHelp ]
