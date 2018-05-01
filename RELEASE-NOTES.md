@@ -38,7 +38,7 @@ There are several major breaking changes and feature additions:
 
  6. ``enum`` types are supported generically.
 
- 7. ``seq[T]`` and ``set[T]`` are supported generically.  I.e., if you add an
-    ``argParse`` and ``argHelp`` for a new type, `seq` and `set` types are
-    automatically supported.  `argcvt` documentation describes delimiting
-    syntax for aggregate/collection types.
+ 7. ``seq[T]`` and ``set[T]`` are supported generically.  I.e., if there is an
+    ``argParse`` and ``argHelp`` for a new type ``T`` then `seq`s and `set`s
+    containing that type are automatically supported.  `argcvt` documentation
+    describes delimiting syntax for aggregate/collection types.
