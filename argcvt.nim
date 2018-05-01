@@ -207,11 +207,12 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var argcvtParams): bool =
     return false
   let parsed = argAggSplit[T](a.val, a.Delimit, a)
   if parsed.len == 0: return false
-  echo "got sep: ", repr(a.sep[0])
-  case a.sep[0]                     # char on command line before [=:]
-  of '+': dst.incl(parsed)          # Append Mode
-  of '-': dst.excl(parsed)          # Delete mode
-  else: dst = {}; dst.incl(parsed)  # Assign Mode
+  if a.sep.len > 0:
+    case a.sep[0]                     # char on command line before [=:]
+    of '+': dst.incl(parsed)          # Append Mode
+    of '-': dst.excl(parsed)          # Delete mode
+    else: dst = {}; dst.incl(parsed)  # Assign Mode
+  else: dst = {}; dst.incl(parsed)    # Assign Mode, No Operator
   return true
 
 proc argHelp*[T](dfl: set[T], a: var argcvtParams): seq[string]=
@@ -229,13 +230,15 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var argcvtParams): bool =
   let parsed = argAggSplit[T](a.val, a.Delimit, a)
   if parsed.len == 0: return false
   if dst == nil: dst = @[]
-  case a.sep[0]                     # char on command line before [=:]
-  of '+': dst.add(parsed)           # Append Mode
-  of '^': dst = parsed & dst        # Prepend Mode
-  of '-':                           # Delete mode
-    for i, e in dst:
-      if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
-  else: dst = parsed                # Assign Mode
+  if a.sep.len > 0:
+    case a.sep[0]                     # char on command line before [=:]
+    of '+': dst.add(parsed)           # Append Mode
+    of '^': dst = parsed & dst        # Prepend Mode
+    of '-':                           # Delete mode
+      for i, e in dst:
+        if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
+    else: dst = parsed                # Assign Mode
+  else: dst = parsed                  # Assign Mode, No Operator
   return true
 
 proc argHelp*[T](dfl: seq[T], a: var argcvtParams): seq[string]=
