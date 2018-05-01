@@ -233,8 +233,6 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let HelpOnlyId = ident("HelpOnly")    # local just help exception
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
-  let shortNoValId = ident("shortNoVal") #local list of arg-free short opts
-  let longNoValId = ident("longNoVal")  # local list of arg-free long opts
   let pId = ident("p")                  # local OptParser result handle
   let mandId = ident("mand")            # local list of mandatory parameters
   let apId = ident("ap")                # argcvtParams
@@ -258,10 +256,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       var `mandId`: seq[string] = @[ ]
       var `tabId`: TextTab =
         @[ @[ "-" & shortH & ", --help", "", "", "print this help message" ] ]
-      var `shortNoValId`: set[char] = { shortH[0] }   # argHelp(bool) updates
-      var `longNoValId`: seq[string] = @[ "help" ]    # argHelp(bool) appends
-      `apId`.shortNoVal = addr `shortNoValId`
-      `apId`.longNoVal = addr `longNoValId`)
+      `apId`.shortNoVal = { shortH[0] } # argHelp(bool) updates
+      `apId`.longNoVal = @[ "help" ])   # argHelp(bool) appends
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     var args = argStart &
@@ -398,7 +394,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       proc parser(args=`cmdLineId`): int =
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
-        var `pId` = initOptParser(args, `shortNoValId`, `longNoValId`,
+        var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `requireSeparator`, `sepChars`, `stopWords`)
         while true:
           next(p)

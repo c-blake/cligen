@@ -10,14 +10,14 @@ when isMainModule:
   from strutils import split, `%`, join
   from argcvt   import argcvtParams, argKeys, argDf, ERR  # Little helpers
 
-  proc argParse(dst: var seq[string], dfl: seq[string], a: argcvtParams): bool =
+  proc argParse(dst: var seq[string], dfl: seq[string], a: var argcvtParams): bool =
     if a.val == nil:
       ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
       return false
     dst = a.val.split(",")
     return true
 
-  proc argHelp(dfl: seq[string]; a: argcvtParams): seq[string] =
+  proc argHelp(dfl: seq[string]; a: var argcvtParams): seq[string] =
     result = @[ a.argKeys, "CSV", a.argDf("\"" & dfl.join(",") & "\"") ]
 
   import cligen

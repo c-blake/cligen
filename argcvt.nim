@@ -27,8 +27,8 @@ type argcvtParams* = object ## \
   Mand*: string       ## how a mandatory defaults is rendered in help
   Help*: string       ## the whole help string, for parse errors
   Delimit*: string    ## delimiting convention for `seq`, `set`, etc.
-  shortNoVal*: ptr set[char]
-  longNoVal*: ptr seq[string]
+  shortNoVal*: set[char]  ## short options keys where value may be omitted
+  longNoVal*: seq[string] ## long option keys where value may be omitted
 
 proc argKeys*(a: argcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
@@ -40,7 +40,7 @@ proc argDf*(a: argcvtParams, dv: string): string =
   (if a.parReq != 0: a.Mand else: dv)
 
 # bool
-proc argParse*(dst: var bool, dfl: bool, a: argcvtParams): bool =
+proc argParse*(dst: var bool, dfl: bool, a: var argcvtParams): bool =
   if len(a.val) > 0:
     case a.val.toLowerAscii  # Like `strutils.parseBool` but we also accept t&f
     of "t", "true" , "yes", "y", "1", "on" : dst = true
@@ -53,36 +53,36 @@ proc argParse*(dst: var bool, dfl: bool, a: argcvtParams): bool =
     dst = not dfl     #.. but not always this means false->true)
   return true
 
-proc argHelp*(dfl: bool; a: argcvtParams): seq[string] =
+proc argHelp*(dfl: bool; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys(argSep=""), "bool", a.argDf($dfl) ]
   if a.parSh.len > 0:
-    a.shortNoVal[].incl(a.parSh[0]) # bool can elide option arguments.
-  a.longNoVal[].add(a.parNm)      # So, add to *NoVal.
+    a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
+  a.longNoVal.add(a.parNm)        # So, add to *NoVal.
 
 # string
-proc argParse*(dst: var string, dfl: string, a: argcvtParams): bool =
+proc argParse*(dst: var string, dfl: string, a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.Help ])
     return false
   dst = a.val
   return true
 
-proc argHelp*(dfl: string; a: argcvtParams): seq[string] =
+proc argHelp*(dfl: string; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "string", a.argDf(nimEscape(dfl)) ]
 
 # cstring
-proc argParse*(dst: var cstring, dfl: cstring, a: argcvtParams): bool =
+proc argParse*(dst: var cstring, dfl: cstring, a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.Help ])
     return false
   dst = a.val
   return true
 
-proc argHelp*(dfl: cstring; a: argcvtParams): seq[string] =
+proc argHelp*(dfl: cstring; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "string", a.argDf(nimEscape($dfl)) ]
 
 # char
-proc argParse*(dst: var char, dfl: char, a: argcvtParams): bool =
+proc argParse*(dst: var char, dfl: char, a: var argcvtParams): bool =
   if len(a.val) > 1:
     ERR("Bad value \"$1\" for single char param \"$2\"\n$3" %
         [ a.val, a.key, a.Help ])
@@ -90,11 +90,11 @@ proc argParse*(dst: var char, dfl: char, a: argcvtParams): bool =
   dst = a.val[0]
   return true
 
-proc argHelp*(dfl: char; a: argcvtParams): seq[string] =
+proc argHelp*(dfl: char; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "char", a.argDf(repr(dfl)) ]
 
 # enums
-proc argParse*[T: enum](dst: var T, dfl: T, a: argcvtParams): bool =
+proc argParse*[T: enum](dst: var T, dfl: T, a: var argcvtParams): bool =
   var found = false
   for e in low(T)..high(T):
     if cmpIgnoreStyle(a.val, $e) == 0:
@@ -110,12 +110,12 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: argcvtParams): bool =
     return false
   return true
 
-proc argHelp*[T: enum](dfl: T; a: argcvtParams): seq[string] =
+proc argHelp*[T: enum](dfl: T; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "enum", $dfl ]
 
 # various numeric types
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
-  proc argParse*(dst: var T, dfl: T, a: argcvtParams): bool =
+  proc argParse*(dst: var T, dfl: T, a: var argcvtParams): bool =
     var parsed: WideT
     let valstrip = strip(a.val)
     if a.val == nil or parse(valstrip, parsed) != len(valstrip):
@@ -125,7 +125,7 @@ template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
     dst = T(parsed)
     return true
 
-  proc argHelp*(dfl: T, a: argcvtParams): seq[string] =
+  proc argHelp*(dfl: T, a: var argcvtParams): seq[string] =
     result = @[ a.argKeys, $T, a.argDf($dfl) ]
 
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int    )  #ints
@@ -166,7 +166,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## ``argAggSplit`` and ``argAggHelp`` anywhere before ``dispatchGen``.
 ## The optional ``+-=`` syntax will remain available.
 
-proc argAggSplit*[T](src: string, delim: string, a: argcvtParams): seq[T] =
+proc argAggSplit*[T](src: string, delim: string, a: var argcvtParams): seq[T] =
   var toks: seq[string]
   if delim == "<D>":                      # DELIMITER-PREFIXED Sep-Vals
     toks = src[1..^1].split(delim[0])     # E.g.: ",hello,world"
@@ -178,10 +178,9 @@ proc argAggSplit*[T](src: string, delim: string, a: argcvtParams): seq[T] =
     toks = src.split(delim)
   var parsed, default: T
   result = @[]
-  var acp = a
   for tok in toks:
-    acp.val = tok
-    if not argParse(parsed, default, acp):
+    a.val = tok
+    if not argParse(parsed, default, a):
       result.setLen(0)
       return
     result.add(parsed)
@@ -195,50 +194,51 @@ proc argAggHelp*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
     dfl = if Dfl.len > 0: Dfl.join(sd) else: "EMPTY"
 
 ## sets
-proc argParse*[T](dst: var set[T], dfl: set[T], a: argcvtParams): bool =
+proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
+  ## incl from an openArray; How can this NOT be in the stdlib?
+  for e in toIncl: dst.incl(e)
+proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
+  ## excl from an openArray; How can this NOT be in the stdlib?
+  for e in toExcl: dst.excl(e)
+
+proc argParse*[T](dst: var set[T], dfl: set[T], a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
     return false
   let parsed = argAggSplit[T](a.val, a.Delimit, a)
   if parsed.len == 0: return false
+  echo "got sep: ", repr(a.sep[0])
   case a.sep[0]                     # char on command line before [=:]
-  of '+':                           # Append Mode
-    for e in parsed: dst.incl(e)
-  of '-':                           # Delete mode
-    for e in parsed: dst.excl(e)
-  else:                             # Assign Mode
-    dst = {}
-    for e in parsed: dst.incl(e)
+  of '+': dst.incl(parsed)          # Append Mode
+  of '-': dst.excl(parsed)          # Delete mode
+  else: dst = {}; dst.incl(parsed)  # Assign Mode
   return true
 
-proc argHelp*[T](dfl: set[T], a: argcvtParams): seq[string]=
+proc argHelp*[T](dfl: set[T], a: var argcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
   argAggHelp(a.Delimit, dflSeq, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
-## seqs                               XXX Add a '^' prepend mode?
-proc argParse*[T](dst: var seq[T], dfl: seq[T], a: argcvtParams): bool =
+## seqs
+proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
     return false
   let parsed = argAggSplit[T](a.val, a.Delimit, a)
   if parsed.len == 0: return false
+  if dst == nil: dst = @[]
   case a.sep[0]                     # char on command line before [=:]
-  of '+':                           # Append Mode
-    if dst == nil: dst = @[]
-    for e in parsed: dst.add(e)
+  of '+': dst.add(parsed)           # Append Mode
+  of '^': dst = parsed & dst        # Prepend Mode
   of '-':                           # Delete mode
-    if dst == nil: dst = @[]
     for i, e in dst:
-      if e in parsed: dst.delete(i)    # Quadratic algo, but preserves order
-  else:                             # Assign Mode
-    dst = @[]
-    for e in parsed: dst.add(e)
+      if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
+  else: dst = parsed                # Assign Mode
   return true
 
-proc argHelp*[T](dfl: seq[T], a: argcvtParams): seq[string]=
+proc argHelp*[T](dfl: seq[T], a: var argcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)

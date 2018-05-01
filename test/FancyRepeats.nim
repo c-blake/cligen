@@ -13,7 +13,7 @@ when isMainModule:
   from textUt   import TextTab
   from parseutils import parseInt
 
-  proc argParse*(dst: var int, dfl: int; a: argcvtParams): bool =
+  proc argParse*(dst: var int, dfl: int; a: var argcvtParams): bool =
     if a.parNm == "verb":               # make "verb" a special kind of int
       inc(dst)                          # that just counts its occurances
     else:
@@ -23,15 +23,16 @@ when isMainModule:
         return false
     return true
 
-  proc argHelp*(defVal: int, a: argcvtParams): seq[string] =
+  proc argHelp*(defVal: int, a: var argcvtParams): seq[string] =
     if a.parNm == "verb":
       result = @[ a.argKeys, "countr", a.argDf($defVal) ]
-      a.shortNoVal[].incl(a.parSh[0])
-      a.longNoVal[].add(a.parNm)
+      if a.parSh.len > 0:
+        a.shortNoVal.incl(a.parSh[0])
+      a.longNoVal.add(a.parNm)
     else:
       result = @[ a.argKeys, "int", a.argDf($defVal) ]
 
-  proc argParse(dst: var seq[string], dfl: seq[string]; a: argcvtParams): bool =
+  proc argParse(dst: var seq[string], dfl: seq[string]; a: var argcvtParams): bool =
     if a.val == nil:
       ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
       return false
@@ -44,7 +45,7 @@ when isMainModule:
       dst = a.val.split(",")
     return true
 
-  proc argHelp(defVal: seq[string], a: argcvtParams): seq[string] =
+  proc argHelp(defVal: seq[string], a: var argcvtParams): seq[string] =
     if a.parNm == "stuff":              # make "stuff" a repeatable key
       result = @[ a.argKeys, "+CSV", a.argDf("\"" & defVal.join(",")) & "\"" ]
     else:
