@@ -127,7 +127,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    help: typed = {}, short: typed = {}, usage: string
 ="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
                    prelude = "Usage:\n  ", echoResult: bool = false,
-                   requireSeparator: bool = false, sepChars = "=:",
+                   requireSeparator: bool = false, sepChars = {'=', ':'},
+                   opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
                    helpTabColumnGap: int = 2, helpTabMinLast: int = 16,
                    helpTabRowSep: string = "", helpTabColumns: seq[int] = @[
                     helpTabOption, helpTabType, helpTabDefault, helpTabDescrip],
@@ -380,10 +381,11 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
-    from os     import commandLineParams
-    from argcvt import argcvtParams, argParse, argHelp
-    from textUt import addPrefix, TextTab, alignTable
-    from parseopt3 import getopt, cmdLongOption, cmdShortOption, optionNormalize
+    from os        import commandLineParams
+    from argcvt    import argcvtParams, argParse, argHelp
+    from textUt    import addPrefix, TextTab, alignTable
+    from parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
+                          cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
@@ -395,11 +397,12 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
-                                  `requireSeparator`, `sepChars`, `stopWords`)
+                                  `requireSeparator`, `sepChars`, `opChars`,
+                                  `stopWords`)
         while true:
-          next(p)
-          if p.kind == cmdEnd: break
-          case p.kind
+          next(`pId`)
+          if `pId`.kind == cmdEnd: break
+          case `pId`.kind
             of cmdLongOption, cmdShortOption:
               `optCases`
             else:
@@ -421,7 +424,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 help: typed = { }, short: typed = { }, usage: string
 ="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
                 prelude = "Usage:\n  ", echoResult: bool = false,
-                requireSeparator: bool = false, sepChars = "=:",
+                requireSeparator: bool = false, sepChars = {'=', ':'},
+                opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
                 helpTabColumnGap = 2, helpTabMinLast = 16, helpTabRowSep = "",
                 helpTabColumns = @[ helpTabOption, helpTabType, helpTabDefault,
                                     helpTabDescrip ],
@@ -435,9 +439,9 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
   result = newStmtList()
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
-    requireSeparator, sepChars, helpTabColumnGap, helpTabMinLast, helpTabRowSep,
-    helpTabColumns, stopWords, positional, argPre, argPost, suppress, shortHelp,
-    implicitDefault, mandatoryHelp, delimit))
+      requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
+      helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
+      suppress, shortHelp, implicitDefault, mandatoryHelp, delimit))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =
