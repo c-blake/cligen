@@ -10,7 +10,6 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 when isMainModule:
   from strutils import split, `%`, join, strip
   from argcvt   import argcvtParams, argKeys, argDf, ERR  # Little helpers
-  from textUt   import TextTab
   from parseutils import parseInt
 
   proc argParse*(dst: var int, dfl: int; a: var argcvtParams): bool =
@@ -26,8 +25,7 @@ when isMainModule:
   proc argHelp*(defVal: int, a: var argcvtParams): seq[string] =
     if a.parNm == "verb":
       result = @[ a.argKeys, "countr", a.argDf($defVal) ]
-      if a.parSh.len > 0:
-        a.shortNoVal.incl(a.parSh[0])
+      if a.parSh.len > 0: a.shortNoVal.incl(a.parSh[0])
       a.longNoVal.add(a.parNm)
     else:
       result = @[ a.argKeys, "int", a.argDf($defVal) ]
@@ -37,12 +35,9 @@ when isMainModule:
       ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
       return false
     if a.parNm == "stuff":              # make "stuff" a repeatable key
-      if a.parCount == 1:
-        dst = a.val.split(",")
-      else:
-        dst &= a.val.split(",")
-    else:
-      dst = a.val.split(",")
+      if a.parCount == 1: dst = a.val.split(",")
+      else: dst &= a.val.split(",")
+    else: dst = a.val.split(",")
     return true
 
   proc argHelp(defVal: seq[string], a: var argcvtParams): seq[string] =
