@@ -32,8 +32,8 @@ type argcvtParams* = object ## \
 
 proc argKeys*(a: argcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
-  result = if len(a.parSh) > 0: "-$1$3, --$2$3" % [ a.parSh, a.parNm, argSep ]
-           else            : "--" & a.parNm & argSep
+  result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh, a.parNm, argSep ]
+           else              : "--" & a.parNm & argSep
 
 proc argDf*(a: argcvtParams, dv: string): string =
   ## argDf is an argHelp space-saving utility proc to decide default column.
@@ -55,7 +55,8 @@ proc argParse*(dst: var bool, dfl: bool, a: argcvtParams): bool =
 
 proc argHelp*(dfl: bool; a: argcvtParams): seq[string] =
   result = @[ a.argKeys(argSep=""), "bool", a.argDf($dfl) ]
-  a.shortNoVal[].incl(a.parSh[0]) # bool can elide option arguments.
+  if a.parSh.len > 0:
+    a.shortNoVal[].incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal[].add(a.parNm)      # So, add to *NoVal.
 
 # string

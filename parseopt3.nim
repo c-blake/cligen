@@ -134,7 +134,7 @@ proc do_short(p: var OptParser) =
   if p.moreShort.len == 0:              # param exhausted; advance param
     p.pos += 1
   if card(p.shortNoVal) > 0 and p.key[0] in p.shortNoVal:  # opt arg optional
-    if p.moreShort[0] in p.sepChars:
+    if p.moreShort.len > 0 and p.moreShort[0] in p.sepChars:
       p.val = p.moreShort[1..^1]        # allow :t, =true, etc.
       p.moreShort = ""
       p.pos += 1
