@@ -15,9 +15,9 @@ There are several major breaking changes and feature additions:
     Doing so now was motivated to implemenet generic support of collections
     (set and seq) of any enum type.
 
- 2.  Also, ``argHelp`` is highly simplified.  It needs only to return a `seq`
-     of length 2 - the type column and the default value column.  See `argcvt`
-     for examples.
+ 2.  Also, ``argHelp`` is simplified.  It needs only to return a len 3 `seq` -
+     the keys column (usually just a.argKeys), the type column and the default
+     value column.  See `argcvt` for examples.
 
  3. A complete shift in the syntax for mandatory parameters.  They are now
     entered just as optional parameters are.  Programs exit with informative
