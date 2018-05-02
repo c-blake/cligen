@@ -39,7 +39,7 @@ proc argDf*(a: argcvtParams, dv: string): string =
   ## argDf is an argHelp space-saving utility proc to decide default column.
   (if a.parReq != 0: a.Mand else: dv)
 
-# bool
+# bools
 proc argParse*(dst: var bool, dfl: bool, a: var argcvtParams): bool =
   if len(a.val) > 0:
     case a.val.toLowerAscii  # Like `strutils.parseBool` but we also accept t&f
@@ -59,18 +59,23 @@ proc argHelp*(dfl: bool; a: var argcvtParams): seq[string] =
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal.add(a.parNm)        # So, add to *NoVal.
 
-# string
+# strings
 proc argParse*(dst: var string, dfl: string, a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.Help ])
     return false
-  dst = a.val
+  if a.sep.len > 0:                   # no separator => assignment
+    case a.sep[0]                     # char on command line before [=:]
+    of '+', '&': dst.add(a.val)       # Append Mode
+    of '^': dst = a.val & dst         # Prepend Mode
+    else: dst = a.val                 # Assign Mode
+  else: dst = a.val                   # Assign Mode, No Operator
   return true
 
 proc argHelp*(dfl: string; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "string", a.argDf(nimEscape(dfl)) ]
 
-# cstring
+# cstrings
 proc argParse*(dst: var cstring, dfl: cstring, a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.Help ])
@@ -81,7 +86,7 @@ proc argParse*(dst: var cstring, dfl: cstring, a: var argcvtParams): bool =
 proc argHelp*(dfl: cstring; a: var argcvtParams): seq[string] =
   result = @[ a.argKeys, "string", a.argDf(nimEscape($dfl)) ]
 
-# char
+# chars
 proc argParse*(dst: var char, dfl: char, a: var argcvtParams): bool =
   if len(a.val) != 1:
     ERR("Bad value \"$1\" for single char param \"$2\"\n$3" %
