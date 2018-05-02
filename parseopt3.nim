@@ -54,6 +54,12 @@
 ## even if "--" is not in ``stopWords``).  Such stop words (or "--") can still
 ## be the **values** of option arguments.  Only usage as a non-option command
 ## parameter acts to stop possible option-treatment of later parameters.
+##
+## To facilitate syntax for operations beyond simple assignment, ``opChars`` is a
+## set of chars that may prefix an element of ``sepChars``.  The ``sep`` member
+## of ``OptParser`` is the actual separator used for the current option, if any.
+## E.g, a user entering "="  causes ``sep == "="`` while entering "+=" gets
+## ``sep == "+="``, and "+/-+=" gets ``sep == "+/-+="``.
 
 import os, strutils
 
