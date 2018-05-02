@@ -65,28 +65,29 @@ type
     cmdShortOption            ## a short option ``-c`` detected
   OptParser* =
       object of RootObj       ## this object implements the command line parser
-    cmd: seq[string]          # command line being parsed
-    pos: int                  # current command parameter to inspect
-    moreShort: string         # carry over short flags to process
-    optsDone: bool            # "--" has been seen
-    shortNoVal: set[char]     # 1-letter options not requiring optarg
-    longNoVal: seq[string]    # long options not requiring optarg
-    stopWords: seq[string]    # special literal parameters that act like "--"
-    requireSep: bool          # require separator between option key & val
-    sepChars: set[char]       # all the chars that can be valid separators
+    cmd*: seq[string]         # command line being parsed
+    pos*: int                 # current command parameter to inspect
+    off*: int                 # current offset into cmd[pos] for short key block
+    optsDone*: bool           # "--" has been seen
+    shortNoVal*: set[char]    # 1-letter options not requiring optarg
+    longNoVal*: seq[string]   # long options not requiring optarg
+    stopWords*: seq[string]   # special literal parameters that act like "--"
+    requireSep*: bool         # require separator between option key & val
+    sepChars*: set[char]      # all the chars that can be valid separators
+    opChars*: set[char]       # all chars that can prefix a sepChar
     sep*: string              ## actual string separating key & value
     kind*: CmdLineKind        ## the detected command line token
     key*, val*: TaintedString ## key and value pair; ``key`` is the option
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
 
-proc ERR(x: varargs[string, `$`]) = stderr.write(x)
+proc ERR(x: varargs[string, `$`]) = stderr.write(x); stderr.write("\n")
 
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoVal: set[char] = {},
                     longNoVal: seq[string] = nil,
                     requireSeparator=false,  # true imitates old parseopt2
-                    sepChars: string= "=:",
+                    sepChars={'=',':'}, opChars: set[char] = {},
                     stopWords: seq[string] = @[]): OptParser =
   ## Initializes a command line parse. `cmdline` should not contain parameter 0,
   ## typically the program name.  If `cmdline` is not given, default to current
@@ -111,10 +112,10 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   result.shortNoVal = shortNoVal
   result.longNoVal = longNoVal
   result.requireSep = requireSeparator
-  for c in sepChars:
-    result.sepChars.incl(c)
+  result.sepChars = sepChars
+  result.opChars = opChars
   result.stopWords = stopWords
-  result.moreShort = ""
+  result.off = 0
   result.optsDone = false
 
 proc initOptParser*(cmdline: string): OptParser =
@@ -125,36 +126,45 @@ proc initOptParser*(cmdline: string): OptParser =
   else:
     return initOptParser(cmdline.split)
 
-#XXX To support .sep like do_long, must overhaul to move an index for chars.
 proc do_short(p: var OptParser) =
+  proc cur(p: OptParser): char =
+    if p.off < p.cmd[p.pos].len: result = p.cmd[p.pos][p.off]
+    else: result = '\0'
   p.kind = cmdShortOption
   p.val = nil
-  p.key = p.moreShort[0..0]             # shift off first char as key
-  p.moreShort = p.moreShort[1..^1]
-  if p.moreShort.len == 0:              # param exhausted; advance param
+  p.key = $p.cur; p.off += 1            # shift off first char as key
+  if p.cur in p.opChars or p.cur in p.sepChars:
+    let mark = p.off
+    while p.cur != '\0' and p.cur notin p.sepChars:
+      p.off += 1
+    if p.cur == '\0':
+      ERR "opChar without same param sepChar"; return
+    if p.off > p.cmd[p.pos].len - 2:
+      ERR "no data following sepChar"; return
+    p.sep = p.cmd[p.pos][mark..p.off]
+    p.val = p.cmd[p.pos][p.off+1..^1]
     p.pos += 1
-  if card(p.shortNoVal) > 0 and p.key[0] in p.shortNoVal:  # opt arg optional
-    if p.moreShort.len > 0 and p.moreShort[0] in p.sepChars:
-      p.val = p.moreShort[1..^1]        # allow :t, =true, etc.
-      p.moreShort = ""
+    p.off = 0
+    return
+  if p.key[0] in p.shortNoVal:          # No explicit val, but that is ok
+    if p.off == p.cmd[p.pos].len:
+      p.off = 0
       p.pos += 1
-    return                                              # continue w/same param
-  if p.requireSep and p.moreShort[0] notin p.sepChars:  # No optarg in reqSep mode
     return
-  if p.moreShort.len != 0:              # only advance if need more data
-    p.pos += 1    #XXX Seems like a bug; Above cmt inconsistent w/if condition
-  if p.moreShort[0] in p.sepChars:      # shift off maybe-optional separator
-    p.moreShort = p.moreShort[1..^1]
-  if p.moreShort.len > 0:               # same param argument is trailing text
-    p.val = p.moreShort
-    p.moreShort = ""
+  if p.requireSep:
+    ERR "Expecting option key-val separator :|= after `", p.key, "`"
     return
-  if p.pos < p.cmd.len:                 # Empty moreShort; opt arg = next param
-    p.val = p.cmd[p.pos]
+  if p.cmd[p.pos].len - p.off > 0:
+    p.val = p.cmd[p.pos][p.off .. ^1]
     p.pos += 1
-  elif card(p.shortNoVal) > 0:
-#   if p.key[0] notin p.sepChars:
-    ERR "argument expected for option `", p.key, "` at end of params"
+    p.off = 0
+    return
+  if p.pos < p.cmd.len - 1:             # opt val = next param
+    p.val = p.cmd[p.pos + 1]
+    p.pos += 2
+    p.off = 0
+    return
+  ERR "argument expected for option `", p.key, "` at end of params"
 
 proc do_long(p: var OptParser) =
   p.kind = cmdLongOption
@@ -167,14 +177,14 @@ proc do_long(p: var OptParser) =
     p.key = nil
     return
   if sep > 2:
-    var nonIdent = sep
-    while nonIdent > 2 and param[nonIdent-1] notin IdentChars:
-      dec(nonIdent)
-    p.sep = param[nonIdent .. sep]
-    p.key = param[2 .. nonIdent-1]
+    var op = sep
+    while op > 2 and param[op-1] in p.opChars:
+      dec(op)
+    p.key = param[2 .. op-1]
+    p.sep = param[op .. sep]
     p.val = param[sep+1..^1]
     return
-  p.key = param[2..^1]                  # no sep; key is whole param past --
+  p.key = param[2..^1]                  # no sep; key is whole param past "--"
   if p.longNoVal != nil and p.key in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
@@ -187,7 +197,7 @@ proc do_long(p: var OptParser) =
     ERR "argument expected for option `", p.key, "` at end of params"
 
 proc next*(p: var OptParser) =
-  if p.moreShort.len > 0:               #Step1: handle any remaining short opts
+  if p.off > 0:                         #Step1: handle any remaining short opts
     do_short(p)
     return
   if p.pos >= p.cmd.len:                #Step2: end of params check
@@ -215,7 +225,7 @@ proc next*(p: var OptParser) =
       p.val = nil
       p.pos += 1
     else:                               #Step6b: maybe a block of short options
-      p.moreShort = p.cmd[p.pos][1..^1] # slice out the initial "-"
+      p.off = 1                         # skip the initial "-"
       do_short(p)
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
@@ -280,7 +290,8 @@ iterator getopt*(p: var OptParser): GetoptResult =
 when declared(paramCount):
   iterator getopt*(cmdline=commandLineParams(), shortNoVal: set[char] = {},
                    longNoVal: seq[string] = nil, requireSeparator=false,
-                   sepChars="=:", stopWords: seq[string] = @[]): GetoptResult =
+                   sepChars={'=', ':'}, opChars: set[char] = {},
+                   stopWords: seq[string] = @[]): GetoptResult =
     ## This is an convenience iterator for iterating over the command line.
     ## Parameters here are the same as for initOptParser.  Example:
     ## See above for a more detailed example
@@ -291,7 +302,7 @@ when declared(paramCount):
     ##     continue
     ##
     var p = initOptParser(cmdline, shortNoVal, longNoVal, requireSeparator,
-                          sepChars, stopWords)
+                          sepChars, opChars, stopWords)
     while true:
       next(p)
       if p.kind == cmdEnd: break
