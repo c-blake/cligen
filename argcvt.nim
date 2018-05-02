@@ -83,7 +83,7 @@ proc argHelp*(dfl: cstring; a: var argcvtParams): seq[string] =
 
 # char
 proc argParse*(dst: var char, dfl: char, a: var argcvtParams): bool =
-  if len(a.val) > 1:
+  if len(a.val) != 1:
     ERR("Bad value \"$1\" for single char param \"$2\"\n$3" %
         [ a.val, a.key, a.Help ])
     return false
@@ -96,11 +96,12 @@ proc argHelp*(dfl: char; a: var argcvtParams): seq[string] =
 # enums
 proc argParse*[T: enum](dst: var T, dfl: T, a: var argcvtParams): bool =
   var found = false
-  for e in low(T)..high(T):
-    if cmpIgnoreStyle(a.val, $e) == 0:
-      dst = e
-      found = true
-      break
+  if a.val.len > 0:
+    for e in low(T)..high(T):
+      if cmpIgnoreStyle(a.val, $e) == 0:
+        dst = e
+        found = true
+        break
   if not found:
     var all = ""
     for e in low(T)..high(T): all.add($e & " ")
@@ -117,8 +118,7 @@ proc argHelp*[T: enum](dfl: T; a: var argcvtParams): seq[string] =
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
   proc argParse*(dst: var T, dfl: T, a: var argcvtParams): bool =
     var parsed: WideT
-    let valstrip = strip(a.val)
-    if a.val == nil or parse(valstrip, parsed) != len(valstrip):
+    if a.val == nil or parse(strip(a.val), parsed) != len(strip(a.val)):
       ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
           [ (if a.val == nil: "nil" else: a.val), a.key, $T, a.Help ])
       return false
@@ -209,8 +209,8 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var argcvtParams): bool =
   if parsed.len == 0: return false
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
-    of '+': dst.incl(parsed)          # Append Mode
-    of '-': dst.excl(parsed)          # Delete mode
+    of '+', '&': dst.incl(parsed)     # Incl Mode
+    of '-': dst.excl(parsed)          # Excl Mode
     else: dst = {}; dst.incl(parsed)  # Assign Mode
   else: dst = {}; dst.incl(parsed)    # Assign Mode, No Operator
   return true
@@ -232,7 +232,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var argcvtParams): bool =
   if dst == nil: dst = @[]
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
-    of '+': dst.add(parsed)           # Append Mode
+    of '+', '&': dst.add(parsed)      # Append Mode
     of '^': dst = parsed & dst        # Prepend Mode
     of '-':                           # Delete mode
       for i, e in dst:
