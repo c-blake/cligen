@@ -149,27 +149,25 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 
 ## **PARSING AGGREGATES (seq, set, ..) FOR NON-OS-TOKENIZED OPTION VALUES**
 ##
-## This module also defines argParse/argHelp pairs for ``seq[T]`` with flexible
-## delimiting rules decided by `Delimit`.  A value of ``"<D>"`` indicates
-## delimiter-prefixed-values (DPSV) while a square-bracket character class like
-## ``"[:,]"`` indicates a set of chars.  Anything else indicates that the whole
-## string is the delimiter.  DPSV format looks like
-## ``<DELIM-CHAR><COMPONENT><DELIM-CHAR><COMPONENT>..`` E.g., for CSV the user
-## enters ``",Howdy,Neighbor"``.
+## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` with
+## delimiting rules decided by ``Delimit`` (set via ``dispatch(..delimit=)``).
+## A value of ``"<D>"`` indicates delimiter-prefixed-values (DPSV) while a
+## square-bracket character class like ``"[:,]"`` indicates a set of chars and
+## anything else indicates that the whole string is the delimiter.
 ##
-## To allow easy appending to, removing from, and resetting existing sequence
-## values, ``'+'``, ``'-'``, ``'='`` are recognized as special prefix chars.
-## So, e.g., ``-o=,1,2,3 -o=+,4,5, -o=-3`` is equivalent to ``-o=,1,2,4,5``.
-## Meanwhile, ``-o,1,2 -o:=-3 -o=++4`` makes ``o``'s value ``["-3", "+4"]``.
-## It is not considered an error to try to delete a non-existent value.
-##
-## ``argParseHelpSeq(myType)`` will instantiate ``argParse`` and ``argHelp``
-## for ``seq[myType]`` if you like any of the default delimiting schemes.
+## DPSV format looks like ``<DELIMCHAR><ELEMENT><DELIMCHAR><ELEMENT>..``
+## E.g., for CSV the user enters ``",foo,bar"``.
 ##
 ## The delimiting system is somewhat extensible.  If you have a new style or
 ## would like to override my usage messages then you can define your own
 ## ``argAggSplit`` and ``argAggHelp`` anywhere before ``dispatchGen``.
-## The optional ``+-=`` syntax will remain available.
+##
+## To allow easy incremental modifications to existing values, a few ``opChars``
+## are interpreted by various ``argParse``s.  For ``string`` and ``seq[T]``,
+## ``'+'`` (or ``'&'``) and ``'^'`` mean append and prepend.  For ``set[T]``
+## and ``seq[T]`` there is also ``'-'`` for deletion (of all matches).  E.g.,
+## ``-o=,1,2,3 -o+=,4,5, -o^=,0 -o=-3`` is equivalent to ``-o=,0,1,2,4,5``.
+## It is not considered an error to try to delete a non-existent value.
 
 proc argAggSplit*[T](src: string, delim: string, a: var argcvtParams): seq[T] =
   var toks: seq[string]
@@ -198,7 +196,7 @@ proc argAggHelp*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
     typ = sd & "SV[" & typ & "]"
     dfl = if Dfl.len > 0: Dfl.join(sd) else: "EMPTY"
 
-## sets
+# sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
   ## incl from an openArray; How can this NOT be in the stdlib?
   for e in toIncl: dst.incl(e)
@@ -227,7 +225,7 @@ proc argHelp*[T](dfl: set[T], a: var argcvtParams): seq[string]=
   argAggHelp(a.Delimit, dflSeq, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
-## seqs
+# seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var argcvtParams): bool =
   if a.val == nil:
     ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
