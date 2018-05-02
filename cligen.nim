@@ -51,14 +51,14 @@ proc parseShorts(shorts: NimNode): Table[string, char] =
       let sh: char = char((losh[1][1]).intVal)
       result[lo] = sh
 
-proc dupBlock(fpars: NimNode, posIx: int,
+proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
               userSpec: Table[string, char]): Table[string, char] =
   # Compute a table giving the short option for any long option, being
   # careful to only allow one such short option if the 1st letters of
   # two or more long options collide.
   result = initTable[string, char]()         # short option for param
   if "" in userSpec: return                  # Empty string key==>no short opts
-  var used: set[char] = {}                   # used shorts; bit vector ok
+  var used: set[char]={ chr(hlpCh.intVal) }  # used shorts; bit vector ok
   for lo, sh in userSpec:
     result[lo] = sh
     used.incl(sh)
@@ -209,7 +209,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   else:
     let disNm = toNimIdent("dispatch" & $pro)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
-  let shOpt = dupBlock(fpars, posIx, parseShorts(short))
+  let shOpt = dupBlock(fpars, posIx, shortHelp, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
@@ -253,7 +253,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       var `apId`: argcvtParams
       `apId`.Mand = `mandHelp`
       `apId`.Delimit = `delim`
-      let shortH = toString(`shortHlp`)
+      let shortH = $(`shortHlp`)
       var `mandId`: seq[string] = @[ ]
       var `tabId`: TextTab =
         @[ @[ "-" & shortH & ", --help", "", "", "print this help message" ] ]
