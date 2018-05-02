@@ -15,20 +15,20 @@ There are several major breaking changes and feature additions:
     Doing so now was motivated to implemenet generic support of collections
     (set and seq) of any enum type.
 
- 2.  Also, ``argHelp`` is simplified.  It needs only to return a len 3 `seq` -
-     the keys column (usually just a.argKeys), the type column and the default
-     value column.  See `argcvt` for examples.
+ 2. ``argHelp`` is simplified.  It needs only to return a len 3 `seq` - the
+    keys column (usually just a.argKeys), the type column and the default
+    value column.  See `argcvt` for examples.
 
  3. A complete shift in the syntax for mandatory parameters.  They are now
     entered just as optional parameters are.  Programs exit with informative
     errors when not all are given by a command user.  This is more consistent
-    syntax, has more consistent help text in the usage message and is also
-    easier on balance for command users.  For discussion, see
+    syntax, has more consistent help text in the usage message and is easier
+    on balance for command users.  For discussion, see
     https://github.com/c-blake/cligen/issues/20
 
  4. ``parseopt3`` can now capture the separator text used by CLI users which
-    includes any trailing non-Nim-identifier characters.  ``argParse`` can
-    access such text to implement things like ``--mySeq+=foo,bar``.
+    includes any trailing characters in `opChars`.  ``argParse`` can access
+    such text to implement things like ``--mySeq+=foo,bar``.
 
  5. Boolean parameters no longer toggle back and forth forever by default.
     Rather now only flip from *their default to its opposite*.  There could be
