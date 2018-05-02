@@ -25,44 +25,46 @@ you override that choice with the ``positional`` argument to ``dispatchGen``.
 
 When there is no positional parameter catcher and no mandatory parameters, it
 is a command syntax error to provide non-option parameters and reported as such.
-This non-option syntax error also commonly occurs when requireSeparator=true
-and traditional Nim parseopt2-like command syntax is in force.  In that case a
-command user may forget the [:|=] required to separate an option and its value.
+This non-option syntax error also commonly occurs when requireSeparator=true.
+In that case a command user may forget the [:|=] required to separate an option
+and its value.
 
 Extending `cligen` to support new parameter types (more on Rule 2)
 ------------------------------------------------------------------
 `cligen` supports most basic Nim types out of the box (strings, numbers, enums,
-sequences of such).  The system can be extended pretty easily to other types.
-To extend the set of supported parameter conversion types, all you need do is
-define a compatible `argParse` and `argHelp` for the new Nim parameter types.
-Basically, `argParse` parses a string into a Nim value and `argHelp` provides
-simple guidance on what that syntax is for command users - input & output.
+sequences and sets of such, etc.).  To extend the set of supported parameter
+conversion types, all you need do is define compatible `argParse` and `argHelp`
+procs for the new Nim parameter types.  Basically, `argParse` parses a string
+into a Nim value and `argHelp` provides simple guidance on what that syntax is
+for command users and formats a default value - the input & output.
 
-For example, you might want to receive a `set[short]` parameter inside a single
-argument/option value.  So, you need some user friendly convention to convert a
-single string to a collection, such as a comma-separated-value list.  Teaching
-`cligen` what to do goes like this:
+For example, you might want to receive a named color parameter from the Nim
+colors module.  Teaching `cligen` what to do goes like this:
 ```nim
-import colors, cligen, argcvt, textUt
+import colors, cligen, argcvt
 
 proc demo(color = colBlack, opt1=true, paths: seq[string]): int =
   echo "color=", color
 
-template argParse(dst: Color, key: string, dfl: Color; val, help: string) =
-  try: dst = parseColor(val)
-  except: discard
+proc argParse(dst: var Color, defaultValue: Color, a: var argcvtParams): bool =
+  try:
+      dst = parseColor(a.val)
+  except:
+      stderr.write(a.val, " is not a known color name\n", a.Help)
+      return false
+  return true
 
-template argHelp(ht: TextTab; defVal: Color; parNm,sh,parHelp: string; rq: int)=
-  ht.add(@[keys(parNm, sh), "Color", argRq(rq, $defVal), parHelp])
+proc argHelp(defaultValue: Color, a: var argcvtParams): seq[string] =
+  result = @[ a.argKeys, "Color", a.argDf($defaultValue) ]
 
 dispatch(demo, doc="NOTE: colors.nim has color names")
 ```
-Of course, you often want more input validation than this.  See `argcvt.nim` in
-the `cligen` package for the currently supported types and more details.  Due
-to ordinary Nim rules, if you dislike any of the default `argParse`/`argHelp`
-implementations for a given type then you can override them by defining your
-own in scope before invoking `dispatch`.  For example, `test/FancyRepeats.nim`
-shows how to make repeated `int` or `seq` issuance additive.
+See `argcvt.nim` in the `cligen` package for currently supported types and
+more details.  Due to ordinary Nim rules, if you dislike any of the default
+`argParse`/`argHelp` implementations for a given type then you can override
+them by defining your own in scope before invoking `dispatch`.  For example,
+`test/FancyRepeats.nim` shows how to make repeated `int` or `seq` issuance
+additive without "+=" syntax.
 
 Exit Code Behavior
 ==================
