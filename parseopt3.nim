@@ -135,17 +135,18 @@ proc do_short(p: var OptParser) =
   p.key = $p.cur; p.off += 1            # shift off first char as key
   if p.cur in p.opChars or p.cur in p.sepChars:
     let mark = p.off
-    while p.cur != '\0' and p.cur notin p.sepChars:
+    while p.cur != '\0' and p.cur notin p.sepChars and p.cur in p.opChars:
       p.off += 1
-    if p.cur == '\0':
-      ERR "opChar without same param sepChar"; return
-    if p.off > p.cmd[p.pos].len - 2:
-      ERR "no data following sepChar"; return
-    p.sep = p.cmd[p.pos][mark..p.off]
-    p.val = p.cmd[p.pos][p.off+1..^1]
-    p.pos += 1
-    p.off = 0
-    return
+    if p.cur in p.sepChars:
+      if p.off > p.cmd[p.pos].len - 2:
+        ERR "no data following sepChar"; return
+      p.sep = p.cmd[p.pos][mark..p.off]
+      p.val = p.cmd[p.pos][p.off+1..^1]
+      p.pos += 1
+      p.off = 0
+      return
+    else:                               # Was just an opChars-starting value
+      p.off = mark
   if p.key[0] in p.shortNoVal:          # No explicit val, but that is ok
     if p.off == p.cmd[p.pos].len:
       p.off = 0
