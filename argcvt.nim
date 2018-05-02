@@ -69,7 +69,7 @@ proc argParse*(dst: var string, dfl: string, a: var argcvtParams): bool =
     of '+', '&': dst.add(a.val)       # Append Mode
     of '^': dst = a.val & dst         # Prepend Mode
     else: dst = a.val                 # Assign Mode
-  else: dst = a.val                   # Assign Mode, No Operator
+  else: dst.add(a.val)                # No Operator => Append Mode
   return true
 
 proc argHelp*(dfl: string; a: var argcvtParams): seq[string] =
@@ -147,7 +147,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 #argParseHelpNum(BiggestFloat, parseBiggestFloat, float64) #only a type alias
 
-## **PARSING AGGREGATES (seq, set, ..) FOR NON-OS-TOKENIZED OPTION VALUES**
+## **PARSING AGGREGATES (string,set,seq,..) FOR NON-OS-TOKENIZED OPTION VALS**
 ##
 ## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` with
 ## delimiting rules decided by ``Delimit`` (set via ``dispatch(..delimit=)``).
@@ -159,15 +159,19 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## E.g., for CSV the user enters ``",foo,bar"``.
 ##
 ## The delimiting system is somewhat extensible.  If you have a new style or
-## would like to override my usage messages then you can define your own
-## ``argAggSplit`` and ``argAggHelp`` anywhere before ``dispatchGen``.
+## would like to override defaults then you can define your own ``argAggSplit``
+## and ``argAggHelp`` anywhere before ``dispatchGen``.
 ##
 ## To allow easy incremental modifications to existing values, a few ``opChars``
-## are interpreted by various ``argParse``s.  For ``string`` and ``seq[T]``,
+## are interpreted by various ``argParse``.  For ``string`` and ``seq[T]``,
 ## ``'+'`` (or ``'&'``) and ``'^'`` mean append and prepend.  For ``set[T]``
 ## and ``seq[T]`` there is also ``'-'`` for deletion (of all matches).  E.g.,
 ## ``-o=,1,2,3 -o+=,4,5, -o^=,0 -o=-3`` is equivalent to ``-o=,0,1,2,4,5``.
 ## It is not considered an error to try to delete a non-existent value.
+##
+## When no operator is provided by the user (i.e. styles like ``-o,x,y,z -o
+## ,a,b --opt ,c,d``), append/incl mode is used, but note that users are always
+## free to simply provide an ``'='`` to signify assignment mode instead.
 
 proc argAggSplit*[T](src: string, delim: string, a: var argcvtParams): seq[T] =
   var toks: seq[string]
@@ -215,7 +219,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var argcvtParams): bool =
     of '+', '&': dst.incl(parsed)     # Incl Mode
     of '-': dst.excl(parsed)          # Excl Mode
     else: dst = {}; dst.incl(parsed)  # Assign Mode
-  else: dst = {}; dst.incl(parsed)    # Assign Mode, No Operator
+  else: dst.incl(parsed)              # No Operator => Incl Mode
   return true
 
 proc argHelp*[T](dfl: set[T], a: var argcvtParams): seq[string]=
@@ -241,7 +245,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var argcvtParams): bool =
       for i, e in dst:
         if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
     else: dst = parsed                # Assign Mode
-  else: dst = parsed                  # Assign Mode, No Operator
+  else: dst.add(parsed)               # No Operator => Append Mode
   return true
 
 proc argHelp*[T](dfl: seq[T], a: var argcvtParams): seq[string]=
