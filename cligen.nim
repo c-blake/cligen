@@ -155,7 +155,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## then generated dispatchers echo the result of wrapped procs and return 0.
   ##
   ## If `requireSeparator` is true, both long and short options need an element
-  ## of `sepChars` (":=" by default) before option values (if there are any).
+  ## of `sepChars` before option values (if there are any).  Any series of chars
+  ## in `opChars` may prefix an element of `sepChars` as in `parseopt3`.
   ##
   ## `stopWords` is a seq[string] of words beyond which ``-`` or ``--`` will no
   ## longer signify an option (like the common sole ``--`` command argument).
@@ -182,6 +183,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## to the Nim default value for a type, rather than becoming mandatory, even
   ## when they are missing an explicit initializer. `mandatoryHelp` is how the
   ## default value appears in help messages for mandatory parameters.
+  ##
+  ## `mandatoryHelp` is the default value string in help tables for required
+  ## parameters.
   ##
   ## `delimit` decides delimiting conventions for aggregate types like `set`s
   ## or `seq`s by assigning to `argcvtParams.Delimit`.  Such delimiting is
