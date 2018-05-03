@@ -345,7 +345,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         var `tmpId` = `posId`[0]
         `apId`.key = "positional $" & $`posNoId`
         `apId`.val = `pId`.key
-        `apId`.sep = ""
+        `apId`.sep = "="
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
         if not argParse(`tmpId`, `tmpId`, `apId`):
