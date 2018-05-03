@@ -69,7 +69,7 @@ proc argParse*(dst: var string, dfl: string, a: var argcvtParams): bool =
     of '+', '&': dst.add(a.val)       # Append Mode
     of '^': dst = a.val & dst         # Prepend Mode
     else: dst = a.val                 # Assign Mode
-  else: dst.add(a.val)                # No Operator => Append Mode
+  else: dst = a.val                   # No Operator => Assign Mode
   return true
 
 proc argHelp*(dfl: string; a: var argcvtParams): seq[string] =
