@@ -170,8 +170,9 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## It is not considered an error to try to delete a non-existent value.
 ##
 ## When no operator is provided by the user (i.e. styles like ``-o,x,y,z -o
-## ,a,b --opt ,c,d``), append/incl mode is used, but note that users are always
-## free to simply provide an ``'='`` to signify assignment mode instead.
+## ,a,b --opt ,c,d``), append/incl mode is used for ``seq`` and ``set`` (but
+## not ``string`` which assigns by default).  Note that users are always free
+## to simply provide an ``'='`` to signify assignment mode instead.
 
 proc argAggSplit*[T](src: string, delim: string, a: var argcvtParams): seq[T] =
   var toks: seq[string]
