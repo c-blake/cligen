@@ -198,8 +198,8 @@ proc argAggHelp*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
     typ = "DPSV[" & typ & "]"
     dfl = if Dfl.len > 0: sd & Dfl.join(sd) else: "EMPTY"
   else:
-    typ = sd & "SV[" & typ & "]"
-    dfl = if Dfl.len > 0: Dfl.join(sd) else: "EMPTY"
+    typ = (if sd=="\t": "T" else: sd) & "SV[" & typ & "]"
+    dfl = if Dfl.len > 0: Dfl.join((if sd=="\t": "\\t" else: sd)) else: "EMPTY"
 
 # sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
