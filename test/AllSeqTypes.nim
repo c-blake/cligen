@@ -34,8 +34,8 @@ proc demo(args: seq[string],
 
 when isMainModule:
   import cligen
-  when defined(setDelim):
-    let d: set[char] = "[,:]"
+  when defined(charClass):
+    let d = "[,:]"
   elif defined(DPSV):
     let d = "<D>"
   else:

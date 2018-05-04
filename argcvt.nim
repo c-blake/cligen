@@ -181,7 +181,7 @@ proc argAggSplit*[T](src: string, delim: string, a: var argcvtParams): seq[T] =
   elif delim[0] == '[' and delim[^1] == ']':
     var cclass: set[char] = {}            # is there no toSet?
     for c in delim[1..^2]: cclass.incl(c)
-    toks = src[1..^1].split(cclass)
+    toks = src.split(cclass)
   else:
     toks = src.split(delim)
   var parsed, default: T
