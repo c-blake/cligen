@@ -94,10 +94,10 @@ _gnu_generic`` in zsh, or the GNU ``help2man`` package.  Many simple examples
 are at [test/](https://github.com/c-blake/cligen/tree/master/test/).  Here are
 some more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md),
 and even more is in the module documentations (
- [parseopt3](https://github.com/c-blake/cligen/tree/master/parseopt3.html)
- [argcvt](https://github.com/c-blake/cligen/tree/master/argcvt.html)
- [cligen](https://github.com/c-blake/cligen/tree/master/cligen.html) ) and
- [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
+ [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
+ [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
+ [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html) )
+ and [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
 
 More Motivation
 ===============
