@@ -95,6 +95,13 @@ are at https://github.com/c-blake/cligen/tree/master/test/.  More details are
 covered by module documentation for ``parseopt3``, ``cligen``, ``argcvt`` as
 well as https://github.com/c-blake/cligen/tree/master/DETAILS.md.
 
+If you are not a new cligen user, then you might check out the module
+documentations and release notes:
+   https://github.com/c-blake/cligen/tree/master/parseopt3.html
+   https://github.com/c-blake/cligen/tree/master/argcvt.html
+   https://github.com/c-blake/cligen/tree/master/cligen.html
+   https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md
+
 More Motivation
 ===============
 There are so many CLI parser frameworks out there...Why do we need yet another?
