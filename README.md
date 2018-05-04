@@ -91,16 +91,13 @@ without further delay, simply entering illegal commands or `--help` to get help
 messages that exhibit the basic mappings.  Default help tables play well with
 automated "help to X" tools such as ``complete -F _longopt`` in bash, ``compdef
 _gnu_generic`` in zsh, or the GNU ``help2man`` package.  Many simple examples
-are at https://github.com/c-blake/cligen/tree/master/test/.  More details are
-covered by module documentation for ``parseopt3``, ``cligen``, ``argcvt`` as
-well as https://github.com/c-blake/cligen/tree/master/DETAILS.md.
-
-If you are not a new cligen user, then you might check out the module
-documentations and release notes:
-   https://github.com/c-blake/cligen/tree/master/parseopt3.html
-   https://github.com/c-blake/cligen/tree/master/argcvt.html
-   https://github.com/c-blake/cligen/tree/master/cligen.html
-   https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md
+are at [https://github.com/c-blake/cligen/tree/master/test/](test/).  Here are
+some more [https://github.com/c-blake/cligen/tree/master/DETAILS.md](DETAILS),
+and even more is in the module documentations (
+ [https://github.com/c-blake/cligen/tree/master/parseopt3.html](parseopt3)
+ [https://github.com/c-blake/cligen/tree/master/argcvt.html](argcvt)
+ [https://github.com/c-blake/cligen/tree/master/cligen.html](cligen) ) and
+ [https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md](RELEASE-NOTES).
 
 More Motivation
 ===============
