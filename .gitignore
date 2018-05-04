@@ -36,3 +36,4 @@ test/OneCharParams
 test/ImplicitDefault
 test/AllSeqTypes
 test/Enums
+test/AllSetTypes

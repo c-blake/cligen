@@ -33,6 +33,25 @@ demo entry point with parameters of all basic types.
   --f8=       ,SV[float]    EMPTY       set f8
   --F8=       ,SV[float]    25.0,26.0   set F8
 ====================================
+Test: test/AllSetTypes.nim
+Usage:
+  demo [optional-params] [args]
+demo entry point with parameters of all basic types.
+  Options(opt-arg sep :|=|spc):
+  -h, --help                               print this help message
+  -b=, --bl=  ,SV[bool]    EMPTY           set bl
+  -B=, --Bl=  ,SV[bool]    false,true      set Bl
+  -i=, --i1=  ,SV[int8]    EMPTY           set i1
+  -I=, --I1=  ,SV[int8]    3,4             set I1
+  --i2=       ,SV[int16]   EMPTY           set i2
+  --I2=       ,SV[int16]   5,6             set I2
+  -u=, --u1=  ,SV[uint8]   EMPTY           set u1
+  -U=, --U1=  ,SV[uint8]   13,14           set U1
+  --u2=       ,SV[uint16]  EMPTY           set u2
+  --U2=       ,SV[uint16]  15,16           set U2
+  -e=, --e=   ,SV[Color]   EMPTY           set e
+  -E=, --E=   ,SV[Color]   red,green,blue  set E
+====================================
 Test: test/AllTypes.nim
 Usage:
   demo [optional-params] [args]
