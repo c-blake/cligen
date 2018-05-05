@@ -255,3 +255,29 @@ proc argHelp*[T](dfl: seq[T], a: var argcvtParams): seq[string]=
   for d in dfl: dflSeq.add($d)
   argAggHelp(a.Delimit, dflSeq, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
+
+import sets # HashSets
+
+proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T], a: var argcvtParams): bool =
+  if a.val == nil:
+    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.Help ])
+    return false
+  let parsed = toSet(argAggSplit[T](a.val, a.Delimit, a))
+  if card(parsed) == 0: return false
+  if a.sep.len > 0:
+    case a.sep[0]                       # char on command line before [=:]
+    of '+', '&': dst.incl(parsed)       # Incl Mode
+    of '-': dst.excl(parsed)            # Excl Mode
+    else: dst.clear(); dst.incl(parsed) # Assign Mode
+  else: dst.incl(parsed)                # No Operator => Incl Mode
+  return true
+
+proc argHelp*[T](dfl: HashSet[T], a: var argcvtParams): seq[string]=
+  var typ = $T; var df: string
+  var dflSeq: seq[string] = @[ ]
+  for d in dfl: dflSeq.add($d)
+  argAggHelp(a.Delimit, dflSeq, typ, df)
+  result = @[ a.argKeys, typ, a.argDf(df) ]
+
+#import tables # Tables XXX need 2D delimiting convention
+#? intsets, lists, deques, queues, etc?

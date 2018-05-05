@@ -37,3 +37,4 @@ test/ImplicitDefault
 test/AllSeqTypes
 test/Enums
 test/AllSetTypes
+test/HashSets
