@@ -118,6 +118,11 @@ const helpTabType*    = 1
 const helpTabDefault* = 2
 const helpTabDescrip* = 3
 
+proc postInc*(x: var int): int =
+  ## Similar to post-fix `++` in C languages: yield initial val, then increment
+  result = x
+  inc(x)
+
 proc delItem*[T](x: var seq[T], item: T): int =
   result = find(x, item)
   if result >= 0:
@@ -514,8 +519,3 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
       "Run a subcommand with --help to see only help for that.")))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
-
-proc postInc*(x: var int): int =
-  ## Similar to post-fix `++` in C languages: yield initial val, then increment
-  result = x
-  inc(x)
