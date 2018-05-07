@@ -23,28 +23,12 @@ when isMainModule:
     return true
 
   proc argHelp*(defVal: int, a: var argcvtParams): seq[string] =
-    if a.parNm == "verb":
+    if a.parNm == "verb":    # This is a parNm-conditional hybrid of bool & int
       result = @[ a.argKeys, "countr", a.argDf($defVal) ]
       if a.parSh.len > 0: a.shortNoVal.incl(a.parSh[0])
       a.longNoVal.add(a.parNm)
     else:
       result = @[ a.argKeys, "int", a.argDf($defVal) ]
-
-  proc argParse(dst: var seq[string], dfl: seq[string]; a: var argcvtParams): bool =
-    if a.val == nil:
-      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
-      return false
-    if a.parNm == "stuff":              # make "stuff" a repeatable key
-      if a.parCount == 1: dst = a.val.split(",")
-      else: dst &= a.val.split(",")
-    else: dst = a.val.split(",")
-    return true
-
-  proc argHelp(defVal: seq[string], a: var argcvtParams): seq[string] =
-    if a.parNm == "stuff":              # make "stuff" a repeatable key
-      result = @[ a.argKeys, "+CSV", a.argDf("\"" & defVal.join(",")) & "\"" ]
-    else:
-      result = @[ a.argKeys, "CSV", a.argDf("\"" & defVal.join(",") & "\"") ]
 
   import cligen
   dispatch(demo)
