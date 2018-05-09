@@ -9,7 +9,7 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from argcvt   import argcvtParams, argKeys, argDf, ERR  # Little helpers
+  from cligen/argcvt import argcvtParams, argKeys, argDf, ERR  # Little helpers
   from parseutils import parseInt
 
   proc argParse*(dst: var int, dfl: int; a: var argcvtParams): bool =

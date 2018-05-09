@@ -1,4 +1,4 @@
-import macros, tables, parseopt3, strutils, os
+import macros, tables, cligen/parseopt3, strutils, os
 
 proc toString(c: char): string =
   ## creates a string from char `c`
@@ -390,11 +390,11 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
-    from os        import commandLineParams
-    from argcvt    import argcvtParams, argParse, argHelp
-    from textUt    import addPrefix, TextTab, alignTable
-    from parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
-                          cmdShortOption, optionNormalize
+    from os               import commandLineParams
+    from cligen/argcvt    import argcvtParams, argParse, argHelp
+    from cligen/textUt    import addPrefix, TextTab, alignTable
+    from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
+                                 cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
