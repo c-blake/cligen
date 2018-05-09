@@ -9,5 +9,5 @@ proc demo(alpha: int, beta=foo, verb=false, item: string, args: seq[string]): in
   return 42
 
 when isMainModule:
-  import cligen, argcvt
+  import cligen
   dispatch(demo, implicitDefault = @[ "item" ], mandatoryHelp = "MANDATORY")
