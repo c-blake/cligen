@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.10
+--------------
+    Appease nimble structure requirements.  The only breaking change should
+    be the need to import cligen/argcvt if you define your own converters.
+
 Version: 0.9.9
 --------------
 
