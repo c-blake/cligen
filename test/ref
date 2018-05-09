@@ -196,11 +196,11 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                      print this help message
-  -a=, --alpha=  int     1        set alpha
-  -v=, --verb=   countr  0        set verb
-  -j=, --junk=   CSV     "rs,tu"  set junk
-  -s=, --stuff=  +CSV    "ab,cd"  set stuff
+  -h, --help                         print this help message
+  -a=, --alpha=  int          1      set alpha
+  -v=, --verb=   countr       0      set verb
+  -j=, --junk=   ,SV[string]  rs,tu  set junk
+  -s=, --stuff=  ,SV[string]  ab,cd  set stuff
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
