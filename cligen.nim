@@ -422,7 +422,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         if mand.len > 0:
           stderr.write "Missing these required parameters:\n"
           for m in mand: stderr.write "  ", m, "\n"
-          stderr.write "Run command with -h for more details.\n"
+          stderr.write "Run command with --help for more details.\n"
           quit(1)
         `callWrapd`
       except `HelpOnlyId`:
