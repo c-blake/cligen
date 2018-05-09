@@ -1,3 +1,3 @@
 nim doc cligen
-nim doc parseopt3
-nim doc argcvt
+nim doc cligen/parseopt3
+nim doc cligen/argcvt
