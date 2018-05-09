@@ -247,11 +247,10 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                        print this help message
-  -a=, --alpha=  int     MANDATORY  set alpha
-  -b=, --beta=   float   2.0        set beta
-  -v, --verb     bool    false      set verb
-  -i=, --item=   string  ""         set item
+  -h, --help                       print this help message
+  -a=, --alpha=  int     REQUIRED  set alpha
+  -v, --version  bool    false     set version
+  -i=, --item=   string  ""        set item
 ====================================
 Test: test/ListDecl.nim
 Usage:
