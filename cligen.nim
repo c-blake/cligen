@@ -141,7 +141,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    argPre: seq[string] = @[], argPost: seq[string] = @[],
                    suppress: seq[string] = @[], shortHelp = 'h',
                    implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
-                   delimit=","): untyped =
+                   mandatoryOverride: seq[string] = @[], delimit=","): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -190,7 +190,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## default value appears in help messages for mandatory parameters.
   ##
   ## `mandatoryHelp` is the default value string in help tables for required
-  ## parameters.
+  ## parameters.  `mandatoryOverride` is a list of strings indicating parameter
+  ## names which override mandatory-ness, e.g., a "version" for printing the
+  ## version and exiting.
   ##
   ## `delimit` decides delimiting conventions for aggregate types like `set`s
   ## or `seq`s by assigning to `argcvtParams.Delimit`.  Such delimiting is
@@ -223,6 +225,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
   let implDef = toStrSeq(implicitDefault)
+  let mandOvr = toStrSeq(mandatoryOverride)
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
     dpars[i][0] = ident($(fpars[i][0]) & "_ParamDefault")   # unique suffix
     spars[i][0] = ident($(fpars[i][0]) & "_ParamDispatch")  # unique suffix
@@ -245,6 +248,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
   let mandId = ident("mand")            # local list of mandatory parameters
+  let mandInFId = ident("mandInForce")  # local list of mandatory parameters
   let apId = ident("ap")                # argcvtParams
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
@@ -264,6 +268,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       `apId`.Delimit = `delim`
       let shortH = $(`shortHlp`)
       var `mandId`: seq[string] = @[ ]
+      var `mandInFId` = true
       var `tabId`: TextTab =
         @[ @[ "-" & shortH & ", --help", "", "", "print this help message" ] ]
       `apId`.shortNoVal = { shortH[0] } # argHelp(bool) updates
@@ -316,6 +321,10 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       let lopt   = optionNormalize(parNm)
       let spar   = spars[i][0]
       let dpar   = dpars[i][0]
+      var maybeMandInForce = newNimNode(nnkEmpty)
+      if `parNm` in `mandOvr`:
+        maybeMandInForce = quote do:
+          `mandInFId` = false
       let apCall = quote do:
         `apId`.key = `pId`.key
         `apId`.val = `pId`.val
@@ -326,6 +335,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         if not argParse(`spar`, `dpar`, `apId`):
           return 1
         discard delItem(`mandId`, `parNm`)
+        `maybeMandInForce`
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
         let parShOpt = $shOpt.getOrDefault(parNm)
         result.add(newNimNode(nnkOfBranch).add(
@@ -419,9 +429,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       {.pop.}
       try:
         `callPrs`
-        if mand.len > 0:
+        if `mandId`.len > 0 and `mandInFId`:
           stderr.write "Missing these required parameters:\n"
-          for m in mand: stderr.write "  ", m, "\n"
+          for m in `mandId`: stderr.write "  ", m, "\n"
           stderr.write "Run command with --help for more details.\n"
           quit(1)
         `callWrapd`
@@ -442,7 +452,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 argPre: seq[string] = @[], argPost: seq[string] = @[],
                 suppress: seq[string] = @[], shortHelp = 'h',
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
-                delimit = ","): untyped =
+                mandatoryOverride: seq[string] = @[], delimit = ","): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -450,7 +460,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
-      suppress, shortHelp, implicitDefault, mandatoryHelp, delimit))
+      suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
+      delimit))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =
