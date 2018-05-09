@@ -6,7 +6,7 @@ proc demo(bg=red, fgs= @[green], cursors={blue}, x=0, args: seq[string]) =
   for i, arg in args: echo "positional[", i, "]: ", repr(arg)
 
 when isMainModule:
-  import cligen, argcvt
+  import cligen
   dispatch(demo,
            help = { "bg"     : "background color",
                     "fgs"    : "foreround colors",
