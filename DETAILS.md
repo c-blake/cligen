@@ -41,7 +41,7 @@ for command users and formats a default value - the input & output.
 For example, you might want to receive a named color parameter from the Nim
 colors module.  Teaching `cligen` what to do goes like this:
 ```nim
-import colors, cligen, argcvt
+import colors, cligen, cligen/argcvt
 
 proc demo(color = colBlack, opt1=true, paths: seq[string]): int =
   echo "color=", color
