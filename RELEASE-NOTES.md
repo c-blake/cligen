@@ -1,8 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.11
+---------------
+    Add new ``mandatoryOverride`` parameter to dispatchGen/dispatch for
+    situations like --version where it is assumed the proc will exit before
+    trying to meaningfully use any mandatory parameters.
+
 Version: 0.9.10
---------------
+---------------
     Appease nimble structure requirements.  The only breaking change should
     be the need to import cligen/argcvt if you define your own converters.
 
