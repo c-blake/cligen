@@ -14,6 +14,32 @@ proc nimEscape*(s: string): string =
   for c in s: result.addEscapedChar(c)
   result.add('"')
 
+proc unescape*(s: string): string =
+  ## Only handles \XX hex and ASCII right now
+  let hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                    'a', 'b', 'c', 'd', 'e', 'f'}
+  proc toHexDig(c: char): int =
+    result = if c <= '9': ord(c) - ord('0') else: 10 + ord(c) - ord('a')
+  result = newStringOfCap(s.len)
+  var i = 0
+  var c: char
+  while i < s.len:
+    case s[i]:
+    of '\\':
+      if i + 3 >= s.len:
+        raise newException(ValueError, "Incomplete 4-byte hex constant")
+      if s[i+1].toLowerAscii != 'x':
+        raise newException(ValueError, "hex constant not of form \xDD")
+      let dhi = toLowerAscii(s[i+2])
+      let dlo = toLowerAscii(s[i+3])
+      if dhi notin hexdigits or dlo notin hexdigits:
+        raise newException(ValueError, "non-hexadecimal constant: " & s[i..i+3])
+      result.add(char(toHexDig(dhi)*16 + toHexDig(dlo)))
+      inc(i, 4)
+    else:
+      result.add(s[i])
+      inc(i, 1)
+
 type argcvtParams* = object ## \
   ## Abstraction of non-param-type arguments to `argParse` and `argHelp`.
   ## Per-use data, then per-parameter data, then per-command/global data.
@@ -88,11 +114,12 @@ proc argHelp*(dfl: cstring; a: var argcvtParams): seq[string] =
 
 # chars
 proc argParse*(dst: var char, dfl: char, a: var argcvtParams): bool =
-  if len(a.val) != 1:
+  let val = unescape(a.val)
+  if len(val) != 1:
     ERR("Bad value \"$1\" for single char param \"$2\"\n$3" %
         [ a.val, a.key, a.Help ])
     return false
-  dst = a.val[0]
+  dst = val[0]
   return true
 
 proc argHelp*(dfl: char; a: var argcvtParams): seq[string] =
