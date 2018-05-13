@@ -22,7 +22,6 @@ proc unescape*(s: string): string =
     result = if c <= '9': ord(c) - ord('0') else: 10 + ord(c) - ord('a')
   result = newStringOfCap(s.len)
   var i = 0
-  var c: char
   while i < s.len:
     case s[i]:
     of '\\':
