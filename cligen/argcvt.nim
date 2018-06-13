@@ -219,13 +219,13 @@ proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
       return
     result.add(parsed)
 
-proc argAggHelp*(sd: string, Dfl: seq[string]; typ, dfl: var string) =
+proc argAggHelp*(sd: string, dfls: seq[string]; typ, dfl: var string) =
   if sd == "<D>":
     typ = "DPSV[" & typ & "]"
-    dfl = if Dfl.len > 0: sd & Dfl.join(sd) else: "EMPTY"
+    dfl = if dfls.len > 0: sd & dfls.join(sd) else: "EMPTY"
   else:
     typ = (if sd=="\t": "T" else: sd) & "SV[" & typ & "]"
-    dfl = if Dfl.len > 0: Dfl.join((if sd=="\t": "\\t" else: sd)) else: "EMPTY"
+    dfl = if dfls.len > 0: dfls.join(if sd=="\t": "\\t" else: sd) else: "EMPTY"
 
 # sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =

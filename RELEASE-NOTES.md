@@ -12,12 +12,11 @@ Version: 0.9.12
     Remaining violations are where I disagree with current --nep1:on are:
 	HelpOnlyId as an exception
 	WideT and T as types
-	ERR where I like all caps to shout the id, and
-        dfl where the case is used to disambiguate from another proc param.
-    I might be persuadable to change the last two, but the first two are very
+	ERR where I like all caps to shout the id
+    I might be persuadable to change the last one, but the first two are very
     much canonical NEP1 that --nep1:on gets wrong.  Until those are fixed, I
-    see little point in being perfectly --nep1:on clean. (Also, those renames
-    should not cause any user-code to break, unlike the above renames.)
+    see little point in being perfectly --nep1:on clean. (Also, that rename
+    should not cause any user-code to break, unlike the argcvtParams renames.)
 
 Version: 0.9.11
 ---------------
