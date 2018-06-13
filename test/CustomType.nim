@@ -8,16 +8,16 @@ proc demo(alpha=1, verb=false, stuff = @[ "ab", "cd" ], args: seq[string]): int=
 
 when isMainModule:
   from strutils import split, `%`, join
-  from cligen/argcvt import argcvtParams, argKeys, argDf, ERR  # Little helpers
+  from cligen/argcvt import ArgcvtParams, argKeys, argDf, ERR  # Little helpers
 
-  proc argParse(dst: var seq[string], dfl: seq[string], a: var argcvtParams): bool =
+  proc argParse(dst: var seq[string], dfl: seq[string], a: var ArgcvtParams): bool =
     if a.val == nil:
-      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.Help ])
+      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.help ])
       return false
     dst = a.val.split(",")
     return true
 
-  proc argHelp(dfl: seq[string]; a: var argcvtParams): seq[string] =
+  proc argHelp(dfl: seq[string]; a: var ArgcvtParams): seq[string] =
     result = @[ a.argKeys, "CSV", a.argDf("\"" & dfl.join(",") & "\"") ]
 
   import cligen

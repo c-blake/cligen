@@ -132,7 +132,7 @@ proc initOptParser*(cmdline: string): OptParser =
   else:
     return initOptParser(cmdline.split)
 
-proc do_short(p: var OptParser) =
+proc doShort(p: var OptParser) =
   proc cur(p: OptParser): char =
     if p.off < p.cmd[p.pos].len: result = p.cmd[p.pos][p.off]
     else: result = '\0'
@@ -173,7 +173,7 @@ proc do_short(p: var OptParser) =
     return
   ERR "argument expected for option `", p.key, "` at end of params"
 
-proc do_long(p: var OptParser) =
+proc doLong(p: var OptParser) =
   p.kind = cmdLongOption
   p.val = nil
   let param = p.cmd[p.pos]
@@ -205,7 +205,7 @@ proc do_long(p: var OptParser) =
 
 proc next*(p: var OptParser) =
   if p.off > 0:                         #Step1: handle any remaining short opts
-    do_short(p)
+    doShort(p)
     return
   if p.pos >= p.cmd.len:                #Step2: end of params check
     p.kind = cmdEnd
@@ -224,7 +224,7 @@ proc next*(p: var OptParser) =
       p.pos += 1                        # skip the "--" itself, unlike stopWords
       next(p)                           # do next one so each parent next()..
       return                            #..yields exactly 1 opt+arg|cmdparam
-    do_long(p)
+    doLong(p)
   else:                                 #Step6: "-" but not "--" => short opt
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
       p.kind = cmdArgument              #  {"-" often used to indicate "stdin"}
@@ -233,7 +233,7 @@ proc next*(p: var OptParser) =
       p.pos += 1
     else:                               #Step6b: maybe a block of short options
       p.off = 1                         # skip the initial "-"
-      do_short(p)
+      doShort(p)
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ## Normalizes option key `s` to allow command syntax to be style-insensitive

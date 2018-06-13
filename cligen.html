@@ -1374,7 +1374,7 @@ Similar to post-fix <cite>++</cite> in C languages: yield initial val, then incr
 <p><cite>shortHelp</cite> is a char to use for a short option key analogue of --help.</p>
 <p><cite>implicitDefault</cite> is a list of formal parameter names allowed to default to the Nim default value for a type, rather than becoming mandatory, even when they are missing an explicit initializer. <cite>mandatoryHelp</cite> is how the default value appears in help messages for mandatory parameters.</p>
 <p><cite>mandatoryHelp</cite> is the default value string in help tables for required parameters.  <cite>mandatoryOverride</cite> is a list of strings indicating parameter names which override mandatory-ness, e.g., a &quot;version&quot; for printing the version and exiting.</p>
-<p><cite>delimit</cite> decides delimiting conventions for aggregate types like <cite>set`s or `seq`s by assigning to `argcvtParams.Delimit</cite>.  Such delimiting is implemented by <cite>argParse</cite>/<cite>argHelp</cite>, and so is very user overridable. See <cite>argcvt</cite> documentation for details on the default implementation.</p>
+<p><cite>delimit</cite> decides delimiting conventions for aggregate types like <cite>set`s or `seq`s by assigning to `ArgcvtParams.delimit</cite>.  Such delimiting is implemented by <cite>argParse</cite>/<cite>argHelp</cite>, and so is very user overridable. See <cite>argcvt</cite> documentation for details on the default implementation.</p>
 
 
 </dd>

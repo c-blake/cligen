@@ -195,7 +195,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## version and exiting.
   ##
   ## `delimit` decides delimiting conventions for aggregate types like `set`s
-  ## or `seq`s by assigning to `argcvtParams.Delimit`.  Such delimiting is
+  ## or `seq`s by assigning to `ArgcvtParams.delimit`.  Such delimiting is
   ## implemented by `argParse`/`argHelp`, and so is very user overridable.
   ## See `argcvt` documentation for details on the default implementation.
 
@@ -227,8 +227,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let implDef = toStrSeq(implicitDefault)
   let mandOvr = toStrSeq(mandatoryOverride)
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
-    dpars[i][0] = ident($(fpars[i][0]) & "_ParamDefault")   # unique suffix
-    spars[i][0] = ident($(fpars[i][0]) & "_ParamDispatch")  # unique suffix
+    dpars[i][0] = ident($(fpars[i][0]) & "ParamDefault")   # unique suffix
+    spars[i][0] = ident($(fpars[i][0]) & "ParamDispatch")  # unique suffix
     if fpars[i][2].kind == nnkEmpty:
       if i == posIx:                    # No initializer; Add @[]
         spars[posIx][2] = prefix(newNimNode(nnkBracket), "@")
@@ -249,7 +249,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let pId = ident("p")                  # local OptParser result handle
   let mandId = ident("mand")            # local list of mandatory parameters
   let mandInFId = ident("mandInForce")  # local list of mandatory parameters
-  let apId = ident("ap")                # argcvtParams
+  let apId = ident("ap")                # ArgcvtParams
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
   let htColGap = helpTabColumnGap
@@ -263,9 +263,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     result = newStmtList()
     let tabId = ident("tab")            # local help table var
     result.add(quote do:
-      var `apId`: argcvtParams
-      `apId`.Mand = `mandHelp`
-      `apId`.Delimit = `delim`
+      var `apId`: ArgcvtParams
+      `apId`.mand = `mandHelp`
+      `apId`.delimit = `delim`
       let shortH = $(`shortHlp`)
       var `mandId`: seq[string] = @[ ]
       var `mandInFId` = true
@@ -297,24 +297,24 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
       let indentDoc = addPrefix(`prefixId`, `docId`)
-      `apId`.Help = `usageId` % [ "prelude", `prlude`, "doc", indentDoc,
+      `apId`.help = `usageId` % [ "prelude", `prlude`, "doc", indentDoc,
                      "command", `cName`, "args", `args`, "options",
                      addPrefix(`prefixId` & "  ",
                                alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                           `htColGap`, `htMinLst`, `htRowSep`,
                                           `htCols`)),
                      "sep", `subSepId` ]
-      if `apId`.Help[^1] != '\n':            # ensure newline @end of help
-        `apId`.Help &= "\n"
+      if `apId`.help[^1] != '\n':            # ensure newline @end of help
+        `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
-        `apId`.Help = addPrefix(`prefixId`, `apId`.Help))
+        `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
   proc defOptCases(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`pId`.key))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
-          stderr.write(`apId`.Help); raise newException(`HelpOnlyId`, "")))
+          stderr.write(`apId`.help); raise newException(`HelpOnlyId`, "")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
@@ -343,7 +343,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
-      stderr.write("Bad option: \"" & `pId`.key & "\"\n" & `apId`.Help)
+      stderr.write("Bad option: \"" & `pId`.key & "\"\n" & `apId`.help)
       return 1))
 
   proc defNonOpt(): NimNode =
@@ -370,7 +370,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     else:
       result.add(quote do:
         stderr.write(`proNm` & " does not expect non-option arguments\n" &
-                     `apId`.Help); return 1)
+                     `apId`.help); return 1)
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
@@ -401,7 +401,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
   result = quote do:
     from os               import commandLineParams
-    from cligen/argcvt    import argcvtParams, argParse, argHelp
+    from cligen/argcvt    import ArgcvtParams, argParse, argHelp
     from cligen/textUt    import addPrefix, TextTab, alignTable
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize

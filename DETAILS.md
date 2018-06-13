@@ -46,15 +46,15 @@ import colors, cligen, cligen/argcvt
 proc demo(color = colBlack, opt1=true, paths: seq[string]): int =
   echo "color=", color
 
-proc argParse(dst: var Color, defaultValue: Color, a: var argcvtParams): bool =
+proc argParse(dst: var Color, defaultValue: Color, a: var ArgcvtParams): bool =
   try:
       dst = parseColor(a.val)
   except:
-      stderr.write(a.val, " is not a known color name\n", a.Help)
+      stderr.write(a.val, " is not a known color name\n", a.help)
       return false
   return true
 
-proc argHelp(defaultValue: Color, a: var argcvtParams): seq[string] =
+proc argHelp(defaultValue: Color, a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "Color", a.argDf($defaultValue) ]
 
 dispatch(demo, doc="NOTE: colors.nim has color names")

@@ -9,20 +9,20 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from cligen/argcvt import argcvtParams, argKeys, argDf, ERR  # Little helpers
+  from cligen/argcvt import ArgcvtParams, argKeys, argDf, ERR  # Little helpers
   from parseutils import parseInt
 
-  proc argParse*(dst: var int, dfl: int; a: var argcvtParams): bool =
+  proc argParse*(dst: var int, dfl: int; a: var ArgcvtParams): bool =
     if a.parNm == "verb":               # make "verb" a special kind of int
       inc(dst)                          # that just counts its occurances
     else:
       if a.val == nil or parseInt(strip(a.val), dst) == 0:
         ERR("Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
-               [ (if a.val == nil: "nil" else: a.val), a.key, a.Help ])
+               [ (if a.val == nil: "nil" else: a.val), a.key, a.help ])
         return false
     return true
 
-  proc argHelp*(defVal: int, a: var argcvtParams): seq[string] =
+  proc argHelp*(defVal: int, a: var ArgcvtParams): seq[string] =
     if a.parNm == "verb":    # This is a parNm-conditional hybrid of bool & int
       result = @[ a.argKeys, "countr", a.argDf($defVal) ]
       if a.parSh.len > 0: a.shortNoVal.incl(a.parSh[0])
