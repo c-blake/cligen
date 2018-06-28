@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.13
+---------------
+    Add ``version`` parameter to ``dispatchGen`` and ``dispatch``.
+
+    Send "--help" and "--version"-type output to ``stdout`` not ``stderr`` for
+    easier shell re-direction.
+
 Version: 0.9.12
 ---------------
     Rename to be more NEP1 compliant. User-visible renames should be limited to:
