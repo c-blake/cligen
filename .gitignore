@@ -39,3 +39,4 @@ test/Enums
 test/AllSetTypes
 test/HashSets
 test/nimcache
+test/Version

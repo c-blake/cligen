@@ -128,6 +128,8 @@ proc delItem*[T](x: var seq[T], item: T): int =
   if result >= 0:
     x.del(Natural(result))
 
+type Version* = tuple[longOpt: string, output: string]
+
 macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    help: typed = {}, short: typed = {}, usage: string
 ="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
@@ -141,7 +143,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    argPre: seq[string] = @[], argPost: seq[string] = @[],
                    suppress: seq[string] = @[], shortHelp = 'h',
                    implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
-                   mandatoryOverride: seq[string] = @[], delimit=","): untyped =
+                   mandatoryOverride: seq[string] = @[], delimit=",",
+                   version: Version=("","")): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -244,6 +247,10 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let HelpOnlyId = ident("HelpOnly")    # local just help exception
+  let VsnOnlyId = ident("VsnOnly")      # local just version exception
+  let vsnOpt = $version[0]
+  let vsnSh = if vsnOpt in shOpt: $shOpt[vsnOpt] else: ""
+  let vsnStr = $version[1]
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
@@ -270,9 +277,14 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       var `mandId`: seq[string] = @[ ]
       var `mandInFId` = true
       var `tabId`: TextTab =
-        @[ @[ "-" & shortH & ", --help", "", "", "print this help message" ] ]
+        @[ @[ "-" & shortH & ", --help", "", "", "write this help to stdout" ] ]
       `apId`.shortNoVal = { shortH[0] } # argHelp(bool) updates
       `apId`.longNoVal = @[ "help" ])   # argHelp(bool) appends
+    if vsnOpt.len > 0:
+      result.add(quote do:
+       var versionDflt = false
+       `apId`.parNm = `vsnOpt`; `apId`.parSh = `vsnSh`; `apId`.parReq = 0
+       `tabId`.add(argHelp(versionDflt, `apId`) & "write version to stdout"))
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     var args = argStart &
@@ -314,7 +326,17 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
-          stderr.write(`apId`.help); raise newException(`HelpOnlyId`, "")))
+          stdout.write(`apId`.help); raise newException(`HelpOnlyId`, "")))
+    if vsnOpt.len > 0:
+      if vsnOpt in shOpt:                     #There is also a short version tag
+        result.add(newNimNode(nnkOfBranch).add(
+          newStrLitNode(vsnOpt), newStrLitNode(vsnSh)).add(
+            quote do:
+              stdout.write(`vsnStr`,"\n"); raise newException(`VsnOnlyId`, "")))
+      else:                                   #There is only a long version tag
+        result.add(newNimNode(nnkOfBranch).add(newStrLitNode(vsnOpt)).add(
+            quote do:
+              stdout.write(`vsnStr`,"\n"); raise newException(`VsnOnlyId`, "")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
@@ -410,6 +432,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): int =
       type `HelpOnlyId` = object of Exception
+      type `VsnOnlyId` = object of Exception
       `iniVar`
       {.push hint[XDeclaredButNotUsed]: off.}
       proc parser(args=`cmdLineId`): int =
@@ -437,6 +460,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `callWrapd`
       except `HelpOnlyId`:
         discard
+      except `VsnOnlyId`:
+        discard
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
@@ -452,7 +477,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 argPre: seq[string] = @[], argPost: seq[string] = @[],
                 suppress: seq[string] = @[], shortHelp = 'h',
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
-                mandatoryOverride: seq[string] = @[], delimit = ","): untyped =
+                mandatoryOverride: seq[string] = @[], delimit = ",",
+                version: Version=("","")): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -461,7 +487,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
-      delimit))
+      delimit, version))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =

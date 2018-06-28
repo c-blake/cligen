@@ -3,7 +3,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                            print this help message
+  -h, --help                            write this help to stdout
   -b=, --bl=  ,SV[bool]     EMPTY       set bl
   -B=, --Bl=  ,SV[bool]     false,true  set Bl
   -s=, --s=   ,SV[string]   EMPTY       set s
@@ -38,7 +38,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                               print this help message
+  -h, --help                               write this help to stdout
   -b=, --bl=  ,SV[bool]    EMPTY           set bl
   -B=, --Bl=  ,SV[bool]    false,true      set Bl
   -i=, --i1=  ,SV[int8]    EMPTY           set i1
@@ -57,7 +57,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -?, --help                  print this help message
+  -?, --help                  write this help to stdout
   -a, --aa    bool     false  set aa
   -b=, --bb=  string   "hi"   set bb
   -c=, --cc=  string   "ho"   set cc
@@ -83,7 +83,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 print this help message
+  -h, --help                 write this help to stdout
   --alpha=    int     1      set alpha
   --abc=      float   2.0    set abc
   -a, --aaah  bool    false  set aaah
@@ -96,7 +96,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -z=, --alpha=  int     1      set alpha
   -A=, --Abc=    float   2.0    set Abc
   -a, --aaah     bool    false  set aaah
@@ -109,7 +109,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -122,7 +122,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
   -s=, --stuff=  CSV   "ab,cd"  set stuff
@@ -134,7 +134,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -z=, --alpha=  int     1      set alpha
   -a=, --abc=    float   2.0    set abc
   --aaah         bool    false  set aaah
@@ -147,7 +147,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -161,7 +161,7 @@ Returns the edit distance between `a` and `b`.
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --a=   string  REQUIRED  set a
   -b=, --b=   string  REQUIRED  set b
 ====================================
@@ -170,7 +170,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                          print this help message
+  -h, --help                          write this help to stdout
   -b=, --bg=       enum        red    background color
   -f=, --fgs=      ,SV[Color]  green  foreround colors
   -c=, --cursors=  ,SV[Color]  blue   cursor colors
@@ -183,7 +183,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -196,7 +196,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                         print this help message
+  -h, --help                         write this help to stdout
   -a=, --alpha=  int          1      set alpha
   -v=, --verb=   countr       0      set verb
   -j=, --junk=   ,SV[string]  rs,tu  set junk
@@ -215,7 +215,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                               print this help message
+  -h, --help                               write this help to stdout
   -i=, --i1=  ,SV[int8]    EMPTY           set i1
   -I=, --I1=  ,SV[int8]    3,4             set I1
   --i2=       ,SV[int16]   EMPTY           set i2
@@ -234,11 +234,11 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help     print this help message  
-  -z=, --alpha=  growth constant          1
-  -b=, --beta=   shrink target            2.0
-  -v, --verb     set verb                 false
-  -i=, --item=   set item                 ""
+  -h, --help     write this help to stdout  
+  -z=, --alpha=  growth constant            1
+  -b=, --beta=   shrink target              2.0
+  -v, --verb     set verb                   false
+  -i=, --item=   set item                   ""
 ====================================
 Test: test/ImplicitDefault.nim
 Usage:
@@ -247,7 +247,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
+  -h, --help                       write this help to stdout
   -a=, --alpha=  int     REQUIRED  set alpha
   -v, --version  bool    false     set version
   -i=, --item=   string  ""        set item
@@ -257,7 +257,7 @@ Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                      print this help message
+  -h, --help                      write this help to stdout
   -a=, --alpha=  float  REQUIRED  set alpha
   -b=, --beta=   float  1.0       set beta
   -v, --verb     bool   false     set verb
@@ -269,7 +269,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
+  -h, --help                       write this help to stdout
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -282,7 +282,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help message
+  -h, --help                       write this help to stdout
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -298,7 +298,7 @@ Usage:
           This does the demo.
     
     Options:
-          -h, --help                    print this help message
+          -h, --help                    write this help to stdout
           -a=, --alpha=  int     1      This is a very long parameter help
                                         string which ordinarily should be
                                         auto-wrapped by alignTable into a
@@ -314,7 +314,7 @@ Usage:
           This shows me something.
     
     Options:
-          -h, --help                   print this help message
+          -h, --help                   write this help to stdout
           -g=, --gamma=  int    1      set gamma
           -i=, --iota=   float  2.0    set iota
           -v, --verb     bool   false  set verb
@@ -324,7 +324,7 @@ Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                 print this help message
+  -h, --help                 write this help to stdout
   -a, --alpha   bool  true   set alpha
   -b=, --beta=  int   2      set beta
   -v, --verb    bool  false  set verb
@@ -336,7 +336,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -349,7 +349,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 print this help message
+  -h, --help                 write this help to stdout
   --alpha=    int     1      set alpha
   --abc=      float   2.0    set abc
   --aaah      bool    false  set aaah
@@ -360,7 +360,7 @@ Usage:
   demo [optional-params] [b]
 This tests if single character parameters work as expected
   Options(opt-arg sep :|=|spc):
-  -h, --help                      print this help message
+  -h, --help                      write this help to stdout
   -u=, --u=   int     1           set u
   -c=, --c=   string  "bad name"  set c
   -g=, --g=   string  "ho"        set g
@@ -372,7 +372,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -z=, --alpha=  int     1      growth constant
   -b=, --beta=   float   2.0    shrink target
   -v, --verb     bool    false  set verb
@@ -385,7 +385,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -398,7 +398,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -411,7 +411,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -424,7 +424,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -435,7 +435,7 @@ Usage:
   multi [optional-params] [subcmd]
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
-  -h, --help                print this help message
+  -h, --help                write this help to stdout
   -b=, --beta=  int     1   set beta
   -i=, --item=  string  ""  set item
 ====================================
@@ -446,7 +446,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help message
+  -h, --help                    write this help to stdout
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   char    '\10'  set beta
   -v, --verb     bool    false  set verb
@@ -459,7 +459,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 print this help message
+  -h, --help                 write this help to stdout
   -a=, --alpha=  int    1    growth constant
   -b=, --beta=   float  2.0  shrink target
 ====================================
@@ -470,7 +470,7 @@ Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                            print this help message
+  -h, --help                            write this help to stdout
   -a=, --alpha=  int          1         set alpha
   -v, --verb     bool         false     set verb
   -s=, --stuff=  ,SV[string]  REQUIRED  set stuff
@@ -480,7 +480,7 @@ Usage:
   demo [required&optional-params] [stuff]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                            print this help message
+  -h, --help                            write this help to stdout
   -a=, --alpha=  int          1         set alpha
   -v, --verb     bool         false     set verb
   --args=        ,SV[string]  REQUIRED  set args
@@ -491,10 +491,22 @@ Usage:
 This tests if things work when a wrapped user-proc uses identifiers also
 used in our generated dispatch proc.
   Options(opt-arg sep :|=|spc):
-  -h, --help                           print this help message
+  -h, --help                           write this help to stdout
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
   -g=, --getopt=   string  "ho"        set getopt
+====================================
+Test: test/Version.nim
+Usage:
+  demo [optional-params] [args]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  -h, --help                    write this help to stdout
+  -V, --version  bool    false  write version to stdout
+  -a=, --alpha=  int     1      set alpha
+  -i=, --item=   string  "hi"   set item
 ====================================
 Usage:  This is a multiple-dispatch cmd.  Usage is like
   FullyAutoMulti subcommand [subcommand-opts & args]
@@ -503,7 +515,7 @@ where subcommand syntaxes are as follows:
   demo [optional-params] [files]
     demo entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
-      -h, --help                    print this help message
+      -h, --help                    write this help to stdout
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
       -v, --verb     bool    false  on=chatty, off=quiet
@@ -512,7 +524,7 @@ where subcommand syntaxes are as follows:
   show [optional-params] [paths]
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
-      -h, --help                   print this help message
+      -h, --help                   write this help to stdout
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
