@@ -194,13 +194,16 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ##
   ## `mandatoryHelp` is the default value string in help tables for required
   ## parameters.  `mandatoryOverride` is a list of strings indicating parameter
-  ## names which override mandatory-ness, e.g., a "version" for printing the
-  ## version and exiting.
+  ## names which override mandatory-ness of anything else.
   ##
   ## `delimit` decides delimiting conventions for aggregate types like `set`s
   ## or `seq`s by assigning to `ArgcvtParams.delimit`.  Such delimiting is
   ## implemented by `argParse`/`argHelp`, and so is very user overridable.
   ## See `argcvt` documentation for details on the default implementation.
+  ##
+  ## `version` is a `Version` 2-tuple (longOpt for version, version string)
+  ## which defines how a CLI user may dump the version of a program.  If you
+  ## want to provide a short option, add a `"version":'v'` to `short`.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
