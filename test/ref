@@ -249,7 +249,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       write this help to stdout
   -a=, --alpha=  int     REQUIRED  set alpha
-  -v, --version  bool    false     set version
+  -b, --bypass   bool    false     set bypass
   -i=, --item=   string  ""        set item
 ====================================
 Test: test/ListDecl.nim
@@ -504,7 +504,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
-  -V, --version  bool    false  write version to stdout
+  --version      bool    false  write version to stdout
   -a=, --alpha=  int     1      set alpha
   -i=, --item=   string  "hi"   set item
 ====================================
