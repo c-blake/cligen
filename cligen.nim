@@ -203,7 +203,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ##
   ## `version` is a `Version` 2-tuple (longOpt for version, version string)
   ## which defines how a CLI user may dump the version of a program.  If you
-  ## want to provide a short option, add a `"version":'v'` to `short`.
+  ## want to provide a short option, add a `"version":'v'` entry to `short`.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
