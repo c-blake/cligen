@@ -204,7 +204,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
-  FullyAutoMulti {subcommand}
+  /u/cb/pkg/nim/cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo show
 Run top-level cmd with the subcmd "help" to get full help text.
@@ -509,7 +509,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -i=, --item=   string  "hi"   set item
 ====================================
 Usage:  This is a multiple-dispatch cmd.  Usage is like
-  FullyAutoMulti subcommand [subcommand-opts & args]
+  /u/cb/pkg/nim/cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files]
