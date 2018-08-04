@@ -28,9 +28,9 @@
 ## ('_') word separation.
 ##
 ## The "separator free" forms above require appropriate ``shortNoVal`` and
-## ``longNoVal`` lists to designate option keys that take no argument (as well
+## ``longNoVal`` lists to designate option keys that take no value (as well
 ## as ``requireSeparator == false``).  If such lists are empty, the user must
-## use separators.
+## use separators when providing any value.
 ##
 ## A notable subtlety is when the first character of an option value is one of
 ## ``sepChars``.  Even if ``requireSeparator`` is ``false``, passing such option
@@ -47,13 +47,13 @@
 ## To ease "nested" command-line parsing (such as with "git" where there may be
 ## early global options, a subcommand and later subcommand options), this parser
 ## also supports a set of "stop words" - special whole command parameters that
-## prevent any subsequent parameters being interpreted as options.  This feature
+## prevent subsequent parameters being interpreted as options.  This feature
 ## makes it easy to fully process a command line and then re-process its tail
 ## rather than mandating breaking out at a stop word with a manual test.  Stop
 ## words are basically just like a POSIX "--" (which this parser also supports -
 ## even if "--" is not in ``stopWords``).  Such stop words (or "--") can still
-## be the **values** of option arguments.  Only usage as a non-option command
-## parameter acts to stop possible option-treatment of later parameters.
+## be the **values** of option keys with no effect.  Only usage as a non-option
+## command parameter acts to stop possible option-treatment of later parameters.
 ##
 ## To facilitate syntax for operations beyond simple assignment, ``opChars`` is a
 ## set of chars that may prefix an element of ``sepChars``.  The ``sep`` member
