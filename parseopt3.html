@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier {
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
+
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
+
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
+}
+
 </style>
 
 <script type="text/javascript" src="../dochack.js"></script>
 
 <script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
-}
-
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1312,9 +1318,9 @@ function main() {
 <p>3. command parameters: everything else | anything after &quot;--&quot; or a stop word.</p>
 <p>The above is a <em>superset</em> of usual POSIX command syntax - it should accept any POSIX-inspired input, but it also accepts more forms/styles. (Note that POSIX itself is not super strict about this part of the standard.  See: <a class="reference external" href="http://pubs.opengroup.org/onlinepubs/009604499/basedefs/xbd_chap12.html">http://pubs.opengroup.org/onlinepubs/009604499/basedefs/xbd_chap12.html</a>)</p>
 <p>When <tt class="docutils literal"><span class="pre">optionNormalize(key)</span></tt> is used, command authors provide command users additional flexibility to <tt class="docutils literal"><span class="pre">--spell_multi-word_options -aVarietyOfWays --as-Per_User-Preference</span></tt>.  This is similar to Nim style-insensitive identifier syntax, but by default allows dash ('-') as well as underscore ('_') word separation.</p>
-<p>The &quot;separator free&quot; forms above require appropriate <tt class="docutils literal"><span class="pre">shortNoVal</span></tt> and <tt class="docutils literal"><span class="pre">longNoVal</span></tt> lists to designate option keys that take no argument (as well as <tt class="docutils literal"><span class="pre">requireSeparator == false</span></tt>).  If such lists are empty, the user must use separators.</p>
+<p>The &quot;separator free&quot; forms above require appropriate <tt class="docutils literal"><span class="pre">shortNoVal</span></tt> and <tt class="docutils literal"><span class="pre">longNoVal</span></tt> lists to designate option keys that take no value (as well as <tt class="docutils literal"><span class="pre">requireSeparator == false</span></tt>).  If such lists are empty, the user must use separators when providing any value.</p>
 <p>A notable subtlety is when the first character of an option value is one of <tt class="docutils literal"><span class="pre">sepChars</span></tt>.  Even if <tt class="docutils literal"><span class="pre">requireSeparator</span></tt> is <tt class="docutils literal"><span class="pre">false</span></tt>, passing such option values requires either A) putting the value in the next command parameter, as in <tt class="docutils literal"><span class="pre">&quot;-c :&quot;</span></tt> or B) prefixing the value with an element of <tt class="docutils literal"><span class="pre">sepChars</span></tt>, as in <tt class="docutils literal"><span class="pre">-c=:</span></tt> or <tt class="docutils literal"><span class="pre">-c::</span></tt>.  Both choices fit into common quoting styles. It seems likely a POSIX-habituated end-user's second guess (after <tt class="docutils literal"><span class="pre">&quot;-c:&quot;</span></tt> errored out with &quot;argument expected&quot;) would just work as they expected. POSIX itself encourages authors &amp; users to use the <tt class="docutils literal"><span class="pre">&quot;-c :&quot;</span></tt> form anyway. This small deviation lets this parser accept valid invocations with the original Nim option parser command syntax (with the same semantics), easing transition.</p>
-<p>To ease &quot;nested&quot; command-line parsing (such as with &quot;git&quot; where there may be early global options, a subcommand and later subcommand options), this parser also supports a set of &quot;stop words&quot; - special whole command parameters that prevent any subsequent parameters being interpreted as options.  This feature makes it easy to fully process a command line and then re-process its tail rather than mandating breaking out at a stop word with a manual test.  Stop words are basically just like a POSIX &quot;--&quot; (which this parser also supports - even if &quot;--&quot; is not in <tt class="docutils literal"><span class="pre">stopWords</span></tt>).  Such stop words (or &quot;--&quot;) can still be the <strong>values</strong> of option arguments.  Only usage as a non-option command parameter acts to stop possible option-treatment of later parameters.</p>
+<p>To ease &quot;nested&quot; command-line parsing (such as with &quot;git&quot; where there may be early global options, a subcommand and later subcommand options), this parser also supports a set of &quot;stop words&quot; - special whole command parameters that prevent subsequent parameters being interpreted as options.  This feature makes it easy to fully process a command line and then re-process its tail rather than mandating breaking out at a stop word with a manual test.  Stop words are basically just like a POSIX &quot;--&quot; (which this parser also supports - even if &quot;--&quot; is not in <tt class="docutils literal"><span class="pre">stopWords</span></tt>).  Such stop words (or &quot;--&quot;) can still be the <strong>values</strong> of option keys with no effect.  Only usage as a non-option command parameter acts to stop possible option-treatment of later parameters.</p>
 <p>To facilitate syntax for operations beyond simple assignment, <tt class="docutils literal"><span class="pre">opChars</span></tt> is a set of chars that may prefix an element of <tt class="docutils literal"><span class="pre">sepChars</span></tt>.  The <tt class="docutils literal"><span class="pre">sep</span></tt> member of <tt class="docutils literal"><span class="pre">OptParser</span></tt> is the actual separator used for the current option, if any. E.g, a user entering &quot;=&quot;  causes <tt class="docutils literal"><span class="pre">sep == &quot;=&quot;</span></tt> while entering &quot;+=&quot; gets <tt class="docutils literal"><span class="pre">sep == &quot;+=&quot;</span></tt>, and &quot;+/-+=&quot; gets <tt class="docutils literal"><span class="pre">sep == &quot;+/-+=&quot;</span></tt>.</p>
 </p>
   <div class="section" id="6">
@@ -1368,8 +1374,8 @@ this object implements the command line parser
 <dt id="initOptParser"><a name="initOptParser,seq[string],set[char],seq[string],set[char],seq[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initOptParser</span><span class="Other">(</span><span class="Identifier">cmdline</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">;</span>
                   <span class="Identifier">shortNoVal</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">longNoVal</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
                   <span class="Identifier">requireSeparator</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">sepChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">;</span>
-                  <span class="Identifier">opChars</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">OptParser</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+                  <span class="Identifier">opChars</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">OptParser</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Initializes a command line parse. <cite>cmdline</cite> should not contain parameter 0, typically the program name.  If <cite>cmdline</cite> is not given, default to current program parameters.</p>
 <p><cite>shortNoVal</cite> and <cite>longNoVal</cite> specify respectively one-letter and long option keys that do _<a class="reference external" href="#not">not</a> take arguments.</p>
@@ -1378,18 +1384,18 @@ this object implements the command line parser
 
 
 </dd>
-<dt id="initOptParser"><a name="initOptParser,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initOptParser</span><span class="Other">(</span><span class="Identifier">cmdline</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">OptParser</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="initOptParser"><a name="initOptParser,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">initOptParser</span><span class="Other">(</span><span class="Identifier">cmdline</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">OptParser</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes option parses with cmdline.  Splits cmdline in on spaces and calls initOptParser(openarray[string]).  Should use a proper tokenizer.
 
 </dd>
-<dt id="next"><a name="next,OptParser"></a><pre><span class="Keyword">proc</span> <span class="Identifier">next</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">OptParser</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="next"><a name="next,OptParser"></a><pre><span class="Keyword">proc</span> <span class="Identifier">next</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">OptParser</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="optionNormalize"><a name="optionNormalize,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">optionNormalize</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="optionNormalize"><a name="optionNormalize,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">optionNormalize</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Normalizes option key <cite>s</cite> to allow command syntax to be style-insensitive in a similar way to Nim identifier syntax.</p>
 <p>Specifically this means to convert <em>all but the first</em> char to lower case and remove chars in <tt class="docutils literal"><span class="pre">wordSeparators</span></tt> ('_' and '-') by default.  This way users can type &quot;command --my-opt-key&quot; or &quot;command --myOptKey&quot; and so on.</p>
@@ -1406,8 +1412,8 @@ Initializes option parses with cmdline.  Splits cmdline in on spaces and calls i
 <div class="section" id="15">
 <h1><a class="toc-backref" href="#15">Iterators</a></h1>
 <dl class="item">
-<dt id="getopt"><a name="getopt.i,OptParser"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getopt</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">OptParser</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">GetoptResult</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="getopt"><a name="getopt.i,OptParser"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getopt</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">OptParser</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">GetoptResult</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 This is an convenience iterator for iterating over the given OptParser object. Example:<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">initOptParser</span><span class="Punctuation">(</span><span class="StringLit">&quot;--left --debug:3 -l=4 -r:2&quot;</span><span class="Punctuation">)</span>
 <span class="Keyword">for</span> <span class="Identifier">kind</span><span class="Punctuation">,</span> <span class="Identifier">key</span><span class="Punctuation">,</span> <span class="Identifier">val</span> <span class="Keyword">in</span> <span class="Identifier">p</span><span class="Operator">.</span><span class="Identifier">getopt</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
@@ -1427,8 +1433,8 @@ This is an convenience iterator for iterating over the given OptParser object. E
 <dt id="getopt"><a name="getopt.i,set[char],seq[string],set[char],seq[string]"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getopt</span><span class="Other">(</span><span class="Identifier">cmdline</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">shortNoVal</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
                <span class="Identifier">longNoVal</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">requireSeparator</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
                <span class="Identifier">sepChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">opChars</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
-               <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">GetoptResult</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+               <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">GetoptResult</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 This is an convenience iterator for iterating over the command line. Parameters here are the same as for initOptParser.  Example: See above for a more detailed example<pre class="listing"><span class="Keyword">for</span> <span class="Identifier">kind</span><span class="Punctuation">,</span> <span class="Identifier">key</span><span class="Punctuation">,</span> <span class="Identifier">val</span> <span class="Keyword">in</span> <span class="Identifier">getopt</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Comment"># this will iterate over all arguments passed to the cmdline.</span>
@@ -1445,7 +1451,7 @@ This is an convenience iterator for iterating over the command line. Parameters 
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-05-04 07:56:34 UTC</small>
+        <small>Made with Nim. Generated: 2018-08-04 07:15:10 UTC</small>
       </div>
     </div>
   </div>
