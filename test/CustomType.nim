@@ -11,9 +11,9 @@ when isMainModule:
   from cligen/argcvt import ArgcvtParams, argKeys, argDf, ERR  # Little helpers
 
   proc argParse(dst: var seq[string], dfl: seq[string], a: var ArgcvtParams): bool =
-    if a.val == nil:
-      ERR("Bad value nil for CSV param \"$1\"\n$2" % [ a.key, a.help ])
-      return false
+#   if a.val.len == 0:
+#     ERR("Empty value for CSV param \"$1\"\n$2" % [ a.key, a.help ])
+#     return false
     dst = a.val.split(",")
     return true
 

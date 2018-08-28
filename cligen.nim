@@ -77,7 +77,7 @@ proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
     for kid in n: collectComments(buf, kid, depth + 1)
   else:
     if n.kind == nnkCommentStmt and depth < 4:
-      if n.strVal != nil:
+      if n.strVal.len != 0:
         buf.add(" ")
         buf.add(n.strVal)
 
@@ -214,7 +214,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     let impl = pro.symbol.getImpl
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
-  if cmtDoc == nil or cmtDoc.len == 0:  # allow caller to override commentDoc
+  if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrapped proc
@@ -401,10 +401,10 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   proc callParser(): NimNode =
     result = quote do:
       var exitCode = 0
-      if `argPreP` != nil and len(`argPreP`) > 0:
+      if len(`argPreP`) > 0:
         exitCode += parser(`argPreP`)
       exitCode += parser()
-      if `argPostP` != nil and len(`argPostP`) > 0:
+      if len(`argPostP`) > 0:
         exitCode += parser(`argPostP`)
       if exitCode != 0:
         return exitCode

@@ -16,9 +16,9 @@ when isMainModule:
     if a.parNm == "verb":               # make "verb" a special kind of int
       inc(dst)                          # that just counts its occurances
     else:
-      if a.val == nil or parseInt(strip(a.val), dst) == 0:
+      if parseInt(strip(a.val), dst) == 0:
         ERR("Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
-               [ (if a.val == nil: "nil" else: a.val), a.key, a.help ])
+               [ a.val, a.key, a.help ])
         return false
     return true
 

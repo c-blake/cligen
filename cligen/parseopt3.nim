@@ -91,7 +91,7 @@ proc ERR(x: varargs[string, `$`]) = stderr.write(x); stderr.write("\n")
 
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoVal: set[char] = {},
-                    longNoVal: seq[string] = nil,
+                    longNoVal: seq[string] = @[],
                     requireSeparator=false,  # true imitates old parseopt2
                     sepChars={'=',':'}, opChars: set[char] = {},
                     stopWords: seq[string] = @[]): OptParser =
@@ -111,7 +111,7 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ##
   ## Parameters following either "--" or any literal parameter in stopWords are
   ## never interpreted as options.
-  if cmdline == nil:
+  if cmdline.len == 0:
     result.cmd = commandLineParams()
     return
   result.cmd = cmdline
@@ -128,7 +128,7 @@ proc initOptParser*(cmdline: string): OptParser =
   ## Initializes option parses with cmdline.  Splits cmdline in on spaces and
   ## calls initOptParser(openarray[string]).  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
-    return initOptParser(seq[string](nil))
+    return initOptParser(seq[string](@[]))
   else:
     return initOptParser(cmdline.split)
 
@@ -137,18 +137,16 @@ proc doShort(p: var OptParser) =
     if p.off < p.cmd[p.pos].len: result = p.cmd[p.pos][p.off]
     else: result = '\0'
   p.kind = cmdShortOption
-  p.val = nil
+  p.val = ""
   p.key = $p.cur; p.off += 1            # shift off first char as key
   if p.cur in p.opChars or p.cur in p.sepChars:
     let mark = p.off
     while p.cur != '\0' and p.cur notin p.sepChars and p.cur in p.opChars:
       p.off += 1
-    if p.cur in p.sepChars:
-      if p.off > p.cmd[p.pos].len - 2:
-        ERR "no data following sepChar"; return
-      p.sep = p.cmd[p.pos][mark..p.off]
-      p.val = p.cmd[p.pos][p.off+1..^1]
-      p.pos += 1
+    if p.cur in p.sepChars:             #This may set p.val="" w/sepChar&NoData
+      p.sep = p.cmd[p.pos][mark..p.off] #..but since "--string=''" shows up this
+      p.val = p.cmd[p.pos][p.off+1..^1] #..way, we consider it an "Ok" sitch..As
+      p.pos += 1                        #..a byproduct, "--string=" is also Ok.
       p.off = 0
       return
     else:                               # Was just an opChars-starting value
@@ -175,13 +173,13 @@ proc doShort(p: var OptParser) =
 
 proc doLong(p: var OptParser) =
   p.kind = cmdLongOption
-  p.val = nil
+  p.val = ""
   let param = p.cmd[p.pos]
   p.pos += 1                            # always consume at least 1 param
   let sep = find(param, p.sepChars)     # only very first occurrence of delim
   if sep == 2:
     ERR "Empty long option key at param", p.pos - 1, " (\"", param, "\")"
-    p.key = nil
+    p.key = ""
     return
   if sep > 2:
     var op = sep
@@ -192,7 +190,7 @@ proc doLong(p: var OptParser) =
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past "--"
-  if p.longNoVal != nil and p.key in p.longNoVal:
+  if p.key in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
     ERR "Expecting option key-val separator :|= after `", p.key, "`"
@@ -200,7 +198,7 @@ proc doLong(p: var OptParser) =
   if p.pos < p.cmd.len:                 # Take opt arg from next param
     p.val = p.cmd[p.pos]
     p.pos += 1
-  elif p.longNoVal != nil:
+  elif p.longNoVal.len != 0:
     ERR "argument expected for option `", p.key, "` at end of params"
 
 proc next*(p: var OptParser) =
@@ -213,7 +211,7 @@ proc next*(p: var OptParser) =
   if not p.cmd[p.pos].startsWith("-") or p.optsDone:  #Step3: non-option param
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
-    p.val = nil
+    p.val = ""
     if p.cmd[p.pos] in p.stopWords:     #Step4: check for stop word
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
@@ -229,7 +227,7 @@ proc next*(p: var OptParser) =
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
       p.kind = cmdArgument              #  {"-" often used to indicate "stdin"}
       p.key = p.cmd[p.pos]
-      p.val = nil
+      p.val = ""
       p.pos += 1
     else:                               #Step6b: maybe a block of short options
       p.off = 1                         # skip the initial "-"
@@ -296,7 +294,7 @@ iterator getopt*(p: var OptParser): GetoptResult =
 
 when declared(paramCount):
   iterator getopt*(cmdline=commandLineParams(), shortNoVal: set[char] = {},
-                   longNoVal: seq[string] = nil, requireSeparator=false,
+                   longNoVal: seq[string] = @[], requireSeparator=false,
                    sepChars={'=', ':'}, opChars: set[char] = {},
                    stopWords: seq[string] = @[]): GetoptResult =
     ## This is an convenience iterator for iterating over the command line.

@@ -86,9 +86,9 @@ proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
 
 # strings
 proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
-  if a.val == nil:
-    ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.help ])
-    return false
+# if a.val.len == 0:
+#   ERR("Empty value for string param \"$1\"\n$2" % [ a.key, a.help ])
+#   return false
   if a.sep.len > 0:                   # no separator => assignment
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(a.val)       # Append Mode
@@ -102,9 +102,9 @@ proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
 
 # cstrings
 proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
-  if a.val == nil:
-    ERR("Bad value nil for string param \"$1\"\n$2" % [ a.key, a.help ])
-    return false
+# if a.val.len == 0:
+#   ERR("Empty value for string param \"$1\"\n$2" % [ a.key, a.help ])
+#   return false
   dst = a.val
   return true
 
@@ -149,9 +149,10 @@ proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
   proc argParse*(dst: var T, dfl: T, a: var ArgcvtParams): bool =
     var parsed: WideT
-    if a.val == nil or parse(strip(a.val), parsed) != len(strip(a.val)):
+    let stripped = strip(a.val)
+    if len(stripped) == 0 or parse(stripped, parsed) != len(stripped):
       ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
-          [ (if a.val == nil: "nil" else: a.val), a.key, $T, a.help ])
+          [ a.val, a.key, $T, a.help ])
       return false
     dst = T(parsed)
     return true
@@ -236,9 +237,9 @@ proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
   for e in toExcl: dst.excl(e)
 
 proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
-  if a.val == nil:
-    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.help ])
-    return false
+# if a.val == nil:
+#   ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
+#   return false
   let parsed = argAggSplit[T](a.val, a.delimit, a)
   if parsed.len == 0: return false
   if a.sep.len > 0:
@@ -258,12 +259,12 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
 
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
-  if a.val == nil:
-    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.help ])
-    return false
+# if a.val.len == 0:
+#   ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
+#   return false
   let parsed = argAggSplit[T](a.val, a.delimit, a)
   if parsed.len == 0: return false
-  if dst == nil: dst = @[]
+# if dst == nil: dst = @[]
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(parsed)      # Append Mode
@@ -285,8 +286,8 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
 import sets # HashSets
 
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T], a: var ArgcvtParams): bool =
-  if a.val == nil:
-    ERR("Bad value nil for DSV param \"$1\"\n$2" % [ a.key, a.help ])
+  if a.val.len == 0:
+    ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
     return false
   let parsed = toSet(argAggSplit[T](a.val, a.delimit, a))
   if card(parsed) == 0: return false
