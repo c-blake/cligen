@@ -146,12 +146,19 @@ proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "enum", $dfl ]
 
 # various numeric types
+proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
+proc high*[T: uint|uint64](x: typedesc[T]): T = cast[T](-1) #Missing in stdlib
+
 template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
   proc argParse*(dst: var T, dfl: T, a: var ArgcvtParams): bool =
     var parsed: WideT
     let stripped = strip(a.val)
     if len(stripped) == 0 or parse(stripped, parsed) != len(stripped):
       ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
+          [ a.val, a.key, $T, a.help ])
+      return false
+    if parsed < WideT(T.low) or parsed > WideT(T.high):
+      ERR("Bad value: \"$1\" for option \"$2\"; out of range for $3\n$4" %
           [ a.val, a.key, $T, a.help ])
       return false
     dst = T(parsed)
