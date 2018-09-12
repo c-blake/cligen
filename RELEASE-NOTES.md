@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.14
+---------------
+    Add range checking for all numeric types to argParseHelpNum
+
+    Adapt code to new Nim nil world order.  One visible consequence is that
+    passing empty values to string/cstring type parameters is allowed/easy.
+
 Version: 0.9.13
 ---------------
     Add ``version`` parameter to ``dispatchGen`` and ``dispatch``.

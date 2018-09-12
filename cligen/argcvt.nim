@@ -86,9 +86,6 @@ proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
 
 # strings
 proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
-# if a.val.len == 0:
-#   ERR("Empty value for string param \"$1\"\n$2" % [ a.key, a.help ])
-#   return false
   if a.sep.len > 0:                   # no separator => assignment
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(a.val)       # Append Mode
@@ -102,9 +99,6 @@ proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
 
 # cstrings
 proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
-# if a.val.len == 0:
-#   ERR("Empty value for string param \"$1\"\n$2" % [ a.key, a.help ])
-#   return false
   dst = a.val
   return true
 
