@@ -465,7 +465,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/TwoNondefaultedSeq.nim
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
-cligen/cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+../cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
