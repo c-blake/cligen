@@ -7,7 +7,6 @@ export COLUMNS=80
   echo "===================================="
  done
  ./test/FullyAutoMulti help 2>&1 ) |
-   grep -v 'Warning: \(expr\|stmt\) is deprecated' |
    grep -v '^Hint: ' |
      sed 's@.*/cligen[-a-z]*/cligen.nim(@cligen/cligen.nim(@' > test/out
 diff --ignore-all-space test/ref test/out
