@@ -204,7 +204,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/FullyAutoMulti.nim
 Usage:
-  /u/cb/pkg/nim/cligen/test/FullyAutoMulti {subcommand}
+cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo show
 Run top-level cmd with the subcmd "help" to get full help text.
@@ -465,7 +465,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ====================================
 Test: test/TwoNondefaultedSeq.nim
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
-../cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
@@ -509,7 +509,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -i=, --item=   string  "hi"   set item
 ====================================
 Usage:  This is a multiple-dispatch cmd.  Usage is like
-  /u/cb/pkg/nim/cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
+cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files]

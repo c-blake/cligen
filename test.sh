@@ -8,5 +8,6 @@ export COLUMNS=80
  done
  ./test/FullyAutoMulti help 2>&1 ) |
    grep -v '^Hint: ' |
-     sed 's@.*/cligen[-a-z]*/cligen.nim(@cligen/cligen.nim(@' > test/out
+     sed -e 's@.*/cligen.nim(@cligen.nim(@' \
+         -e 's@.*/cligen/test@cligen/test@' > test/out
 diff --ignore-all-space test/ref test/out
