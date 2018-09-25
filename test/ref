@@ -1,4 +1,4 @@
-Test: test/AllSeqTypes.nim
+==> test/AllSeqTypes.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
@@ -32,8 +32,8 @@ demo entry point with parameters of all basic types.
   -F=, --F4=  ,SV[float32]  23.0,24.0   set F4
   --f8=       ,SV[float]    EMPTY       set f8
   --F8=       ,SV[float]    25.0,26.0   set F8
-====================================
-Test: test/AllSetTypes.nim
+
+==> test/AllSetTypes.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
@@ -51,8 +51,8 @@ demo entry point with parameters of all basic types.
   --U2=       ,SV[uint16]  15,16           set U2
   -e=, --e=   ,SV[Color]   EMPTY           set e
   -E=, --E=   ,SV[Color]   red,green,blue  set E
-====================================
-Test: test/AllTypes.nim
+
+==> test/AllTypes.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
@@ -75,8 +75,8 @@ demo entry point with parameters of all basic types.
   -o=, --oo=  float    11.0   set oo
   -p=, --pp=  float32  12.0   set pp
   -q=, --qq=  float    13.0   set qq
-====================================
-Test: test/BlockedShort.nim
+
+==> test/BlockedShort.out <==
 Usage:
   demo [optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -88,8 +88,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --abc=      float   2.0    set abc
   -a, --aaah  bool    false  set aaah
   --aloha=    string  ""     set aloha
-====================================
-Test: test/CaseDistinguised.nim
+
+==> test/CaseDistinguised.out <==
 Usage:
   demo [optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -101,8 +101,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -A=, --Abc=    float   2.0    set Abc
   -a, --aaah     bool    false  set aaah
   --aloha=       string  ""     set aloha
-====================================
-Test: test/CustomCmdName.nim
+
+==> test/CustomCmdName.out <==
 Usage:
   deeeemo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -114,8 +114,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/CustomType.nim
+
+==> test/CustomType.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -126,8 +126,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
   -s=, --stuff=  CSV   "ab,cd"  set stuff
-====================================
-Test: test/DupShort.nim
+
+==> test/DupShort.out <==
 Usage:
   demo [optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -139,8 +139,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -a=, --abc=    float   2.0    set abc
   --aaah         bool    false  set aaah
   --aloha=       string  ""     set aloha
-====================================
-Test: test/EarlySeq.nim
+
+==> test/EarlySeq.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -152,8 +152,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/EchoResult.nim
+
+==> test/EchoResult.out <==
 Usage:
   editDistance [required&optional-params]
 Returns the edit distance between `a` and `b`.
@@ -164,8 +164,8 @@ memory overhead.
   -h, --help                    write this help to stdout
   -a=, --a=   string  REQUIRED  set a
   -b=, --b=   string  REQUIRED  set b
-====================================
-Test: test/Enums.nim
+
+==> test/Enums.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
@@ -175,8 +175,8 @@ demo entry point with varied, meaningless parameters.
   -f=, --fgs=      ,SV[Color]  green  foreround colors
   -c=, --cursors=  ,SV[Color]  blue   cursor colors
   -x=, --x=        int         0      set x
-====================================
-Test: test/External.nim
+
+==> test/External.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -188,8 +188,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/FancyRepeats.nim
+
+==> test/FancyRepeats.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -201,16 +201,38 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -v=, --verb=   countr       0      set verb
   -j=, --junk=   ,SV[string]  rs,tu  set junk
   -s=, --stuff=  ,SV[string]  ab,cd  set stuff
-====================================
-Test: test/FullyAutoMulti.nim
+
+==> test/FullyAutoMulti.out <==
 Usage:
 cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo show
 Run top-level cmd with the subcmd "help" to get full help text.
 Run a subcommand with --help to see only help for that.
-====================================
-Test: test/HashSets.nim
+
+==> test/FullyAutoMultiTopLvl.out <==
+Usage:  This is a multiple-dispatch cmd.  Usage is like
+cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  demo [optional-params] [files]
+    demo entry point with varied, meaningless parameters.
+    Options(opt-arg sep :|=|spc):
+      -h, --help                    write this help to stdout
+      -a=, --alpha=  int     1      set alpha
+      -b=, --beta=   float   2.0    set beta
+      -v, --verb     bool    false  on=chatty, off=quiet
+      -i=, --item=   string  ""     set item
+  
+  show [optional-params] [paths]
+    show entry point with varied, meaningless parameters.
+    Options(opt-arg sep :|=|spc):
+      -h, --help                   write this help to stdout
+      -z=, --gamma=  int    1      set gamma
+      -i=, --iota=   float  2.0    set iota
+      -v, --verb     bool   false  set verb
+
+==> test/HashSets.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with parameters of all basic types.
@@ -226,8 +248,8 @@ demo entry point with parameters of all basic types.
   --U2=       ,SV[uint16]  16,15           set U2
   -e=, --e=   ,SV[Color]   EMPTY           set e
   -E=, --E=   ,SV[Color]   red,green,blue  set E
-====================================
-Test: test/HelpTabCols.nim
+
+==> test/HelpTabCols.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -239,8 +261,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   shrink target              2.0
   -v, --verb     set verb                   false
   -i=, --item=   set item                   ""
-====================================
-Test: test/ImplicitDefault.nim
+
+==> test/ImplicitDefault.out <==
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -251,8 +273,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -a=, --alpha=  int     REQUIRED  set alpha
   -b, --bypass   bool    false     set bypass
   -i=, --item=   string  ""        set item
-====================================
-Test: test/ListDecl.nim
+
+==> test/ListDecl.out <==
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
@@ -261,8 +283,8 @@ demo entry point with varied, meaningless parameters.
   -a=, --alpha=  float  REQUIRED  set alpha
   -b=, --beta=   float  1.0       set beta
   -v, --verb     bool   false     set verb
-====================================
-Test: test/Mandatory.nim
+
+==> test/Mandatory.out <==
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -274,8 +296,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
   -i=, --item=   string  REQUIRED  set item
-====================================
-Test: test/MandatoryNoPos.nim
+
+==> test/MandatoryNoPos.out <==
 Usage:
   demo [required&optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -287,8 +309,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
   -i=, --item=   string  REQUIRED  set item
-====================================
-Test: test/ManualMulti.nim
+
+==> test/ManualMulti.out <==
 Usage:
   ManualMulti demo|show [subcommand-args]
 
@@ -318,8 +340,8 @@ Usage:
           -g=, --gamma=  int    1      set gamma
           -i=, --iota=   float  2.0    set iota
           -v, --verb     bool   false  set verb
-====================================
-Test: test/MultiFlag.nim
+
+==> test/MultiFlag.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.
@@ -328,8 +350,8 @@ demo entry point with varied, meaningless parameters.
   -a, --alpha   bool  true   set alpha
   -b=, --beta=  int   2      set beta
   -v, --verb    bool  false  set verb
-====================================
-Test: test/NoPositional.nim
+
+==> test/NoPositional.out <==
 Usage:
   demo [optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -341,8 +363,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/NoShort.nim
+
+==> test/NoShort.out <==
 Usage:
   demo [optional-params]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -354,8 +376,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --abc=      float   2.0    set abc
   --aaah      bool    false  set aaah
   --aloha=    string  ""     set aloha
-====================================
-Test: test/OneCharParams.nim
+
+==> test/OneCharParams.out <==
 Usage:
   demo [optional-params] [b]
 This tests if single character parameters work as expected
@@ -364,8 +386,8 @@ This tests if single character parameters work as expected
   -u=, --u=   int     1           set u
   -c=, --c=   string  "bad name"  set c
   -g=, --g=   string  "ho"        set g
-====================================
-Test: test/PerParam.nim
+
+==> test/PerParam.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -377,8 +399,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    shrink target
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/ReturnEmpty.nim
+
+==> test/ReturnEmpty.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -390,8 +412,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/ReturnInt.nim
+
+==> test/ReturnInt.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -403,8 +425,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/ReturnNonInt.nim
+
+==> test/ReturnNonInt.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -416,8 +438,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/ReturnString.nim
+
+==> test/ReturnString.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -429,8 +451,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/SemiAutoMulti.nim
+
+==> test/SemiAutoMulti.out <==
 Usage:
   multi [optional-params] [subcmd]
 Run command with no parameters for a full help message.
@@ -438,8 +460,8 @@ Run command with no parameters for a full help message.
   -h, --help                write this help to stdout
   -b=, --beta=  int     1   set beta
   -i=, --item=  string  ""  set item
-====================================
-Test: test/SeqInt.nim
+
+==> test/SeqInt.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -451,8 +473,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   char    '\10'  set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
-====================================
-Test: test/Suppress.nim
+
+==> test/Suppress.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -462,8 +484,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -h, --help                 write this help to stdout
   -a=, --alpha=  int    1    growth constant
   -b=, --beta=   float  2.0  shrink target
-====================================
-Test: test/TwoNondefaultedSeq.nim
+
+==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
 cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
@@ -474,8 +496,8 @@ demo entry point with varied, meaningless parameters.
   -a=, --alpha=  int          1         set alpha
   -v, --verb     bool         false     set verb
   -s=, --stuff=  ,SV[string]  REQUIRED  set stuff
-====================================
-Test: test/TwoNondefaultedSeqSwap.nim
+
+==> test/TwoNondefaultedSeqSwap.out <==
 Usage:
   demo [required&optional-params] [stuff]
 demo entry point with varied, meaningless parameters.
@@ -484,8 +506,8 @@ demo entry point with varied, meaningless parameters.
   -a=, --alpha=  int          1         set alpha
   -v, --verb     bool         false     set verb
   --args=        ,SV[string]  REQUIRED  set args
-====================================
-Test: test/UserDispIdCollide.nim
+
+==> test/UserDispIdCollide.out <==
 Usage:
   demo [optional-params] [args]
 This tests if things work when a wrapped user-proc uses identifiers also
@@ -495,8 +517,8 @@ used in our generated dispatch proc.
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
   -g=, --getopt=   string  "ho"        set getopt
-====================================
-Test: test/Version.nim
+
+==> test/Version.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -507,24 +529,3 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --version      bool    false  write version to stdout
   -a=, --alpha=  int     1      set alpha
   -i=, --item=   string  "hi"   set item
-====================================
-Usage:  This is a multiple-dispatch cmd.  Usage is like
-cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
-where subcommand syntaxes are as follows:
-
-  demo [optional-params] [files]
-    demo entry point with varied, meaningless parameters.
-    Options(opt-arg sep :|=|spc):
-      -h, --help                    write this help to stdout
-      -a=, --alpha=  int     1      set alpha
-      -b=, --beta=   float   2.0    set beta
-      -v, --verb     bool    false  on=chatty, off=quiet
-      -i=, --item=   string  ""     set item
-  
-  show [optional-params] [paths]
-    show entry point with varied, meaningless parameters.
-    Options(opt-arg sep :|=|spc):
-      -h, --help                   write this help to stdout
-      -z=, --gamma=  int    1      set gamma
-      -i=, --iota=   float  2.0    set iota
-      -v, --verb     bool   false  set verb
