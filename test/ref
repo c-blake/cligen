@@ -206,7 +206,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 Usage:
 cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
-  demo show
+  demo print
 Run top-level cmd with the subcmd "help" to get full help text.
 Run a subcommand with --help to see only help for that.
 
@@ -224,7 +224,7 @@ where subcommand syntaxes are as follows:
       -v, --verb     bool    false  on=chatty, off=quiet
       -i=, --item=   string  ""     set item
   
-  show [optional-params] [paths]
+  print [optional-params] [paths]
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
       -h, --help                   write this help to stdout
