@@ -501,7 +501,7 @@ proc subCommandName(node: NimNode): string {.compileTime.} =
   result = $node[0]
   for child in node:
     if child.kind == nnkExprEqExpr:
-      if $child[0] == "cmdname":
+      if eqIdent(child[0], "cmdname"):
         result = $child[1]
         break
 
