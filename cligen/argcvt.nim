@@ -238,9 +238,6 @@ proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
   for e in toExcl: dst.excl(e)
 
 proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
-# if a.val == nil:
-#   ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
-#   return false
   let parsed = argAggSplit[T](a.val, a.delimit, a)
   if parsed.len == 0: return false
   if a.sep.len > 0:
@@ -260,12 +257,8 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
 
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
-# if a.val.len == 0:
-#   ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
-#   return false
   let parsed = argAggSplit[T](a.val, a.delimit, a)
   if parsed.len == 0: return false
-# if dst == nil: dst = @[]
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(parsed)      # Append Mode
