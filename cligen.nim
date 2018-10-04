@@ -33,7 +33,7 @@ proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
     if kid.kind == nnkFormalParams:
       return formalParamExpand(kid, suppress)
   error "formalParams requires a proc argument."
-  return nil
+  return nil                #not-reached
 
 proc parseHelps(helps: NimNode): Table[string, string] =
   # Compute a table giving the help text for any parameter
