@@ -394,8 +394,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
-        stderr.write(`proNm` & " does not expect non-option arguments\n" &
-                     `apId`.help); return 1)
+        stderr.write(`proNm` & " does not expect non-option arguments.  Got\n" &
+                     $`pId` & "\n" & `apId`.help); return 1)
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
