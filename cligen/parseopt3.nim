@@ -111,9 +111,6 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ##
   ## Parameters following either "--" or any literal parameter in stopWords are
   ## never interpreted as options.
-  if cmdline.len == 0:
-    result.cmd = commandLineParams()
-    return
   result.cmd = cmdline
   result.shortNoVal = shortNoVal
   result.longNoVal = longNoVal
@@ -128,7 +125,7 @@ proc initOptParser*(cmdline: string): OptParser =
   ## Initializes option parses with cmdline.  Splits cmdline in on spaces and
   ## calls initOptParser(openarray[string]).  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
-    return initOptParser(seq[string](@[]))
+    return initOptParser(commandLineParams())
   else:
     return initOptParser(cmdline.split)
 
