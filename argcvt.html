@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier {
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1233,12 +1239,6 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
-  <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
-  <ul class="simple simple-toc-section">
-    
-  </ul>
-</li>
-<li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#ArgcvtParams"
@@ -1254,105 +1254,115 @@ function main() {
   help*: string                ## the whole help string, for parse errors
   delimit*: string             ## delimiting convention for `seq`, `set`, etc.
   shortNoVal*: set[char]       ## short options keys where value may be omitted
-  longNoVal*: seq[string]      ## long option keys where value may be omitted"><wbr />argcvt<wbr />Params<span class="attachedType" style="visibility:hidden"></span></a></li>
+  longNoVal*: seq[string]      ## long option keys where value may be omitted"><wbr />Argcvt<wbr />Params<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#ERR,varargs[string,]"
+      <li><a class="reference" href="#ERR%2Cvarargs%5Bstring%2C%5D"
     title="ERR(x: varargs[string, `$`])"><wbr />ERR<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#nimEscape,string"
+  <li><a class="reference" href="#nimEscape%2Cstring"
     title="nimEscape(s: string): string"><wbr />nim<wbr />Escape<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#argKeys,ArgcvtParams,string"
+  <li><a class="reference" href="#unescape%2Cstring"
+    title="unescape(s: string): string"><wbr />unescape<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#argKeys%2CArgcvtParams%2Cstring"
     title="argKeys(a: ArgcvtParams; argSep = &quot;=&quot;): string"><wbr />arg<wbr />Keys<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argDf,ArgcvtParams,string"
+  <li><a class="reference" href="#argDf%2CArgcvtParams%2Cstring"
     title="argDf(a: ArgcvtParams; dv: string): string"><wbr />arg<wbr />Df<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,bool,bool,ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cbool%2Cbool%2CArgcvtParams"
     title="argParse(dst: var bool; dfl: bool; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,bool,ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cbool%2CArgcvtParams"
     title="argHelp(dfl: bool; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,string,string,ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cstring%2Cstring%2CArgcvtParams"
     title="argParse(dst: var string; dfl: string; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,string,ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cstring%2CArgcvtParams"
     title="argHelp(dfl: string; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,cstring,cstring,ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Ccstring%2Ccstring%2CArgcvtParams"
     title="argParse(dst: var cstring; dfl: cstring; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,cstring,ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Ccstring%2CArgcvtParams"
     title="argHelp(dfl: cstring; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,char,char,ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cchar%2Cchar%2CArgcvtParams"
     title="argParse(dst: var char; dfl: char; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,char,ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cchar%2CArgcvtParams"
     title="argHelp(dfl: char; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,T,T,ArgcvtParams"
+  <li><a class="reference" href="#argParse%2CT%2CT%2CArgcvtParams"
     title="argParse[T: enum](dst: var T; dfl: T; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,T,ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2CT%2CArgcvtParams"
     title="argHelp[T: enum](dfl: T; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,int,int,ArgcvtParams"
-    title="argParse(dst116278: var int; dfl116280: int; a116282: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,int,ArgcvtParams"
-    title="argHelp(dfl116286: int; a116288: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,int8,int8,ArgcvtParams"
-    title="argParse(dst116345: var int8; dfl116347: int8; a116349: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,int8,ArgcvtParams"
-    title="argHelp(dfl116353: int8; a116355: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,int16,int16,ArgcvtParams"
-    title="argParse(dst116411: var int16; dfl116413: int16; a116415: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,int16,ArgcvtParams"
-    title="argHelp(dfl116419: int16; a116421: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,int32,int32,ArgcvtParams"
-    title="argParse(dst116477: var int32; dfl116479: int32; a116481: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,int32,ArgcvtParams"
-    title="argHelp(dfl116485: int32; a116487: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,int64,int64,ArgcvtParams"
-    title="argParse(dst116543: var int64; dfl116545: int64; a116547: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,int64,ArgcvtParams"
-    title="argHelp(dfl116551: int64; a116553: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,uint,uint,ArgcvtParams"
-    title="argParse(dst116610: var uint; dfl116612: uint; a116614: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,uint,ArgcvtParams"
-    title="argHelp(dfl116618: uint; a116620: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,uint8,uint8,ArgcvtParams"
-    title="argParse(dst116677: var uint8; dfl116679: uint8; a116681: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,uint8,ArgcvtParams"
-    title="argHelp(dfl116685: uint8; a116687: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,uint16,uint16,ArgcvtParams"
-    title="argParse(dst116744: var uint16; dfl116746: uint16; a116748: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,uint16,ArgcvtParams"
-    title="argHelp(dfl116752: uint16; a116754: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,uint32,uint32,ArgcvtParams"
-    title="argParse(dst116811: var uint32; dfl116813: uint32; a116815: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,uint32,ArgcvtParams"
-    title="argHelp(dfl116819: uint32; a116821: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,uint64,uint64,ArgcvtParams"
-    title="argParse(dst116878: var uint64; dfl116880: uint64; a116882: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,uint64,ArgcvtParams"
-    title="argHelp(dfl116886: uint64; a116888: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,float32,float32,ArgcvtParams"
-    title="argParse(dst116945: var float32; dfl116947: float32; a116949: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,float32,ArgcvtParams"
-    title="argHelp(dfl116953: float32; a116955: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,float,float,ArgcvtParams"
-    title="argParse(dst117012: var float; dfl117014: float; a117016: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,float,ArgcvtParams"
-    title="argHelp(dfl117020: float; a117022: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argAggSplit,string,string,ArgcvtParams"
+  <li><a class="reference" href="#low%2Ctypedesc%5BT%5D"
+    title="low[T: uint | uint64](x: typedesc[T]): T"><wbr />low<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#high%2Ctypedesc%5BT%5D"
+    title="high[T: uint | uint64](x: typedesc[T]): T"><wbr />high<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#argParse%2Cint%2Cint%2CArgcvtParams"
+    title="argParse(dst213670: var int; dfl213672: int; a213674: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cint%2CArgcvtParams"
+    title="argHelp(dfl213680: int; a213682: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cint8%2Cint8%2CArgcvtParams"
+    title="argParse(dst213819: var int8; dfl213821: int8; a213823: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cint8%2CArgcvtParams"
+    title="argHelp(dfl213829: int8; a213831: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cint16%2Cint16%2CArgcvtParams"
+    title="argParse(dst213963: var int16; dfl213965: int16; a213967: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cint16%2CArgcvtParams"
+    title="argHelp(dfl213973: int16; a213975: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cint32%2Cint32%2CArgcvtParams"
+    title="argParse(dst214107: var int32; dfl214109: int32; a214111: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cint32%2CArgcvtParams"
+    title="argHelp(dfl214117: int32; a214119: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cint64%2Cint64%2CArgcvtParams"
+    title="argParse(dst214251: var int64; dfl214253: int64; a214255: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cint64%2CArgcvtParams"
+    title="argHelp(dfl214261: int64; a214263: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cuint%2Cuint%2CArgcvtParams"
+    title="argParse(dst214396: var uint; dfl214398: uint; a214400: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cuint%2CArgcvtParams"
+    title="argHelp(dfl214406: uint; a214408: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cuint8%2Cuint8%2CArgcvtParams"
+    title="argParse(dst214586: var uint8; dfl214588: uint8; a214590: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cuint8%2CArgcvtParams"
+    title="argHelp(dfl214596: uint8; a214598: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cuint16%2Cuint16%2CArgcvtParams"
+    title="argParse(dst214747: var uint16; dfl214749: uint16; a214751: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cuint16%2CArgcvtParams"
+    title="argHelp(dfl214757: uint16; a214759: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cuint32%2Cuint32%2CArgcvtParams"
+    title="argParse(dst214908: var uint32; dfl214910: uint32; a214912: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cuint32%2CArgcvtParams"
+    title="argHelp(dfl214918: uint32; a214920: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cuint64%2Cuint64%2CArgcvtParams"
+    title="argParse(dst215069: var uint64; dfl215071: uint64; a215073: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cuint64%2CArgcvtParams"
+    title="argHelp(dfl215079: uint64; a215081: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cfloat32%2Cfloat32%2CArgcvtParams"
+    title="argParse(dst215259: var float32; dfl215261: float32; a215263: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cfloat32%2CArgcvtParams"
+    title="argHelp(dfl215269: float32; a215271: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2Cfloat%2Cfloat%2CArgcvtParams"
+    title="argParse(dst215428: var float; dfl215430: float; a215432: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2Cfloat%2CArgcvtParams"
+    title="argHelp(dfl215438: float; a215440: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argAggSplit%2Cstring%2Cstring%2CArgcvtParams"
     title="argAggSplit[T](src: string; delim: string; a: var ArgcvtParams): seq[T]"><wbr />arg<wbr />Agg<wbr />Split<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argAggHelp,string,seq[string],string,string"
+  <li><a class="reference" href="#argAggHelp%2Cstring%2Cseq%5Bstring%5D%2Cstring%2Cstring"
     title="argAggHelp(sd: string; dfls: seq[string]; typ, dfl: var string)"><wbr />arg<wbr />Agg<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#incl,set[T],openArray[T]"
+  <li><a class="reference" href="#incl%2Cset%5BT%5D%2CopenArray%5BT%5D"
     title="incl[T](dst: var set[T]; toIncl: openArray[T])"><wbr />incl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#excl,set[T],openArray[T]"
+  <li><a class="reference" href="#excl%2Cset%5BT%5D%2CopenArray%5BT%5D"
     title="excl[T](dst: var set[T]; toExcl: openArray[T])"><wbr />excl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#argParse,set[T],set[T],ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cset%5BT%5D%2Cset%5BT%5D%2CArgcvtParams"
     title="argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,set[T],ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cset%5BT%5D%2CArgcvtParams"
     title="argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argParse,seq[T],seq[T],ArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"
     title="argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp,seq[T],ArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"
     title="argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams"
+    title="argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
+  <li><a class="reference" href="#argHelp%2CHashSet%5BT%5D%2CArgcvtParams"
+    title="argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType" style="visibility:hidden">ArgcvtParams</span></a></li>
 
   </ul>
 </li>
@@ -1363,21 +1373,17 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   <p class="module-desc"><tt class="docutils literal"><span class="pre">argParse</span></tt> determines how string args are interpreted into native types. <tt class="docutils literal"><span class="pre">argHelp</span></tt> explains this interpretation to a command-line user.  Define new overloads in-scope of <tt class="docutils literal"><span class="pre">dispatch</span></tt> to override these or support more types.<p><strong>PARSING AGGREGATES (string,set,seq,..) FOR NON-OS-TOKENIZED OPTION VALS</strong></p>
-<p>This module also defines <tt class="docutils literal"><span class="pre">argParse</span></tt>/<tt class="docutils literal"><span class="pre">argHelp</span></tt> pairs for <tt class="docutils literal"><span class="pre">seq[T]</span></tt> with delimiting rules decided by <tt class="docutils literal"><span class="pre">Delimit</span></tt> (set via <tt class="docutils literal"><span class="pre">dispatch(..delimit=)</span></tt>). A value of <tt class="docutils literal"><span class="pre">&quot;&lt;D&gt;&quot;</span></tt> indicates delimiter-prefixed-values (DPSV) while a square-bracket character class like <tt class="docutils literal"><span class="pre">&quot;[:,]&quot;</span></tt> indicates a set of chars and anything else indicates that the whole string is the delimiter.</p>
+<p>This module also defines <tt class="docutils literal"><span class="pre">argParse</span></tt>/<tt class="docutils literal"><span class="pre">argHelp</span></tt> pairs for <tt class="docutils literal"><span class="pre">seq[T]</span></tt> with delimiting rules decided by <tt class="docutils literal"><span class="pre">delimit</span></tt> (set via <tt class="docutils literal"><span class="pre">dispatch(..delimit=)</span></tt>). A value of <tt class="docutils literal"><span class="pre">&quot;&lt;D&gt;&quot;</span></tt> indicates delimiter-prefixed-values (DPSV) while a square-bracket character class like <tt class="docutils literal"><span class="pre">&quot;[:,]&quot;</span></tt> indicates a set of chars and anything else indicates that the whole string is the delimiter.</p>
 <p>DPSV format looks like <tt class="docutils literal"><span class="pre">&lt;DELIMCHAR&gt;&lt;ELEMENT&gt;&lt;DELIMCHAR&gt;&lt;ELEMENT&gt;..</span></tt> E.g., for CSV the user enters <tt class="docutils literal"><span class="pre">&quot;,foo,bar&quot;</span></tt>.</p>
 <p>The delimiting system is somewhat extensible.  If you have a new style or would like to override defaults then you can define your own <tt class="docutils literal"><span class="pre">argAggSplit</span></tt> and <tt class="docutils literal"><span class="pre">argAggHelp</span></tt> anywhere before <tt class="docutils literal"><span class="pre">dispatchGen</span></tt>.</p>
 <p>To allow easy incremental modifications to existing values, a few <tt class="docutils literal"><span class="pre">opChars</span></tt> are interpreted by various <tt class="docutils literal"><span class="pre">argParse</span></tt>.  For <tt class="docutils literal"><span class="pre">string</span></tt> and <tt class="docutils literal"><span class="pre">seq[T]</span></tt>, <tt class="docutils literal"><span class="pre">'+'</span></tt> (or <tt class="docutils literal"><span class="pre">'&amp;'</span></tt>) and <tt class="docutils literal"><span class="pre">'^'</span></tt> mean append and prepend.  For <tt class="docutils literal"><span class="pre">set[T]</span></tt> and <tt class="docutils literal"><span class="pre">seq[T]</span></tt> there is also <tt class="docutils literal"><span class="pre">'-'</span></tt> for deletion (of all matches).  E.g., <tt class="docutils literal"><span class="pre">-o=,1,2,3 -o+=,4,5, -o^=,0 -o=-3</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">-o=,0,1,2,4,5</span></tt>. It is not considered an error to try to delete a non-existent value.</p>
 <p>When no operator is provided by the user (i.e. styles like <tt class="docutils literal"><span class="pre">-o,x,y,z -o ,a,b --opt ,c,d</span></tt>), append/incl mode is used for <tt class="docutils literal"><span class="pre">seq</span></tt> and <tt class="docutils literal"><span class="pre">set</span></tt> (but not <tt class="docutils literal"><span class="pre">string</span></tt> which assigns by default).  Note that users are always free to simply provide an <tt class="docutils literal"><span class="pre">'='</span></tt> to signify assignment mode instead.</p>
 </p>
-  <div class="section" id="6">
-<h1><a class="toc-backref" href="#6">Imports</a></h1>
-<dl class="item">
-<a class="reference external" href="parseutils.html">parseutils</a>, <a class="reference external" href="strutils.html">strutils</a>, <a class="reference external" href="typetraits.html">typetraits</a>
-</dl></div>
-<div class="section" id="7">
+  <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="ArgcvtParams"><a name="ArgcvtParams"></a><pre><span class="Identifier">ArgcvtParams</span> <span class="Other">=</span> <span class="Keyword">object</span>
+<a id="ArgcvtParams"></a>
+<dt><pre><a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">key</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                 <span class="Comment">## key actually used for this option</span>
   <span class="Identifier">val</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                 <span class="Comment">## value actually given by user</span>
   <span class="Identifier">sep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                 <span class="Comment">## separator actually used (including before '=' text)</span>
@@ -1385,9 +1391,9 @@ function main() {
   <span class="Identifier">parSh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## short key for this option key</span>
   <span class="Identifier">parCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>               <span class="Comment">## count of times this parameter has been invoked</span>
   <span class="Identifier">parReq</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                 <span class="Comment">## flag indicating parameter is mandatory</span>
-  <span class="Identifier">Mand</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                <span class="Comment">## how a mandatory defaults is rendered in help</span>
-  <span class="Identifier">Help</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                <span class="Comment">## the whole help string, for parse errors</span>
-  <span class="Identifier">Delimit</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>             <span class="Comment">## delimiting convention for `seq`, `set`, etc.</span>
+  <span class="Identifier">mand</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                <span class="Comment">## how a mandatory defaults is rendered in help</span>
+  <span class="Identifier">help</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>                <span class="Comment">## the whole help string, for parse errors</span>
+  <span class="Identifier">delimit</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>             <span class="Comment">## delimiting convention for `seq`, `set`, etc.</span>
   <span class="Identifier">shortNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>       <span class="Comment">## short options keys where value may be omitted</span>
   <span class="Identifier">longNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>      <span class="Comment">## long option keys where value may be omitted</span>
   </pre></dt>
@@ -1401,264 +1407,340 @@ Abstraction of non-param-type arguments to <cite>argParse</cite> and <cite>argHe
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="ERR"><a name="ERR,varargs[string,]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ERR</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Other">`</span><span class="Operator">$</span><span class="Other">`</span><span class="Other">]</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="ERR%2Cvarargs%5Bstring%2C%5D"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">ERR</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Other">`</span><span class="Operator">$</span><span class="Other">`</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="nimEscape"><a name="nimEscape,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">nimEscape</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="nimEscape%2Cstring"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">nimEscape</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Until strutils gets a nimStringEscape that is not deprecated
 
 </dd>
-<dt id="argKeys"><a name="argKeys,ArgcvtParams,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argKeys</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">ArgcvtParams</span><span class="Other">;</span> <span class="Identifier">argSep</span> <span class="Other">=</span> <span class="StringLit">&quot;=&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="unescape%2Cstring"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">unescape</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Only handles XX hex and ASCII right now
+
+</dd>
+<a id="argKeys%2CArgcvtParams%2Cstring"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argKeys</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">argSep</span> <span class="Other">=</span> <span class="StringLit">&quot;=&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <cite>argKeys</cite> generates the option keys column in help tables
 
 </dd>
-<dt id="argDf"><a name="argDf,ArgcvtParams,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argDf</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">ArgcvtParams</span><span class="Other">;</span> <span class="Identifier">dv</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argDf%2CArgcvtParams%2Cstring"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argDf</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">dv</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 argDf is an argHelp space-saving utility proc to decide default column.
 
 </dd>
-<dt id="argParse"><a name="argParse,bool,bool,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cbool%2Cbool%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argHelp%2Cbool%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argParse%2Cstring%2Cstring%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argHelp%2Cstring%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,bool,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Ccstring%2Ccstring%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,string,string,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argHelp%2Ccstring%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,string,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cchar%2Cchar%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cchar%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,cstring,cstring,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2CT%2CT%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argHelp%2CT%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,cstring,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="low%2Ctypedesc%5BT%5D"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">low</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">uint</span> <span class="Operator">|</span> <span class="Identifier">uint64</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,char,char,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="high%2Ctypedesc%5BT%5D"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">high</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">uint</span> <span class="Operator">|</span> <span class="Identifier">uint64</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,char,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cint%2Cint%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">213670</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">213672</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213674</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cint%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">213680</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213682</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,T,T,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<a id="argParse%2Cint8%2Cint8%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">213819</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">213821</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213823</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cint8%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">213829</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213831</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,T,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<a id="argParse%2Cint16%2Cint16%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">213963</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">213965</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213967</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cint16%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">213973</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">213975</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,int,int,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116278</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116280</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116282</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cint32%2Cint32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214107</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214109</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214111</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cint32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214117</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214119</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,int,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116286</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116288</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cint64%2Cint64%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214251</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214253</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214255</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cint64%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214261</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214263</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,int8,int8,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116345</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116347</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116349</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cuint%2Cuint%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214396</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214398</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214400</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cuint%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214406</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214408</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,int8,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116353</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116355</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cuint8%2Cuint8%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214586</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214588</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214590</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cuint8%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214596</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214598</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,int16,int16,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116411</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116413</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116415</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cuint16%2Cuint16%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214747</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214749</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214751</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cuint16%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214757</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214759</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,int16,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116419</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116421</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cuint32%2Cuint32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">214908</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">214910</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214912</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cuint32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">214918</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">214920</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,int32,int32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116477</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116479</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116481</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cuint64%2Cuint64%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">215069</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">215071</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215073</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cuint64%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">215079</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215081</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,int32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116485</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116487</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cfloat32%2Cfloat32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">215259</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">215261</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215263</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cfloat32%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">215269</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215271</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,int64,int64,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116543</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116545</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116547</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argParse%2Cfloat%2Cfloat%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">215428</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">215430</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215432</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+unequals operator. This is a shorthand for <tt class="docutils literal"><span class="pre">not (x == y)</span></tt>.
+
+</dd>
+<a id="argHelp%2Cfloat%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">215438</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">215440</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,int64,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116551</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116553</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argAggSplit%2Cstring%2Cstring%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argAggSplit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">src</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">delim</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
 <dd>
-
+a shortcut for '.. ^' to avoid the common gotcha that a space between '..' and '^' is required.
 
 </dd>
-<dt id="argParse"><a name="argParse,uint,uint,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116610</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116612</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116614</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="argAggHelp%2Cstring%2Cseq%5Bstring%5D%2Cstring%2Cstring"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argAggHelp</span><span class="Other">(</span><span class="Identifier">sd</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfls</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">,</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
 
 </dd>
-<dt id="argHelp"><a name="argHelp,uint,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116618</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116620</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,uint8,uint8,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116677</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116679</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116681</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,uint8,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116685</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116687</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,uint16,uint16,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116744</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116746</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116748</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,uint16,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116752</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116754</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,uint32,uint32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116811</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116813</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116815</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,uint32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116819</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116821</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,uint64,uint64,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116878</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116880</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116882</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,uint64,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116886</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116888</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,float32,float32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">116945</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">116947</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116949</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,float32,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">116953</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">116955</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argParse"><a name="argParse,float,float,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">(</span><span class="Identifier">dst</span><span class="DecNumber">117012</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="DecNumber">117014</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">117016</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argHelp"><a name="argHelp,float,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="DecNumber">117020</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a</span><span class="DecNumber">117022</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argAggSplit"><a name="argAggSplit,string,string,ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argAggSplit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">src</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">delim</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="argAggHelp"><a name="argAggHelp,string,seq[string],string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argAggHelp</span><span class="Other">(</span><span class="Identifier">sd</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfls</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">,</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="incl"><a name="incl,set[T],openArray[T]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">incl</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">toIncl</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<a id="incl%2Cset%5BT%5D%2CopenArray%5BT%5D"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">incl</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">toIncl</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 incl from an openArray; How can this NOT be in the stdlib?
 
 </dd>
-<dt id="excl"><a name="excl,set[T],openArray[T]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">excl</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">toExcl</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<a id="excl%2Cset%5BT%5D%2CopenArray%5BT%5D"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">excl</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">toExcl</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 excl from an openArray; How can this NOT be in the stdlib?
 
 </dd>
-<dt id="argParse"><a name="argParse,set[T],set[T],ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<a id="argParse%2Cset%5BT%5D%2Cset%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argHelp%2Cset%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argHelp"><a name="argHelp,set[T],ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<a id="argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
+
+</dd>
+<a id="argHelp%2Cseq%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="argParse"><a name="argParse,seq[T],seq[T],ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<a id="argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argParse</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
-
+&quot;is greater&quot; operator. This is the same as <tt class="docutils literal"><span class="pre">y &lt; x</span></tt>.
 
 </dd>
-<dt id="argHelp"><a name="argHelp,seq[T],ArgcvtParams"></a><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ArgcvtParams</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<a id="argHelp%2CHashSet%5BT%5D%2CArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">argHelp</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
@@ -1673,7 +1755,7 @@ excl from an openArray; How can this NOT be in the stdlib?
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-05-04 07:56:34 UTC</small>
+        <small>Made with Nim. Generated: 2018-10-04 06:41:59 UTC</small>
       </div>
     </div>
   </div>
