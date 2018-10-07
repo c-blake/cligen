@@ -207,7 +207,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
-  #XXX needs either to accessed at top-level or assigned in a shadow local.
+  #XXX needs either to be accessed at top-level or assigned in a shadow local.
   when compiles(pro.getImpl):
     let impl = pro.getImpl
   else:
