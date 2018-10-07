@@ -130,9 +130,12 @@ proc delItem*[T](x: var seq[T], item: T): int =
 
 type Version* = tuple[longOpt: string, output: string]
 
+const dflUsage = "${prelude}$command $args\n" &
+                 "$doc  Options(opt-arg sep :|=|spc):\n" &
+                 "$options$sep"
+
 macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
-                   help: typed = {}, short: typed = {}, usage: string
-="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
+                   help: typed = {}, short: typed = {}, usage: string=dflUsage,
                    prelude = "Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = {'=', ':'},
                    opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
@@ -468,8 +471,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
-                help: typed = { }, short: typed = { }, usage: string
-="${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep",
+                help: typed = { }, short: typed = { }, usage: string=dflUsage,
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = {'=', ':'},
                 opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
@@ -532,9 +534,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       let `restId`: seq[string] = if n > 1: subcmd[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
-        echo "Usage:  This is a multiple-dispatch cmd.  Usage is like"
-        echo "  $1 subcommand [subcommand-opts & args]" % [ `srcBase` ]
-        echo "where subcommand syntaxes are as follows:\n"
+        echo ("Usage:  This is a multiple-dispatch cmd.  Usage is like\n" &
+              "  $1 subcommand [subcommand-opts & args]\n" &
+              "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
         let `dashHelpId` = @[ "--help" ])
   var cnt = 0
   for p in procBrackets:
@@ -554,8 +556,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     result.add(newCall("add", subcmdsId, newStrLitNode(subCommandName(p))))
   result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
-    "${prelude}$command {subcommand}\nwhere {subcommand} is one of:\n  " &
-      join(`subcmdsId`, " ") & "\n" &
-      "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
-      "Run a subcommand with --help to see only help for that.")))
+    "${prelude}$command {subcommand}\n" &
+     "where {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\n" &
+     "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
+     "Run a subcommand with --help to see only help for that.")))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
