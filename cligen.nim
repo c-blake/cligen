@@ -254,9 +254,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let HelpOnlyId = ident("HelpOnly")    # local just help exception
   let VsnOnlyId = ident("VsnOnly")      # local just version exception
-  let vsnOpt = $version[0]
+  let vsnOpt = $version[0]              # Need string lits here for CL parse
   let vsnSh = if vsnOpt in shOpt: $shOpt[vsnOpt] else: ""
-  let vsnStr = $version[1]
+  let vsnStr = version[1]               # value must just work in stdout.write
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
@@ -507,6 +507,8 @@ proc subCommandName(node: NimNode): string {.compileTime.} =
         result = $child[1]
         break
 
+var cligenVersion* = ""
+
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
   ## call quit(said dispatcher); procBrackets=arg lists for dispatchGen(), e.g,
@@ -554,10 +556,14 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     var `subcmdsId`: seq[string] = @[ ])
   for p in procBrackets:
     result.add(newCall("add", subcmdsId, newStrLitNode(subCommandName(p))))
+  let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
+                                        newIdentNode("cligenVersion"))
   result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
+                     newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\n" &
      "where {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\n" &
-     "Run top-level cmd with the subcmd \"help\" to get full help text.\n" &
-     "Run a subcommand with --help to see only help for that.")))
+     "Run top-level cmd with subcmd \"help\" or no subcmd to get all helps.\n" &
+     "Run a subcommand with --help to see only help for that." &
+     (if cligenVersion.len>0: "\nMay also run top-level with --version" else:""))))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
