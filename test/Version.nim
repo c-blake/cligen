@@ -8,11 +8,11 @@ proc demo(alpha: int=1, item: string="hi", args: seq[string]): int =
 
 when isMainModule:
   import cligen
-  let vsn = "1.5"
   when defined(versionGit):
-    #Does not work because staticExec is unevaluated at macro-arg-passing time
-    dispatch(demo, version = ("version", staticExec "git log -1 | head -n1"))
+    const vsn = staticExec "git log -1 | head -n1"
+    dispatch(demo, version = ("version", vsn))
   elif defined(versionShort):
+    let vsn = "1.5"
     dispatch(demo, version = ("version", vsn), short = { "version": 'V' })
   else:
-    dispatch(demo, version = ("version", vsn))
+    dispatch(demo, version = ("version", "1.0"))
