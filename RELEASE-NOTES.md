@@ -1,7 +1,7 @@
 RELEASE NOTES
 =============
 
-Version: 0.9.15
+Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time
     constant strings rather than string literals.  See `test/Version.nim`.
