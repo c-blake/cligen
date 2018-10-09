@@ -207,8 +207,9 @@ Usage:
 cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo print
-Run top-level cmd with the subcmd "help" to get full help text.
+Run top-level cmd with subcmd "help" or no subcmd to get all helps.
 Run a subcommand with --help to see only help for that.
+May also run top-level with --version
 
 ==> test/FullyAutoMultiTopLvl.out <==
 Usage:  This is a multiple-dispatch cmd.  Usage is like
