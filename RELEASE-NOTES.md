@@ -1,6 +1,18 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.15
+---------------
+    Add ability for top-level command in `dispatchMulti` to accept "--version"
+    to print some version string.  Just set `cligenVersion = "my version"`
+    somewhere after `import cligen` but before `dispatchMulti`.
+
+    Fix bug where cmdName was not being compared with `eqIdent`.
+
+    Fix subtle new nil bug https://github.com/c-blake/cligen/issues/41
+
+    More informative error message when non-option arguments are passed.
+
 Version: 0.9.14
 ---------------
     Add range checking for all numeric types to argParseHelpNum
