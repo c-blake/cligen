@@ -3,6 +3,12 @@ RELEASE NOTES
 
 Version: 0.9.15
 ---------------
+    Add ability for [1] element of Version 2-tuple-literals to be compile-time
+    constant strings rather than string literals.  See `test/Version.nim`.
+    [ This also works for `cligenVersion`, but you must `const foo = ..` and
+      then `cligenVersion = foo` since `cligenVersion` itself is not and
+      should not be a compile-time constant. ]
+
     Add ability for top-level command in `dispatchMulti` to accept "--version"
     to print some version string.  Just set `cligenVersion = "my version"`
     somewhere after `import cligen` but before `dispatchMulti`.
