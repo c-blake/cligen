@@ -1,2 +1,2 @@
-import strutils, cligen
-dispatch(editdistance, echoResult=true, requireSeparator=true)
+import editDistance, cligen
+dispatch(editDistanceAscii, echoResult=true, requireSeparator=true)

@@ -155,7 +155,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/EchoResult.out <==
 Usage:
-  editDistance [required&optional-params]
+  editDistanceAscii [required&optional-params]
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
@@ -487,7 +487,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -b=, --beta=   float  2.0  shrink target
 
 ==> test/TwoNondefaultedSeq.out <==
-TwoNondefaultedSeq.nim(9, 11) template/generic instantiation from here
+TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
 cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
