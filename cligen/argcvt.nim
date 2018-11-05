@@ -143,7 +143,7 @@ proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
 proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
 proc high*[T: uint|uint64](x: typedesc[T]): T = cast[T](-1) #Missing in stdlib
 
-template argParseHelpNum(WideT: untyped, parse: untyped, T: untyped): untyped =
+template argParseHelpNum*(WideT: untyped, parse: untyped, T: untyped): untyped =
   proc argParse*(dst: var T, dfl: T, a: var ArgcvtParams): bool =
     var parsed: WideT
     let stripped = strip(a.val)
