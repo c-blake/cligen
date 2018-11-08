@@ -495,7 +495,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
       delimit, version))
   result.add(newCall("quit", newCall("dispatch" & $pro)))
 
-proc subCommandName(node: NimNode): string {.compileTime.} =
+proc subCmdName(node: NimNode): string {.compileTime.} =
   ## Helper for dispatchMulti. Takes as input one bracket expression containing
   ## the command name and the arguments to dispatchGen(). Returns either the
   ## command name (the first child of the bracket expression) or the value given
@@ -526,14 +526,14 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
-  let subcmdsId = ident("subcmds")
+  let subCmdsId = ident("subCmds")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
-    proc `multiId`(subcmd: seq[string]) =
-      let n = subcmd.len
-      let `arg0Id` = if n > 0: subcmd[0] else: "help"
-      let `restId`: seq[string] = if n > 1: subcmd[1..<n] else: @[ ])
+    proc `multiId`(subCmd: seq[string]) =
+      let n = subCmd.len
+      let `arg0Id` = if n > 0: subCmd[0] else: "help"
+      let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helps = (quote do:
         echo ("Usage:  This is a multiple-dispatch cmd.  Usage is like\n" &
@@ -544,7 +544,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     inc(cnt)
     let disp = "dispatch_" & $p[0]
-    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode(subCommandName(p))).add(
+    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode(subCmdName(p))).add(
       newCall("quit", newCall(disp, restId))))
     let sep = if cnt < len(procBrackets): "\n" else: ""
     helps.add(newNimNode(nnkDiscardStmt).add(
@@ -553,17 +553,17 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   cases[^1].add(newNimNode(nnkElse).add(helps))
   result.add(multiDef)
   result.add(quote do:
-    var `subcmdsId`: seq[string] = @[ ])
+    var `subCmdsId`: seq[string] = @[ ])
   for p in procBrackets:
-    result.add(newCall("add", subcmdsId, newStrLitNode(subCommandName(p))))
+    result.add(newCall("add", subCmdsId, newStrLitNode(subCmdName(p))))
   let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
                                         newIdentNode("cligenVersion"))
-  result.add(newCall("dispatch", multiId, newParam("stopWords", subcmdsId),
+  result.add(newCall("dispatch", multiId, newParam("stopWords", subCmdsId),
                      newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\n" &
-     "where {subcommand} is one of:\n  " & join(`subcmdsId`, " ") & "\n" &
+     "where {subcommand} is one of:\n  " & join(`subCmdsId`, " ") & "\n" &
      "Run top-level cmd with subcmd \"help\" or no subcmd to get all helps.\n" &
      "Run a subcommand with --help to see only help for that." &
-     (if cligenVersion.len>0: "\nMay also run top-level with --version" else:""))))
+     (if cligenVersion.len>0:"\nTop-level --version also available"else:""))))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
