@@ -483,7 +483,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 suppress: seq[string] = @[], shortHelp = 'h',
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
                 mandatoryOverride: seq[string] = @[], delimit = ",",
-                version: Version=("","")): untyped =
+                version: Version=("",""),
+                generateCall: static bool = true): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -493,7 +494,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
       delimit, version))
-  result.add(newCall("quit", newCall("dispatch" & $pro)))
+  if generateCall:
+    result.add(newCall("quit", newCall("dispatch" & $pro)))
 
 proc subCommandName(node: NimNode): string {.compileTime.} =
   ## Helper for dispatchMulti. Takes as input one bracket expression containing
