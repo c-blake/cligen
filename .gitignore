@@ -40,3 +40,4 @@ test/AllSetTypes
 test/HashSets
 test/nimcache
 test/Version
+test/ResultInt
