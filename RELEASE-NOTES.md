@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.18
+---------------
+    Generated dispatchers now have the same return type (including void) and
+    the same return value of wrapped procs.  Abnormal control flow from bad or
+    magic command parameters is communicated to the caller of a generated
+    dispatcher by raising the HelpOnly, VersionOnly, and ParseError exceptions.
+    Manual invocation of dispatchers probably needs to be updated accordingly,
+    unless you want to confuse your CLI users with chatty exception messages.
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time

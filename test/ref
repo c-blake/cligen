@@ -401,6 +401,19 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 
+==> test/ResultInt.out <==
+Usage:
+  editDistanceAscii [required&optional-params]
+Returns the edit distance between `a` and `b`.
+
+This uses the `Levenshtein`:idx: distance algorithm with only a linear
+memory overhead.
+  Options(opt-arg sep :|=|spc):
+  -h, --help                    write this help to stdout
+  --version   bool    false     write version to stdout
+  -a=, --a=   string  REQUIRED  set a
+  -b=, --b=   string  REQUIRED  set b
+
 ==> test/ReturnEmpty.out <==
 Usage:
   demo [optional-params] [args]
@@ -488,7 +501,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(108, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+cligen.nim(111, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.

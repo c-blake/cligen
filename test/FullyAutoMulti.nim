@@ -1,8 +1,7 @@
-proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]): int =
+proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", repr(item)
   for i, f in files: echo "args[", i, "]: ", repr(f)
-  return 42
 
 proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
   ## show entry point with varied, meaningless parameters.

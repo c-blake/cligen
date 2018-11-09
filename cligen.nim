@@ -1,4 +1,7 @@
 import macros, tables, cligen/parseopt3, strutils, os
+type HelpOnly*    = object of Exception
+type VersionOnly* = object of Exception
+type ParseError*  = object of Exception
 
 proc toString(c: char): string =
   ## creates a string from char `c`
@@ -135,8 +138,8 @@ const dflUsage = "${prelude}$command $args\n" &
                  "$options$sep"
 
 macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
-                   help: typed = {}, short: typed = {}, usage: string=dflUsage,
-                   prelude = "Usage:\n  ", echoResult: bool = false,
+                   help: typed = {}, short: typed = {},
+                   usage: string=dflUsage, prelude="Usage:\n  ",
                    requireSeparator: bool = false, sepChars = {'=', ':'},
                    opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
                    helpTabColumnGap: int = 2, helpTabMinLast: int = 16,
@@ -162,8 +165,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## `short` is a {(paramNm,char)} of per-parameter single-char option keys.
   ##
   ## Non-int return types are discarded since programs can only return integer
-  ## exit codes (usually 1-byte) to OSes.  However, if `echoResult` is true
-  ## then generated dispatchers echo the result of wrapped procs and return 0.
+  ## exit codes (usually 1-byte) to OSes.  However, if `echoResult` is true then
+  ## `dispatch` & `multiDispatch` echo the result of wrapped procs, returning 0.
+  ## (Technically, dispatch callers not `dispatchGen` implement this parameter.)
   ##
   ## If `requireSeparator` is true, both long and short options need an element
   ## of `sepChars` before option values (if there are any).  Any series of chars
@@ -252,8 +256,6 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
-  let HelpOnlyId = ident("HelpOnly")    # local just help exception
-  let VsnOnlyId = ident("VsnOnly")      # local just version exception
   let vsnOpt = $version[0]              # Need string lits here for CL parse
   let vsnSh = if vsnOpt in shOpt: $shOpt[vsnOpt] else: ""
   let vsnStr = version[1]               # value must just work in stdout.write
@@ -332,17 +334,17 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
-          stdout.write(`apId`.help); raise newException(`HelpOnlyId`, "")))
+          stdout.write(`apId`.help); raise newException(HelpOnly, "")))
     if vsnOpt.len > 0:
       if vsnOpt in shOpt:                     #There is also a short version tag
         result.add(newNimNode(nnkOfBranch).add(
           newStrLitNode(vsnOpt), newStrLitNode(vsnSh)).add(
             quote do:
-              stdout.write(`vsnStr`,"\n"); raise newException(`VsnOnlyId`, "")))
+              stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
       else:                                   #There is only a long version tag
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(vsnOpt)).add(
             quote do:
-              stdout.write(`vsnStr`,"\n"); raise newException(`VsnOnlyId`, "")))
+              stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
@@ -361,7 +363,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
         if not argParse(`spar`, `dpar`, `apId`):
-          return 1
+          raise newException(ParseError, "")
         discard delItem(`mandId`, `parNm`)
         `maybeMandInForce`
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
@@ -372,7 +374,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
       stderr.write("Bad option: \"" & `pId`.key & "\"\n" & `apId`.help)
-      return 1))
+      raise newException(ParseError, "")))
 
   proc defNonOpt(): NimNode =
     result = newStmtList()
@@ -392,41 +394,24 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
         if not argParse(`tmpId`, `tmpId`, `apId`):
-          return 1
+          raise newException(ParseError, "")
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
         stderr.write(`proNm` & " does not expect non-option arguments.  Got\n" &
-                     $`pId` & "\n" & `apId`.help); return 1)
+                     $`pId` & "\n" & `apId`.help)
+        raise newException(ParseError, ""))
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
     result = quote do:
-      var exitCode = 0
-      if len(`argPreP`) > 0:
-        exitCode += parser(`argPreP`)
-      exitCode += parser()
-      if len(`argPostP`) > 0:
-        exitCode += parser(`argPostP`)
-      if exitCode != 0:
-        return exitCode
-
-  let echoResultP = echoResult              #XXX ShouldBeUnnecessary
-  proc callWrapped(): NimNode =
-    if fpars[0].kind == nnkEmpty:           # pure proc/no return type
-      result = quote do:
-        `callIt`; return 0
-    else:                                   # convertible-to-int return type
-      result = quote do:
-         if `echoResultP`:
-           echo `callIt`; return 0
-         else:
-           when compiles(int(`callIt`)): return `callIt`
-           else: discard `callIt`; return 0
+      if len(`argPreP`) > 0: parser(`argPreP`)    #Extra *compile-time* input
+      parser()
+      if len(`argPostP`) > 0: parser(`argPostP`)  #Extra *compile-time* input
 
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
-  let callPrs=callParser(); let callWrapd=callWrapped() #XXX ShouldBeUnnecessary
+  let callPrs=callParser(); let retType=fpars[0]  #XXX ShouldBeUnnecessary
   result = quote do:
     from os               import commandLineParams
     from cligen/argcvt    import ArgcvtParams, argParse, argHelp
@@ -436,12 +421,10 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
-                 `prefixId`="", `subSepId`=""): int =
-      type `HelpOnlyId` = object of Exception
-      type `VsnOnlyId` = object of Exception
+                 `prefixId`="", `subSepId`=""): `retType` =
       `iniVar`
       {.push hint[XDeclaredButNotUsed]: off.}
-      proc parser(args=`cmdLineId`): int =
+      proc parser(args=`cmdLineId`) =
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
@@ -456,18 +439,13 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
             else:
               `nonOpt`
       {.pop.}
-      try:
-        `callPrs`
-        if `mandId`.len > 0 and `mandInFId`:
-          stderr.write "Missing these required parameters:\n"
-          for m in `mandId`: stderr.write "  ", m, "\n"
-          stderr.write "Run command with --help for more details.\n"
-          quit(1)
-        `callWrapd`
-      except `HelpOnlyId`:
-        discard
-      except `VsnOnlyId`:
-        discard
+      `callPrs`
+      if `mandId`.len > 0 and `mandInFId`:
+        stderr.write "Missing these required parameters:\n"
+        for m in `mandId`: stderr.write "  ", m, "\n"
+        stderr.write "Run command with --help for more details.\n"
+        raise newException(ParseError, "")
+      `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
@@ -485,15 +463,40 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 mandatoryOverride: seq[string] = @[], delimit = ",",
                 version: Version=("","")): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
-  ## call quit(said dispatcher); Usage is the same as the dispatchGen() macro.
+  ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
-    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
+    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
       delimit, version))
-  result.add(newCall("quit", newCall("dispatch" & $pro)))
+  let disNm = ident("dispatch" & $pro)
+  if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
+    result.add(quote do:                      #No Return Type At All
+      try: `disNm`(); quit(0)
+      except HelpOnly, VersionOnly: quit(0)
+      except ParseError: quit(1))
+  elif echoResult.boolVal:
+    result.add(quote do:                      #CLI author requests echo
+      try: echo `disNm`(); quit(0)
+      except HelpOnly, VersionOnly: quit(0)
+      except ParseError: quit(1))
+  else:
+    result.add(quote do:
+      when compiles(int(`disNm`())):          #Can convert to int
+        try: quit(int(`disNm`()))
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)
+#     elif compiles(echo `disNm`()):          #`$` exists for echo
+#       try: echo `disNm`(); quit(0)
+#       except HelpOnly, VersionOnly: quit(0)
+#       except ParseError: quit(1)
+      else:                                   #unconvertible; Just ignore
+        try: discard `disNm`(); quit(0)
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1))
+# echo repr(result)
 
 proc subCmdName(node: NimNode): string {.compileTime.} =
   ## Helper for dispatchMulti. Takes as input one bracket expression containing
@@ -511,7 +514,7 @@ var cligenVersion* = ""
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
-  ## call quit(said dispatcher); procBrackets=arg lists for dispatchGen(), e.g,
+  ## call the dispatcher & quit; procBrackets=arg lists for dispatchGen(), e.g,
   ## dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ]).
   result = newStmtList()
   for p in procBrackets:
@@ -543,13 +546,33 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   var cnt = 0
   for p in procBrackets:
     inc(cnt)
-    let disp = "dispatch_" & $p[0]
-    cases[^1].add(newNimNode(nnkOfBranch).add(newStrLitNode(subCmdName(p))).add(
-      newCall("quit", newCall(disp, restId))))
+    let disNm = ident("dispatch" & $p[0])
+    let sCmdNode = newStrLitNode(subCmdName(p))
+    cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNode).add(quote do:
+      when compiles(int(`disNm`())):          #Can convert to int
+        try: quit(int(`disNm`()))
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)
+#     elif compiles(echo `disNm`()):          #`$` exists for echo XXX |subCmdEc
+#       try: echo `disNm`(); quit(0)
+#       except HelpOnly, VersionOnly: quit(0)
+#       except ParseError: quit(1)
+      elif compiles(type(`disNm`())):         #there is a type to discard
+        try: discard `disNm`(); quit(0)
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)
+      else:                                   #void return
+        try: `disNm`(); quit(0)
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
-    helps.add(newNimNode(nnkDiscardStmt).add(
-      newCall(disp, dashHelpId, newParam("prefix", newStrLitNode("  ")),
-              newParam("subSep", newStrLitNode(sep)))))
+    helps.add(quote do:
+      when compiles(type(`disNm`())):
+        try: discard `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
+        except HelpOnly: discard
+      else:
+        try: `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
+        except HelpOnly: discard)
   cases[^1].add(newNimNode(nnkElse).add(helps))
   result.add(multiDef)
   result.add(quote do:
