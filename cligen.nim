@@ -616,4 +616,6 @@ proc mergeParams*(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
   ##This is a dummy parameter merge to provide a hook for CLI authors to create
   ##the `seq[string]` to be parsed from whatever run-time sources (likely based
   ##on `qualifiedName`) that they would like. Here we just pass through cmdLine.
+  ##In a single `dispatch` context, `qualifiedName` simply is `cmdName` while in
+  ##a `dispatchMulti` context it is `"<mainCommand>_<subCommand>"`.
   cmdLine
