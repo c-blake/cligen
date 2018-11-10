@@ -71,17 +71,16 @@ dispatch(editDistance, echoResult=true)
 If the result _cannot_ be converted to an int, `cligen` will echo results if
 possible automatically (unless you tell it not to by passing `noAutoEcho=true`).
 
-If _neither_ echo, nor conversion of ints to exit codes does the trick or if you
-do not want the program to exit immediately then you probably need to call
-`dispatchGen` and then call `dispatchFoo` yourself instead of relying on the
-`dispatch` macro to do both.  Return _types and values_ of generated dispatchers
-match that of the wrap-ee, but first parameter is a `seq[string]`, just like a
-command line (and a few other knobs to assist in more complex call settings,
-like indented help).  The dispatcher raises three exception types `HelpOnly`,
-`VersionOnly`, and `ParseError` -- hopefully self-explanatory.  You may also
-need to call `dispatchFoo` yourself if you want to merge parameters from other
-sources like a `$HOME/.cmdrc` and/or `$CMD` or if you want to call dispatchers
-more than once or on more than one set of `seq[string]` arguments.
+If _neither_ echo, nor conversion of ints to exit codes does the trick OR if
+you to control program exit OR if you want to call dispatchers more than once
+OR on more than one set of `seq[string]` args then you probably need to call
+`dispatchGen()` and later call `dispatchFoo()` yourself.  This is all the
+`dispatch` macro does itself.  The return _types and values_ of generated
+dispatchers match that of the wrap-ee.  The first parameter is a `seq[string]`,
+just like a command line.  Other parameters are knobs to assist in nested call
+settings that are defaulted and probably don't matter to you.  The dispatcher
+raises three exception types `HelpOnly`, `VersionOnly`, and `ParseError` which
+are hopefully self-explanatory.
 
 If you want to expose two or more procs into a command with subcommands a la
 `git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each []
@@ -99,6 +98,18 @@ With that, a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
 ``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
+
+If you want to merge parameters from other sources like a `$HOME/.cmdrc`,
+`${XDG_CONFIG:-$HOME/.config}/cmd` or wherever you want configuration files
+to be and/or merge from `$CMD` you can redefine `mergeParams()` after the
+`import cligen` but before `dispatch`/`dispatchMulti`:
+```nim
+  import cligen, os, strutils
+  proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
+    let eval = os.getEnv(toUpperAscii(qualifiedName))     #read $MULTI_FOO, etc.
+    if eval.len > 0: eval.split() & cmdLine else: cmdLine #Lame quoting
+  dispatchMulti([foo, short={"verb": 'v'}], [bar])
+```
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help

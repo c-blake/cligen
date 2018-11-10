@@ -1287,6 +1287,8 @@ function main() {
     title="postInc(x: var int): int"><wbr />post<wbr />Inc<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delItem%2Cseq%5BT%5D%2CT"
     title="delItem[T](x: var seq[T]; item: T): int"><wbr />del<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#mergeParams%2Cstring"
+    title="mergeParams(qualifiedName = &quot;&quot;; cmdLine = commandLineParams()): seq[string]"><wbr />merge<wbr />Params<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1419,6 +1421,13 @@ Similar to post-fix <cite>++</cite> in C languages: yield initial val, then incr
 
 
 </dd>
+<a id="mergeParams,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">mergeParams</span><span class="Other">(</span><span class="Identifier">qualifiedName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">cmdLine</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+This is a dummy parameter merge to provide a hook for CLI authors to create the <cite>seq[string]</cite> to be parsed from whatever run-time sources (likely based on <cite>qualifiedName</cite>) that they would like. Here we just pass through cmdLine.
+
+</dd>
 
 </dl></div>
 <div class="section" id="17">
@@ -1489,7 +1498,7 @@ A convenience wrapper to both generate a multi-command dispatcher and then call 
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-11-10 10:19:15 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-10 12:00:12 UTC</small>
       </div>
     </div>
   </div>

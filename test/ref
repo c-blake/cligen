@@ -204,7 +204,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/FullyAutoMulti.out <==
 Usage:
-cligen/test/FullyAutoMulti {subcommand}
+  FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   demo print whoa nelly
 Run top-level cmd with subcmd "help" or no subcmd to get all helps.
@@ -213,7 +213,7 @@ Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
 Usage:  This is a multiple-dispatch cmd.  Usage is like
-cligen/test/FullyAutoMulti subcommand [subcommand-opts & args]
+  FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files]

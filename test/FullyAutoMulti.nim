@@ -22,8 +22,18 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
   return "42"
 
 when isMainModule:
-  import cligen
+  import cligen, os, strutils
   cligenVersion = "0.0.1"
+
+  proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
+    #This is just a demo/eg/test.  Convention is usually to UPPERCASE vars.
+    #CLI author may well want configuration files to merge cf, env, cmdLine,
+    #and maybe remove duplicates of just some specific params, etc.  May
+    #be worth providing a couple helper procs for less picky CLI authors.
+    let evar = toUpperAscii(qualifiedName)      # FULLYAUTOMULTI_DEMO,..
+    let eval = os.getEnv(evar)
+    if eval.len > 0: eval.split() & cmdLine else: cmdLine   #No quoting rule!
+
   dispatchMulti([ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ whoa, echoResult=true ],

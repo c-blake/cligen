@@ -72,10 +72,11 @@ Commands return integer codes to operating systems to indicate exit status
 (only the lowest order byte is significant on many OSes).  Conventionally, zero
 status indicates a successful exit.  If the return type of the proc wrapped by
 dispatch is int (or convertible to int) then that value will be propagated to
-become the exit code.  Otherwise the return of the wrapped proc is discarded
-unless ``echoResult=true`` is passed in which case the result is printed as
-long as there is a type to string/``$`` converter in scope.  Command-line
-syntax errors cause programs to exit with status 1 and print a help message.
+become the exit code.  Otherwise. `cligen` checks to see if `$` is in scope/echo
+result works and echos it if so (unless `noAutoEcho` is passed).  Trying to echo
+can be forced by passing ``echoResult=true``.  Command-line syntax errors cause
+programs to exit with status 1 and print a help message.  Explicit requests for
+help via --help or -h or --version, on the other hand, exit with status 0.
 
 Usage String Adjustment
 =======================
@@ -86,3 +87,9 @@ with some named-argument string interpolation:
            usage="Use:\n$command $args\nOptions:\n$options\n$doc\n",
            prefix="   "))   # indent the whole message a few spaces.
 ```
+Like usage string adjustment, there are many other knobs and tweaks available.
+For even more details see the module documentations (
+ [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
+ [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
+ [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html) )
+ and [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).

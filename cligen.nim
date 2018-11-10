@@ -419,7 +419,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
-    proc `disNm`(`cmdLineId`: seq[string] = commandLineParams(),
+    proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`cName`),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): `retType` =
       `iniVar`
@@ -534,8 +534,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     c.add(newParam("prelude", newStrLitNode("")))
     result.add(c)
   let fileParen = lineinfo(procBrackets)  # Infer multi-cmd name from lineinfo
-  let xOpPar = rfind(fileParen, ".nim(") - 1
-  let srcBase = newStrLitNode(if xOpPar < 0: "??" else: fileParen[0 .. xOpPar])
+  let Slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
+  let Paren = rfind(fileParen, ".nim(") - 1
+  let srcBase = newStrLitNode(if Paren < 0: "??" else: fileParen[Slash..Paren])
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -557,31 +558,32 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   var cnt = 0
   for p in procBrackets:
     inc(cnt)
+    let qnm = $srcBase & "_" & $p[0]            #qualified name
     let disNm = ident("dispatch" & $p[0])
     let sCmdNm = newStrLitNode(subCmdName(p))
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdAuEc = not subCmdNoAutoEc(p)
     if sCmdEcR:
       cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
-        try: echo `disNm`(); quit(0)
+        try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1)))
     else:
       cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
         when compiles(int(`disNm`())):          #Can convert to int
-          try: quit(int(`disNm`()))
+          try: quit(int(`disNm`(mergeParams(`qnm`, `restId`))))
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)
         elif bool(`sCmdAuEc`) and compiles(echo `disNm`()):  #autoEc && have `$`
-          try: echo `disNm`(); quit(0)
+          try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)
         elif compiles(type(`disNm`())):         #there is a type to discard
-          try: discard `disNm`(); quit(0)
+          try: discard `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)
         else:                                   #void return
-          try: `disNm`(); quit(0)
+          try: `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
@@ -609,3 +611,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      "Run a subcommand with --help to see only help for that." &
      (if cligenVersion.len>0:"\nTop-level --version also available"else:""))))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
+
+proc mergeParams*(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
+  ##This is a dummy parameter merge to provide a hook for CLI authors to create
+  ##the `seq[string]` to be parsed from whatever run-time sources (likely based
+  ##on `qualifiedName`) that they would like. Here we just pass through cmdLine.
+  cmdLine
