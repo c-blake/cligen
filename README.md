@@ -46,7 +46,7 @@ With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress some long option getting a short option at all, specify ``'\0'`` for
 its short key.  To suppress all short options, give ``short`` a key of ``""``.
 
-By default, ``dispatchGen`` has ``requireSeparator=false`` making ``-abcdBar``,
+By default, ``dispatch`` has ``requireSeparator=false`` making ``-abcdBar``,
 ``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` all acceptable syntax for
 command options.  Additionally, long option keys can be spelled flexibly, e.g.
 ``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
@@ -68,6 +68,20 @@ an 8-bit exit code, just pass ``echoResult=true``:
 import cligen, strutils   # generate a CLI for Nim stdlib's editDistance
 dispatch(editDistance, echoResult=true)
 ```
+If the result _cannot_ be converted to an int, `cligen` will echo results if
+possible automatically (unless you tell it not to by passing `noAutoEcho=true`).
+
+If _neither_ echo, nor conversion of ints to exit codes does the trick or if you
+do not want the program to exit immediately then you probably need to call
+`dispatchGen` and then call `dispatchFoo` yourself instead of relying on the
+`dispatch` macro to do both.  Return _types and values_ of generated dispatchers
+match that of the wrap-ee, but first parameter is a `seq[string]`, just like a
+command line (and a few other knobs to assist in more complex call settings,
+like indented help).  The dispatcher raises three exception types `HelpOnly`,
+`VersionOnly`, and `ParseError` -- hopefully self-explanatory.  You may also
+need to call `dispatchFoo` yourself if you want to merge parameters from other
+sources like a `$HOME/.cmdrc` and/or `$CMD` or if you want to call dispatchers
+more than once or on more than one set of `seq[string]` arguments.
 
 If you want to expose two or more procs into a command with subcommands a la
 `git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each []
