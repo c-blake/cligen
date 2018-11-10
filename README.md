@@ -103,11 +103,11 @@ If you want to merge parameters from other sources like a `$HOME/.cmdrc`,
 to be and/or merge from `$CMD` you can redefine `mergeParams()` after the
 `import cligen` but before `dispatch`/`dispatchMulti`:
 ```nim
-  import cligen, os, strutils
-  proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
-    let eval = os.getEnv(toUpperAscii(qualifiedName))     #read $MULTI_FOO, etc.
-    if eval.len > 0: eval.split() & cmdLine else: cmdLine #Lame quoting
-  dispatchMulti([foo, short={"verb": 'v'}], [bar])
+import cligen, os, strutils
+proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
+  let eval = os.getEnv(toUpperAscii(qualifiedName))     #read $MULTI_FOO, etc.
+  if eval.len > 0: eval.split() & cmdLine else: cmdLine #Lame quoting
+dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
 
 That's basically it.  Many users who have read this far can start using `cligen`
