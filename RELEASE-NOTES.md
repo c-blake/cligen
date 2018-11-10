@@ -10,13 +10,20 @@ Version: 0.9.18
     Manual invocation of dispatchers probably needs to be updated accordingly,
     unless you want to confuse your CLI users with chatty exception messages.
 
-    `cligen` now tries to echo results if they are not-convertible to int.
+    `cligen` now tries to echo results if they are not-convertible to `int`.
     This feature may be deactivated via the `noAutoEcho=true` parameter to
     `dispatch`/`dispatchMulti`. { Since a 1-byte exit codes/mod 256 can be
-    catastrophic truncation for many int returns, it is possible trying to echo
+    catastrophic truncation for many returns, it is possible trying to `echo`
     being the first step would be more user friendly.  However, if people want
     to write procs with various exit codes in mind, it's hard to think of a
     more natural setup than just exiting with the return. }
+
+    `cligen` now gets its command parameters by calling `mergeParams()` which
+    CLI authors may redefine arbitrarily (see `test/FullyAutoMulti.nim` and/or
+    `README.md`).  So, config files, environment variables or even network
+    requests could be used to populate the `seq[string]` dispatchers parse.
+    Right now `mergeParams()` just returns `commandLineParams()`.  It could
+    become smarter in the future if people ask.
 
 Version: 0.9.17
 ---------------
