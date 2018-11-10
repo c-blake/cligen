@@ -44,7 +44,7 @@ just override it with the 5th|``short=`` macro parameter:
 ```
 With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress some long option getting a short option at all, specify ``'\0'`` for
-its short key.  To suppress all short options, give ``short`` a key of ``""``.
+its short key.  To suppress _all_ short options, give ``short`` a key of ``""``.
 
 By default, ``dispatch`` has ``requireSeparator=false`` making ``-abcdBar``,
 ``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` all acceptable syntax for
@@ -52,7 +52,7 @@ command options.  Additionally, long option keys can be spelled flexibly, e.g.
 ``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
 
 The same basic string-to-native type converters used for option values will be
-applied to convert optional positional arguments to seq[T] values or mandatory
+applied to convert optional positional arguments to `seq[T]` values or mandatory
 positional arguments to values of their types:
 ```nim
 proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
@@ -68,24 +68,23 @@ an 8-bit exit code, just pass ``echoResult=true``:
 import cligen, strutils   # generate a CLI for Nim stdlib's editDistance
 dispatch(editDistance, echoResult=true)
 ```
-If the result _cannot_ be converted to an int, `cligen` will echo results if
-possible automatically (unless you tell it not to by passing `noAutoEcho=true`).
+If the result _cannot_ be converted to `int`, `cligen` will automatically `echo`
+results if possible (unless you tell it not to by passing `noAutoEcho=true`).
 
-If _neither_ echo, nor conversion of ints to exit codes does the trick OR if
-you to control program exit OR if you want to call dispatchers more than once
-OR on more than one set of `seq[string]` args then you probably need to call
-`dispatchGen()` and later call `dispatchFoo()` yourself.  This is all the
-`dispatch` macro does itself.  The return _types and values_ of generated
-dispatchers match that of the wrap-ee.  The first parameter is a `seq[string]`,
-just like a command line.  Other parameters are knobs to assist in nested call
-settings that are defaulted and probably don't matter to you.  The dispatcher
-raises three exception types `HelpOnly`, `VersionOnly`, and `ParseError` which
-are hopefully self-explanatory.
+If _neither_ `echo`, nor conversion to `int` exit codes does the trick OR if you
+want to control program exit OR to call dispatchers more than once OR on more
+than one set of `seq[string]` args then you may need to call `dispatchGen()`
+and later call `dispatchFoo()` yourself.  This is all `dispatch` itself does.
+The return _types and values_ of generated dispatchers match those of the
+wrapped proc.  The first parameter is a `seq[string]`, just like a command line.
+{ Other parameters are knobs to aid in nested call settings that are defaulted
+and probably don't matter to you. } The dispatcher raises 3 exception types:
+`HelpOnly`, `VersionOnly`, `ParseError`.  These are hopefully self-explanatory.
 
 If you want to expose two or more procs into a command with subcommands a la
-`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each []
-list in `dispatchMulti` is the argument list for each sub-`dispatch`.  Tune
-command syntax and help strings in the same way as ``dispatch`` as in:
+`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each
+`[]` list in `dispatchMulti` is the argument list for each sub-`dispatch`.
+Tune command syntax and help strings in the same way as ``dispatch`` as in:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
