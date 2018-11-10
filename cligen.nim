@@ -138,8 +138,8 @@ const dflUsage = "${prelude}$command $args\n" &
                  "$options$sep"
 
 macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
-                   help: typed = {}, short: typed = {},
-                   usage: string=dflUsage, prelude="Usage:\n  ",
+                   help: typed = {}, short: typed = {}, usage: string=dflUsage,
+                   prelude="Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = {'=', ':'},
                    opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
                    helpTabColumnGap: int = 2, helpTabMinLast: int = 16,
@@ -150,7 +150,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    suppress: seq[string] = @[], shortHelp = 'h',
                    implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
                    mandatoryOverride: seq[string] = @[], delimit=",",
-                   version: Version=("","")): untyped =
+                   version: Version=("",""), noAutoEcho: bool=false): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -461,17 +461,18 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 suppress: seq[string] = @[], shortHelp = 'h',
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
                 mandatoryOverride: seq[string] = @[], delimit = ",",
-                version: Version=("","")): untyped =
+                version: Version=("",""), noAutoEcho: bool=false): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
-    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude,
+    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
       delimit, version))
   let disNm = ident("dispatch" & $pro)
+  let autoEc = not noAutoEcho.boolVal
   if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
     result.add(quote do:                      #No Return Type At All
       try: `disNm`(); quit(0)
@@ -488,27 +489,37 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
         try: quit(int(`disNm`()))
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1)
-#     elif compiles(echo `disNm`()):          #`$` exists for echo
-#       try: echo `disNm`(); quit(0)
-#       except HelpOnly, VersionOnly: quit(0)
-#       except ParseError: quit(1)
+      elif bool(`autoEc`) and compiles(echo `disNm`()): #autoEc mode && have `$`
+        try: echo `disNm`(); quit(0)
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)
       else:                                   #unconvertible; Just ignore
         try: discard `disNm`(); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1))
-# echo repr(result)
 
 proc subCmdName(node: NimNode): string {.compileTime.} =
-  ## Helper for dispatchMulti. Takes as input one bracket expression containing
-  ## the command name and the arguments to dispatchGen(). Returns either the
-  ## command name (the first child of the bracket expression) or the value given
-  ## to `cmdname` argument.
+  ## Get last cmdName= argument, if any, in bracket expression, or name of 1st
+  ## element of bracket if none given.
   result = $node[0]
   for child in node:
     if child.kind == nnkExprEqExpr:
-      if eqIdent(child[0], "cmdname"):
+      if eqIdent(child[0], "cmdName"):
         result = $child[1]
-        break
+
+proc subCmdEchoRes(node: NimNode): bool {.compileTime.} =
+  ##Get last echoResult value, if any, in bracket expression
+  result = false
+  for child in node:
+    if child.kind == nnkExprEqExpr:
+      if eqIdent(child[0], "echoResult"): return true
+
+proc subCmdNoAutoEc(node: NimNode): bool {.compileTime.} =
+  ##Get last noAutoEcho value, if any, in bracket expression
+  result = false
+  for child in node:
+    if child.kind == nnkExprEqExpr:
+      if eqIdent(child[0], "noAutoEcho"): return true
 
 var cligenVersion* = ""
 
@@ -547,24 +558,32 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     inc(cnt)
     let disNm = ident("dispatch" & $p[0])
-    let sCmdNode = newStrLitNode(subCmdName(p))
-    cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNode).add(quote do:
-      when compiles(int(`disNm`())):          #Can convert to int
-        try: quit(int(`disNm`()))
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)
-#     elif compiles(echo `disNm`()):          #`$` exists for echo XXX |subCmdEc
-#       try: echo `disNm`(); quit(0)
-#       except HelpOnly, VersionOnly: quit(0)
-#       except ParseError: quit(1)
-      elif compiles(type(`disNm`())):         #there is a type to discard
-        try: discard `disNm`(); quit(0)
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)
-      else:                                   #void return
-        try: `disNm`(); quit(0)
+    let sCmdNm = newStrLitNode(subCmdName(p))
+    let sCmdEcR = subCmdEchoRes(p)
+    let sCmdAuEc = not subCmdNoAutoEc(p)
+    if sCmdEcR:
+      cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
+        try: echo `disNm`(); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1)))
+    else:
+      cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
+        when compiles(int(`disNm`())):          #Can convert to int
+          try: quit(int(`disNm`()))
+          except HelpOnly, VersionOnly: quit(0)
+          except ParseError: quit(1)
+        elif bool(`sCmdAuEc`) and compiles(echo `disNm`()):  #autoEc && have `$`
+          try: echo `disNm`(); quit(0)
+          except HelpOnly, VersionOnly: quit(0)
+          except ParseError: quit(1)
+        elif compiles(type(`disNm`())):         #there is a type to discard
+          try: discard `disNm`(); quit(0)
+          except HelpOnly, VersionOnly: quit(0)
+          except ParseError: quit(1)
+        else:                                   #void return
+          try: `disNm`(); quit(0)
+          except HelpOnly, VersionOnly: quit(0)
+          except ParseError: quit(1)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
     helps.add(quote do:
       when compiles(type(`disNm`())):

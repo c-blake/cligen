@@ -206,7 +206,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 Usage:
 cligen/test/FullyAutoMulti {subcommand}
 where {subcommand} is one of:
-  demo print
+  demo print whoa nelly
 Run top-level cmd with subcmd "help" or no subcmd to get all helps.
 Run a subcommand with --help to see only help for that.
 Top-level --version also available
@@ -232,6 +232,22 @@ where subcommand syntaxes are as follows:
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
+  
+  whoa [optional-params] [names]
+    Another entry point; here we echoResult
+    Options(opt-arg sep :|=|spc):
+      -h, --help                  write this help to stdout
+      -z=, --zeta=  int    1      set zeta
+      -e=, --eta=   float  2.0    set eta
+      -v, --verb    bool   false  set verb
+  
+  nelly [optional-params] [names]
+    Yet another entry point; here we block autoEcho
+    Options(opt-arg sep :|=|spc):
+      -h, --help                  write this help to stdout
+      --hooves=      int   4      set hooves
+      -r=, --races=  int   9      set races
+      -v, --verb     bool  false  set verb
 
 ==> test/HashSets.out <==
 Usage:
@@ -441,6 +457,19 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -i=, --item=   string  ""     set item
 
 ==> test/ReturnNonInt.out <==
+Usage:
+  demo [optional-params] [args]
+demo entry point with varied, meaningless parameters.  A Nim invocation
+might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
+invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+  Options(opt-arg sep :|=|spc):
+  -h, --help                    write this help to stdout
+  -a=, --alpha=  int     1      set alpha
+  -b=, --beta=   float   2.0    set beta
+  -v, --verb     bool    false  set verb
+  -i=, --item=   string  ""     set item
+
+==> test/ReturnNonIntNoAuto.out <==
 Usage:
   demo [optional-params] [args]
 demo entry point with varied, meaningless parameters.  A Nim invocation

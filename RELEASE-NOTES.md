@@ -10,6 +10,14 @@ Version: 0.9.18
     Manual invocation of dispatchers probably needs to be updated accordingly,
     unless you want to confuse your CLI users with chatty exception messages.
 
+    `cligen` now tries to echo results if they are not-convertible to int.
+    This feature may be deactivated via the `noAutoEcho=true` parameter to
+    `dispatch`/`dispatchMulti`. { Since a 1-byte exit codes/mod 256 can be
+    catastrophic truncation for many int returns, it is possible trying to echo
+    being the first step would be more user friendly.  However, if people want
+    to write procs with various exit codes in mind, it's hard to think of a
+    more natural setup than just exiting with the return. }
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time

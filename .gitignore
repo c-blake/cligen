@@ -41,3 +41,4 @@ test/HashSets
 test/nimcache
 test/Version
 test/ResultInt
+test/ReturnNonIntNoAuto
