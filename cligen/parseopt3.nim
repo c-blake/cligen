@@ -2,7 +2,7 @@
 ## with the Nim standard library parseopt (and the code derives from that).
 ## It supports one convenience iterator over all command line options and some
 ## lower-level features.
-## Supported command syntax (here ``=`` | ``:`` may be any char in ``sepChars``):
+## Supported command syntax (here ``=``|``:`` may be any char in ``sepChars``):
 ##
 ## 1. short option bundles: ``-abx``  (where a, b, x *are in* `shortNoVal`)
 ##
@@ -12,7 +12,7 @@
 ## 2. long options with values: ``--foo:bar``, ``--foo=bar``, ``--foo bar``
 ## (where ``foo`` is *not in* ``longNoVal``)
 ##
-## 2a. long options without vals: ``--baz`` (where ``baz`` *is in* ``longNoVal``)
+## 2a. long options without vals: ``--baz`` (where ``baz`` is in ``longNoVal``)
 ##
 ## 3. command parameters: everything else | anything after "--" or a stop word.
 ##
@@ -55,8 +55,8 @@
 ## be the **values** of option keys with no effect.  Only usage as a non-option
 ## command parameter acts to stop possible option-treatment of later parameters.
 ##
-## To facilitate syntax for operations beyond simple assignment, ``opChars`` is a
-## set of chars that may prefix an element of ``sepChars``.  The ``sep`` member
+## To facilitate syntax for operations beyond simple assignment, ``opChars`` is
+## a set of chars that may prefix an element of ``sepChars``. The ``sep`` member
 ## of ``OptParser`` is the actual separator used for the current option, if any.
 ## E.g, a user entering "="  causes ``sep == "="`` while entering "+=" gets
 ## ``sep == "+="``, and "+/-+=" gets ``sep == "+/-+="``.
@@ -266,7 +266,7 @@ type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
 
 iterator getopt*(p: var OptParser): GetoptResult =
-  ## This is an convenience iterator for iterating over the given OptParser object.
+  ## An convenience iterator for iterating over the given OptParser object.
   ## Example:
   ##
   ## .. code-block:: nim

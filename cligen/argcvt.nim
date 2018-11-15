@@ -279,7 +279,8 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
 
 import sets # HashSets
 
-proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T], a: var ArgcvtParams): bool =
+proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
+                  a: var ArgcvtParams): bool =
   if a.val.len == 0:
     ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
     return false

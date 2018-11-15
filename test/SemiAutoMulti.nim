@@ -35,13 +35,13 @@ when isMainModule:
     of "demo": quit(dispatch_demo(cmdline = subcmd[1..^1]))
     of "show": quit(dispatch_show(cmdline = subcmd[1..^1]))
     of "help":
-        echo "Usage:\n  SemiAutoMulti demo|show|help [subcommand-args]\n"
-        echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
-        # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
-        let use = "SemiAutoMulti [globalOpts] $command $args\n$doc\nOptions:\n$options"
-        discard dispatch_demo(cmdline = @[ "--help" ], prefix="    ", usage=use)
-        discard dispatch_show(cmdline = @[ "--help" ], prefix="    ", usage=use)
-        quit(0)
+      echo "Usage:\n  SemiAutoMulti demo|show|help [subcommand-args]\n"
+      echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
+      # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
+      let u="SemiAutoMulti [globlOpts] $command $args\n$doc\nOptions:\n$options"
+      discard dispatch_demo(cmdline = @[ "--help" ], prefix="    ", usage=u)
+      discard dispatch_show(cmdline = @[ "--help" ], prefix="    ", usage=u)
+      quit(0)
     else: echo "unknown subcommand: ", subcmd
     quit(1)
 
