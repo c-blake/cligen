@@ -98,17 +98,19 @@ With that, a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
 
-If you want to merge parameters from other sources like a `$HOME/.cmdrc`,
-`${XDG_CONFIG:-$HOME/.config}/cmd` or wherever you want configuration files
-to be and/or merge from `$CMD` you can redefine `mergeParams()` after the
-`import cligen` but before `dispatch`/`dispatchMulti`:
+If you want `cligen` to merge parameters from other sources like a `$CMD`
+environment variable then you can redefine `mergeParams()` after `import cligen`
+but before `dispatch`/`dispatchMulti`:
 ```nim
 import cligen, os, strutils
-proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
-  let eval = os.getEnv(toUpperAscii(qualifiedName))     #read $MULTI_FOO, etc.
-  if eval.len > 0: eval.split() & cmdLine else: cmdLine #Lame quoting
+proc mergeParams(cmdNames: seq[string], cmdLine=commandLineParams()): seq[string]=
+  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #Get $MULTI_(FOO|_BAR)
+  if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
+You can, of course, alse have `mergeParams` use the `parsecfg` module to convert
+`$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
+is relevant to `cmdNames` and/or remove duplicate values for certain keys.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
@@ -117,7 +119,7 @@ automated "help to X" tools such as ``complete -F _longopt`` in bash, ``compdef
 _gnu_generic`` in zsh, or the GNU ``help2man`` package.  Many simple examples
 are at [test/](https://github.com/c-blake/cligen/tree/master/test/).  Here are
 some more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md),
-and even more is in the module documentations (
+and even more are in the module documentations (
  [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
  [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
  [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html) )
@@ -126,8 +128,8 @@ and even more is in the module documentations (
 More Motivation
 ===============
 There are so many CLI parser frameworks out there...Why do we need yet another?
-This approach to command-line interfaces has both great Don't Repeat Yourself
-("DRY", or relatedly "a few points of edit") properties and also has nice
+This approach to command-line interfaces has some obvious Don't Repeat Yourself
+("DRY", or relatedly "a few points of edit") properties, but also has nice
 "loose coupling" properties.  `cligen` need not even be *present on the system*
 unless you are compiling a CLI executable.  Similarly, wrapped routines need
 not be in the same module, modifiable, or know anything about `cligen`.  This

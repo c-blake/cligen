@@ -25,14 +25,12 @@ when isMainModule:
   import cligen, os, strutils
   cligenVersion = "0.0.1"
 
-  proc mergeParams(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
-    #This is just a demo/eg/test.  Convention is usually to UPPERCASE vars.
-    #CLI author may well want configuration files to merge cf, env, cmdLine,
-    #and maybe remove duplicates of just some specific params, etc.  May
-    #be worth providing a couple helper procs for less picky CLI authors.
-    let evar = toUpperAscii(qualifiedName)      # FULLYAUTOMULTI_DEMO,..
-    let eval = os.getEnv(evar)
-    if eval.len > 0: eval.split() & cmdLine else: cmdLine   #No quoting rule!
+  proc mergeParams(cmdNames: seq[string],
+                   cmdLine=commandLineParams()): seq[string] =
+    #This is just a demo/test following usual $UPPERCASE convention.  CLI author
+    #may also want to use `parsecfg` and/or remove duplicates of certain params.
+    let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #$FULLYAUTOMULTI_DEMO
+    if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
 
   dispatchMulti([ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],

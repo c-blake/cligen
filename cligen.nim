@@ -419,7 +419,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
-    proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`cName`),
+    proc `disNm`(`cmdLineId`: seq[string] = mergeParams(@[ `cName` ]),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): `retType` =
       `iniVar`
@@ -558,11 +558,12 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   var cnt = 0
   for p in procBrackets:
     inc(cnt)
-    let qnm = $srcBase & "_" & $p[0]            #qualified name
     let disNm = ident("dispatch" & $p[0])
     let sCmdNm = newStrLitNode(subCmdName(p))
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdAuEc = not subCmdNoAutoEc(p)
+    let nm0 = $srcBase
+    let qnm = quote do: @[ `nm0`, `sCmdNm` ]    #qualified name
     if sCmdEcR:
       cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
         try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
@@ -612,10 +613,11 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      (if cligenVersion.len>0:"\nTop-level --version also available"else:""))))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
 
-proc mergeParams*(qualifiedName="", cmdLine=commandLineParams()): seq[string] =
+proc mergeParams*(cmdNames: seq[string],
+                  cmdLine=commandLineParams()): seq[string] =
   ##This is a dummy parameter merge to provide a hook for CLI authors to create
   ##the `seq[string]` to be parsed from whatever run-time sources (likely based
-  ##on `qualifiedName`) that they would like. Here we just pass through cmdLine.
-  ##In a single `dispatch` context, `qualifiedName` simply is `cmdName` while in
-  ##a `dispatchMulti` context it is `"<mainCommand>_<subCommand>"`.
+  ##on `cmdNames`) that they would like.  Here we just pass through cmdLine.
+  ##In a single `dispatch` context, `cmdNames[0]` is the `cmdName` while in a
+  ##`dispatchMulti` context it is `@[ <mainCommand>, <subCommand> ]`.
   cmdLine
