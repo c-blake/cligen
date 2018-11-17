@@ -383,7 +383,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         if sugg.len > 0:
           mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
       stderr.write("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
-                   mb & `apId`.help)
+                   mb & "Run with --help for full usage.\n")
       raise newException(ParseError, "Unknown option")))
 
   proc defNonOpt(): NimNode =
@@ -410,7 +410,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     else:
       result.add(quote do:
         stderr.write(`proNm` & " does not expect non-option arguments.  Got\n" &
-                     $`pId` & "\n" & `apId`.help)
+                     $`pId` & "\nRun with --help for full usage.\n")
         raise newException(ParseError, "Unexpected non-option " & $`pId`))
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
