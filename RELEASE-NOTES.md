@@ -25,6 +25,16 @@ Version: 0.9.18
     Right now `mergeParams()` just returns `commandLineParams()`.  It could
     become smarter in the future if people ask.
 
+    `cligen` now tries to detect typos/spelling mistakes by suggesting nearby
+    elements in both long option keys and subcommand names.  Presently, just
+    uses the editDistanceASCII, but true Damerau distance may be forthcoming.
+    Suggestions are not offered for incorrect short option keys.
+
+    Commands written with `dispatchMulti` now have more gradual information
+    revelation error behavior, not dumping the full set of all helps unless
+    users request it with the help subcommand which they are informed they can
+    do upon any error.
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time

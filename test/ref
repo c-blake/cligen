@@ -214,9 +214,10 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 Usage:
   FullyAutoMulti {subcommand}
 where {subcommand} is one of:
-  demo print whoa nelly
-Run top-level cmd with subcmd "help" or no subcmd to get all helps.
-Run a subcommand with --help to see only help for that.
+  help demo print whoa nelly
+Run top-level cmd with -h or --help for top-level help.
+Run top-level with subcmd "help" to get *all* helps.
+Run any given subcommand with --help to see help for that one.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==

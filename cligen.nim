@@ -262,8 +262,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   let prefixId = ident("prefix")        # local help prefix param
   let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
+  let allId = ident("allParams")        # local list of all parameters
   let mandId = ident("mand")            # local list of mandatory parameters
-  let mandInFId = ident("mandInForce")  # local list of mandatory parameters
+  let mandInFId = ident("mandInForce")  # mandatory-in-force flag
   let apId = ident("ap")                # ArgcvtParams
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
@@ -282,6 +283,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       `apId`.mand = `mandHelp`
       `apId`.delimit = `delim`
       let shortH = $(`shortHlp`)
+      var `allId`: seq[string] = @[ "help" ]
       var `mandId`: seq[string] = @[ ]
       var `mandInFId` = true
       var `tabId`: TextTab =
@@ -312,7 +314,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
-         `tabId`.add(argHelp(`defVal`, `apId`) & `hlp`))
+         `tabId`.add(argHelp(`defVal`, `apId`) & `hlp`); `allId`.add(`parNm`) )
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
@@ -373,7 +375,15 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
-      stderr.write("Unknown option: \"" & `pId`.key & "\"\n" & `apId`.help)
+      var mb, k: string
+      k = "short"
+      if `pId`.kind == cmdLongOption:
+        k = "long"
+        let sugg = suggestions(`pId`.key, allParams)
+        if sugg.len > 0:
+          mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
+      stderr.write("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
+                   mb & `apId`.help)
       raise newException(ParseError, "Unknown option")))
 
   proc defNonOpt(): NimNode =
@@ -415,7 +425,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   result = quote do:
     from os               import commandLineParams
     from cligen/argcvt    import ArgcvtParams, argParse, argHelp
-    from cligen/textUt    import addPrefix, TextTab, alignTable
+    from cligen/textUt    import addPrefix, TextTab, alignTable, suggestions
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
@@ -528,11 +538,15 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## call the dispatcher & quit; procBrackets=arg lists for dispatchGen(), e.g,
   ## dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ]).
   result = newStmtList()
+  let subCmdsId = ident("subCmds")
+  result.add(quote do:
+    var `subCmdsId`: seq[string] = @[ "help" ])
   for p in procBrackets:
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     c.add(newParam("prelude", newStrLitNode("")))
     result.add(c)
+    result.add(newCall("add", subCmdsId, newStrLitNode(subCmdName(p))))
   let fileParen = lineinfo(procBrackets)  # Infer multi-cmd name from lineinfo
   let Slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
   let Paren = rfind(fileParen, ".nim(") - 1
@@ -541,20 +555,16 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
-  let subCmdsId = ident("subCmds")
   var multiDef = newStmtList()
+  var setSubCs = newStmtList()
   multiDef.add(quote do:
     import os
     proc `multiId`(subCmd: seq[string]) =
       let n = subCmd.len
-      let `arg0Id` = if n > 0: subCmd[0] else: "help"
+      let `arg0Id` = if n > 0: subCmd[0] else: ""
       let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
-  var helps = (quote do:
-        echo ("Usage:  This is a multiple-dispatch cmd.  Usage is like\n" &
-              "  $1 subcommand [subcommand-opts & args]\n" &
-              "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
-        let `dashHelpId` = @[ "--help" ])
+  var helpDump = newStmtList()
   var cnt = 0
   for p in procBrackets:
     inc(cnt)
@@ -588,19 +598,39 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
-    helps.add(quote do:
+    helpDump.add(quote do:
       when compiles(type(`disNm`())):
         try: discard `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
         except HelpOnly: discard
       else:
         try: `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
         except HelpOnly: discard)
-  cases[^1].add(newNimNode(nnkElse).add(helps))
+  cases[^1].add(newNimNode(nnkElse).add(quote do:
+    if `arg0Id` == "":
+      echo ("""Usage:
+  $1 {subcommand}
+where {subcommand} is one of:
+  $2
+Run top-level cmd with -h or --help for top-level help.
+Run top-level with subcmd "help" to get *all* helps.
+Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
+  join(`subCmdsId`, " "),
+  (if cligenVersion.len>0:"\nTop-level --version also available" else: "")])
+    elif `arg0Id` == "help":
+      echo ("Usage:  This is a multiple-dispatch cmd.  Usage is like\n" &
+            "  $1 subcommand [subcommand-opts & args]\n" &
+            "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
+      let `dashHelpId` = @[ "--help" ]
+      `helpDump`
+    else:
+      stderr.write "Unknown subcoommand \"" & `arg0Id` & "\".  "
+      let sugg = suggestions(`arg0Id`, `subCmdsId`)
+      if sugg.len > 0:
+        stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
+      else:
+        stderr.write "It is not similar to defined subcommands.\n\n"
+      stderr.write "Run again with subcommand help to get detailed usage.\n"))
   result.add(multiDef)
-  result.add(quote do:
-    var `subCmdsId`: seq[string] = @[ ])
-  for p in procBrackets:
-    result.add(newCall("add", subCmdsId, newStrLitNode(subCmdName(p))))
   let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
                                         newIdentNode("cligenVersion"))
   result.add(newCall("dispatch", multiId, newParam("stopWords", subCmdsId),
@@ -608,9 +638,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\n" &
      "where {subcommand} is one of:\n  " & join(`subCmdsId`, " ") & "\n" &
-     "Run top-level cmd with subcmd \"help\" or no subcmd to get all helps.\n" &
-     "Run a subcommand with --help to see only help for that." &
-     (if cligenVersion.len>0:"\nTop-level --version also available"else:""))))
+     "Run top-level cmd with -h or --help for top-level help.\n" &
+     "Run top-level with subcmd \"help\" to get *all* helps.\n" &
+     "Run any given subcommand with --help to see help for that one." &
+     (if cligenVersion.len>0:"\nTop-level --version also available" else: ""))))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
 
 proc mergeParams*(cmdNames: seq[string],
