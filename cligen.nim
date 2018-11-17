@@ -363,7 +363,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
         if not argParse(`spar`, `dpar`, `apId`):
-          raise newException(ParseError, "")
+          raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
         `maybeMandInForce`
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
@@ -373,8 +373,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     result.add(newNimNode(nnkElse).add(quote do:
-      stderr.write("Bad option: \"" & `pId`.key & "\"\n" & `apId`.help)
-      raise newException(ParseError, "")))
+      stderr.write("Unknown option: \"" & `pId`.key & "\"\n" & `apId`.help)
+      raise newException(ParseError, "Unknown option")))
 
   proc defNonOpt(): NimNode =
     result = newStmtList()
@@ -394,14 +394,14 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
         if not argParse(`tmpId`, `tmpId`, `apId`):
-          raise newException(ParseError, "")
+          raise newException(ParseError, "Cannot parse " & `apId`.key)
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
         stderr.write(`proNm` & " does not expect non-option arguments.  Got\n" &
                      $`pId` & "\n" & `apId`.help)
-        raise newException(ParseError, ""))
+        raise newException(ParseError, "Unexpected non-option " & $`pId`))
 
   let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
   proc callParser(): NimNode =
@@ -444,7 +444,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         stderr.write "Missing these required parameters:\n"
         for m in `mandId`: stderr.write "  ", m, "\n"
         stderr.write "Run command with --help for more details.\n"
-        raise newException(ParseError, "")
+        raise newException(ParseError, "Missing one/some mandatory args")
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
