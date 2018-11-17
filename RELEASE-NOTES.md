@@ -33,7 +33,9 @@ Version: 0.9.18
     Commands written with `dispatchMulti` now have more gradual information
     revelation error behavior, not dumping the full set of all helps unless
     users request it with the help subcommand which they are informed they can
-    do upon any error.
+    do upon any error.  Similarly, `dispatchGen` generates commands that only
+    print out the full help upon `--help` or `-h` (or whatever `shortHelp` is),
+    but tells the user to do that for more details.
 
 Version: 0.9.17
 ---------------
