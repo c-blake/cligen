@@ -40,7 +40,7 @@ from editDistance import editDistanceASCII
 proc suggestions*(wrong: string, rights: openArray[string], lim=5): seq[string]=
   for d in 1 .. 3:
     for right in rights:
-      if editDistanceASCII(right, wrong) <= d:
+      if right notin result and editDistanceASCII(right, wrong) <= d:
         result.add(right)
     if result.len > lim:
       break
