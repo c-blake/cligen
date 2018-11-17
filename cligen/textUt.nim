@@ -36,11 +36,47 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
       result &= repeat(" ", leader) & wrapped[j] & "\n"
     result &= rowSep
 
-from editDistance import editDistanceASCII
-proc suggestions*(wrong: string, rights: openArray[string], lim=5): seq[string]=
+type C = uint8      ##Type for edit cost values & totals
+proc distDamerau[T](A, B: openArray[T], maxDist=uint8.high,
+                    Cid=1.C, Csub=1.C, Cxpo=1.C, dI: var seq[C]): C =
+  ## True Damerau(1964) distance with unrestricted transpositions.
+  var n = A.len                         #ensure 2nd arg shorter (m < n)
+  var m = B.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
+  if n < m:         #XXX Unlikely to matter for juat a few short strings.
+    return distDamerau(B, A, maxDist, Cid, Csub, Cxpo, dI)
+  let CsubA = min(2.C * Cid, Csub)      #Can always do a sub w/del + ins
+  template d(i,j: C): auto = dI[(m.C + 2.C)*(i) + (j)]
+  template DA(i: C): auto = dI[(m.C + 2.C)*(n.C + 2.C) + (i)]
+  let BIG = C(n + m) * Cid
+  dI.setLen((n + 2) * (m + 2) + 256)
+  zeroMem(addr DA(0), 256 * sizeof(C))
+  d(0.C,0.C) = C(BIG)
+  for i in 0.C .. n.C:
+    d(i+1.C, 1.C) = C(i) * Cid
+    d(i+1.C, 0.C) = BIG
+  for j in 0.C .. m.C:
+    d(1.C, j+1) = C(j) * Cid
+    d(0.C, j+1) = BIG
+  for i in 1.C .. n.C:
+    var DB = 0.C
+    for j in 1.C .. m.C:
+      let i1 = DA(C(B[j - 1]))
+      let j1 = DB
+      let cost = if A[i-1] == B[j-1]: C(0) else: C(1)
+      if cost == 0:
+        DB = C(j)
+      d(i+1.C, j+1.C) = min(d(i1 , j1) + (i-i1-1.C + 1.C + j-j1-1.C) * Cxpo,
+                            min(d(i,   j) + cost * CsubA,
+                                min(d(i+1, j) + Cid,
+                                    d(i  , j+1) + Cid)))
+    DA(C(A[i-1])) = i
+  return d(n.C+1.C, m.C+1.C)
+
+proc suggestions*(wrong: string, rights: openArray[string], lim=3): seq[string]=
+  var buf: seq[C]
   for d in 1 .. 3:
     for right in rights:
-      if right notin result and editDistanceASCII(right, wrong) <= d:
+      if right notin result and distDamerau(right, wrong, d.C, dI=buf) <= d.C:
         result.add(right)
-    if result.len > lim:
+    if result.len >= lim:
       break
