@@ -42,3 +42,4 @@ test/nimcache
 test/Version
 test/ResultInt
 test/ReturnNonIntNoAuto
+test/DetectSet
