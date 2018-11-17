@@ -37,7 +37,10 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
     result &= rowSep
 
 from editDistance import editDistanceASCII
-proc suggestions*(wrong: string, rights: openArray[string], lim=2): seq[string]=
-  for right in rights:
-    if editDistanceASCII(right, wrong) <= lim:
-      result.add(right)
+proc suggestions*(wrong: string, rights: openArray[string], lim=5): seq[string]=
+  for d in 1 .. 3:
+    for right in rights:
+      if editDistanceASCII(right, wrong) <= d:
+        result.add(right)
+    if result.len > lim:
+      break
