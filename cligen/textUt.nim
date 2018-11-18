@@ -75,10 +75,14 @@ proc distDamerau[T](A, B: openArray[T], maxDist=uint8.high,
   return d(n.C+1.C, m.C+1.C)
 
 proc suggestions*(wrong: string, rights: openArray[string], lim=3): seq[string]=
+  let mxMx = 4.C                          #At least 1 more than d in dist[] <= d
   var buf: seq[C]
-  for d in 1 .. 3:
-    for right in rights:
-      if right notin result and distDamerau(right, wrong, d.C, dI=buf) <= d.C:
+  var dist: seq[C]                        #Array parallel to `rights`
+  for right in rights:                    #Distances can be slow; Do just once
+    dist.add(distDamerau(right, wrong, maxDist=mxMx, dI=buf))
+  for d in 1.C ..< mxMx:                  #Do not call if wrong == some right
+    for i, right in rights:
+      if right notin result and dist[i] <= d:
         result.add(right)
     if result.len >= lim:
       break
