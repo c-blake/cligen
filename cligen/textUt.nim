@@ -44,13 +44,15 @@ proc distDamerau[T](A, B: openArray[T], maxDist=uint8.high,
   var m = B.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
   if n < m:         #XXX Unlikely to matter for juat a few short strings.
     return distDamerau(B, A, maxDist, Cid, Csub, Cxpo, dI)
+  if n - m > int(maxDist) * int(Cid) + 1:  #XXX Check strictness of this bound
+    return maxDist
   let CsubA = min(2.C * Cid, Csub)      #Can always do a sub w/del + ins
-  template d(i,j: C): auto = dI[(m.C + 2.C)*(i) + (j)]
+  template d(i, j: C): auto = dI[(m.C + 2.C)*(i) + (j)]
   template DA(i: C): auto = dI[(m.C + 2.C)*(n.C + 2.C) + (i)]
   let BIG = C(n + m) * Cid
   dI.setLen((n + 2) * (m + 2) + 256)
   zeroMem(addr DA(0), 256 * sizeof(C))
-  d(0.C,0.C) = C(BIG)
+  d(0.C, 0.C) = BIG
   for i in 0.C .. n.C:
     d(i+1.C, 1.C) = C(i) * Cid
     d(i+1.C, 0.C) = BIG
@@ -64,7 +66,7 @@ proc distDamerau[T](A, B: openArray[T], maxDist=uint8.high,
       let j1 = DB
       let cost = if A[i-1] == B[j-1]: C(0) else: C(1)
       if cost == 0:
-        DB = C(j)
+        DB = j
       d(i+1.C, j+1.C) = min(d(i1 , j1) + (i-i1-1.C + 1.C + j-j1-1.C) * Cxpo,
                             min(d(i,   j) + cost * CsubA,
                                 min(d(i+1, j) + Cid,
