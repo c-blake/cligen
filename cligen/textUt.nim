@@ -37,7 +37,7 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
     result &= rowSep
 
 type C = int16      ##Type for edit cost values & totals
-type Cmx = C.high
+const Cmx = C.high
 proc distDamerau*[T](A, B: openArray[T], maxDist=Cmx,
                      Cid=1.C, Csub=1.C, Cxpo=1.C, dI: var seq[C]): C =
   ## True Damerau(1964) distance with unrestricted transpositions.
