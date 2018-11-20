@@ -110,7 +110,7 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
 You can, of course, alse have `mergeParams` use the `parsecfg` module to convert
 `$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
-is relevant to `cmdNames` and/or remove duplicate values for certain keys.
+is relevant to `cmdNames`.
 
 That's basically it.  Many users who have read this far can start using `cligen`
 without further delay, simply entering illegal commands or `--help` to get help
