@@ -73,7 +73,7 @@ proc distDamerau*[T](A, B: openArray[T], maxDist=Cmx,
                                 min(d(i+1, j) + Cid,
                                     d(i  , j+1) + Cid)))
     DA(C(A[i-1])) = i
-  return d(n.C+1.C, m.C+1.C)
+  return min(maxDist, d(n.C+1.C, m.C+1.C))
 
 proc suggestions*(wrong: string, rights: openArray[string], lim=3): seq[string]=
   let mxMx = 4.C                          #At least 1 more than d in dist[] <= d
