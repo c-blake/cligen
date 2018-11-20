@@ -43,9 +43,7 @@ proc distDamerau*[T](A, B: openArray[T], maxDist=Cmx,
   ## True Damerau(1964) distance with unrestricted transpositions.
   var n = A.len                         #ensure 2nd arg shorter (m < n)
   var m = B.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
-  if n < m:         #XXX Unlikely to matter for juat a few short strings.
-    return distDamerau(B, A, maxDist, Cid, Csub, Cxpo, dI)
-  if n - m >= int(maxDist) * int(Cid):
+  if abs(n - m) * int(Cid) >= int(maxDist):
     return maxDist
   let CsubA = min(2.C * Cid, Csub)      #Can always do a sub w/del + ins
   template d(i, j: C): auto = dI[(m.C + 2.C)*(i) + (j)]
