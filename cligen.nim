@@ -164,10 +164,12 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ##
   ## `short` is a {(paramNm,char)} of per-parameter single-char option keys.
   ##
-  ## Non-int return types are discarded since programs can only return integer
-  ## exit codes (usually 1-byte) to OSes.  However, if `echoResult` is true then
-  ## `dispatch` & `multiDispatch` echo the result of wrapped procs, returning 0.
-  ## (Technically, dispatch callers not `dispatchGen` implement this parameter.)
+  ## Since programs can return integer exit codes (usually 1-byte) to OSes, if
+  ## the return type is convertible to `int` that value is propagated unless
+  ## `echoResult` is true.  However, if `echoResult` is true or if the result is
+  ## unconvertible and `noAutoEcho` is false then the generated dispatcher echos
+  ## the result of wrapped procs.  (Technically, dispatcher callers like
+  ## `dispatch` and `dispatchMulti` not `dispatchGen` implement this behavior.)
   ##
   ## If `requireSeparator` is true, both long and short options need an element
   ## of `sepChars` before option values (if there are any).  Any series of chars
