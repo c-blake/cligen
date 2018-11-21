@@ -214,6 +214,14 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## `version` is a `Version` 2-tuple (longOpt for version, version string)
   ## which defines how a CLI user may dump the version of a program.  If you
   ## want to provide a short option, add a `"version":'v'` entry to `short`.
+  ##
+  ## `setByParse` is `addr(some var Table[string, seq[string]])` and, if given,
+  ## will be keyed by parameter names/long keys each having a `seq` of all the
+  ## values assigned from that key in whatever order `mergeParams()` creates.
+  ## A wrapped proc can inspect this to make certain decisions.  An ordinary Nim
+  ## proc cannot itself know from inside the call if a parameter got its value
+  ## via explicit user passing or via defaulting.  This means any proc using
+  ## `setByParse` and inspecting the table is inherently command-line only.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
