@@ -43,3 +43,4 @@ test/Version
 test/ResultInt
 test/ReturnNonIntNoAuto
 test/DetectSet
+test/DetectSet2

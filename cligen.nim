@@ -150,7 +150,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    suppress: seq[string] = @[], shortHelp = 'h',
                    implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
                    mandatoryOverride: seq[string] = @[], delimit=",",
-                   version: Version=("",""), noAutoEcho: bool=false): untyped =
+                   version: Version=("",""), noAutoEcho: bool=false,
+                   setByParse: ptr var Table[string, seq[string]] = nil): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -333,6 +334,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
+  let setByParseP = setByParse
   proc defOptCases(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`pId`.key))
     result.add(newNimNode(nnkOfBranch).add(
@@ -359,6 +361,12 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       if `parNm` in `mandOvr`:
         maybeMandInForce = quote do:
           `mandInFId` = false
+      let maybeRecord =
+        if setByParseP != nil:
+          quote do:
+            try: `setByParseP`[][`parNm`].add(`pId`.val)
+            except KeyError: `setByParseP`[][`parNm`] = @[ `pId`.val ]
+        else: newNimNode(nnkEmpty)
       let apCall = quote do:
         `apId`.key = `pId`.key
         `apId`.val = `pId`.val
@@ -366,6 +374,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
         `apId`.parNm = `parNm`
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
+        `maybeRecord`
         if not argParse(`spar`, `dpar`, `apId`):
           raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
@@ -473,7 +482,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 suppress: seq[string] = @[], shortHelp = 'h',
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
                 mandatoryOverride: seq[string] = @[], delimit = ",",
-                version: Version=("",""), noAutoEcho: bool=false): untyped =
+                version: Version=("",""), noAutoEcho: bool=false,
+                setByParse: ptr var Table[string, seq[string]] = nil): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -482,7 +492,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
-      delimit, version))
+      delimit, version, noAutoEcho, setByParse))
   let disNm = ident("dispatch" & $pro)
   let autoEc = not noAutoEcho.boolVal
   if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
