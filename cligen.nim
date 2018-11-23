@@ -398,7 +398,9 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       k = "short"
       if `pId`.kind == cmdLongOption:
         k = "long"
-        let sugg = suggestions(`pId`.key, allParams)
+        var idNorm: seq[string]
+        for id in allParams: idNorm.add(optionNormalize(id))  #Use `normalize`?
+        let sugg = suggestions(optionNormalize(`pId`.key), idNorm, allParams)
         if sugg.len > 0:
           mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
       stderr.write("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
@@ -643,7 +645,7 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
       `helpDump`
     else:
       stderr.write "Unknown subcoommand \"" & `arg0Id` & "\".  "
-      let sugg = suggestions(`arg0Id`, `subCmdsId`)
+      let sugg = suggestions(`arg0Id`, `subCmdsId`, `subCmdsId`)
       if sugg.len > 0:
         stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
       else:
