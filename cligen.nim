@@ -576,7 +576,6 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
   var multiDef = newStmtList()
-  var setSubCs = newStmtList()
   multiDef.add(quote do:
     import os
     proc `multiId`(subCmd: seq[string]) =
