@@ -7,6 +7,3 @@ proc get(a=1) = discard
 #func get(a: string) = discard 
 
 dispatch(QualifiedSym.get)
-
-#XXX Work in progress
-#dispatchMulti([QualifiedSym.get])
