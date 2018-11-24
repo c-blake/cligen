@@ -584,9 +584,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     result.add(c)
     result.add(newCall("add", subCmdsId, newStrLitNode(subCmdName(p))))
   let fileParen = lineinfo(procBrackets)  # Infer multi-cmd name from lineinfo
-  let Slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
-  let Paren = rfind(fileParen, ".nim(") - 1
-  let srcBase = newStrLitNode(if Paren < 0: "??" else: fileParen[Slash..Paren])
+  let slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
+  let paren = rfind(fileParen, ".nim(") - 1
+  let srcBase = newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")

@@ -37,40 +37,40 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
     result &= rowSep
 
 type C = int16      ##Type for edit cost values & totals
-const Cmx = C.high
-proc distDamerau*[T](A, B: openArray[T], maxDist=Cmx,
-                     Cid=C(1), Csub=C(1), Cxpo=C(1), dI: var seq[C]): C =
+const mxC = C.high
+proc distDamerau*[T](a, b: openArray[T], maxDist=mxC,
+                     idC=C(1), subC=C(1), xpoC=C(1), dI: var seq[C]): C =
   ## True Damerau(1964) distance with unrestricted transpositions.
-  var n = A.len                         #ensure 2nd arg shorter (m < n)
-  var m = B.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
-  if abs(n - m) * int(Cid) >= int(maxDist):
+  var n = a.len                         #ensure 2nd arg shorter (m < n)
+  var m = b.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
+  if abs(n - m) * int(idC) >= int(maxDist):
     return maxDist
-  let CsubA = min(C(2) * Cid, Csub)      #Can always do a sub w/del + ins
+  let subCeff = min(C(2) * idC, subC)   #effective cost; Can sub w/del+ins
   template d(i, j: C): auto = dI[(C(m) + C(2))*(i) + (j)]
-  template DA(i: C): auto = dI[(C(m) + C(2))*(C(n) + C(2)) + (i)]
-  let BIG = C(n + m) * Cid
+  template dA(i: C): auto = dI[(C(m) + C(2))*(C(n) + C(2)) + (i)]
+  let big = C(n + m) * idC
   dI.setLen((n + 2) * (m + 2) + 256)
-  zeroMem(addr DA(0), 256 * sizeof(C))
-  d(C(0), C(0)) = BIG
+  zeroMem(addr dA(0), 256 * sizeof(C))
+  d(C(0), C(0)) = big
   for i in C(0) .. C(n):
-    d(i+C(1), C(1)) = C(i) * Cid
-    d(i+C(1), C(0)) = BIG
+    d(i+C(1), C(1)) = C(i) * idC
+    d(i+C(1), C(0)) = big
   for j in C(0) .. C(m):
-    d(C(1), j+1) = C(j) * Cid
-    d(C(0), j+1) = BIG
+    d(C(1), j+1) = C(j) * idC
+    d(C(0), j+1) = big
   for i in C(1) .. C(n):
-    var DB = C(0)
+    var dB = C(0)
     for j in C(1) .. C(m):
-      let i1 = DA(C(B[j - 1]))
-      let j1 = DB
-      let cost = if A[i-1] == B[j-1]: C(0) else: C(1)
+      let i1 = dA(C(b[j - 1]))
+      let j1 = dB
+      let cost = if a[i-1] == b[j-1]: C(0) else: C(1)
       if cost == 0:
-        DB = j
-      d(i+C(1), j+C(1)) = min(d(i1, j1) + (i-i1-C(1) + C(1) + j-j1-C(1)) * Cxpo,
-                            min(d(i, j) + cost * CsubA,
-                                min(d(i+1, j) + Cid,
-                                    d(i  , j+1) + Cid)))
-    DA(C(A[i-1])) = i
+        dB = j
+      d(i+C(1), j+C(1)) = min(d(i1, j1) + (i-i1-C(1) + C(1) + j-j1-C(1)) * xpoC,
+                            min(d(i, j) + cost * subCeff,
+                                min(d(i+1, j) + idC,
+                                    d(i  , j+1) + idC)))
+    dA(C(a[i-1])) = i
   return min(maxDist, d(C(n)+C(1), C(m)+C(1)))
 
 proc suggestions*[T](wrong: string; match, right: openArray[T],
