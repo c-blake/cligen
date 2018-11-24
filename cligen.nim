@@ -3,6 +3,12 @@ type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
 
+proc dispatchId(name: string="", cmd: string="", rep: string=""): NimIdent =
+  ## Build Nim ident for generated parser-dispatcher proc
+  result = if name.len > 0: toNimIdent(name)
+           elif cmd.len > 0: toNimIdent("dispatch" & cmd)  #XXX illegal chars
+           else: toNimIdent("dispatch" & rep)
+
 proc toString(c: char): string =
   ## creates a string from char `c`
   result = newStringOfCap(1)
@@ -137,7 +143,7 @@ const dflUsage = "${prelude}$command $args\n" &
                  "$doc  Options(opt-arg sep :|=|spc):\n" &
                  "$options$sep"
 
-macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
+macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                    help: typed = {}, short: typed = {}, usage: string=dflUsage,
                    prelude="Usage:\n  ", echoResult: bool = false,
                    requireSeparator: bool = false, sepChars = {'=', ':'},
@@ -151,7 +157,8 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
                    implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
                    mandatoryOverride: seq[string] = @[], delimit=",",
                    version: Version=("",""), noAutoEcho: bool=false,
-                   setByParse: ptr var Table[string, seq[string]] = nil): untyped =
+                   setByParse: ptr var Table[string, seq[string]] = nil,
+                   dispatchName: string = ""): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -222,14 +229,14 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
   ## proc cannot itself know from inside the call if a parameter got its value
   ## via explicit user passing or via defaulting.  This means any proc using
   ## `setByParse` and inspecting the table is inherently command-line only.
+  ##
+  ## `dispatchName` is the name of a generated dispatcher, defaulting to simply
+  ## "dispatchpro" where `pro` is the name of the proc being wrapped.
 
   let helps = parseHelps(help)
   #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
   #XXX needs either to be accessed at top-level or assigned in a shadow local.
-  when compiles(pro.getImpl):
-    let impl = pro.getImpl
-  else:
-    let impl = pro.symbol.getImpl
+  let impl = pro.symbol.getImpl
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
@@ -237,12 +244,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
     cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
-  when compiles(ident("dispatch" & $pro)):  # Name of dispatch wrapper
-    let disNm = ident("dispatch" & $pro)
-  elif compiles(!("dispatch" & $pro)):
-    let disNm = !("dispatch" & $pro)
-  else:
-    let disNm = toNimIdent("dispatch" & $pro)
+  let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, shortHelp, parseShorts(short))
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
@@ -479,7 +481,7 @@ macro dispatchGen*(pro: typed, cmdName: string = "", doc: string = "",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
+macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                 help: typed = { }, short: typed = { }, usage: string=dflUsage,
                 prelude = "Usage:\n  ", echoResult: bool = false,
                 requireSeparator: bool = false, sepChars = {'=', ':'},
@@ -493,7 +495,8 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
                 implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
                 mandatoryOverride: seq[string] = @[], delimit = ",",
                 version: Version=("",""), noAutoEcho: bool=false,
-                setByParse: ptr var Table[string, seq[string]] = nil): untyped =
+                setByParse: ptr var Table[string, seq[string]] = nil,
+                dispatchName: string = ""): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -503,7 +506,7 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
       helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
       suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
       delimit, version, noAutoEcho, setByParse))
-  let disNm = ident("dispatch" & $pro)
+  let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
   if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
     result.add(quote do:                      #No Return Type At All
@@ -531,27 +534,38 @@ macro dispatch*(pro: typed, cmdName: string = "", doc: string = "",
         except ParseError: quit(1))
 
 proc subCmdName(node: NimNode): string {.compileTime.} =
-  ## Get last cmdName= argument, if any, in bracket expression, or name of 1st
-  ## element of bracket if none given.
-  result = $node[0]
+  ## Get last cmdName argument, if any, in bracket expression, or name of 1st
+  ## element of bracket if none given, unless that name is module-qualified.
   for child in node:
-    if child.kind == nnkExprEqExpr:
-      if eqIdent(child[0], "cmdName"):
-        result = $child[1]
+    if child.kind == nnkExprEqExpr and eqIdent(child[0], "cmdName"):
+      result = $child[1]
+  if result == "":
+    if '.' in repr(node):
+      error "qualified symbol " & repr(node) & " must manually set `cmdName`."
+    else:
+      result = $node[0]
+
+proc dispatchName(node: NimNode): string {.compileTime.} =
+  ## Get last dispatchName argument, if any, in bracket expression, or return
+  ## "dispatch & subCmdName(node)" if none.
+  result = "dispatch" & subCmdName(node)  #XXX strip illegal chars
+  for child in node:
+    if child.kind == nnkExprEqExpr and eqIdent(child[0], "dispatchName"):
+      result = $child[1]
 
 proc subCmdEchoRes(node: NimNode): bool {.compileTime.} =
   ##Get last echoResult value, if any, in bracket expression
   result = false
   for child in node:
-    if child.kind == nnkExprEqExpr:
-      if eqIdent(child[0], "echoResult"): return true
+    if child.kind == nnkExprEqExpr and eqIdent(child[0], "echoResult"):
+      return true
 
 proc subCmdNoAutoEc(node: NimNode): bool {.compileTime.} =
   ##Get last noAutoEcho value, if any, in bracket expression
   result = false
   for child in node:
-    if child.kind == nnkExprEqExpr:
-      if eqIdent(child[0], "noAutoEcho"): return true
+    if child.kind == nnkExprEqExpr and eqIdent(child[0], "noAutoEcho"):
+      return true
 
 var cligenVersion* = ""
 
@@ -589,8 +603,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   var cnt = 0
   for p in procBrackets:
     inc(cnt)
-    let disNm = ident("dispatch" & $p[0])
-    let sCmdNm = newStrLitNode(subCmdName(p))
+    let sCmdNmS = subCmdName(p)
+    let disNm = dispatchId(dispatchName(p), sCmdNmS, "")
+    let sCmdNm = newStrLitNode(sCmdNmS)
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdAuEc = not subCmdNoAutoEc(p)
     let nm0 = $srcBase
@@ -644,7 +659,7 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
       let `dashHelpId` = @[ "--help" ]
       `helpDump`
     else:
-      stderr.write "Unknown subcoommand \"" & `arg0Id` & "\".  "
+      stderr.write "Unknown subcommand \"" & `arg0Id` & "\".  "
       let sugg = suggestions(`arg0Id`, `subCmdsId`, `subCmdsId`)
       if sugg.len > 0:
         stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"

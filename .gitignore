@@ -44,3 +44,5 @@ test/ResultInt
 test/ReturnNonIntNoAuto
 test/DetectSet
 test/DetectSet2
+test/QualifiedSym
+test/QualifiedMulti

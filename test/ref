@@ -434,6 +434,22 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 
+==> test/QualifiedMulti.out <==
+Usage:
+  QualifiedMulti {subcommand}
+where {subcommand} is one of:
+  help get put
+Run top-level cmd with -h or --help for top-level help.
+Run top-level with subcmd "help" to get *all* helps.
+Run any given subcommand with --help to see help for that one.
+
+==> test/QualifiedSym.out <==
+Usage:
+  get [optional-params]
+  Options(opt-arg sep :|=|spc):
+  -h, --help          write this help to stdout
+  -a=, --a=   int  1  set a
+
 ==> test/ResultInt.out <==
 Usage:
   editDistanceAscii [required&optional-params]
@@ -547,7 +563,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(111, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+cligen.nim(117, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
