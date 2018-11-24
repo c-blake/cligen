@@ -37,6 +37,15 @@ Version: 0.9.18
     print out the full help upon `--help` or `-h` (or whatever `shortHelp` is),
     but tells the user to do that for more details.
 
+    `dispatchGen` (and so also `dispatch` and `dispatchMulti`) now takes a
+    couple new arguments: `setByParse` and `dispatchName`, documented in the
+    doc comment.  The first is basically a way to catch the whole sequence of
+    strings any parameter received during the parse.  The second is a way to
+    override the default naming of the generated dispatcher to "dispatch" &
+    $cmdName (note this is different than the old "dispatch" & $pro default
+    if you set cmdName, but you can recover the old name with `dispatchName=`
+    if necessary).
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time
