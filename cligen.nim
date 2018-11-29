@@ -24,10 +24,22 @@ proc toStrSeq(strSeqInitializer: NimNode): seq[string] =
   for kid in strSeqInitializer[1]:
     result.add($kid)
 
-proc formalParamExpand(fpars: NimNode, suppress: seq[string]= @[]): NimNode =
+proc containsParam(fpars: NimNode, key: string): bool =
+# for i in 1 ..< len(fpars):                  #default for result = false
+#   if $(fpars[i][0]) == key: return true
+  for declIx in 1 ..< len(fpars):
+    let idefs = fpars[declIx]
+    for i in 0 ..< len(idefs) - 3:
+      if $idefs[i] == key: return true
+    if $idefs[^3] == key: return true
+
+proc formalParamExpand(fpars: NimNode, n: auto, suppress: seq[string]= @[]): NimNode =
   # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
   result = newNimNode(nnkFormalParams)
   result.add(fpars[0])                                  # just copy ret value
+  for p in suppress:
+    if not fpars.containsParam(p):
+      error repr(n[0]) & " has no param matching `suppress` key \"" & p & "\""
   for declIx in 1 ..< len(fpars):
     let idefs = fpars[declIx]
     for i in 0 ..< len(idefs) - 3:
@@ -40,25 +52,29 @@ proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
   # Extract formal parameter list from the return value of .symbol.getImpl
   for kid in n:
     if kid.kind == nnkFormalParams:
-      return formalParamExpand(kid, suppress)
+      return formalParamExpand(kid, n, suppress)
   error "formalParams requires a proc argument."
   return nil                #not-reached
 
-proc parseHelps(helps: NimNode): Table[string, string] =
+proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
   # Compute a table giving the help text for any parameter
   result = initTable[string, string]()
   for ph in helps:
       let p: string = (ph[1][0]).strVal
       let h: string = (ph[1][1]).strVal
       result[p] = h
+      if not fpars.containsParam(p):
+        error $proNm & " has no param matching `help` key \"" & p & "\""
 
-proc parseShorts(shorts: NimNode): Table[string, char] =
+proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   # Compute a table giving the user-specified short option for any parameter
   result = initTable[string, char]()
   for losh in shorts:
       let lo: string = (losh[1][0]).strVal
       let sh: char = char((losh[1][1]).intVal)
       result[lo] = sh
+      if lo.len > 0 and not fpars.containsParam(lo):
+        error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
               userSpec: Table[string, char]): Table[string, char] =
@@ -195,9 +211,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## By default, `cligen` maps the first non-defaulted `seq[]` proc parameter
   ## to any non-option/positional command args.  `positional` selects another.
   ##
-  ## `argPre` & `argPost` are sources of cmdLine-like data, e.g. from a split
-  ## environment variable value, applied pre/post the actual command line.
-  ##
   ## `suppress` is a list of formal parameter names to NOT include in the
   ## parsing/assigning system.  Such names are effectively pinned to whatever
   ## their default values are.
@@ -233,9 +246,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## `dispatchName` is the name of a generated dispatcher, defaulting to simply
   ## "dispatchpro" where `pro` is the name of the proc being wrapped.
 
-  let helps = parseHelps(help)
-  #XXX Nim fails to access macro args in sub-scopes.  So `help` (`cmdName`...)
-  #XXX needs either to be accessed at top-level or assigned in a shadow local.
+  #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
+  #XXX need either to be used at top-level or assigned in a shadow local.
   let impl = pro.symbol.getImpl
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
@@ -245,13 +257,20 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
+  let helps = parseHelps(help, proNm, fpars)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
-  let shOpt = dupBlock(fpars, posIx, shortHelp, parseShorts(short))
+  let shOpt = dupBlock(fpars, posIx, shortHelp, parseShorts(short,proNm,fpars))
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
   let implDef = toStrSeq(implicitDefault)
+  for p in implDef:
+    if not fpars.containsParam(p):
+      error $proNm&" has no param matching `implicitDefault` key \"" & p & "\""
   let mandOvr = toStrSeq(mandatoryOverride)
+  for p in mandOvr:
+   if not fpars.containsParam(p):
+     error $proNm&" has no param matching `mandatoryOverride` key \"" & p & "\""
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
     dpars[i][0] = ident($(fpars[i][0]) & "ParamDefault")   # unique suffix
     spars[i][0] = ident($(fpars[i][0]) & "ParamDispatch")  # unique suffix
@@ -436,15 +455,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                      $`pId` & "\nRun with --help for full usage.\n")
         raise newException(ParseError, "Unexpected non-option " & $`pId`))
 
-  let argPreP=argPre; let argPostP=argPost  #XXX ShouldBeUnnecessary
-  proc callParser(): NimNode =
-    result = quote do:
-      if len(`argPreP`) > 0: parser(`argPreP`)    #Extra *compile-time* input
-      parser()
-      if len(`argPostP`) > 0: parser(`argPostP`)  #Extra *compile-time* input
-
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
-  let callPrs=callParser(); let retType=fpars[0]  #XXX ShouldBeUnnecessary
+  let retType=fpars[0]
   result = quote do:
     from os               import commandLineParams
     from cligen/argcvt    import ArgcvtParams, argParse, argHelp
@@ -472,7 +484,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
             else:
               `nonOpt`
       {.pop.}
-      `callPrs`
+      parser()
       if `mandId`.len > 0 and `mandInFId`:
         stderr.write "Missing these required parameters:\n"
         for m in `mandId`: stderr.write "  ", m, "\n"
