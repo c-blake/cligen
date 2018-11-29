@@ -518,6 +518,7 @@ macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       delimit, version, noAutoEcho, setByParse))
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
+  #XXX below mess should prob be a template used both here and in dispatchMulti
   if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
     result.add(quote do:                      #No Return Type At All
       try: `disNm`(); quit(0)
