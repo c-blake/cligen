@@ -137,7 +137,7 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "enum", $dfl ]
+  result = @[ a.argKeys, "enum", a.argDf($dfl) ]
 
 # various numeric types
 proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib

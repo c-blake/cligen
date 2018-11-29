@@ -190,14 +190,15 @@ memory overhead.
 
 ==> test/Enums.out <==
 Usage:
-  demo [optional-params] [args]
+  demo [required&optional-params] [args]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                          write this help to stdout
-  -b=, --bg=       enum        red    background color
-  -f=, --fgs=      ,SV[Color]  green  foreround colors
-  -c=, --cursors=  ,SV[Color]  blue   cursor colors
-  -x=, --x=        int         0      set x
+  -h, --help                        write this help to stdout
+  -c=, --c=   enum        REQUIRED  primary color
+  -b=, --bg=  enum        red       background color
+  -f=, --fg=  ,SV[Color]  green     foreround colors
+  --curs=     ,SV[Color]  blue      cursor colors
+  -x=, --x=   int         0         set x
 
 ==> test/External.out <==
 Usage:
