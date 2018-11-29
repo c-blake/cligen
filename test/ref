@@ -143,6 +143,13 @@ Usage:
   -a=, --alpha=  int  1  set alpha
   -b=, --beta=   int  2  set beta
 
+==> test/DistinctInt.out <==
+Usage:
+  main [required&optional-params]
+  Options(opt-arg sep :|=|spc):
+  -h, --help                  write this help to stdout
+  -a=, --age=  int  REQUIRED  set age
+
 ==> test/DupShort.out <==
 Usage:
   demo [optional-params]

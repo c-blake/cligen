@@ -46,3 +46,4 @@ test/DetectSet
 test/DetectSet2
 test/QualifiedSym
 test/QualifiedMulti
+test/DistinctInt
