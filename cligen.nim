@@ -156,23 +156,46 @@ type Version* = tuple[longOpt: string, output: string]
 const dflUsage = "${prelude}$command $args\n" &
                  "$doc  Options(opt-arg sep :|=|spc):\n" &
                  "$options$sep"
+type
+  ClStatus* = enum clBadKey,                        ## Unknown long key
+                   clBadVal,                        ## Unparsable value
+                   clNonOption,                     ## Unexpected non-option
+                   clMissingMandatory,              ## >=1 mandatory missing
+                   clHelpOnly, clVersionOnly, clOk  ## Non-errors
+  ClParse* = tuple[paramName,         ##Param name/long opt key
+                   unparsedVal,       ##Unparsed value("" for missing mandatory)
+                   message: string;   ##A decent default error message
+                   status: ClStatus]  ##Parse status for this parameter
+
+proc contains*(x: openArray[ClParse], paramName: string): bool =
+  ## Test if the `seq` updated via `setByParse` contains a parameter.
+  for e in x:
+    if e.paramName == paramName: return true
+
+proc contains*(x: openArray[ClParse], status: ClStatus): bool =
+  ## Test if the `seq` updated via `setByParse` contains a certain status.
+  for e in x:
+    if e.status == status: return true
+
+proc numOfStatus*(x: openArray[ClParse], status: set[ClStatus]): int =
+  ## Count many elements in `seq` updated via `setByParse` with parse status
+  ## in `status`.
+  for e in x:
+    if e.status in status: inc(result)
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
-                   help: typed = {}, short: typed = {}, usage: string=dflUsage,
-                   prelude="Usage:\n  ", echoResult: bool = false,
-                   requireSeparator: bool = false, sepChars = {'=', ':'},
-                   opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
-                   helpTabColumnGap: int = 2, helpTabMinLast: int = 16,
-                   helpTabRowSep: string = "", helpTabColumns: seq[int] = @[
-                    helpTabOption, helpTabType, helpTabDefault, helpTabDescrip],
-                   stopWords: seq[string] = @[], positional = "",
-                   argPre: seq[string] = @[], argPost: seq[string] = @[],
-                   suppress: seq[string] = @[], shortHelp = 'h',
-                   implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
-                   mandatoryOverride: seq[string] = @[], delimit=",",
-                   version: Version=("",""), noAutoEcho: bool=false,
-                   setByParse: ptr var Table[string, seq[string]] = nil,
-                   dispatchName: string = ""): untyped =
+ help: typed = {}, short: typed = {}, usage: string=dflUsage,
+ prelude="Usage:\n  ", echoResult: bool=false, requireSeparator: bool=false,
+ sepChars={'=',':'},
+ opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
+ helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
+ helpTabColumns: seq[int] = @[
+  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
+ stopWords: seq[string] = @[], positional="", suppress: seq[string] = @[],
+ shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
+ mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
+ noAutoEcho: bool=false, dispatchName: string = "",
+ setByParse: ptr var seq[ClParse]=nil): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
@@ -233,16 +256,20 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## which defines how a CLI user may dump the version of a program.  If you
   ## want to provide a short option, add a `"version":'v'` entry to `short`.
   ##
-  ## `setByParse` is `addr(some var Table[string, seq[string]])` and, if given,
-  ## will be keyed by parameter names/long keys each having a `seq` of all the
-  ## values assigned from that key in whatever order `mergeParams()` creates.
-  ## A wrapped proc can inspect this to make certain decisions.  An ordinary Nim
-  ## proc cannot itself know from inside the call if a parameter got its value
-  ## via explicit user passing or via defaulting.  This means any proc using
-  ## `setByParse` and inspecting the table is inherently command-line only.
-  ##
   ## `dispatchName` is the name of a generated dispatcher, defaulting to simply
   ## "dispatchpro" where `pro` is the name of the proc being wrapped.
+  ##
+  ## `setByParse` is `addr(some var seq[ClParse])`.  If given/non-nil, this will
+  ## collect each parameter seen, keyed under its long/param name (in other
+  ## words, input from `mergeParams` but slightly cooked).  Wrapped procs can
+  ## inspect this to decide various things.  Ordinary Nim procs, from inside
+  ## calls, do not themselves know how params got their values - positional,
+  ## keyword, or defaulting.  So, any proc using `setByParse` is inherently
+  ## command-line only.  So, this `var seq` needing to be declared before the
+  ## wrapped proc is not considered onerous.  Please bear in mind that people
+  ## hateful of shell programming appreciate you keeping important functionality
+  ## Nim-callable.  `cligen` provides a few convenience proc to help interpret
+  ## `setByParse`: `contains` & `numOfStatus`.
 
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
@@ -304,6 +331,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let htCols   = helpTabColumns
   let prlude   = prelude; let mandHelp = mandatoryHelp
   let shortHlp = shortHelp; let delim = delimit
+  let setByParseId = ident("setByP")    # parse recording var seq
+  let setByParseP = setByParse
 
   proc initVars(): NimNode =            # init vars & build help str
     result = newStmtList()
@@ -319,7 +348,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       var `tabId`: TextTab =
         @[ @[ "-" & shortH & ", --help", "", "", "write this help to stdout" ] ]
       `apId`.shortNoVal = { shortH[0] } # argHelp(bool) updates
-      `apId`.longNoVal = @[ "help" ])   # argHelp(bool) appends
+      `apId`.longNoVal = @[ "help" ]    # argHelp(bool) appends
+      let `setByParseId`: ptr seq[ClParse] = `setByParseP`)
     if vsnOpt.len > 0:
       result.add(quote do:
        var versionDflt = false
@@ -361,7 +391,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
-  let setByParseP = setByParse
   proc defOptCases(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`pId`.key))
     result.add(newNimNode(nnkOfBranch).add(
@@ -388,12 +417,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       if `parNm` in `mandOvr`:
         maybeMandInForce = quote do:
           `mandInFId` = false
-      let maybeRecord =
-        if setByParseP != nil:
-          quote do:
-            try: `setByParseP`[][`parNm`].add(`pId`.val)
-            except KeyError: `setByParseP`[][`parNm`] = @[ `pId`.val ]
-        else: newNimNode(nnkEmpty)
       let apCall = quote do:
         `apId`.key = `pId`.key
         `apId`.val = `pId`.val
@@ -401,9 +424,15 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.parNm = `parNm`
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
-        `maybeRecord`
-        if not argParse(`spar`, `dpar`, `apId`):
-          raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
+        if cast[pointer](`setByParseId`) != nil:
+          if argParse(`spar`,`dpar`,`apId`):
+            `setByParseId`[].add((`parNm`,`pId`.val, "", clOk))
+          else:
+            `setByParseId`[].add((`parNm`,`pId`.val,
+                                 "Cannot parse arg to " & `apId`.key, clBadVal))
+        else:
+          if not argParse(`spar`, `dpar`, `apId`):
+            raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
         `maybeMandInForce`
       if parNm in shOpt and lopt.len > 1:     # both a long and short option
@@ -424,7 +453,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
           mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
       stderr.write("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
                    mb & "Run with --help for full usage.\n")
-      raise newException(ParseError, "Unknown option")))
+      raise newException(ParseError, "Unknown option")))  #XXX switch on `setByParseId`
 
   proc defNonOpt(): NimNode =
     result = newStmtList()
@@ -444,7 +473,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
         if not argParse(`tmpId`, `tmpId`, `apId`):
-          raise newException(ParseError, "Cannot parse " & `apId`.key)
+          raise newException(ParseError, "Cannot parse " & `apId`.key)  #XXX switch on `setByParseId`
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
@@ -465,8 +494,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(@[ `cName` ]),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`=""): `retType` =
-      `iniVar`
       {.push hint[XDeclaredButNotUsed]: off.}
+      `iniVar`
       proc parser(args=`cmdLineId`) =
         var `posNoId` = 0
         var `keyCountId` = initCountTable[string]()
@@ -492,30 +521,27 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
-                help: typed = { }, short: typed = { }, usage: string=dflUsage,
-                prelude = "Usage:\n  ", echoResult: bool = false,
-                requireSeparator: bool = false, sepChars = {'=', ':'},
-                opChars={'+','-','*','/','%', '@',',', '.','&','^','~','|'},
-                helpTabColumnGap = 2, helpTabMinLast = 16, helpTabRowSep = "",
-                helpTabColumns = @[ helpTabOption, helpTabType, helpTabDefault,
-                                    helpTabDescrip ],
-                stopWords: seq[string] = @[], positional = "",
-                argPre: seq[string] = @[], argPost: seq[string] = @[],
-                suppress: seq[string] = @[], shortHelp = 'h',
-                implicitDefault: seq[string] = @[], mandatoryHelp = "REQUIRED",
-                mandatoryOverride: seq[string] = @[], delimit = ",",
-                version: Version=("",""), noAutoEcho: bool=false,
-                setByParse: ptr var Table[string, seq[string]] = nil,
-                dispatchName: string = ""): untyped =
+ help: typed = {}, short: typed = {}, usage: string=dflUsage,
+ prelude="Usage:\n  ", echoResult: bool=false, requireSeparator: bool=false,
+ sepChars={'=',':'},
+ opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
+ helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
+ helpTabColumns: seq[int] = @[
+  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
+ stopWords: seq[string] = @[], positional="", suppress: seq[string] = @[],
+ shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
+ mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
+ noAutoEcho: bool=false, dispatchName: string = "",
+ setByParse: ptr var seq[ClParse]=nil): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
   result.add(newCall(
     "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
-      helpTabRowSep, helpTabColumns, stopWords, positional, argPre, argPost,
-      suppress, shortHelp, implicitDefault, mandatoryHelp, mandatoryOverride,
-      delimit, version, noAutoEcho, setByParse))
+      helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
+      implicitDefault, mandatoryHelp, mandatoryOverride, delimit, version,
+      noAutoEcho, dispatchName, setByParse))
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
   #XXX below mess should prob be a template used both here and in dispatchMulti
@@ -606,6 +632,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   multiDef.add(quote do:
     import os
     proc `multiId`(subCmd: seq[string]) =
+      {.push hint[XDeclaredButNotUsed]: off.}
       let n = subCmd.len
       let `arg0Id` = if n > 0: subCmd[0] else: ""
       let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])

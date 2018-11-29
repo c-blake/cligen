@@ -137,11 +137,11 @@ Usage:
 
 ==> test/DetectSet2.out <==
 Usage:
-  foo [optional-params]
+  foo [required&optional-params]
   Options(opt-arg sep :|=|spc):
-  -h, --help             write this help to stdout
-  -a=, --alpha=  int  1  set alpha
-  -b=, --beta=   int  2  set beta
+  -h, --help                    write this help to stdout
+  -a=, --alpha=  int  REQUIRED  set alpha
+  -b=, --beta=   int  2         set beta
 
 ==> test/DistinctInt.out <==
 Usage:
