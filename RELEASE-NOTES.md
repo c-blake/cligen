@@ -3,6 +3,11 @@ RELEASE NOTES
 
 Version: 0.9.18
 ---------------
+    This release adds several major features..Krux02 asked for (approximately)
+    mergeParams and Timotheecour requested non-quitting invocation & something
+    like setByParse and alaviss asked for qualified proc name support.  A few
+    others just came to me working on it.
+
     Generated dispatchers now have the same return type (including void) and
     the same return value of wrapped procs.  Abnormal control flow from bad or
     magic command parameters is communicated to the caller of a generated
@@ -15,8 +20,9 @@ Version: 0.9.18
     `dispatch`/`dispatchMulti`. { Since a 1-byte exit codes/mod 256 can be
     catastrophic truncation for many returns, it is possible trying to `echo`
     being the first step would be more user friendly.  However, if people want
-    to write procs with various exit codes in mind, it's hard to think of a
-    more natural setup than just exiting with the return. }
+    to write procs with various exit codes in mind, it's also hard to think of
+    a more natural setup than just exiting with that integer return.  So, the
+    need for the CLI author to supply an `echoResult=true` override remains. }
 
     `cligen` now gets its command parameters by calling `mergeParams()` which
     CLI authors may redefine arbitrarily (see `test/FullyAutoMulti.nim` and/or
@@ -26,9 +32,8 @@ Version: 0.9.18
     become smarter in the future if people ask.
 
     `cligen` now tries to detect typos/spelling mistakes by suggesting nearby
-    elements in both long option keys and subcommand names.  Presently, just
-    uses the editDistanceASCII, but true Damerau distance may be forthcoming.
-    Suggestions are not offered for incorrect short option keys.
+    elements in both long option keys and subcommand names where nearby is
+    according to an edit distance designed for detecting typos.
 
     Commands written with `dispatchMulti` now have more gradual information
     revelation error behavior, not dumping the full set of all helps unless
@@ -45,6 +50,13 @@ Version: 0.9.18
     $cmdName (note this is different than the old "dispatch" & $pro default
     if you set cmdName, but you can recover the old name with `dispatchName=`
     if necessary).
+
+    `argPre` and `argPost` have been retired.  If you happened to be using them
+    you should be able to recreate (easily?) any behavior with `mergeParams()`.
+
+    `dispatchGen` now generates a compile-time error if you use a parameter name
+    not in the wrapped proc for `help`, `short`, `suppress`, `implicitDefault`,
+    or `mandatoryOverride`.
 
 Version: 0.9.17
 ---------------
