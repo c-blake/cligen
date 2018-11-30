@@ -1255,6 +1255,20 @@ function main() {
     title="ParseError = object of Exception"><wbr />Parse<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Version"
     title="Version = tuple[longOpt: string, output: string]"><wbr />Version<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ClStatus"
+    title="ClStatus = enum
+  clBadKey,                   ## Unknown long key
+  clBadVal,                   ## Unparsable value
+  clNonOption,                ## Unexpected non-option
+  clMissing,                  ## Mandatory but missing
+  clHelpOnly, clVersionOnly, clOk ## Non-errors"><wbr />Cl<wbr />Status<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ClParse"
+    title="ClParse = tuple[paramName,      ## Parse status for this parameter
+## A decent default error message
+## Param name&#x2F;long opt key
+              unparsedVal,    ## Unparsed value(&quot;&quot; for missing mandatory)
+              message: string,
+              status: ClStatus]"><wbr />Cl<wbr />Parse<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1277,6 +1291,14 @@ function main() {
     title="helpTabDefault = 2"><wbr />help<wbr />Tab<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#helpTabDescrip"
     title="helpTabDescrip = 3"><wbr />help<wbr />Tab<wbr />Descrip<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#dflUsage"
+    title="dflUsage = &quot;${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep&quot;"><wbr />dfl<wbr />Usage<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ClErrors"
+    title="ClErrors = {clBadKey, clBadVal, clNonOption, clMissing}"><wbr />Cl<wbr />Errors<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ClExit"
+    title="ClExit = {clHelpOnly, clVersionOnly}"><wbr />Cl<wbr />Exit<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ClNoCall"
+    title="ClNoCall = {clBadKey..clVersionOnly}"><wbr />Cl<wbr />No<wbr />Call<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1287,6 +1309,14 @@ function main() {
     title="postInc(x: var int): int"><wbr />post<wbr />Inc<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delItem%2Cseq%5BT%5D%2CT"
     title="delItem[T](x: var seq[T]; item: T): int"><wbr />del<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#contains%2CopenArray%5BClParse%5D%2Cstring"
+    title="contains(x: openArray[ClParse]; paramName: string): bool"><wbr />contains<span class="attachedType" style="visibility:hidden">ClParse</span></a></li>
+  <li><a class="reference" href="#contains%2CopenArray%5BClParse%5D%2CClStatus"
+    title="contains(x: openArray[ClParse]; status: ClStatus): bool"><wbr />contains<span class="attachedType" style="visibility:hidden">ClParse</span></a></li>
+  <li><a class="reference" href="#numOfStatus%2CopenArray%5BClParse%5D%2Cset%5BClStatus%5D"
+    title="numOfStatus(x: openArray[ClParse]; stati: set[ClStatus]): int"><wbr />num<wbr />Of<wbr />Status<span class="attachedType" style="visibility:hidden">ClParse</span></a></li>
+  <li><a class="reference" href="#next%2CopenArray%5BClParse%5D%2Cset%5BClStatus%5D%2Cint"
+    title="next(x: openArray[ClParse]; stati: set[ClStatus]; start = 0): int"><wbr />next<span class="attachedType" style="visibility:hidden">ClParse</span></a></li>
   <li><a class="reference" href="#mergeParams%2Cseq%5Bstring%5D"
     title="mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]"><wbr />merge<wbr />Params<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1295,34 +1325,32 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#dispatchGen.m%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bint%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cstring%2CVersion%2Cbool%2Cptr.Table%5Bstring%2Cseq%5Bstring%5D%5D%2Cstring"
+      <li><a class="reference" href="#dispatchGen.m%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bint%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cstring%2CVersion%2Cbool%2Cstring%2Cptr.seq%5BClParse%5D"
     title="dispatchGen(pro: typed{nkSym}; cmdName: string = &quot;&quot;; doc: string = &quot;&quot;; help: typed = {};
             short: typed = {}; usage: string = dflUsage; prelude = &quot;Usage:\n  &quot;;
             echoResult: bool = false; requireSeparator: bool = false;
-            sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;^&#x27;,
-                                        &#x27;~&#x27;, &#x27;|&#x27;}; helpTabColumnGap: int = 2;
-            helpTabMinLast: int = 16; helpTabRowSep: string = &quot;&quot;;
-            helpTabColumns: seq[int] = @[0, 1, 2, 3]; stopWords: seq[string] = @[];
-            positional = &quot;&quot;; argPre: seq[string] = @[]; argPost: seq[string] = @[];
+            sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;|&#x27;,
+                                        &#x27;~&#x27;, &#x27;^&#x27;, &#x27;$&#x27;, &#x27;#&#x27;, &#x27;&lt;&#x27;, &#x27;&gt;&#x27;, &#x27;?&#x27;};
+            helpTabColumnGap: int = 2; helpTabMinLast: int = 16;
+            helpTabRowSep: string = &quot;&quot;; helpTabColumns: seq[int] = @[0, 1, 2, 3];
+            stopWords: seq[string] = @[]; positional = &quot;&quot;;
             suppress: seq[string] = @[]; shortHelp = &#x27;h&#x27;;
             implicitDefault: seq[string] = @[]; mandatoryHelp = &quot;REQUIRED&quot;;
             mandatoryOverride: seq[string] = @[]; delimit = &quot;,&quot;;
             version: Version = (&quot;&quot;, &quot;&quot;); noAutoEcho: bool = false;
-            setByParse: ptr var Table[string, seq[string]] = nil;
-            dispatchName: string = &quot;&quot;): untyped"><wbr />dispatch<wbr />Gen<span class="attachedType" style="visibility:hidden">Version</span></a></li>
-  <li><a class="reference" href="#dispatch.m%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cstring%2CVersion%2Cbool%2Cptr.Table%5Bstring%2Cseq%5Bstring%5D%5D%2Cstring"
+            dispatchName: string = &quot;&quot;; setByParse: ptr var seq[ClParse] = nil): untyped"><wbr />dispatch<wbr />Gen<span class="attachedType" style="visibility:hidden">Version</span></a></li>
+  <li><a class="reference" href="#dispatch.m%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bint%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cstring%2CVersion%2Cbool%2Cstring"
     title="dispatch(pro: typed{nkSym}; cmdName: string = &quot;&quot;; doc: string = &quot;&quot;; help: typed = {};
          short: typed = {}; usage: string = dflUsage; prelude = &quot;Usage:\n  &quot;;
          echoResult: bool = false; requireSeparator: bool = false;
-         sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;^&#x27;,
-                                     &#x27;~&#x27;, &#x27;|&#x27;}; helpTabColumnGap = 2;
-         helpTabMinLast = 16; helpTabRowSep = &quot;&quot;; helpTabColumns = @[0, 1, 2, 3];
-         stopWords: seq[string] = @[]; positional = &quot;&quot;; argPre: seq[string] = @[];
-         argPost: seq[string] = @[]; suppress: seq[string] = @[]; shortHelp = &#x27;h&#x27;;
-         implicitDefault: seq[string] = @[]; mandatoryHelp = &quot;REQUIRED&quot;;
-         mandatoryOverride: seq[string] = @[]; delimit = &quot;,&quot;;
-         version: Version = (&quot;&quot;, &quot;&quot;); noAutoEcho: bool = false;
-         setByParse: ptr var Table[string, seq[string]] = nil;
+         sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;|&#x27;,
+                                     &#x27;~&#x27;, &#x27;^&#x27;, &#x27;$&#x27;, &#x27;#&#x27;, &#x27;&lt;&#x27;, &#x27;&gt;&#x27;, &#x27;?&#x27;};
+         helpTabColumnGap: int = 2; helpTabMinLast: int = 16;
+         helpTabRowSep: string = &quot;&quot;; helpTabColumns: seq[int] = @[0, 1, 2, 3];
+         stopWords: seq[string] = @[]; positional = &quot;&quot;; suppress: seq[string] = @[];
+         shortHelp = &#x27;h&#x27;; implicitDefault: seq[string] = @[];
+         mandatoryHelp = &quot;REQUIRED&quot;; mandatoryOverride: seq[string] = @[];
+         delimit = &quot;,&quot;; version: Version = (&quot;&quot;, &quot;&quot;); noAutoEcho: bool = false;
          dispatchName: string = &quot;&quot;): untyped"><wbr />dispatch<span class="attachedType" style="visibility:hidden">Version</span></a></li>
   <li><a class="reference" href="#dispatchMulti.m%2Cvarargs%5Buntyped%5D"
     title="dispatchMulti(procBrackets: varargs[untyped]): untyped"><wbr />dispatch<wbr />Multi<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1368,6 +1396,28 @@ function main() {
 
 
 </dd>
+<a id="ClStatus"></a>
+<dt><pre><a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">clBadKey</span><span class="Other">,</span>                   <span class="Comment">## Unknown long key</span>
+  <span class="Identifier">clBadVal</span><span class="Other">,</span>                   <span class="Comment">## Unparsable value</span>
+  <span class="Identifier">clNonOption</span><span class="Other">,</span>                <span class="Comment">## Unexpected non-option</span>
+  <span class="Identifier">clMissing</span><span class="Other">,</span>                  <span class="Comment">## Mandatory but missing</span>
+  <span class="Identifier">clHelpOnly</span><span class="Other">,</span> <span class="Identifier">clVersionOnly</span><span class="Other">,</span> <span class="Identifier">clOk</span> <span class="Comment">## Non-errors</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="ClParse"></a>
+<dt><pre><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">paramName</span><span class="Other">,</span>      <span class="Comment">## Parse status for this parameter</span>
+<span class="Comment">## A decent default error message</span>
+<span class="Comment">## Param name/long opt key</span>
+              <span class="Identifier">unparsedVal</span><span class="Other">,</span>    <span class="Comment">## Unparsed value(&quot;&quot; for missing mandatory)</span>
+              <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span>
+              <span class="Identifier">status</span><span class="Other">:</span> <a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a><span class="Other">]</span></pre></dt>
+<dd>
+Parse status for this parameter
+
+</dd>
 
 </dl></div>
 <div class="section" id="8">
@@ -1408,6 +1458,30 @@ function main() {
 
 
 </dd>
+<a id="dflUsage"></a>
+<dt><pre><span class="Identifier">dflUsage</span> <span class="Other">=</span> <span class="StringLit">&quot;${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="ClErrors"></a>
+<dt><pre><span class="Identifier">ClErrors</span> <span class="Other">=</span> <span class="Other">{</span><span class="DecNumber">clBadKey</span><span class="Other">,</span> <span class="DecNumber">clBadVal</span><span class="Other">,</span> <span class="DecNumber">clNonOption</span><span class="Other">,</span> <span class="DecNumber">clMissing</span><span class="Other">}</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="ClExit"></a>
+<dt><pre><span class="Identifier">ClExit</span> <span class="Other">=</span> <span class="Other">{</span><span class="DecNumber">clHelpOnly</span><span class="Other">,</span> <span class="DecNumber">clVersionOnly</span><span class="Other">}</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="ClNoCall"></a>
+<dt><pre><span class="Identifier">ClNoCall</span> <span class="Other">=</span> <span class="Other">{</span><span class="DecNumber">clBadKey</span><span class="Other">..</span><span class="DecNumber">clVersionOnly</span><span class="Other">}</span></pre></dt>
+<dd>
+
+
+</dd>
 
 </dl></div>
 <div class="section" id="12">
@@ -1425,6 +1499,32 @@ Similar to post-fix <cite>++</cite> in C languages: yield initial val, then incr
 
 
 </dd>
+<a id="contains,openArray[ClParse],string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">paramName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Test if the <cite>seq</cite> updated via <cite>setByParse</cite> contains a parameter.
+
+</dd>
+<a id="contains,openArray[ClParse],ClStatus"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">status</span><span class="Other">:</span> <a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Test if the <cite>seq</cite> updated via <cite>setByParse</cite> contains a certain status.
+
+</dd>
+<a id="numOfStatus,openArray[ClParse],set[ClStatus]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">numOfStatus</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stati</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Count elements in the <cite>setByParse seq</cite> with parse status in <cite>stati</cite>.
+
+</dd>
+<a id="next,openArray[ClParse],set[ClStatus],int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">next</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stati</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">start</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+First index after startIx in <cite>setByParse seq</cite> w/parse status in <cite>stati</cite>.
+
+</dd>
 <a id="mergeParams,seq[string]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">mergeParams</span><span class="Other">(</span><span class="Identifier">cmdNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cmdLine</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1437,22 +1537,21 @@ This is a dummy parameter merge to provide a hook for CLI authors to create the 
 <div class="section" id="17">
 <h1><a class="toc-backref" href="#17">Macros</a></h1>
 <dl class="item">
-<a id="dispatchGen.m,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[int],seq[string],string,seq[string],seq[string],seq[string],Char,seq[string],string,seq[string],string,Version,bool,ptr.Table[string,seq[string]],string"></a>
+<a id="dispatchGen.m,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[int],seq[string],string,seq[string],Char,seq[string],string,seq[string],string,Version,bool,string,ptr.seq[ClParse]"></a>
 <dt><pre><span class="Keyword">macro</span> <span class="Identifier">dispatchGen</span><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                  <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">short</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">usage</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">dflUsage</span><span class="Other">;</span>
                  <span class="Identifier">prelude</span> <span class="Other">=</span> <span class="StringLit">&quot;Usage:\n  &quot;</span><span class="Other">;</span> <span class="Identifier">echoResult</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
                  <span class="Identifier">requireSeparator</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">sepChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">opChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'+'</span><span class="Other">,</span>
-    <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">helpTabColumnGap</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span>
-                 <span class="Identifier">helpTabMinLast</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span> <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+    <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'$'</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">,</span> <span class="CharLit">'&lt;'</span><span class="Other">,</span> <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">;</span>
+                 <span class="Identifier">helpTabColumnGap</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span> <span class="Identifier">helpTabMinLast</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span>
+                 <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                  <span class="Identifier">helpTabColumns</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span><span class="Other">;</span>
                  <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">positional</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-                 <span class="Identifier">argPre</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">argPost</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                  <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">shortHelp</span> <span class="Other">=</span> <span class="CharLit">'h'</span><span class="Other">;</span>
                  <span class="Identifier">implicitDefault</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">mandatoryHelp</span> <span class="Other">=</span> <span class="StringLit">&quot;REQUIRED&quot;</span><span class="Other">;</span>
                  <span class="Identifier">mandatoryOverride</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">delimit</span> <span class="Other">=</span> <span class="StringLit">&quot;,&quot;</span><span class="Other">;</span>
                  <span class="Identifier">version</span><span class="Other">:</span> <a href="cligen.html#Version"><span class="Identifier">Version</span></a> <span class="Other">=</span> <span class="Other">(</span><span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">noAutoEcho</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-                 <span class="Identifier">setByParse</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
-                 <span class="Identifier">dispatchName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+                 <span class="Identifier">dispatchName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">setByParse</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 <p>Generate a command-line dispatcher for proc <cite>pro</cite> with extra help <cite>usage</cite>. Parameters without defaults in the proc become mandatory command arguments while those with default values become command options.  Proc parameters and option keys are normalized so that command users may spell multi-word option keys flexibly as in <tt class="docutils literal"><span class="pre">--dry-Run``|</span></tt>--dryrun``.  Each proc parameter type must have in-scope argParse and argHelp procs (argcvt.nim defines argParse/Help for many basic types, set[T], seq[T], etc.).</p>
 <p><cite>help</cite> is a {(paramNm,str)} of per-param help, eg. {&quot;quiet&quot;:&quot;be quiet&quot;}. Very often, only these user-given help strings are needed for a decent CLI.</p>
@@ -1462,31 +1561,29 @@ This is a dummy parameter merge to provide a hook for CLI authors to create the 
 <p><cite>stopWords</cite> is a seq[string] of words beyond which <tt class="docutils literal"><span class="pre">-</span></tt> or <tt class="docutils literal"><span class="pre">--</span></tt> will no longer signify an option (like the common sole <tt class="docutils literal"><span class="pre">--</span></tt> command argument).</p>
 <p><cite>helpTabColumnGap</cite> and <cite>helpTabMinLast</cite> control format parameters of the options help table, and <cite>helpTabRowSep</cite> (&quot;&quot; by default) separates rows. <cite>helpTabColumns</cite> selects columns to format and is a seq of some subset of <cite>{ helpTabOption, helpTabType, helpTabDefault, helpTabDescrip }</cite>, though only the final column in a help table row auto-word-wraps.</p>
 <p>By default, <cite>cligen</cite> maps the first non-defaulted <cite>seq[]</cite> proc parameter to any non-option/positional command args.  <cite>positional</cite> selects another.</p>
-<p><cite>argPre</cite> &amp; <cite>argPost</cite> are sources of cmdLine-like data, e.g. from a split environment variable value, applied pre/post the actual command line.</p>
 <p><cite>suppress</cite> is a list of formal parameter names to NOT include in the parsing/assigning system.  Such names are effectively pinned to whatever their default values are.</p>
 <p><cite>shortHelp</cite> is a char to use for a short option key analogue of --help.</p>
 <p><cite>implicitDefault</cite> is a list of formal parameter names allowed to default to the Nim default value for a type, rather than becoming mandatory, even when they are missing an explicit initializer. <cite>mandatoryHelp</cite> is how the default value appears in help messages for mandatory parameters.</p>
 <p><cite>mandatoryHelp</cite> is the default value string in help tables for required parameters.  <cite>mandatoryOverride</cite> is a list of strings indicating parameter names which override mandatory-ness of anything else.</p>
 <p><cite>delimit</cite> decides delimiting conventions for aggregate types like <cite>set`s or `seq`s by assigning to `ArgcvtParams.delimit</cite>.  Such delimiting is implemented by <cite>argParse</cite>/<cite>argHelp</cite>, and so is very user overridable. See <cite>argcvt</cite> documentation for details on the default implementation.</p>
 <p><cite>version</cite> is a <cite>Version</cite> 2-tuple (longOpt for version, version string) which defines how a CLI user may dump the version of a program.  If you want to provide a short option, add a <cite>&quot;version&quot;:'v'</cite> entry to <cite>short</cite>.</p>
-<p><cite>setByParse</cite> is <cite>addr(some var Table[string, seq[string]])</cite> and, if given, will be keyed by parameter names/long keys each having a <cite>seq</cite> of all the values assigned from that key in whatever order <cite>mergeParams()</cite> creates. A wrapped proc can inspect this to make certain decisions.  An ordinary Nim proc cannot itself know from inside the call if a parameter got its value via explicit user passing or via defaulting.  This means any proc using <cite>setByParse</cite> and inspecting the table is inherently command-line only.</p>
 <p><cite>dispatchName</cite> is the name of a generated dispatcher, defaulting to simply &quot;dispatchpro&quot; where <cite>pro</cite> is the name of the proc being wrapped.</p>
+<p><cite>setByParse</cite> is <cite>addr(some var seq[ClParse])</cite>.  If given/non-nil, this will collect each parameter seen, keyed under its long/param name (in other words, input from <cite>mergeParams</cite> but slightly cooked).  Wrapped procs can inspect this to decide various things.  Ordinary Nim procs, from inside calls, do not themselves know how params got their values - positional, keyword, or defaulting.  So, any proc using <cite>setByParse</cite> is inherently command-line only.  So, this <cite>var seq</cite> needing to be declared before the wrapped proc is not considered onerous.  Please bear in mind that people hateful of shell programming appreciate you keeping important functionality Nim-callable.  <cite>cligen</cite> provides a few convenience proc to help interpret <cite>setByParse</cite>: <cite>contains</cite> &amp; <cite>numOfStatus</cite>.</p>
 
 
 </dd>
-<a id="dispatch.m,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[string],string,seq[string],seq[string],seq[string],Char,seq[string],string,seq[string],string,Version,bool,ptr.Table[string,seq[string]],string"></a>
+<a id="dispatch.m,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[int],seq[string],string,seq[string],Char,seq[string],string,seq[string],string,Version,bool,string"></a>
 <dt><pre><span class="Keyword">macro</span> <span class="Identifier">dispatch</span><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
               <span class="Identifier">short</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">usage</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">dflUsage</span><span class="Other">;</span> <span class="Identifier">prelude</span> <span class="Other">=</span> <span class="StringLit">&quot;Usage:\n  &quot;</span><span class="Other">;</span>
               <span class="Identifier">echoResult</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">requireSeparator</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
               <span class="Identifier">sepChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">opChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'+'</span><span class="Other">,</span> <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span>
-    <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">helpTabColumnGap</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span> <span class="Identifier">helpTabMinLast</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span> <span class="Identifier">helpTabRowSep</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-              <span class="Identifier">helpTabColumns</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
-              <span class="Identifier">positional</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">argPre</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">argPost</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
-              <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">shortHelp</span> <span class="Other">=</span> <span class="CharLit">'h'</span><span class="Other">;</span>
+    <span class="CharLit">'|'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'$'</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">,</span> <span class="CharLit">'&lt;'</span><span class="Other">,</span> <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">helpTabColumnGap</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span>
+              <span class="Identifier">helpTabMinLast</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span> <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+              <span class="Identifier">helpTabColumns</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
+              <span class="Identifier">positional</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">shortHelp</span> <span class="Other">=</span> <span class="CharLit">'h'</span><span class="Other">;</span>
               <span class="Identifier">implicitDefault</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">mandatoryHelp</span> <span class="Other">=</span> <span class="StringLit">&quot;REQUIRED&quot;</span><span class="Other">;</span>
               <span class="Identifier">mandatoryOverride</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">delimit</span> <span class="Other">=</span> <span class="StringLit">&quot;,&quot;</span><span class="Other">;</span>
               <span class="Identifier">version</span><span class="Other">:</span> <a href="cligen.html#Version"><span class="Identifier">Version</span></a> <span class="Other">=</span> <span class="Other">(</span><span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">noAutoEcho</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-              <span class="Identifier">setByParse</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
               <span class="Identifier">dispatchName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 A convenience wrapper to both generate a command-line dispatcher and then call the dispatcher &amp; exit; Usage is the same as the dispatchGen() macro.
@@ -1508,7 +1605,7 @@ A convenience wrapper to both generate a multi-command dispatcher and then call 
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-11-24 11:11:47 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-30 15:11:32 UTC</small>
       </div>
     </div>
   </div>
