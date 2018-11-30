@@ -66,18 +66,10 @@ them by defining your own in scope before invoking `dispatch`.  For example,
 `test/FancyRepeats.nim` shows how to make repeated `int` or `seq` issuance
 additive without "+=" syntax.
 
-Usage String Adjustment
-=======================
-If you don't like the help message as-is, you can re-order it however you like
-with some named-argument string interpolation:
-```nim
-  dispatch(foobar,          # swap place of doc string and options table
-           usage="Use:\n$command $args\nOptions:\n$options\n$doc\n",
-           prefix="   "))   # indent the whole message a few spaces.
-```
+----
 
-Like usage string adjustment, there are many other knobs and tweaks available.
-For even more details see the module documentations (
+There are many adjustments available.  For more details see the module
+documentations (
  [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
  [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
  [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html) )
