@@ -36,7 +36,9 @@ dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 That's it.  No specification language or complex arg parsing APIs.  If you
 aren't immediately sold, here is some more
 [motivation](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+
 ---
+
 The same basic string-to-native type converters used for option values will be
 applied to convert optional positional arguments to `seq[T]` values or mandatory
 positional arguments to values of their types:
@@ -47,7 +49,9 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:  # Preserve ability to `import api` & call from Nim
   import cligen; dispatch(foobar)
 ```
+
 ---
+
 `dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
 `nimble`, just use in, say, a `cmd.nim` file.  Each `[]` list in `dispatchMulti`
 is the argument list for each sub-`dispatch`.  Tune command syntax and help
@@ -64,7 +68,9 @@ With that, a CLI user can run ``./cmd foo -m1`` or ``./cmd bar -y10 1.0 2.0``.
 ``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
+
 ---
+
 Many CLI authors who have understood things this far can use `cligen` already.
 Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
@@ -79,12 +85,16 @@ With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress a long option getting *any* short option, specify ``'\0'`` as the
 value for its short key.  To suppress _all_ short options, give ``short`` a key
 of ``""``.
+
 ---
+
 By default, ``dispatch`` has ``requireSeparator=false`` making ``-abcdBar``,
 ``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` all acceptable syntax for
 command options.  Additionally, long option keys can be spelled flexibly, e.g.
 ``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
+
 ---
+
 If it makes more sense to echo a convertible-to-int8-exit-code result of a proc
 then just pass ``echoResult=true``:
 ```nim
@@ -104,7 +114,9 @@ wrapped proc.  The first parameter is a `seq[string]`, just like a command line.
 { Other parameters are knobs to aid in nested call settings that are defaulted
 and probably don't matter to you. } The dispatcher raises 3 exception types:
 `HelpOnly`, `VersionOnly`, `ParseError`.  These are hopefully self-explanatory.
+
 ---
+
 If you want `cligen` to merge parameters from other sources like a `$CMD`
 environment variable then you can redefine `mergeParams()` after `import cligen`
 but before `dispatch`/`dispatchMulti`:
@@ -118,7 +130,9 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 You can, of course, also have `mergeParams` use the `parsecfg` module to convert
 `$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
 is relevant to `cmdNames`.
+
 ---
+
 Default help tables work with automated "help to X" tools such as ``complete -F
 _longopt`` in bash, ``compdef _gnu_generic`` in zsh, or the GNU ``help2man``.
 
