@@ -1,20 +1,19 @@
 cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
-This approach to CLIs comes from Andrey Mikhaylenko's nice Python module 'argh'.
-Much as with Python, an intuitive subset of ordinary Nim calls maps cleanly onto
-command calls, syntactically and semantically.  For such procs, `cligen` can
-automatically generate a command-line interface complete with long and short
-options and a nice help message.  In Nim terms, adding a CLI can be as easy as
-adding a single line of code:
+This approach to CLIs was inspired by [Andrey Mikhaylenko's nice Python module
+'argh'](https://pythonhosted.org/argh/).  The basic idea is that proc signatures
+encode/declare almost everything needed to generate a CLI - names, types, and
+default values.  A little reflection/introspection then suffices to generate a
+parser-dispatcher that translates a `seq[string]` command input into proc calls.
+In Nim, adding a CLI can be as easy as adding a single line of code:
 ```nim
 proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
   ##Some existing API call
   result = 1          # Of course, real code would have real logic here
-
-when isMainModule: import cligen; dispatch(foobar)    # Whoa...Just one line??
+import cligen; dispatch(foobar) #Whoa..Just 1 line??
 ```
-Compile it to foobar (assuming ``nim c foobar.nim`` is appropriate, say) and
-then run ``./foobar --help`` to get a minimal (but not so useless) help message:
+Compile it to foobar (e.g., ``nim c foobar.nim``) and then run ``./foobar
+--help`` to get a minimal (but not so useless!) help message:
 ```
 Usage:
   foobar [optional-params] [paths]
@@ -32,7 +31,7 @@ Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
 When you want to produce a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals:
 ```nim
-  dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
+dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
 
 The same basic string-to-native type converters used for option values will be
@@ -41,8 +40,8 @@ positional arguments to values of their types:
 ```nim
 proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
   ##Some API call
-  result = 1          # Of course, real code would have real logic here
-when isMainModule:
+  result = 1        # Of course, real code would have real logic here
+when isMainModule:  # Preserve ability to `import api` & call from Nim
   import cligen; dispatch(foobar)
 ```
 
@@ -72,7 +71,7 @@ More Controls For More Subtle Cases/More Picky CLI authors
 You can manually control the short option for any parameter via the `short` macro
 parameter:
 ```nim
-  dispatch(foobar, short = { "bar" : 'r' }))
+dispatch(foobar, short = { "bar" : 'r' }))
 ```
 With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress a long option getting *any* short option, specify ``'\0'`` as the
