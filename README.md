@@ -134,6 +134,7 @@ and even more are in the module documentations (
 More Motivation
 ===============
 There are so many CLI parser frameworks out there...Why do we need yet another?
+
 This approach to command-line interfaces has some obvious Don't Repeat Yourself
 ("DRY", or relatedly "a few points of edit") properties.  It also has very nice
 "loose coupling" properties.  `cligen` need not even be *present on the system*
@@ -156,5 +157,5 @@ just need to learn what kind of proc is "command-like enough", various minor
 controls/arguments to `dispatch` to enhance the help message, and the
 "binding/translation" between proc and command parameters.  The last is helped a
 lot by the auto-generated help message and all the controls are gradual and
-rather "pickyness-driven".  So, there is a mentally pay as you go/only pay for
-what you use kinds of property.
+rather "pickyness-driven".  So, there is a mentally pay-as-you-go/only-pay-for-
+what-you-use kind of property.
