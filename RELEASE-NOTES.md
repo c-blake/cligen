@@ -60,6 +60,10 @@ Version: 0.9.18
     not in the wrapped proc for `help`, `short`, `suppress`, `implicitDefault`,
     or `mandatoryOverride`.
 
+    Unknown operators in the default `argParse` implementations for aggregates
+    (`string`, `seq[T]`, etc.) now produce an error message unless you tell the
+    argcvt'rs not to with an `argCvtOptions.incl(acLooseOperators)`.
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time

@@ -7,6 +7,10 @@ from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
 proc ERR*(x: varargs[string, `$`]) = stderr.write(x)
 
+type
+  ArgCvtOption* = enum acLooseOperators   ## Unknown operator same as just '='
+var argCvtOptions*: set[ArgCvtOption] = {}
+
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
   result = newStringOfCap(s.len + 2 + s.len shr 2)
@@ -90,7 +94,12 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(a.val)       # Append Mode
     of '^': dst = a.val & dst         # Prepend Mode
-    else: dst = a.val                 # Assign Mode
+    of '=': dst = a.val               # Assign Mode
+    else:
+      if acLooseOperators in argCvtOptions: dst = a.val #Sloppy Mode=>assign
+      else:
+        ERR("Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key])
+        return false
   else: dst = a.val                   # No Operator => Assign Mode
   return true
 
@@ -244,7 +253,13 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.incl(parsed)     # Incl Mode
     of '-': dst.excl(parsed)          # Excl Mode
-    else: dst = {}; dst.incl(parsed)  # Assign Mode
+    of '=': dst={}; dst.incl(parsed)  # Assign Mode
+    else:
+      if acLooseOperators in argCvtOptions:
+        dst = {}; dst.incl(parsed)    # Sloppy Mode: just assign
+      else:
+        ERR("Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key])
+        return false
   else: dst.incl(parsed)              # No Operator => Incl Mode
   return true
 
@@ -263,10 +278,16 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(parsed)      # Append Mode
     of '^': dst = parsed & dst        # Prepend Mode
-    of '-':                           # Delete mode
+    of '-':                           # Delete Mode
       for i, e in dst:
         if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
-    else: dst = parsed                # Assign Mode
+    of '=': dst = parsed              # Assign Mode
+    else:
+      if acLooseOperators in argCvtOptions:
+        dst = parsed                # Assign Mode
+      else:
+        ERR("Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key])
+        return false
   else: dst.add(parsed)               # No Operator => Append Mode
   return true
 
@@ -290,7 +311,13 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
     case a.sep[0]                       # char on command line before [=:]
     of '+', '&': dst.incl(parsed)       # Incl Mode
     of '-': dst.excl(parsed)            # Excl Mode
-    else: dst.clear(); dst.incl(parsed) # Assign Mode
+    of '=': dst.clear(); dst.incl(parsed) # Assign Mode
+    else:
+      if acLooseOperators in argCvtOptions:
+        dst.clear(); dst.incl(parsed)   # Assign Mode
+      else:
+        ERR("Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key])
+        return false
   else: dst.incl(parsed)                # No Operator => Incl Mode
   return true
 

@@ -7,5 +7,6 @@ proc demo(alpha=1, Abc=foo, aaah=false, aloha="") =
   echo "alpha:", alpha, " Abc:", Abc, " aaah:", aaah, " aloha:", repr(aloha)
 
 when isMainModule:
-  import cligen
+  import cligen, cligen/argcvt
+  argCvtOptions.incl(acLooseOperators)
   dispatch(demo, short={"alpha": 'z'})
