@@ -367,8 +367,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
        `tabId`.add(argHelp(versionDflt, `apId`) & "write version to stdout"))
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
-    var args = argStart &
-               (if posIx != -1: " [" & $(fpars[posIx][0]) & "]" else: "")
+    let posHelp = if posIx != -1:
+                    if $fpars[posIx][0] in helps: helps[$fpars[posIx][0]]
+                    else: " [" & $(fpars[posIx][0]) & "]"
+                  else: ""
+    var args = argStart & posHelp
     for i in 1 ..< len(fpars):
       let idef = fpars[i]
       let sdef = spars[i]

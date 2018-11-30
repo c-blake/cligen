@@ -588,7 +588,7 @@ demo entry point with varied, meaningless parameters.
 
 ==> test/TwoNondefaultedSeqSwap.out <==
 Usage:
-  demo [required&optional-params] [stuff]
+  demo [required&optional-params]stuffies (1 or more strings)
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                            write this help to stdout
