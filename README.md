@@ -86,8 +86,8 @@ command options.  Additionally, long option keys can be spelled flexibly, e.g.
 If it makes more sense to echo a convertible-to-int8-exit-code result of a proc
 then just pass ``echoResult=true``:
 ```nim
-import cligen, strutils   # generate a CLI for Nim stdlib's editDistance
-dispatch(editDistance, echoResult=true)
+import editdistance, cligen   # gen a CLI for Nim stdlib's editDistance
+dispatch(editDistanceASCII, echoResult=true)
 ```
 If result _cannot_ be converted to `int`, `cligen` tries to `echo` the result
 if possible (unless you tell it not to by passing `noAutoEcho=true`).
