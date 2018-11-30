@@ -113,26 +113,33 @@ proc mergeParams(cmdNames: seq[string], cmdLine=commandLineParams()): seq[string
   if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
-You can, of course, alse have `mergeParams` use the `parsecfg` module to convert
+You can, of course, also have `mergeParams` use the `parsecfg` module to convert
 `$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
 is relevant to `cmdNames`.
 
 Default help tables work with automated "help to X" tools such as ``complete -F
 _longopt`` in bash, ``compdef _gnu_generic`` in zsh, or the GNU ``help2man``.
 
-Many simple examples can bee seen here:
-    [test/](https://github.com/c-blake/cligen/tree/master/test/).
+Even More Controls and Details
+==============================
+After many feature requests `cligen` grew many knobs & levers.  First there are
+more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md) on the
+restrictions on wrappable procs and extending the parser to new argument types.
 
-Here are more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md),
-and even more are in the module documentations (
-        [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
-        [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
-        [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html)
-        ) and
+Then there is the documentation for the three main modules:
+  [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
+  [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
+  [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html)
+
+A good starting point for advanced usage is the many simple examples can be seen
+in my automated test suite:
+  [test/](https://github.com/c-blake/cligen/tree/master/test/).
+
+Finally, I try to keep track of possibly breaking changes and new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
 
-More Motivation
-===============
+More Motivation For The Skeptical
+=================================
 There are so many CLI parser frameworks out there...Why do we need yet another?
 
 This approach to command-line interfaces has some obvious Don't Repeat Yourself
