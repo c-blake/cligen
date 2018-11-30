@@ -33,6 +33,7 @@ metadata with Nim's association-list literals:
 ```nim
 dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
+That's it.  No specification language or complex arg parsing APIs.
 
 The same basic string-to-native type converters used for option values will be
 applied to convert optional positional arguments to `seq[T]` values or mandatory
@@ -45,26 +46,25 @@ when isMainModule:  # Preserve ability to `import api` & call from Nim
   import cligen; dispatch(foobar)
 ```
 
-If you want to expose two or more procs into a command with subcommands a la
-`git` or `nimble`, just use `dispatchMulti` in, say, a `cmd.nim` file.  Each
-`[]` list in `dispatchMulti` is the argument list for each sub-`dispatch`.
-Tune command syntax and help strings in the same way as ``dispatch`` as in:
+`dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
+`nimble`, just use in, say, a `cmd.nim` file.  Each `[]` list in `dispatchMulti`
+is the argument list for each sub-`dispatch`.  Tune command syntax and help
+strings in the same way as ``dispatch`` as in:
 ```nim
 proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
-proc bar(myHiHo: int, myfloats: seq[float], verb=false) =
+proc bar(yippee: int, myfloats: seq[float], verb=false) =
   ##Some other API call
 when isMainModule:
-  import cligen; dispatchMulti([foo, short={"verb": 'v'}], [bar])
+  import cligen; dispatchMulti([foo, help={"myMandatory": "Need it!"}], [bar])
 ```
-With that, a user can run ``./cmd foo -vm1`` or ``./cmd bar -m10 1.0 2.0``.
+With that, a CLI user can run ``./cmd foo -m1`` or ``./cmd bar -y10 1.0 2.0``.
 ``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
 
-That's basically it.  Many users who have read this far can start using `cligen`
-without further delay, simply entering illegal commands or `--help` to get help
-messages that exhibit the basic mappings.  
+Many CLI authors who have understood things this far can use `cligen` already.
+Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
 More Controls For More Subtle Cases/More Picky CLI authors
 ==========================================================
