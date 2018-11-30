@@ -530,7 +530,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(@[ `cName` ]),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
-                 `prefixId`="", `subSepId`=""): `retType` =
+                 `prefixId`="", `subSepId`="", parseOnly=false): `retType` =
       {.push hint[XDeclaredButNotUsed]: off.}
       `iniVar`
       proc parser(args=`cmdLineId`) =
@@ -558,7 +558,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
           for m in `mandId`: stderr.write "  ", m, "\n"
           stderr.write "Run command with --help for more details.\n"
           raise newException(ParseError, "Missing one/some mandatory args")
-      if cast[pointer](`setByParseId`) != nil and `setByParseId`[].numOfStatus(ClNoCall) > 0:
+      if parseOnly or (cast[pointer](`setByParseId`) != nil and
+          `setByParseId`[].numOfStatus(ClNoCall) > 0):
         return
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
