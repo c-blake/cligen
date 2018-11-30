@@ -212,9 +212,9 @@ proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
     toks = src.split(cclass)
   else:
     toks = src.split(delim)
-  var parsed, default: T
   result = @[]
   for tok in toks:
+    var parsed, default: T
     a.val = tok
     if not argParse(parsed, default, a):
       result.setLen(0)
