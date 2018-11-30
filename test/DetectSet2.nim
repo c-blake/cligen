@@ -20,18 +20,29 @@ proc foo(alpha: int, beta: int=2) =
     echo "proc-default value for beta"
   if fooParse.numOfStatus({clBadKey, clBadVal}) > 0:
     echo "There was some kind of parse error."
-  echo alpha, " ", beta
+  echo "full parameter parse:", fooParse
+  echo "alpha: ", alpha                     #Main logic
+  echo "beta: ", beta
 
-dispatch(foo, setByParse=addr fooParse)
+dispatchGen(foo, setByParse=addr fooParse)
 
-if fooParse.numOfStatus({clOk}) != fooParse.len:
-  echo "There was some kind of command-line parsing error."
-  #Could investigate fooParse in more detail, obviously.
-  quit(1)
+dispatchFoo()       #1st arg defaults to os.commandLineParams()
+
+echo "fooParse:"
+echo fooParse
+
+if fooParse.numOfStatus({clOk}) == fooParse.len:
+  echo "dispatched to foo"
+else:
+  echo "no dispatch to foo"
+
+if clHelpOnly in fooParse:
+  echo "User requested help.  Here you go"
+  echo fooParse[fooParse.next({clHelpOnly})].message
+  quit(0)
+
 if clVersionOnly in fooParse:
   echo "User requested version only - NO dispatch TO foo WAS DONE"
-if clHelpOnly in fooParse:
-  echo "User requested help only - NO dispatch TO foo WAS DONE"
 
 #While I understand that this mode of usage still leverages the already-known-
 #to-any-Nim-programmer declarative syntax for parameters & defaults, note that

@@ -136,12 +136,17 @@ Usage:
   -b=, --beta=   int  2  set beta
 
 ==> test/DetectSet2.out <==
+fooParse:
+@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
+no dispatch to foo
+User requested help.  Here you go
 Usage:
   foo [required&optional-params]
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
   -a=, --alpha=  int  REQUIRED  set alpha
   -b=, --beta=   int  2         set beta
+
 
 ==> test/DistinctInt.out <==
 Usage:

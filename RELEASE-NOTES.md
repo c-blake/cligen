@@ -5,8 +5,7 @@ Version: 0.9.18
 ---------------
     This release adds several major features..Krux02 asked for (approximately)
     mergeParams and Timotheecour requested non-quitting invocation & something
-    like setByParse and alaviss asked for qualified proc name support.  A few
-    others just came to me working on it.
+    like setByParse and alaviss asked for qualified proc name support.
 
     Generated dispatchers now have the same return type (including void) and
     the same return value of wrapped procs.  Abnormal control flow from bad or
@@ -42,14 +41,17 @@ Version: 0.9.18
     print out the full help upon `--help` or `-h` (or whatever `shortHelp` is),
     but tells the user to do that for more details.
 
-    `dispatchGen` (and so also `dispatch` and `dispatchMulti`) now takes a
-    couple new arguments: `setByParse` and `dispatchName`, documented in the
-    doc comment.  The first is basically a way to catch the whole sequence of
-    strings any parameter received during the parse.  The second is a way to
-    override the default naming of the generated dispatcher to "dispatch" &
-    $cmdName (note this is different than the old "dispatch" & $pro default
-    if you set cmdName, but you can recover the old name with `dispatchName=`
-    if necessary).
+    `dispatchGen` now takes a couple new args: `dispatchName` and `setByParse`,
+    documented in the doc comment.  `dispatchName` lets you to override the
+    default naming of the generated dispatcher to "dispatch" & $cmdName (note
+    this is different than the old `"dispatch" & $pro` default *if* you set
+    `cmdName`, but you can recover the old name with `dispatchName=` if needed).
+
+    `setByParse` is a way to catch the entire sequence of `parseopt3` parsed
+    strings, unparsed values, error messages and status conditions assigned to
+    any parameter during the parse in command-line order.  This expert mode is
+    currently only available in `dispatchGen`.  So, manual dispatch calling is
+    required (eg. `dispatchGen(myProc, setByParse=addr(x)); dispatchMyProc()`).
 
     `argPre` and `argPost` have been retired.  If you happened to be using them
     you should be able to recreate (easily?) any behavior with `mergeParams()`.

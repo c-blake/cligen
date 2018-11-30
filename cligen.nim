@@ -153,19 +153,24 @@ proc delItem*[T](x: var seq[T], item: T): int =
 
 type Version* = tuple[longOpt: string, output: string]
 
-const dflUsage = "${prelude}$command $args\n" &
-                 "$doc  Options(opt-arg sep :|=|spc):\n" &
-                 "$options$sep"
+const dflUsage* = "${prelude}$command $args\n" &
+                  "$doc  Options(opt-arg sep :|=|spc):\n" & "$options$sep"
+
 type
   ClStatus* = enum clBadKey,                        ## Unknown long key
                    clBadVal,                        ## Unparsable value
                    clNonOption,                     ## Unexpected non-option
-                   clMissingMandatory,              ## >=1 mandatory missing
+                   clMissing,                       ## Mandatory but missing
                    clHelpOnly, clVersionOnly, clOk  ## Non-errors
+
   ClParse* = tuple[paramName,         ##Param name/long opt key
                    unparsedVal,       ##Unparsed value("" for missing mandatory)
                    message: string;   ##A decent default error message
                    status: ClStatus]  ##Parse status for this parameter
+
+const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
+const ClExit*   = { clHelpOnly, clVersionOnly }
+const ClNoCall* = ClErrors + ClExit
 
 proc contains*(x: openArray[ClParse], paramName: string): bool =
   ## Test if the `seq` updated via `setByParse` contains a parameter.
@@ -177,11 +182,16 @@ proc contains*(x: openArray[ClParse], status: ClStatus): bool =
   for e in x:
     if e.status == status: return true
 
-proc numOfStatus*(x: openArray[ClParse], status: set[ClStatus]): int =
-  ## Count many elements in `seq` updated via `setByParse` with parse status
-  ## in `status`.
+proc numOfStatus*(x: openArray[ClParse], stati: set[ClStatus]): int =
+  ## Count elements in the `setByParse seq` with parse status in `stati`.
   for e in x:
-    if e.status in status: inc(result)
+    if e.status in stati: inc(result)
+
+proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
+  ## First index after startIx in `setByParse seq` w/parse status in `stati`.
+  result = -1
+  for i, e in x:
+    if e.status in stati: return i
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
@@ -396,17 +406,29 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
-          stdout.write(`apId`.help); raise newException(HelpOnly, "")))
+          if cast[pointer](`setByParseId`) != nil:
+            `setByParseId`[].add(("help", "", `apId`.help, clHelpOnly))
+            return                            #Do not try to keep parsing
+          else:
+            stdout.write(`apId`.help); raise newException(HelpOnly, "")))
     if vsnOpt.len > 0:
       if vsnOpt in shOpt:                     #There is also a short version tag
         result.add(newNimNode(nnkOfBranch).add(
           newStrLitNode(vsnOpt), newStrLitNode(vsnSh)).add(
             quote do:
-              stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
+              if cast[pointer](`setByParseId`) != nil:
+                `setByParseId`[].add((`vsnOpt`, "", `vsnStr`, clVersionOnly))
+                return                        #Do not try to keep parsing
+              else:
+                stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
       else:                                   #There is only a long version tag
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(vsnOpt)).add(
             quote do:
-              stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
+              if cast[pointer](`setByParseId`) != nil:
+                `setByParseId`[].add((`vsnOpt`, "", `vsnStr`, clVersionOnly))
+                return                        #Do not try to keep parsing
+              else:
+                stdout.write(`vsnStr`,"\n");raise newException(VersionOnly,"")))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
@@ -451,9 +473,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         let sugg = suggestions(optionNormalize(`pId`.key), idNorm, allParams)
         if sugg.len > 0:
           mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
-      stderr.write("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
-                   mb & "Run with --help for full usage.\n")
-      raise newException(ParseError, "Unknown option")))  #XXX switch on `setByParseId`
+      let msg = ("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
+                 mb & "Run with --help for full usage.\n")
+      if cast[pointer](`setByParseId`) != nil:
+        `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+      else:
+        stderr.write(msg)
+        raise newException(ParseError, "Unknown option")))
 
   proc defNonOpt(): NimNode =
     result = newStmtList()
@@ -472,15 +498,26 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.sep = "="
         `apId`.parNm = `apId`.key
         `apId`.parCount = 1
-        if not argParse(`tmpId`, `tmpId`, `apId`):
-          raise newException(ParseError, "Cannot parse " & `apId`.key)  #XXX switch on `setByParseId`
+        let msg = "Cannot parse " & `apId`.key
+        if cast[pointer](`setByParseId`) != nil:
+          if argParse(`tmpId`,`tmpId`,`apId`):
+            `setByParseId`[].add((`apId`.key, `pId`.val, "", clOk))
+          else:
+            `setByParseId`[].add((`apId`.key, `pId`.val, msg, clBadVal))
+        else:
+          if not argParse(`tmpId`, `tmpId`, `apId`):
+            raise newException(ParseError, msg)
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
-        stderr.write(`proNm` & " does not expect non-option arguments.  Got\n" &
-                     $`pId` & "\nRun with --help for full usage.\n")
-        raise newException(ParseError, "Unexpected non-option " & $`pId`))
+        let msg = "Unexpected non-option " & $`pId`
+        if cast[pointer](`setByParseId`) != nil:
+          `setByParseId`[].add((`apId`.key, `pId`.val, msg, clNonOption))
+        else:
+          stderr.write(`proNm`&" does not expect non-option arguments.  Got\n" &
+                       $`pId` & "\nRun with --help for full usage.\n")
+          raise newException(ParseError, msg))
 
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
   let retType=fpars[0]
@@ -513,10 +550,16 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       {.pop.}
       parser()
       if `mandId`.len > 0 and `mandInFId`:
-        stderr.write "Missing these required parameters:\n"
-        for m in `mandId`: stderr.write "  ", m, "\n"
-        stderr.write "Run command with --help for more details.\n"
-        raise newException(ParseError, "Missing one/some mandatory args")
+        if cast[pointer](`setByParseId`) != nil:
+          for m in `mandId`:
+            `setByParseId`[].add((m, "", "Missing " & m, clMissing))
+        else:
+          stderr.write "Missing these required parameters:\n"
+          for m in `mandId`: stderr.write "  ", m, "\n"
+          stderr.write "Run command with --help for more details.\n"
+          raise newException(ParseError, "Missing one/some mandatory args")
+      if cast[pointer](`setByParseId`) != nil and `setByParseId`[].numOfStatus(ClNoCall) > 0:
+        return
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
@@ -531,8 +574,7 @@ macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  stopWords: seq[string] = @[], positional="", suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
- noAutoEcho: bool=false, dispatchName: string = "",
- setByParse: ptr var seq[ClParse]=nil): untyped =
+ noAutoEcho: bool=false, dispatchName: string = ""): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
   result = newStmtList()
@@ -541,7 +583,7 @@ macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
       implicitDefault, mandatoryHelp, mandatoryOverride, delimit, version,
-      noAutoEcho, dispatchName, setByParse))
+      noAutoEcho, dispatchName))
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
   #XXX below mess should prob be a template used both here and in dispatchMulti
