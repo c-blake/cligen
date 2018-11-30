@@ -205,7 +205,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
   var toks: seq[string]
   if delim == "<D>":                      # DELIMITER-PREFIXED Sep-Vals
-    toks = src[1..^1].split(delim[0])     # E.g.: ",hello,world"
+    toks = src[1..^1].split(src[0])       # E.g.: ",hello,world"
   elif delim[0] == '[' and delim[^1] == ']':
     var cclass: set[char] = {}            # is there no toSet?
     for c in delim[1..^2]: cclass.incl(c)
