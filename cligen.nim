@@ -369,7 +369,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                                          "[optional-params]"
     let posHelp = if posIx != -1:
                     if $fpars[posIx][0] in helps: helps[$fpars[posIx][0]]
-                    else: " [" & $(fpars[posIx][0]) & "]"
+                    else: " [" & $(fpars[posIx][0]) & " ... ]"
                   else: ""
     var args = argStart & posHelp
     for i in 1 ..< len(fpars):
