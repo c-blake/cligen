@@ -33,8 +33,10 @@ metadata with Nim's association-list literals:
 ```nim
 dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
-That's it.  No specification language or complex arg parsing APIs.
-
+That's it.  No specification language or complex arg parsing APIs.  If you
+aren't immediately sold, here is some more
+[motivation](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+-------------------------------------------------------------------------------
 The same basic string-to-native type converters used for option values will be
 applied to convert optional positional arguments to `seq[T]` values or mandatory
 positional arguments to values of their types:
@@ -45,7 +47,7 @@ proc foobar(myMandatory: int, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:  # Preserve ability to `import api` & call from Nim
   import cligen; dispatch(foobar)
 ```
-
+-------------------------------------------------------------------------------
 `dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
 `nimble`, just use in, say, a `cmd.nim` file.  Each `[]` list in `dispatchMulti`
 is the argument list for each sub-`dispatch`.  Tune command syntax and help
@@ -62,7 +64,7 @@ With that, a CLI user can run ``./cmd foo -m1`` or ``./cmd bar -y10 1.0 2.0``.
 ``./cmd --help`` will emit a brief help message and ``./cmd help`` emits a more
 comprehensive message, while ``./cmd subcommand --help`` emits just the message
 for ``subcommand``.
-
+-------------------------------------------------------------------------------
 Many CLI authors who have understood things this far can use `cligen` already.
 Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
@@ -77,12 +79,12 @@ With that, ``"bar"`` gets ``'r'`` while ``"baz"`` gets ``'b'`` as short options.
 To suppress a long option getting *any* short option, specify ``'\0'`` as the
 value for its short key.  To suppress _all_ short options, give ``short`` a key
 of ``""``.
-
+-------------------------------------------------------------------------------
 By default, ``dispatch`` has ``requireSeparator=false`` making ``-abcdBar``,
 ``-abcd Bar``, ``--delta Bar`` or ``--delta=Bar`` all acceptable syntax for
 command options.  Additionally, long option keys can be spelled flexibly, e.g.
 ``--dry-run`` or ``--dryRun``, much like Nim's style-insensitive identifiers.
-
+-------------------------------------------------------------------------------
 If it makes more sense to echo a convertible-to-int8-exit-code result of a proc
 then just pass ``echoResult=true``:
 ```nim
@@ -102,7 +104,7 @@ wrapped proc.  The first parameter is a `seq[string]`, just like a command line.
 { Other parameters are knobs to aid in nested call settings that are defaulted
 and probably don't matter to you. } The dispatcher raises 3 exception types:
 `HelpOnly`, `VersionOnly`, `ParseError`.  These are hopefully self-explanatory.
-
+-------------------------------------------------------------------------------
 If you want `cligen` to merge parameters from other sources like a `$CMD`
 environment variable then you can redefine `mergeParams()` after `import cligen`
 but before `dispatch`/`dispatchMulti`:
@@ -116,7 +118,7 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 You can, of course, also have `mergeParams` use the `parsecfg` module to convert
 `$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
 is relevant to `cmdNames`.
-
+-------------------------------------------------------------------------------
 Default help tables work with automated "help to X" tools such as ``complete -F
 _longopt`` in bash, ``compdef _gnu_generic`` in zsh, or the GNU ``help2man``.
 
@@ -137,32 +139,3 @@ in my automated test suite:
 
 Finally, I try to keep track of possibly breaking changes and new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
-
-More Motivation For The Skeptical
-=================================
-There are so many CLI parser frameworks out there...Why do we need yet another?
-
-This approach to command-line interfaces has some obvious Don't Repeat Yourself
-("DRY", or relatedly "a few points of edit") properties.  It also has very nice
-"loose coupling" properties.  `cligen` need not even be *present on the system*
-unless you are compiling a CLI executable.  Similarly, wrapped routines need not
-be in the same module, modifiable, or know anything about `cligen`.
-
-This approach is great when you want to maintain an API and a CLI in parallel.
-Mostly you can just update the API and a single line of help message.  Easy dual
-API/CLI maintenance encourages preserving access to functionality via APIs/"Nim
-import".  When so preserved, this then eases complex uses being driven by other
-Nim programs rather than by shell scripts (once usage complexity makes scripting
-language limitations annoying).
-
-Finally, and perhaps most importantly, this approach is "DRY for the brain".
-The learning curve/cognitive load and even the extra program text for a CLI is
-all about as minimal as possible.  Any potential CLI author *already knows* the
-syntax for a Nim proc declaration with default values which serves as the
-"declarative specification language" for the CLI in `cligen`.  Mostly they
-just need to learn what kind of proc is "command-like enough", various minor
-controls/arguments to `dispatch` to enhance the help message, and the
-"binding/translation" between proc and command parameters.  The last is helped a
-lot by the auto-generated help message and all the controls are gradual and
-rather "pickyness-driven".  So, there is a mentally pay-as-you-go/only-pay-for-
-what-you-use kind of property.
