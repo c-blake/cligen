@@ -7,4 +7,4 @@ proc demo(alpha=1, verb=false, args: seq[string], stuff: seq[string]): int=
 when isMainModule:
   import cligen
   dispatch(demo, positional="stuff",
-           help={ "stuff" : "stuffies (1 or more strings)" })
+           help={ "stuff" : "[ stuffies (1 or more strings) ]" })
