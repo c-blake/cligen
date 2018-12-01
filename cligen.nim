@@ -116,7 +116,10 @@ proc findByName(parNm: string, fpars: NimNode): int =
 
 proc posIxGet(positional: NimNode, fpars: NimNode): int =
   ## Find the proc param to map to optional positional arguments of a command.
-  if len(positional.strVal) > 0:
+  let positionalStr = positional.strVal
+  if positionalStr == "":
+    return -1
+  if positionalStr != "<AUTO>":
     result = findByName(positional.strVal, fpars)
     if result == -1:
       error("requested positional argument catcher " & positional.strVal &
@@ -201,7 +204,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
  helpTabColumns: seq[int] = @[
   helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional="", suppress: seq[string] = @[],
+ stopWords: seq[string] = @[], positional="<AUTO>", suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
@@ -241,6 +244,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ##
   ## By default, `cligen` maps the first non-defaulted `seq[]` proc parameter
   ## to any non-option/positional command args.  `positional` selects another.
+  ## Set `positional` to the empty string ("") to disable this entirely.
   ##
   ## `suppress` is a list of formal parameter names to NOT include in the
   ## parsing/assigning system.  Such names are effectively pinned to whatever
@@ -577,7 +581,7 @@ macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
  helpTabColumns: seq[int] = @[
   helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional="", suppress: seq[string] = @[],
+ stopWords: seq[string] = @[], positional="<AUTO>", suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = ""): untyped =
