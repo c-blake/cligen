@@ -375,9 +375,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                     if $fpars[posIx][0] in helps: helps[$fpars[posIx][0]]
                     else:
                       let typeName = fpars[posIx][1][1].strVal
-                      " [" & $(fpars[posIx][0]) & ": " & typeName & "...]"
+                      "[" & $(fpars[posIx][0]) & ": " & typeName & "...]"
                   else: ""
-    var args = argStart & posHelp
+    var args = argStart & " " & posHelp
     for i in 1 ..< len(fpars):
       let idef = fpars[i]
       let sdef = spars[i]
