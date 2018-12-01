@@ -64,6 +64,9 @@ Version: 0.9.18
     (`string`, `seq[T]`, etc.) now produce an error message unless you tell the
     argcvt'rs not to with an `argCvtOptions.incl(acLooseOperators)`.
 
+    `positional`="" to dispatch/dispatchGen now disables entirely inference of
+    what proc parameter catches positionals.
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time
