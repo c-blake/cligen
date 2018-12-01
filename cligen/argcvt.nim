@@ -94,7 +94,7 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(a.val)       # Append Mode
     of '^': dst = a.val & dst         # Prepend Mode
-    of '=': dst = a.val               # Assign Mode
+    of ':','=': dst = a.val           # Assign Mode
     else:
       if acLooseOperators in argCvtOptions: dst = a.val #Sloppy Mode=>assign
       else:
@@ -253,7 +253,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.incl(parsed)     # Incl Mode
     of '-': dst.excl(parsed)          # Excl Mode
-    of '=': dst={}; dst.incl(parsed)  # Assign Mode
+    of ':','=': dst={}; dst.incl(parsed)  # Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
         dst = {}; dst.incl(parsed)    # Sloppy Mode: just assign
@@ -281,7 +281,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     of '-':                           # Delete Mode
       for i, e in dst:
         if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
-    of '=': dst = parsed              # Assign Mode
+    of ':','=': dst = parsed              # Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
         dst = parsed                # Assign Mode
@@ -311,7 +311,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
     case a.sep[0]                       # char on command line before [=:]
     of '+', '&': dst.incl(parsed)       # Incl Mode
     of '-': dst.excl(parsed)            # Excl Mode
-    of '=': dst.clear(); dst.incl(parsed) # Assign Mode
+    of ':','=': dst.clear(); dst.incl(parsed)   # Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
         dst.clear(); dst.incl(parsed)   # Assign Mode

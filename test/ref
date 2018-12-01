@@ -78,7 +78,7 @@ demo entry point with parameters of all basic types.
 
 ==> test/BlockedShort.out <==
 Usage:
-  demo [optional-params]
+  demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -91,7 +91,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/CaseDistinguised.out <==
 Usage:
-  demo [optional-params]
+  demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -129,7 +129,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/DetectSet.out <==
 Usage:
-  foo [optional-params]
+  foo [optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help             write this help to stdout
   -a=, --alpha=  int  1  set alpha
@@ -137,11 +137,11 @@ Usage:
 
 ==> test/DetectSet2.out <==
 fooParse:
-@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
+@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] \n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
 no dispatch to foo
 User requested help.  Here you go
 Usage:
-  foo [required&optional-params]
+  foo [required&optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
   -a=, --alpha=  int  REQUIRED  set alpha
@@ -150,14 +150,14 @@ Usage:
 
 ==> test/DistinctInt.out <==
 Usage:
-  main [required&optional-params]
+  main [required&optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help                  write this help to stdout
   -a=, --age=  int  REQUIRED  set age
 
 ==> test/DupShort.out <==
 Usage:
-  demo [optional-params]
+  demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -183,7 +183,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/EchoResult.out <==
 Usage:
-  editDistanceAscii [required&optional-params]
+  editDistanceAscii [required&optional-params] 
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
@@ -346,7 +346,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/MandatoryNoPos.out <==
 Usage:
-  demo [required&optional-params]
+  demo [required&optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -400,7 +400,7 @@ demo entry point with varied, meaningless parameters.
 
 ==> test/NoPositional.out <==
 Usage:
-  demo [optional-params]
+  demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -413,7 +413,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/NoShort.out <==
 Usage:
-  demo [optional-params]
+  demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -458,14 +458,14 @@ Run any given subcommand with --help to see help for that one.
 
 ==> test/QualifiedSym.out <==
 Usage:
-  get [optional-params]
+  get [optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help          write this help to stdout
   -a=, --a=   int  1  set a
 
 ==> test/ResultInt.out <==
 Usage:
-  editDistanceAscii [required&optional-params]
+  editDistanceAscii [required&optional-params] 
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
@@ -576,7 +576,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(131, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
+cligen.nim(134, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -588,7 +588,7 @@ demo entry point with varied, meaningless parameters.
 
 ==> test/TwoNondefaultedSeqSwap.out <==
 Usage:
-  demo [required&optional-params]stuffies (1 or more strings)
+  demo [required&optional-params] [ stuffies (1 or more strings) ]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                            write this help to stdout
