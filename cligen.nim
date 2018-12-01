@@ -283,7 +283,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## wrapped proc is not considered onerous.  Please bear in mind that people
   ## hateful of shell programming appreciate you keeping important functionality
   ## Nim-callable.  `cligen` provides a few convenience proc to help interpret
-  ## `setByParse`: `contains` & `numOfStatus`.
+  ## `setByParse`: `contains`, `numOfStatus`, & `next`.
 
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
