@@ -47,5 +47,3 @@ test/DetectSet2
 test/QualifiedSym
 test/QualifiedMulti
 test/DistinctInt
-
-.DS_Store
