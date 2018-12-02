@@ -251,12 +251,12 @@ proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
 
 proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
   let parsed = argAggSplit[T](a.val, a.delimit, a)
-  if parsed.len == 0: return false
+# if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.incl(parsed)     # Incl Mode
     of '-': dst.excl(parsed)          # Excl Mode
-    of ':','=': dst={}; dst.incl(parsed)  # Assign Mode
+    of ':','=': dst={}; dst.incl(parsed)  # Clobbering Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
         dst = {}; dst.incl(parsed)    # Sloppy Mode: just assign
@@ -276,7 +276,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
   let parsed = argAggSplit[T](a.val, a.delimit, a)
-  if parsed.len == 0: return false
+# if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(parsed)      # Append Mode
@@ -309,12 +309,12 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
     ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
     return false
   let parsed = toSet(argAggSplit[T](a.val, a.delimit, a))
-  if card(parsed) == 0: return false
+# if card(parsed) == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                       # char on command line before [=:]
     of '+', '&': dst.incl(parsed)       # Incl Mode
     of '-': dst.excl(parsed)            # Excl Mode
-    of ':','=': dst.clear(); dst.incl(parsed)   # Assign Mode
+    of ':','=': dst.clear(); dst.incl(parsed)   # Clobbering Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
         dst.clear(); dst.incl(parsed)   # Assign Mode
