@@ -67,6 +67,10 @@ Version: 0.9.18
     `positional`="" to dispatch/dispatchGen now disables entirely inference of
     what proc parameter catches positionals.
 
+    `help["positionalName"]` will now be used in the one-line command summary
+    as a help string for the parameter catching positionals.  It defaults to
+    `[ <paramName>: <type> ]`.
+
 Version: 0.9.17
 ---------------
     Add ability for [1] element of Version 2-tuple-literals to be compile-time
