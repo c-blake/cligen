@@ -131,8 +131,7 @@ proc posIxGet(positional: NimNode, fpars: NimNode): int =
     if idef[1].kind != nnkEmpty and idef[2].kind == nnkEmpty and
        typeKind(getType(idef[1])) == ntySequence:
       if result != -1:            # Allow multiple seq[T]s via "--" separators?
-        warning("cligen only supports one seq param for positional args; using"&
-                " `" & $fpars[result][0] & "`, not `" & $fpars[i][0] & "`.")
+        error("cligen only supports one seq param for positional args; use `positional` to dispatch to specify which one")
       else:
         result = i
 
