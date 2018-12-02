@@ -39,18 +39,18 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                               write this help to stdout
-  -b=, --bl=  ,SV[bool]    EMPTY           set bl
-  -B=, --Bl=  ,SV[bool]    false,true      set Bl
-  -i=, --i1=  ,SV[int8]    EMPTY           set i1
-  -I=, --I1=  ,SV[int8]    3,4             set I1
-  --i2=       ,SV[int16]   EMPTY           set i2
-  --I2=       ,SV[int16]   5,6             set I2
-  -u=, --u1=  ,SV[uint8]   EMPTY           set u1
-  -U=, --U1=  ,SV[uint8]   13,14           set U1
-  --u2=       ,SV[uint16]  EMPTY           set u2
-  --U2=       ,SV[uint16]  15,16           set U2
-  -e=, --e=   ,SV[Color]   EMPTY           set e
-  -E=, --E=   ,SV[Color]   red,green,blue  set E
+  -b=, --bl=  ,SV{bool}    EMPTY           set bl
+  -B=, --Bl=  ,SV{bool}    false,true      set Bl
+  -i=, --i1=  ,SV{int8}    EMPTY           set i1
+  -I=, --I1=  ,SV{int8}    3,4             set I1
+  --i2=       ,SV{int16}   EMPTY           set i2
+  --I2=       ,SV{int16}   5,6             set I2
+  -u=, --u1=  ,SV{uint8}   EMPTY           set u1
+  -U=, --U1=  ,SV{uint8}   13,14           set U1
+  --u2=       ,SV{uint16}  EMPTY           set u2
+  --U2=       ,SV{uint16}  15,16           set U2
+  -e=, --e=   ,SV{Color}   EMPTY           set e
+  -E=, --E=   ,SV{Color}   red,green,blue  set E
 
 ==> test/AllTypes.out <==
 Usage:
@@ -202,7 +202,7 @@ demo entry point with varied, meaningless parameters.
   -c=, --c=   enum        REQUIRED  primary color
   -b=, --bg=  enum        red       background color
   -f=, --fg=  ,SV[Color]  green     foreround colors
-  --curs=     ,SV[Color]  blue      cursor colors
+  --curs=     ,SV{Color}  blue      cursor colors
   -x=, --x=   int         0         set x
 
 ==> test/External.out <==
@@ -285,16 +285,16 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                               write this help to stdout
-  -i=, --i1=  ,SV[int8]    EMPTY           set i1
-  -I=, --I1=  ,SV[int8]    3,4             set I1
-  --i2=       ,SV[int16]   EMPTY           set i2
-  --I2=       ,SV[int16]   5,6             set I2
-  -u=, --u1=  ,SV[uint8]   EMPTY           set u1
-  -U=, --U1=  ,SV[uint8]   13,14           set U1
-  --u2=       ,SV[uint16]  EMPTY           set u2
-  --U2=       ,SV[uint16]  16,15           set U2
-  -e=, --e=   ,SV[Color]   EMPTY           set e
-  -E=, --E=   ,SV[Color]   red,green,blue  set E
+  -i=, --i1=  ,SV{int8}    EMPTY           set i1
+  -I=, --I1=  ,SV{int8}    3,4             set I1
+  --i2=       ,SV{int16}   EMPTY           set i2
+  --I2=       ,SV{int16}   5,6             set I2
+  -u=, --u1=  ,SV{uint8}   EMPTY           set u1
+  -U=, --U1=  ,SV{uint8}   13,14           set U1
+  --u2=       ,SV{uint16}  EMPTY           set u2
+  --U2=       ,SV{uint16}  16,15           set U2
+  -e=, --e=   ,SV{Color}   EMPTY           set e
+  -E=, --E=   ,SV{Color}   red,green,blue  set E
 
 ==> test/HelpTabCols.out <==
 Usage:

@@ -232,12 +232,13 @@ proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
       return
     result.add(parsed)
 
-proc argAggHelp*(sd: string, dfls: seq[string]; typ, dfl: var string) =
+proc argAggHelp*(sd: string, dfls: seq[string]; bracket: string;
+                 typ, dfl: var string) =
   if sd == "<D>":
-    typ = "DPSV[" & typ & "]"
+    typ = "DPSV" & bracket[0] & typ & bracket[1]
     dfl = if dfls.len > 0: sd & dfls.join(sd) else: "EMPTY"
   else:
-    typ = (if sd=="\t": "T" else: sd) & "SV[" & typ & "]"
+    typ = (if sd=="\t": "T" else: sd) & "SV" & bracket[0] & typ & bracket[1]
     dfl = if dfls.len > 0: dfls.join(if sd=="\t": "\\t" else: sd) else: "EMPTY"
 
 # sets
@@ -269,7 +270,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, typ, df)
+  argAggHelp(a.delimit, dflSeq, "{}", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # seqs
@@ -297,7 +298,7 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, typ, df)
+  argAggHelp(a.delimit, dflSeq, "[]", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 import sets # HashSets
@@ -327,7 +328,7 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, typ, df)
+  argAggHelp(a.delimit, dflSeq, "{}", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 #import tables # Tables XXX need 2D delimiting convention
