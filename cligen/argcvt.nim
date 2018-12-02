@@ -94,7 +94,7 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
     case a.sep[0]                     # char on command line before [=:]
     of '+', '&': dst.add(a.val)       # Append Mode
     of '^': dst = a.val & dst         # Prepend Mode
-    of ':','=': dst = a.val           # Assign Mode
+    of ':','=': dst = a.val           # Clobbering Assign Mode
     else:
       if acLooseOperators in argCvtOptions: dst = a.val #Sloppy Mode=>assign
       else:
@@ -204,12 +204,14 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## ``'+'`` (or ``'&'``) and ``'^'`` mean append and prepend.  For ``set[T]``
 ## and ``seq[T]`` there is also ``'-'`` for deletion (of all matches).  E.g.,
 ## ``-o=,1,2,3 -o+=,4,5, -o^=,0 -o=-3`` is equivalent to ``-o=,0,1,2,4,5``.
-## It is not considered an error to try to delete a non-existent value.
+## It is not considered an error to try to delete a non-existent value.  The
+## same things work with ``:`` instead of ``=`` but are not a common syntax.
 ##
 ## When no operator is provided by the user (i.e. styles like ``-o,x,y,z -o
-## ,a,b --opt ,c,d``), append/incl mode is used for ``seq`` and ``set`` (but
-## not ``string`` which assigns by default).  Note that users are always free
-## to simply provide an ``'='`` to signify assignment mode instead.
+## ,a,b --opt ,c,d``) with no explicit ``=`` or ``:``, append/incl mode is used
+## for ``seq`` and ``set`` (but not ``string`` which clobber assigns for such).
+## Note that users are always free to simply provide an ``'='`` to signify
+## clobber assignment mode instead.
 
 proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
   var toks: seq[string]
@@ -281,10 +283,10 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     of '-':                           # Delete Mode
       for i, e in dst:
         if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
-    of ':','=': dst = parsed              # Assign Mode
+    of ':','=': dst = parsed          # Clobbering Assign Mode
     else:
       if acLooseOperators in argCvtOptions:
-        dst = parsed                # Assign Mode
+        dst = parsed                  # Clobbering Assign Mode
       else:
         ERR("Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key])
         return false
