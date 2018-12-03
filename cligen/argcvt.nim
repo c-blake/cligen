@@ -254,6 +254,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
 # if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
+    of '@': dst={}                    # Clear/truncate Mode
     of '+', '&': dst.incl(parsed)     # Incl Mode
     of '-': dst.excl(parsed)          # Excl Mode
     of ':','=': dst={}; dst.incl(parsed)  # Clobbering Assign Mode
@@ -279,6 +280,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
 # if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                     # char on command line before [=:]
+    of '@': dst.setLen(0)             # Clear/truncate Mode
     of '+', '&': dst.add(parsed)      # Append Mode
     of '^': dst = parsed & dst        # Prepend Mode
     of '-':                           # Delete Mode
@@ -312,6 +314,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
 # if card(parsed) == 0: return false    #XXX Allow ./app --foo="" to succeed.
   if a.sep.len > 0:
     case a.sep[0]                       # char on command line before [=:]
+    of '@': dst.clear()                 # Clear/truncate Mode
     of '+', '&': dst.incl(parsed)       # Incl Mode
     of '-': dst.excl(parsed)            # Excl Mode
     of ':','=': dst.clear(); dst.incl(parsed)   # Clobbering Assign Mode
