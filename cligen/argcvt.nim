@@ -211,7 +211,8 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## ,a,b --opt ,c,d``) with no explicit ``=`` or ``:``, append/incl mode is used
 ## for ``seq`` and ``set`` (but not ``string`` which clobber assigns for such).
 ## Note that users are always free to simply provide an ``'='`` to signify
-## clobber assignment mode instead.
+## clobber assignment mode instead.  The empty seq or empty set can be assigned
+## via ``@=`` where any argument to the right of that ``=`` is ignored.
 
 proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
   var toks: seq[string]
