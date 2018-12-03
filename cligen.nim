@@ -3,6 +3,8 @@ type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
 
+const positionalAuto = "<AUTO>"
+
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimIdent =
   ## Build Nim ident for generated parser-dispatcher proc
   result = if name.len > 0: toNimIdent(name)
@@ -114,15 +116,14 @@ proc findByName(parNm: string, fpars: NimNode): int =
   if result == -1:
     warning("specified positional argument `" & parNm & "` not found")
 
-proc posIxGet(positional: NimNode, fpars: NimNode): int =
+proc posIxGet(positional: string, fpars: NimNode): int =
   ## Find the proc param to map to optional positional arguments of a command.
-  let positionalStr = positional.strVal
-  if positionalStr == "":
+  if positional == "":
     return -1
-  if positionalStr != "<AUTO>":
-    result = findByName(positional.strVal, fpars)
+  if positional != positionalAuto:
+    result = findByName(positional, fpars)
     if result == -1:
-      error("requested positional argument catcher " & positional.strVal &
+      error("requested positional argument catcher " & positional &
             " is not in formal parameter list")
     return
   result = -1                     # No optional positional arg param yet found
@@ -204,7 +205,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
  helpTabColumns: seq[int] = @[
   helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional="<AUTO>", suppress: seq[string] = @[],
+ stopWords: seq[string] = @[], positional: static string = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
@@ -573,27 +574,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
- help: typed = {}, short: typed = {}, usage: string=dflUsage,
- prelude="Usage:\n  ", echoResult: bool=false, requireSeparator: bool=false,
- sepChars={'=',':'},
- opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
- helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
- helpTabColumns: seq[int] = @[
-  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional="<AUTO>", suppress: seq[string] = @[],
- shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
- mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
- noAutoEcho: bool=false, dispatchName: string = ""): untyped =
-  ## A convenience wrapper to both generate a command-line dispatcher and then
-  ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
+macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym}, noAutoEcho: bool, echoResult: bool): untyped =
   result = newStmtList()
-  result.add(newCall(
-    "dispatchGen", pro, cmdName, doc, help, short, usage, prelude, echoResult,
-      requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
-      helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
-      implicitDefault, mandatoryHelp, mandatoryOverride, delimit, version,
-      noAutoEcho, dispatchName))
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
   #XXX below mess should prob be a template used both here and in dispatchMulti
@@ -621,6 +603,28 @@ macro dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         try: discard `disNm`(); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1))
+
+template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
+ help: typed = {}, short: typed = {}, usage: string=dflUsage,
+ prelude="Usage:\n  ", echoResult: bool=false, requireSeparator: bool=false,
+ sepChars={'=',':'},
+ opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
+ helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
+ helpTabColumns: seq[int] = @[
+  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
+ stopWords: seq[string] = @[], positional = positionalAuto, suppress: seq[string] = @[],
+ shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
+ mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
+ noAutoEcho: bool=false, dispatchName: string = ""): untyped =
+  ## A convenience wrapper to both generate a command-line dispatcher and then
+  ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
+  dispatchGen(
+    pro, cmdName, doc, help, short, usage, prelude, echoResult,
+      requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
+      helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
+      implicitDefault, mandatoryHelp, mandatoryOverride, delimit, version,
+      noAutoEcho, dispatchName)
+  dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
 proc subCmdName(node: NimNode): string {.compileTime.} =
   ## Get last cmdName argument, if any, in bracket expression, or name of 1st
