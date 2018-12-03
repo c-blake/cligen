@@ -199,6 +199,7 @@ proc doLong(p: var OptParser) =
     ERR "argument expected for option `", p.key, "` at end of params"
 
 proc next*(p: var OptParser) =
+  p.sep = ""
   if p.off > 0:                         #Step1: handle any remaining short opts
     doShort(p)
     return
