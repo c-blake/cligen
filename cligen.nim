@@ -262,10 +262,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## parameters.  `mandatoryOverride` is a list of strings indicating parameter
   ## names which override mandatory-ness of anything else.
   ##
-  ## `delimit` decides delimiting conventions for aggregate types like `set`s
-  ## or `seq`s by assigning to `ArgcvtParams.delimit`.  Such delimiting is
-  ## implemented by `argParse`/`argHelp`, and so is very user overridable.
-  ## See `argcvt` documentation for details on the default implementation.
+  ## `delimit` decides what delimiter to display in help messages for default
+  ## values of aggregate types like `seq` or `set`.  Actual delimiting is DPSV.
   ##
   ## `version` is a `Version` 2-tuple (longOpt for version, version string)
   ## which defines how a CLI user may dump the version of a program.  If you
