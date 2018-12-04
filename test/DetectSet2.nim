@@ -25,16 +25,15 @@ proc foo(alpha: int, beta: int=2, rest: seq[int]) =
   echo "beta: ", beta
 
 dispatchGen(foo, setByParse=addr fooParse)
-
-dispatchFoo()       #1st arg defaults to os.commandLineParams()
+dispatchFoo(parseOnly=true)   #cmdLine=os.commandLineParams() by default
 
 echo "fooParse:"
 for e in fooParse: echo "  ", e
 
 if fooParse.numOfStatus({clOk, clPositional}) == fooParse.len:
-  echo "dispatched to foo"
+  echo "would have called foo"
 else:
-  echo "no dispatch to foo"
+  echo "would not have called foo"
 
 if clHelpOnly in fooParse:
   echo "User requested help.  Here you go"
