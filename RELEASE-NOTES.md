@@ -5,7 +5,8 @@ Version: 0.9.18
 ---------------
     This release adds several major features..Krux02 asked for (approximately)
     mergeParams and Timotheecour requested non-quitting invocation & something
-    like setByParse and alaviss asked for qualified proc name support.
+    like setByParse and the new aggregate parsing and alaviss asked for
+    qualified proc name support.
 
     Generated dispatchers now have the same return type (including void) and
     the same return value of wrapped procs.  Abnormal control flow from bad or
@@ -30,6 +31,9 @@ Version: 0.9.18
     Right now `mergeParams()` just returns `commandLineParams()`.  It could
     become smarter in the future if people ask.
 
+    `argPre` and `argPost` have been retired.  If you happened to be using them
+    you should be able to recreate (easily?) any behavior with `mergeParams()`.
+
     `cligen` now tries to detect typos/spelling mistakes by suggesting nearby
     elements in both long option keys and subcommand names where nearby is
     according to an edit distance designed for detecting typos.
@@ -53,16 +57,12 @@ Version: 0.9.18
     currently only available in `dispatchGen`.  So, manual dispatch calling is
     required (eg. `dispatchGen(myProc, setByParse=addr(x)); dispatchMyProc()`).
 
-    `argPre` and `argPost` have been retired.  If you happened to be using them
-    you should be able to recreate (easily?) any behavior with `mergeParams()`.
-
     `dispatchGen` now generates a compile-time error if you use a parameter name
     not in the wrapped proc for `help`, `short`, `suppress`, `implicitDefault`,
     or `mandatoryOverride`.
 
     Unknown operators in the default `argParse` implementations for aggregates
-    (`string`, `seq[T]`, etc.) now produce an error message unless you tell the
-    argcvt'rs not to with an `argCvtOptions.incl(acLooseOperators)`.
+    (`string`, `seq[T]`, etc.) now produce an error message.
 
     `positional`="" to dispatch/dispatchGen now disables entirely inference of
     what proc parameter catches positionals.
@@ -70,6 +70,23 @@ Version: 0.9.18
     `help["positionalName"]` will now be used in the one-line command summary
     as a help string for the parameter catching positionals.  It defaults to
     `[ <paramName>: <type> ]`.
+
+    Command-line syntax for aggregate types like `seq[T]` has changed quite a
+    bit to be both simpler and more general/capable.  There is a non-delimited
+    "single assignment per command-param" mode where users go `--foo^=atFront`
+    to pre-pend.  No delimiting rule is needed since all that is offloaded to
+    the shell running the command.  There is also a "splitting-assignment" mode
+    where operators like `^=` get a `,` prefix like `,^=` and users specify
+    delimiters as the first char of a value, `-f,=,a,b,c`.  This lets CLI users
+    assign many elements in a single command parameter or clobber the whole
+    collection with `,@=`.  When users need to delimit, they choose their own
+    character.  See argcvt documentation for details.  The `delimit` parameter
+    to `dispatch` has been re-purposed to just be what shows up to separate
+    default values in generated help messages.
+
+    There is a new --help-syntax line item for all commands which emits a
+    hopefully eventually user-friendly description of particulars related to
+    syntax for cligen commands, a syntax which has some unique extensions.
 
 Version: 0.9.17
 ---------------
