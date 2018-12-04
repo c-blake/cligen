@@ -11,7 +11,7 @@ import cligen
 
 var fooParse: seq[ClParse]
 
-proc foo(alpha: int, beta: int=2) =
+proc foo(alpha: int, beta: int=2, rest: seq[int]) =
   if "alpha" in fooParse:
     echo "user sets of alpha saw these value strings: "
     for s in fooParse:
@@ -29,9 +29,9 @@ dispatchGen(foo, setByParse=addr fooParse)
 dispatchFoo()       #1st arg defaults to os.commandLineParams()
 
 echo "fooParse:"
-echo fooParse
+for e in fooParse: echo "  ", e
 
-if fooParse.numOfStatus({clOk}) == fooParse.len:
+if fooParse.numOfStatus({clOk, clPositional}) == fooParse.len:
   echo "dispatched to foo"
 else:
   echo "no dispatch to foo"

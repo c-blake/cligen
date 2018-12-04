@@ -166,7 +166,9 @@ type
                    clBadVal,                        ## Unparsable value
                    clNonOption,                     ## Unexpected non-option
                    clMissing,                       ## Mandatory but missing
-                   clHelpOnly, clVersionOnly, clOk  ## Non-errors
+                   clOk,                            ## Option parse part ok
+                   clPositional,                    ## Expected non-option
+                   clHelpOnly, clVersionOnly        ## Early Exit requests
 
   ClParse* = tuple[paramName,         ##Param name/long opt key
                    unparsedVal,       ##Unparsed value("" for missing mandatory)
@@ -521,9 +523,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         let msg = "Cannot parse " & `apId`.key
         if cast[pointer](`setByParseId`) != nil:
           if argParse(`tmpId`,`tmpId`,`apId`):
-            `setByParseId`[].add((`apId`.key, `pId`.val, "", clOk))
+            `setByParseId`[].add((`apId`.key, `apId`.val, "", clPositional))
           else:
-            `setByParseId`[].add((`apId`.key, `pId`.val, msg, clBadVal))
+            `setByParseId`[].add((`apId`.key, `apId`.val, msg, clBadVal))
         else:
           if not argParse(`tmpId`, `tmpId`, `apId`):
             raise newException(ParseError, msg)

@@ -134,11 +134,12 @@ Usage:
 
 ==> test/DetectSet2.out <==
 fooParse:
-@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] \n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
 no dispatch to foo
 User requested help.  Here you go
 Usage:
-  foo [required&optional-params] 
+  foo [required&optional-params] [rest: int...]
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
   --help-syntax                 print cligen-specific syntax
@@ -609,7 +610,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(631, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(633, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(135, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
