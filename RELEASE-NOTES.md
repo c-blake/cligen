@@ -4,9 +4,9 @@ RELEASE NOTES
 Version: 0.9.18
 ---------------
     This release adds several major features..Krux02 asked for (approximately)
-    mergeParams and Timotheecour requested non-quitting invocation & something
-    like setByParse and the new aggregate parsing and alaviss asked for
-    qualified proc name support.
+    mergeParams, alaviss asked for qualified proc name support, and Timotheecour
+    requested non-quitting invocation & something like setByParse and the new
+    aggregate parsing and pointed out other bugs/helped implement some things.
 
     Generated dispatchers now have the same return type (including void) and
     the same return value of wrapped procs.  Abnormal control flow from bad or
