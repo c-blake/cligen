@@ -3,56 +3,56 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                             print this help
-  --help-syntax                          print cligen-specific syntax
-  -b=, --bl=     [bool]     EMPTY        set bl
-  -B=, --Bl=     [bool]     ,false,true  set Bl
-  -s=, --s=      [string]   EMPTY        set s
-  -S=, --S=      [string]   ,ho,hey      set S
-  -i=, --i=      [int]      EMPTY        set i
-  -I=, --I=      [int]      ,1,2         set I
-  --i1=          [int8]     EMPTY        set i1
-  --I1=          [int8]     ,3,4         set I1
-  --i2=          [int16]    EMPTY        set i2
-  --I2=          [int16]    ,5,6         set I2
-  --i4=          [int32]    EMPTY        set i4
-  --I4=          [int32]    ,7,8         set I4
-  --i8=          [int64]    EMPTY        set i8
-  --I8=          [int64]    ,9,10        set I8
-  -u=, --u=      [uint]     EMPTY        set u
-  -U=, --U=      [uint]     ,11,12       set U
-  --u1=          [uint8]    EMPTY        set u1
-  --U1=          [uint8]    ,13,14       set U1
-  --u2=          [uint16]   EMPTY        set u2
-  --U2=          [uint16]   ,15,16       set U2
-  --u4=          [uint32]   EMPTY        set u4
-  --U4=          [uint32]   ,17,18       set U4
-  --u8=          [uint64]   EMPTY        set u8
-  --U8=          [uint64]   ,19,20       set U8
-  -f=, --f4=     [float32]  EMPTY        set f4
-  -F=, --F4=     [float32]  ,23.0,24.0   set F4
-  --f8=          [float]    EMPTY        set f8
-  --F8=          [float]    ,25.0,26.0   set F8
+  -h, --help                            print this help
+  --help-syntax                         print cligen-specific syntax
+  -b=, --bl=     [bool]     EMPTY       append to bl
+  -B=, --Bl=     [bool]     false,true  append to Bl
+  -s=, --s=      [string]   EMPTY       append to s
+  -S=, --S=      [string]   ho,hey      append to S
+  -i=, --i=      [int]      EMPTY       append to i
+  -I=, --I=      [int]      1,2         append to I
+  --i1=          [int8]     EMPTY       append to i1
+  --I1=          [int8]     3,4         append to I1
+  --i2=          [int16]    EMPTY       append to i2
+  --I2=          [int16]    5,6         append to I2
+  --i4=          [int32]    EMPTY       append to i4
+  --I4=          [int32]    7,8         append to I4
+  --i8=          [int64]    EMPTY       append to i8
+  --I8=          [int64]    9,10        append to I8
+  -u=, --u=      [uint]     EMPTY       append to u
+  -U=, --U=      [uint]     11,12       append to U
+  --u1=          [uint8]    EMPTY       append to u1
+  --U1=          [uint8]    13,14       append to U1
+  --u2=          [uint16]   EMPTY       append to u2
+  --U2=          [uint16]   15,16       append to U2
+  --u4=          [uint32]   EMPTY       append to u4
+  --U4=          [uint32]   17,18       append to U4
+  --u8=          [uint64]   EMPTY       append to u8
+  --U8=          [uint64]   19,20       append to U8
+  -f=, --f4=     [float32]  EMPTY       append to f4
+  -F=, --F4=     [float32]  23.0,24.0   append to F4
+  --f8=          [float]    EMPTY       append to f8
+  --F8=          [float]    25.0,26.0   append to F8
 
 ==> test/AllSetTypes.out <==
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                                print this help
-  --help-syntax                             print cligen-specific syntax
-  -b=, --bl=     {bool}    EMPTY            set bl
-  -B=, --Bl=     {bool}    ,false,true      set Bl
-  -i=, --i1=     {int8}    EMPTY            set i1
-  -I=, --I1=     {int8}    ,3,4             set I1
-  --i2=          {int16}   EMPTY            set i2
-  --I2=          {int16}   ,5,6             set I2
-  -u=, --u1=     {uint8}   EMPTY            set u1
-  -U=, --U1=     {uint8}   ,13,14           set U1
-  --u2=          {uint16}  EMPTY            set u2
-  --U2=          {uint16}  ,15,16           set U2
-  -e=, --e=      {Color}   EMPTY            set e
-  -E=, --E=      {Color}   ,red,green,blue  set E
+  -h, --help                               print this help
+  --help-syntax                            print cligen-specific syntax
+  -b=, --bl=     {bool}    EMPTY           set bl
+  -B=, --Bl=     {bool}    false,true      set Bl
+  -i=, --i1=     {int8}    EMPTY           set i1
+  -I=, --I1=     {int8}    3,4             set I1
+  --i2=          {int16}   EMPTY           set i2
+  --I2=          {int16}   5,6             set I2
+  -u=, --u1=     {uint8}   EMPTY           set u1
+  -U=, --U1=     {uint8}   13,14           set U1
+  --u2=          {uint16}  EMPTY           set u2
+  --U2=          {uint16}  15,16           set U2
+  -e=, --e=      {Color}   EMPTY           set e
+  -E=, --E=      {Color}   red,green,blue  set E
 
 ==> test/AllTypes.out <==
 Usage:
@@ -121,7 +121,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
-  -s=, --stuff=  CSV   "ab,cd"  set stuff
+  -s=, --stuff=  CSV   "ab,cd"  append to stuff
 
 ==> test/DetectSet.out <==
 Usage:
@@ -190,8 +190,8 @@ demo entry point with varied, meaningless parameters.
   --help-syntax                     print cligen-specific syntax
   -c=, --c=      enum     REQUIRED  primary color
   -b=, --bg=     enum     red       background color
-  -f=, --fg=     [Color]  ,green    foreround colors
-  --curs=        {Color}  ,blue     cursor colors
+  -f=, --fg=     [Color]  green     foreround colors
+  --curs=        {Color}  blue      cursor colors
   -x=, --x=      int      0         set x
 
 ==> test/External.out <==
@@ -215,12 +215,12 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       print this help
-  --help-syntax                    print cligen-specific syntax
-  -a=, --alpha=  int       1       set alpha
-  -v=, --verb=   countr    0       set verb
-  -j=, --junk=   [string]  ,rs,tu  set junk
-  -s=, --stuff=  [string]  ,ab,cd  set stuff
+  -h, --help                      print this help
+  --help-syntax                   print cligen-specific syntax
+  -a=, --alpha=  int       1      set alpha
+  -v=, --verb=   countr    0      set verb
+  -j=, --junk=   [string]  rs,tu  append to junk
+  -s=, --stuff=  [string]  ab,cd  append to stuff
 
 ==> test/FullyAutoMulti.out <==
 Usage:
@@ -280,18 +280,18 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                                print this help
-  --help-syntax                             print cligen-specific syntax
-  -i=, --i1=     {int8}    EMPTY            set i1
-  -I=, --I1=     {int8}    ,3,4             set I1
-  --i2=          {int16}   EMPTY            set i2
-  --I2=          {int16}   ,5,6             set I2
-  -u=, --u1=     {uint8}   EMPTY            set u1
-  -U=, --U1=     {uint8}   ,13,14           set U1
-  --u2=          {uint16}  EMPTY            set u2
-  --U2=          {uint16}  ,16,15           set U2
-  -e=, --e=      {Color}   EMPTY            set e
-  -E=, --E=      {Color}   ,red,green,blue  set E
+  -h, --help                               print this help
+  --help-syntax                            print cligen-specific syntax
+  -i=, --i1=     {int8}    EMPTY           set i1
+  -I=, --I1=     {int8}    3,4             set I1
+  --i2=          {int16}   EMPTY           set i2
+  --I2=          {int16}   5,6             set I2
+  -u=, --u1=     {uint8}   EMPTY           set u1
+  -U=, --U1=     {uint8}   13,14           set U1
+  --u2=          {uint16}  EMPTY           set u2
+  --U2=          {uint16}  16,15           set U2
+  -e=, --e=      {Color}   EMPTY           set e
+  -E=, --E=      {Color}   red,green,blue  set E
 
 ==> test/HelpTabCols.out <==
 Usage:
@@ -610,7 +610,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(638, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(643, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(138, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
@@ -620,7 +620,7 @@ demo entry point with varied, meaningless parameters.
   --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
-  -s=, --stuff=  [string]  REQUIRED  set stuff
+  -s=, --stuff=  [string]  REQUIRED  append to stuff
 
 ==> test/TwoNondefaultedSeqSwap.out <==
 Usage:
@@ -631,7 +631,7 @@ demo entry point with varied, meaningless parameters.
   --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
-  --args=        [string]  REQUIRED  set args
+  --args=        [string]  REQUIRED  append to args
 
 ==> test/UserDispIdCollide.out <==
 Usage:
