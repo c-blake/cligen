@@ -132,21 +132,6 @@ Usage:
   -a=, --alpha=  int  1  set alpha
   -b=, --beta=   int  2  set beta
 
-==> test/DetectSet2.out <==
-fooParse:
-  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    print this help\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
-  (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
-no dispatch to foo
-User requested help.  Here you go
-Usage:
-  foo [required&optional-params] [rest: int...]
-  Options(opt-arg sep :|=|spc):
-  -h, --help                    print this help
-  --help-syntax                 print cligen-specific syntax
-  -a=, --alpha=  int  REQUIRED  set alpha
-  -b=, --beta=   int  2         set beta
-
-
 ==> test/DistinctInt.out <==
 Usage:
   main [required&optional-params] 
@@ -456,6 +441,21 @@ This tests if single character parameters work as expected
   -u=, --u=      int     1           set u
   -c=, --c=      string  "bad name"  set c
   -g=, --g=      string  "ho"        set g
+
+==> test/ParseOnly.out <==
+fooParse:
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    print this help\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
+would not have called foo
+User requested help.  Here you go
+Usage:
+  foo [required&optional-params] [rest: int...]
+  Options(opt-arg sep :|=|spc):
+  -h, --help                    print this help
+  --help-syntax                 print cligen-specific syntax
+  -a=, --alpha=  int  REQUIRED  set alpha
+  -b=, --beta=   int  2         set beta
+
 
 ==> test/PerParam.out <==
 Usage:
