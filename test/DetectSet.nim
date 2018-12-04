@@ -14,8 +14,8 @@ proc argParse(dst: var int, dfl: int, a: var ArgcvtParams): bool =
     alphaSet = true
   let stripped = strip(a.val)
   if len(stripped) == 0 or parseInt(stripped, dst) != len(stripped):
-    ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
-        [ a.val, a.key, "int", a.help ])
+    a.msg = "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
+            [ a.val, a.key, "int", a.help ]
     return false
   return true
 

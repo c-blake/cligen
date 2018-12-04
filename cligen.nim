@@ -472,13 +472,14 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
         if cast[pointer](`setByParseId`) != nil:
-          if argParse(`spar`,`dpar`,`apId`):
+          if argParse(`spar`, `dpar`, `apId`):
             `setByParseId`[].add((`parNm`,`pId`.val, "", clOk))
           else:
             `setByParseId`[].add((`parNm`,`pId`.val,
                                  "Cannot parse arg to " & `apId`.key, clBadVal))
         else:
           if not argParse(`spar`, `dpar`, `apId`):
+            stderr.write `apId`.msg
             raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
         `maybeMandInForce`
@@ -531,6 +532,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
             `setByParseId`[].add((`apId`.key, `apId`.val, msg, clBadVal))
         else:
           if not argParse(`tmpId`, `tmpId`, `apId`):
+            stderr.write `apId`.msg
             raise newException(ParseError, msg)
         if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))

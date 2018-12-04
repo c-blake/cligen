@@ -8,7 +8,7 @@ proc demo(alpha=1, verb=false, stuff = @[ "ab", "cd" ], args: seq[string]): int=
 
 when isMainModule:
   from strutils import split, `%`, join
-  from cligen/argcvt import ArgcvtParams, argKeys, argDf, ERR  # Little helpers
+  from cligen/argcvt import ArgcvtParams, argKeys, argDf  # Little helpers
 
   proc argParse(dst: var seq[string], dfl: seq[string], a: var ArgcvtParams): bool =
     dst = a.val.split(",")

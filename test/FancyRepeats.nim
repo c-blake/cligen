@@ -9,7 +9,7 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from cligen/argcvt import ArgcvtParams, argKeys, argDf, ERR  # Little helpers
+  from cligen/argcvt import ArgcvtParams, argKeys, argDf  # Little helpers
   from parseutils import parseInt
 
   proc argParse*(dst: var int, dfl: int; a: var ArgcvtParams): bool =
@@ -17,8 +17,8 @@ when isMainModule:
       inc(dst)                          # that just counts its occurances
     else:
       if parseInt(strip(a.val), dst) == 0:
-        ERR("Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
-               [ a.val, a.key, a.help ])
+        a.msg = "Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
+                [ a.val, a.key, a.help ]
         return false
     return true
 

@@ -5,7 +5,6 @@
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
-proc ERR*(x: varargs[string, `$`]) = stderr.write(x)
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -39,6 +38,7 @@ proc unescape*(s: string): string =
       result.add(s[i])
       inc(i, 1)
 
+type ElementError = object of Exception
 type ArgcvtParams* = object ## \
   ## Abstraction of non-param-type arguments to `argParse` and `argHelp`.
   ## Per-use data, then per-parameter data, then per-command/global data.
@@ -51,7 +51,8 @@ type ArgcvtParams* = object ## \
   parReq*: int        ## flag indicating parameter is mandatory
   mand*: string       ## how a mandatory defaults is rendered in help
   help*: string       ## the whole help string, for parse errors
-  delimit*: string    ## delimiting convention for `seq`, `set`, etc.
+  delimit*: string    ## delimiting convention for `seq`, etc. default vals
+  msg*: string        ## Error message from a bad parse
   shortNoVal*: set[char]  ## short options keys where value may be omitted
   longNoVal*: seq[string] ## long option keys where value may be omitted
 
@@ -71,8 +72,8 @@ proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
     of "t", "true" , "yes", "y", "1", "on" : dst = true
     of "f", "false", "no" , "n", "0", "off": dst = false
     else:
-      ERR("Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
-          [ a.key, a.val, a.help ])
+      a.msg = "Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
+              [ a.key, a.val, a.help ]
       return false
   else:               # No option arg => reverse of default (usually, ..
     dst = not dfl     #.. but not always this means false->true)
@@ -96,8 +97,8 @@ proc argHelp*(dfl: cstring; a: var ArgcvtParams): seq[string] =
 proc argParse*(dst: var char, dfl: char, a: var ArgcvtParams): bool =
   let val = unescape(a.val)
   if len(val) != 1:
-    ERR("Bad value \"$1\" for single char param \"$2\"\n$3" %
-        [ a.val, a.key, a.help ])
+    a.msg = "Bad value \"$1\" for single char param \"$2\"\n$3" %
+            [ a.val, a.key, a.help ]
     return false
   dst = val[0]
   return true
@@ -118,8 +119,8 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
     var all = ""
     for e in low(T)..high(T): all.add($e & " ")
     all.add("\n\n")
-    ERR("Bad enum value for option \"$1\". \"$2\" is not one of:\n  $3$4" %
-        [ a.key, a.val, all, a.help ])
+    a.msg = "Bad enum value for option \"$1\". \"$2\" is not one of:\n  $3$4" %
+            [ a.key, a.val, all, a.help ]
     return false
   return true
 
@@ -135,12 +136,12 @@ template argParseHelpNum*(WideT: untyped, parse: untyped, T: untyped): untyped =
     var parsed: WideT
     let stripped = strip(a.val)
     if len(stripped) == 0 or parse(stripped, parsed) != len(stripped):
-      ERR("Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
-          [ a.val, a.key, $T, a.help ])
+      a.msg = "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
+              [ a.val, a.key, $T, a.help ]
       return false
     if parsed < WideT(T.low) or parsed > WideT(T.high):
-      ERR("Bad value: \"$1\" for option \"$2\"; out of range for $3\n$4" %
-          [ a.val, a.key, $T, a.help ])
+      a.msg = "Bad value: \"$1\" for option \"$2\"; out of range for $3\n$4" %
+              [ a.val, a.key, $T, a.help ]
       return false
     dst = T(parsed)
     return true
@@ -188,12 +189,12 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
   ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
   let toks = if split: a.val[1..^1].split(a.val[0]) else: @[ a.val ]
   let old = a.sep; a.sep = ""     #can have agg[string] & want clobbers on elts
-  for tok in toks:
+  for i, tok in toks:
     var parsed, default: T
     a.val = tok
     if not argParse(parsed, default, a):
       result.setLen(0); a.sep = old
-      return
+      raise newException(ElementError, "Bad element " & $i)
     result.add(parsed)
   a.sep = old                     #probably don't need to restore, but eh.
 
@@ -204,29 +205,32 @@ proc argAggHelp*(dfls: seq[string]; brkt, dlm: string; typ, dfl: var string) =
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
   result = true
-  if a.sep.len <= 1:                      # No Sep|No Op => Append
-    dst.add(argAggSplit[T](a, false))
-    return
-  if   a.sep == "+=": dst.add(argAggSplit[T](a, false))
-  elif a.sep == "^=": dst = argAggSplit[T](a, false) & dst
-  elif a.sep == "-=":                     # Delete Mode
-    let parsed = argAggSplit[T](a, false)[0]
-    for i, e in dst:                      # Slow algo,..
-      if e == parsed: dst.delete(i)       # ..but preserves order
-  elif a.val == "":                       # just clobber
-    dst.setLen(0)
-  elif a.sep == ",@=":                    # split-clobber-assign
-    dst = argAggSplit[T](a)
-  elif a.sep == ",=" or a.sep == ",+=":   # split-append
-    dst = dst & argAggSplit[T](a)
-  elif a.sep == ",^=":                    # split-prepend
-    dst = argAggSplit[T](a) & dst
-  elif a.sep == ",-=":                    # split-delete
-    let parsed = argAggSplit[T](a)
-    for i, e in dst:                      # Slow algo,..
-      if e in parsed: dst.delete(i)       # ..but preserves order
-  else:
-    ERR("Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key])
+  try:
+    if a.sep.len <= 1:                      # No Sep|No Op => Append
+      dst.add(argAggSplit[T](a, false))
+      return
+    if   a.sep == "+=": dst.add(argAggSplit[T](a, false))
+    elif a.sep == "^=": dst = argAggSplit[T](a, false) & dst
+    elif a.sep == "-=":                     # Delete Mode
+      let parsed = argAggSplit[T](a, false)[0]
+      for i, e in dst:                      # Slow algo,..
+        if e == parsed: dst.delete(i)       # ..but preserves order
+    elif a.val == "":                       # just clobber
+      dst.setLen(0)
+    elif a.sep == ",@=":                    # split-clobber-assign
+      dst = argAggSplit[T](a)
+    elif a.sep == ",=" or a.sep == ",+=":   # split-append
+      dst = dst & argAggSplit[T](a)
+    elif a.sep == ",^=":                    # split-prepend
+      dst = argAggSplit[T](a) & dst
+    elif a.sep == ",-=":                    # split-delete
+      let parsed = argAggSplit[T](a)
+      for i, e in dst:                      # Slow algo,..
+        if e in parsed: dst.delete(i)       # ..but preserves order
+    else:
+      a.msg = "Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key]
+      raise newException(ElementError, "Bad operator")
+  except:
     return false
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
@@ -245,7 +249,7 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
   of '+', '&': dst.add(a.val)         # Append
   of '^': dst = a.val & dst           # Prepend
   else:
-    ERR("Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key])
+    a.msg = "Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key]
     return false
 
 proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
@@ -261,21 +265,24 @@ proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
 
 proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
   result = true
-  if a.sep.len <= 1:                      # No Sep|No Op => Append
-    dst.incl(argAggSplit[T](a, false))
-    return
-  if   a.sep == "+=": dst.incl(argAggSplit[T](a, false))
-  elif a.sep == "-=": dst.excl(argAggSplit[T](a, false))
-  elif a.val == "":                       # just clobber
-    dst = {}
-  elif a.sep == ",@=":                    # split-clobber-assign
-    dst = {}; dst.incl(argAggSplit[T](a))
-  elif a.sep == ",=" or a.sep == ",+=":   # split-include
-    dst.incl(argAggSplit[T](a))
-  elif a.sep == ",-=":                    # split-exclude
-    dst.excl(argAggSplit[T](a))
-  else:
-    ERR("Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key])
+  try:
+    if a.sep.len <= 1:                      # No Sep|No Op => Append
+      dst.incl(argAggSplit[T](a, false))
+      return
+    if   a.sep == "+=": dst.incl(argAggSplit[T](a, false))
+    elif a.sep == "-=": dst.excl(argAggSplit[T](a, false))
+    elif a.val == "":                       # just clobber
+      dst = {}
+    elif a.sep == ",@=":                    # split-clobber-assign
+      dst = {}; dst.incl(argAggSplit[T](a))
+    elif a.sep == ",=" or a.sep == ",+=":   # split-include
+      dst.incl(argAggSplit[T](a))
+    elif a.sep == ",-=":                    # split-exclude
+      dst.excl(argAggSplit[T](a))
+    else:
+      a.msg = "Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key]
+      raise newException(ElementError, "Bad operator")
+  except:
     return false
 
 proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
@@ -290,21 +297,24 @@ import sets
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
                   a: var ArgcvtParams): bool =
   result = true
-  if a.sep.len <= 1:                      # No Sep|No Op => Append
-    dst.incl(toSet(argAggSplit[T](a, false)))
-    return
-  if   a.sep == "+=": dst.incl(toSet(argAggSplit[T](a, false)))
-  elif a.sep == "-=": dst.excl(toSet(argAggSplit[T](a, false)))
-  elif a.val == "":                       # just clobber
-    dst.clear()
-  elif a.sep == ",@=":                    # split-clobber-assign
-    dst.clear(); dst.incl(toSet(argAggSplit[T](a)))
-  elif a.sep == ",=" or a.sep == ",+=":   # split-include
-    dst.incl(toSet(argAggSplit[T](a)))
-  elif a.sep == ",-=":                    # split-exclude
-    dst.excl(toSet(argAggSplit[T](a)))
-  else:
-    ERR("Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key])
+  try:
+    if a.sep.len <= 1:                      # No Sep|No Op => Append
+      dst.incl(toSet(argAggSplit[T](a, false)))
+      return
+    if   a.sep == "+=": dst.incl(toSet(argAggSplit[T](a, false)))
+    elif a.sep == "-=": dst.excl(toSet(argAggSplit[T](a, false)))
+    elif a.val == "":                       # just clobber
+      dst.clear()
+    elif a.sep == ",@=":                    # split-clobber-assign
+      dst.clear(); dst.incl(toSet(argAggSplit[T](a)))
+    elif a.sep == ",=" or a.sep == ",+=":   # split-include
+      dst.incl(toSet(argAggSplit[T](a)))
+    elif a.sep == ",-=":                    # split-exclude
+      dst.excl(toSet(argAggSplit[T](a)))
+    else:
+      a.msg = "Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key]
+      raise newException(ElementError, "Bad operator")
+  except:
     return false
 
 proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
