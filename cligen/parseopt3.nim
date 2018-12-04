@@ -166,7 +166,9 @@ proc doShort(p: var OptParser) =
     p.pos += 2
     p.off = 0
     return
-  ERR "argument expected for option `", p.key, "` at end of params"
+  p.val = ""
+  p.off = 0
+  p.pos += 1
 
 proc doLong(p: var OptParser) =
   p.kind = cmdLongOption
@@ -196,7 +198,8 @@ proc doLong(p: var OptParser) =
     p.val = p.cmd[p.pos]
     p.pos += 1
   elif p.longNoVal.len != 0:
-    ERR "argument expected for option `", p.key, "` at end of params"
+    p.val = ""
+    p.pos += 1
 
 proc next*(p: var OptParser) =
   p.sep = ""
