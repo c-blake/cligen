@@ -198,9 +198,18 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
     result.add(parsed)
   a.sep = old                     #probably don't need to restore, but eh.
 
+proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
+  if defaultHelp.len > 0: return defaultHelp # TODO: what user explicitly set it to empty?
+  when T is seq:
+    result = "append to"
+  else:
+    result = "set"
+
+  result.add " " & parNm
+
 proc argAggHelp*(dfls: seq[string]; brkt, dlm: string; typ, dfl: var string) =
   typ = brkt[0] & typ & brkt[1]
-  dfl = if dfls.len > 0: dlm & dfls.join(dlm) else: "EMPTY"
+  dfl = ($dfls)[1 .. ^1]
 
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =

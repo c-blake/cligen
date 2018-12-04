@@ -397,11 +397,16 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         let parNm = $idef[0]
         let sh = toString(shOpt.getOrDefault(parNm))      #Add to perPar helpTab
         let defVal = sdef[0]
-        let hlp=if parNm in helps: helps.getOrDefault(parNm) else: "set "&parNm
+        let hlp =
+          if parNm in helps:
+            helps.getOrDefault(parNm)
+          else:
+            ""
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
-         `tabId`.add(argHelp(`defVal`, `apId`) & `hlp`); `allId`.add(`parNm`) )
+         let descr = getDescription(`defVal`, `parNm`, `hlp`)
+         `tabId`.add(argHelp(`defVal`, `apId`) & descr); `allId`.add(`parNm`) )
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
@@ -550,7 +555,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let retType=fpars[0]
   result = quote do:
     from os               import commandLineParams
-    from cligen/argcvt    import ArgcvtParams, argParse, argHelp
+    from cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
     from cligen/textUt    import addPrefix, TextTab, alignTable, suggestions
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
