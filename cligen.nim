@@ -90,6 +90,9 @@ proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
   for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
     if i == posIx: continue                  # positionals get no option char
     let parNm = $(fpars[i][0])
+    if parNm.len == 1 and parNm[0] == chr(hlpCh.intVal):
+      error "Error: `" & parNm & "` collides with `shortHelp`.  Use another " &
+            "shortHelp='char' in `dispatch`."
     let sh = parNm[0]                        # abbreviation is 1st character
     if sh notin used and parNm notin result: # still available
       result[parNm] = sh
