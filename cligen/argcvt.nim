@@ -235,7 +235,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "[]", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
@@ -287,7 +287,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
 
 proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "{}", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
@@ -319,7 +319,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
 
 proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "{}", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]

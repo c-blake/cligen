@@ -364,7 +364,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `apId`.delimit = `delim`
       let shortH = $(`shortHlp`)
       var `allId`: seq[string] = @[ "help", "help-syntax" ]
-      var `mandId`: seq[string] = @[ ]
+      var `mandId`: seq[string]
       var `mandInFId` = true
       var `tabId`: TextTab =
         @[ @[ "-" & shortH & ", --help", "", "", "print this help" ],
