@@ -7,10 +7,6 @@ from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
 proc ERR*(x: varargs[string, `$`]) = stderr.write(x)
 
-type
-  ArgCvtOption* = enum acLooseOperators   ## Unknown operator same as just '='
-var argCvtOptions*: set[ArgCvtOption] = {}
-
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
   result = newStringOfCap(s.len + 2 + s.len shr 2)
@@ -88,24 +84,6 @@ proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal.add(a.parNm)        # So, add to *NoVal.
 
-# strings
-proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
-  if a.sep.len > 0:                   # no separator => assignment
-    case a.sep[0]                     # char on command line before [=:]
-    of '+', '&': dst.add(a.val)       # Append Mode
-    of '^': dst = a.val & dst         # Prepend Mode
-    of ':','=': dst = a.val           # Clobbering Assign Mode
-    else:
-      if acLooseOperators in argCvtOptions: dst = a.val #Sloppy Mode=>assign
-      else:
-        ERR("Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key])
-        return false
-  else: dst = a.val                   # No Operator => Assign Mode
-  return true
-
-proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "string", a.argDf(nimEscape(dfl)) ]
-
 # cstrings
 proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
   dst = a.val
@@ -182,65 +160,94 @@ argParseHelpNum(BiggestUInt , parseBiggestUInt , uint32 )
 argParseHelpNum(BiggestUInt , parseBiggestUInt , uint64 )
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
-#argParseHelpNum(BiggestFloat, parseBiggestFloat, float64) #only a type alias
 
-## **PARSING AGGREGATES (string,set,seq,..) FOR NON-OS-TOKENIZED OPTION VALS**
+## ** PARSING AGGREGATES (string,set,seq,..) **
 ##
-## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` with
-## delimiting rules decided by ``delimit`` (set via ``dispatch(..delimit=)``).
-## A value of ``"<D>"`` indicates delimiter-prefixed-values (DPSV) while a
-## square-bracket character class like ``"[:,]"`` indicates a set of chars and
-## anything else indicates that the whole string is the delimiter.
+## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` and
+## similar aggregates (set[T], HashSet[T]) with a full complement of operations:
+## prepend (``^=``), subtract/delete (``-=``), as well as the usual append
+## (``+=`` or just ``=`` as is customary, after e.g. ``cc -Ipath1 -Ipath2``).
+## 
+## ``string`` is treated more as a scalar variable by ``cligen`` in that an
+## unqualified ``[:=<SPACE>]`` does an overwriting/clobbering assignment rather
+## than adding to the end of the string, but ``+=`` effects the append if
+## desired.  E.g., ``--foo=""`` overwrites the value to be an empty string,
+## ``--foo+=""`` leaves it unaltered, and ``--foo^=new`` prepends ``"new"``.
 ##
-## DPSV format looks like ``<DELIMCHAR><ELEMENT><DELIMCHAR><ELEMENT>..``
-## E.g., for CSV the user enters ``",foo,bar"``.
-##
-## The delimiting system is somewhat extensible.  If you have a new style or
-## would like to override defaults then you can define your own ``argAggSplit``
-## and ``argAggHelp`` anywhere before ``dispatchGen``.
-##
-## To allow easy incremental modifications to existing values, a few ``opChars``
-## are interpreted by various ``argParse``.  For ``string`` and ``seq[T]``,
-## ``'+'`` (or ``'&'``) and ``'^'`` mean append and prepend.  For ``set[T]``
-## and ``seq[T]`` there is also ``'-'`` for deletion (of all matches).  E.g.,
-## ``-o=,1,2,3 -o+=,4,5, -o^=,0 -o=-3`` is equivalent to ``-o=,0,1,2,4,5``.
-## It is not considered an error to try to delete a non-existent value.  The
-## same things work with ``:`` instead of ``=`` but are not a common syntax.
-##
-## When no operator is provided by the user (i.e. styles like ``-o,x,y,z -o
-## ,a,b --opt ,c,d``) with no explicit ``=`` or ``:``, append/incl mode is used
-## for ``seq`` and ``set`` (but not ``string`` which clobber assigns for such).
-## Note that users are always free to simply provide an ``'='`` to signify
-## clobber assignment mode instead.  The empty seq or empty set can be assigned
-## via ``@=`` where any argument to the right of that ``=`` is ignored.
+## This module also supports a ``,``-prefixed family of enhanced Delimiter-
+## Prefixed Separated Value operators that allow passing multiple slots to the
+## above operators.  DPSV is like typical regex substitution syntax, e.g.,
+## ``/old/new`` or ``%search%replace`` where the first ``char`` indicates the
+## delimiter for the rest.  Delimiting is strict. (E.g., ``--foo,^=/old/new/``
+## prepends 3 items ``@["old", "new", ""]`` to some ``foo: seq[string]``).
+## Available only in the ``,``-family is also ``,@`` as in ``,@=<D>V1<D>V2...``
+## which does a clobbering assignment of ``@["V1", "V2", ...]``.  *No delimiter*
+## (i.e. ``"--foo,@="``) clips any aggregate to its empty version, e.g. ``@[]``.
 
-proc argAggSplit*[T](src: string, delim: string, a: var ArgcvtParams): seq[T] =
-  var toks: seq[string]
-  if delim == "<D>":                      # DELIMITER-PREFIXED Sep-Vals
-    toks = src[1..^1].split(src[0])       # E.g.: ",hello,world"
-  elif delim[0] == '[' and delim[^1] == ']':
-    var cclass: set[char] = {}            # is there no toSet?
-    for c in delim[1..^2]: cclass.incl(c)
-    toks = src.split(cclass)
-  else:
-    toks = src.split(delim)
-  result = @[]
+proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
+  ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
+  let toks = if split: a.val[1..^1].split(a.val[0]) else: @[ a.val ]
+  let old = a.sep; a.sep = ""     #can have agg[string] & want clobbers on elts
   for tok in toks:
     var parsed, default: T
     a.val = tok
     if not argParse(parsed, default, a):
-      result.setLen(0)
+      result.setLen(0); a.sep = old
       return
     result.add(parsed)
+  a.sep = old                     #probably don't need to restore, but eh.
 
-proc argAggHelp*(sd: string, dfls: seq[string]; bracket: string;
-                 typ, dfl: var string) =
-  if sd == "<D>":
-    typ = "DPSV" & bracket[0] & typ & bracket[1]
-    dfl = if dfls.len > 0: sd & dfls.join(sd) else: "EMPTY"
+proc argAggHelp*(dfls: seq[string]; bracket: string; typ, dfl: var string) =
+  typ = bracket[0] & typ & bracket[1]
+  dfl = if dfls.len > 0: "," & dfls.join(",") else: "EMPTY"
+
+# seqs
+proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
+  result = true
+  if a.sep.len <= 1:                      # No Sep|No Op => Append
+    dst.add(argAggSplit[T](a, false))
+    return
+  if   a.sep == "+=": dst.add(argAggSplit[T](a, false))
+  elif a.sep == "^=": dst = argAggSplit[T](a, false) & dst
+  elif a.sep == "-=":                     # Delete Mode
+    let parsed = argAggSplit[T](a, false)[0]
+    for i, e in dst:                      # Slow algo,..
+      if e == parsed: dst.delete(i)       # ..but preserves order
+  elif a.sep == ",@=":                    # split-clobber-assign
+    dst = argAggSplit[T](a)
+  elif a.sep == ",=" or a.sep == ",+=":   # split-append
+    dst = dst & argAggSplit[T](a)
+  elif a.sep == ",^=":                    # split-prepend
+    dst = argAggSplit[T](a) & dst
+  elif a.sep == ",-=":                    # split-delete
+    let parsed = argAggSplit[T](a)
+    for i, e in dst:                      # Slow algo,..
+      if e in parsed: dst.delete(i)       # ..but preserves order
   else:
-    typ = (if sd=="\t": "T" else: sd) & "SV" & bracket[0] & typ & bracket[1]
-    dfl = if dfls.len > 0: dfls.join(if sd=="\t": "\\t" else: sd) else: "EMPTY"
+    ERR("Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key])
+    return false
+
+proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
+  var typ = $T; var df: string
+  var dflSeq: seq[string] = @[ ]
+  for d in dfl: dflSeq.add($d)
+  argAggHelp(dflSeq, "[]", typ, df)
+  result = @[ a.argKeys, typ, a.argDf(df) ]
+
+# strings -- after seq[T] just in case string=seq[char] may need that.
+proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
+  result = true
+  if a.sep.len <= 1:                  # No|Only Separator => Clobber Assign
+    dst = a.val; return               # Cannot fail to parse a string
+  case a.sep[0]                       # char on command line before [=:]
+  of '+', '&': dst.add(a.val)         # Append
+  of '^': dst = a.val & dst           # Prepend
+  else:
+    ERR("Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key])
+    return false
+
+proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
+  result = @[ a.argKeys, "string", a.argDf(nimEscape(dfl)) ]
 
 # sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
@@ -251,88 +258,54 @@ proc excl*[T](dst: var set[T], toExcl: openArray[T]) =
   for e in toExcl: dst.excl(e)
 
 proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
-  let parsed = argAggSplit[T](a.val, a.delimit, a)
-# if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
-  if a.sep.len > 0:
-    case a.sep[0]                     # char on command line before [=:]
-    of '@': dst={}                    # Clear/truncate Mode
-    of '+', '&': dst.incl(parsed)     # Incl Mode
-    of '-': dst.excl(parsed)          # Excl Mode
-    of ':','=': dst={}; dst.incl(parsed)  # Clobbering Assign Mode
-    else:
-      if acLooseOperators in argCvtOptions:
-        dst = {}; dst.incl(parsed)    # Sloppy Mode: just assign
-      else:
-        ERR("Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key])
-        return false
-  else: dst.incl(parsed)              # No Operator => Incl Mode
-  return true
+  result = true
+  if a.sep.len <= 1:                      # No Sep|No Op => Append
+    dst.incl(argAggSplit[T](a, false))
+    return
+  if   a.sep == "+=": dst.incl(argAggSplit[T](a, false))
+  elif a.sep == "-=": dst.excl(argAggSplit[T](a, false))
+  elif a.sep == ",@=":                    # split-clobber-assign
+    dst = {}; dst.incl(argAggSplit[T](a))
+  elif a.sep == ",=" or a.sep == ",+=":   # split-include
+    dst.incl(argAggSplit[T](a))
+  elif a.sep == ",-=":                    # split-exclude
+    dst.excl(argAggSplit[T](a))
+  else:
+    ERR("Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key])
+    return false
 
 proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, "{}", typ, df)
+  argAggHelp(dflSeq, "{}", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
-# seqs
-proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
-  let parsed = argAggSplit[T](a.val, a.delimit, a)
-# if parsed.len == 0: return false    #XXX Allow ./app --foo="" to succeed.
-  if a.sep.len > 0:
-    case a.sep[0]                     # char on command line before [=:]
-    of '@': dst.setLen(0)             # Clear/truncate Mode
-    of '+', '&': dst.add(parsed)      # Append Mode
-    of '^': dst = parsed & dst        # Prepend Mode
-    of '-':                           # Delete Mode
-      for i, e in dst:
-        if e in parsed: dst.delete(i) # Quadratic algo, but preserves order
-    of ':','=': dst = parsed          # Clobbering Assign Mode
-    else:
-      if acLooseOperators in argCvtOptions:
-        dst = parsed                  # Clobbering Assign Mode
-      else:
-        ERR("Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key])
-        return false
-  else: dst.add(parsed)               # No Operator => Append Mode
-  return true
-
-proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
-  var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
-  for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, "[]", typ, df)
-  result = @[ a.argKeys, typ, a.argDf(df) ]
-
-import sets # HashSets
-
+# HashSets
+import sets
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
                   a: var ArgcvtParams): bool =
-  if a.val.len == 0:
-    ERR("Empty value for DSV param \"$1\"\n$2" % [ a.key, a.help ])
+  result = true
+  if a.sep.len <= 1:                      # No Sep|No Op => Append
+    dst.incl(toSet(argAggSplit[T](a, false)))
+    return
+  if   a.sep == "+=": dst.incl(toSet(argAggSplit[T](a, false)))
+  elif a.sep == "-=": dst.excl(toSet(argAggSplit[T](a, false)))
+  elif a.sep == ",@=":                    # split-clobber-assign
+    dst.clear(); dst.incl(toSet(argAggSplit[T](a)))
+  elif a.sep == ",=" or a.sep == ",+=":   # split-include
+    dst.incl(toSet(argAggSplit[T](a)))
+  elif a.sep == ",-=":                    # split-exclude
+    dst.excl(toSet(argAggSplit[T](a)))
+  else:
+    ERR("Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key])
     return false
-  let parsed = toSet(argAggSplit[T](a.val, a.delimit, a))
-# if card(parsed) == 0: return false    #XXX Allow ./app --foo="" to succeed.
-  if a.sep.len > 0:
-    case a.sep[0]                       # char on command line before [=:]
-    of '@': dst.clear()                 # Clear/truncate Mode
-    of '+', '&': dst.incl(parsed)       # Incl Mode
-    of '-': dst.excl(parsed)            # Excl Mode
-    of ':','=': dst.clear(); dst.incl(parsed)   # Clobbering Assign Mode
-    else:
-      if acLooseOperators in argCvtOptions:
-        dst.clear(); dst.incl(parsed)   # Assign Mode
-      else:
-        ERR("Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key])
-        return false
-  else: dst.incl(parsed)                # No Operator => Incl Mode
-  return true
 
 proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string] = @[ ]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(a.delimit, dflSeq, "{}", typ, df)
+  argAggHelp(dflSeq, "{}", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 #import tables # Tables XXX need 2D delimiting convention
