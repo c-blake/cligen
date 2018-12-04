@@ -215,7 +215,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
       let parsed = argAggSplit[T](a, false)[0]
       for i, e in dst:                      # Slow algo,..
         if e == parsed: dst.delete(i)       # ..but preserves order
-    elif a.val == "":                       # just clobber
+    elif a.val == "" and a.sep == ",=":     # just clobber
       dst.setLen(0)
     elif a.sep == ",@=":                    # split-clobber-assign
       dst = argAggSplit[T](a)
@@ -271,7 +271,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
       return
     if   a.sep == "+=": dst.incl(argAggSplit[T](a, false))
     elif a.sep == "-=": dst.excl(argAggSplit[T](a, false))
-    elif a.val == "":                       # just clobber
+    elif a.val == "" and a.sep == ",=":     # just clobber
       dst = {}
     elif a.sep == ",@=":                    # split-clobber-assign
       dst = {}; dst.incl(argAggSplit[T](a))
@@ -303,7 +303,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
       return
     if   a.sep == "+=": dst.incl(toSet(argAggSplit[T](a, false)))
     elif a.sep == "-=": dst.excl(toSet(argAggSplit[T](a, false)))
-    elif a.val == "":                       # just clobber
+    elif a.val == "" and a.sep == ",=":     # just clobber
       dst.clear()
     elif a.sep == ",@=":                    # split-clobber-assign
       dst.clear(); dst.incl(toSet(argAggSplit[T](a)))
