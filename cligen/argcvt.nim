@@ -2,6 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
+import strformat
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
@@ -228,8 +229,8 @@ proc formatHuman(a: seq[string]): string =
       result.add ","
     result.add formatHuman(a[i])
 
-proc argAggHelp*(dfls: seq[string]; brkt, dlm: string; typ, dfl: var string) =
-  typ = brkt[0] & typ & brkt[1]
+proc argAggHelp*(dfls: seq[string]; seqTyp, dlm: string; typ, dfl: var string) =
+  typ = fmt"{seqTyp}({typ})"
   # Note: this would print in Nim format: dfl = ($dfls)[1 .. ^1]
   # TODO: ok to ignore dlm?
   dfl = formatHuman dfls
@@ -269,7 +270,7 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "[]", a.delimit, typ, df)
+  argAggHelp(dflSeq, "array", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # strings -- after seq[T] just in case string=seq[char] may need that.
@@ -321,7 +322,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "{}", a.delimit, typ, df)
+  argAggHelp(dflSeq, "set", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # HashSets
@@ -353,7 +354,7 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "{}", a.delimit, typ, df)
+  argAggHelp(dflSeq, "hashset", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 #import tables # Tables XXX need 2D delimiting convention
