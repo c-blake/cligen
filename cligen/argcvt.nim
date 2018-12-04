@@ -198,7 +198,7 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
   a.sep = old                     #probably don't need to restore, but eh.
 
 proc argAggHelp*(dfls: seq[string]; brkt, dlm: string; typ, dfl: var string) =
-  typ = brkt[0] & typ & brkt[1]
+  typ = brkt[0] & typ & "..." & brkt[1]
   dfl = if dfls.len > 0: dlm & dfls.join(dlm) else: "EMPTY"
 
 # seqs
