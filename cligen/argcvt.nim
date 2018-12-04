@@ -52,7 +52,6 @@ type ArgcvtParams* = object ## \
   parReq*: int        ## flag indicating parameter is mandatory
   mand*: string       ## how a mandatory defaults is rendered in help
   help*: string       ## the whole help string, for parse errors
-  delimit*: string    ## delimiting convention for `seq`, etc. default vals
   msg*: string        ## Error message from a bad parse
   shortNoVal*: set[char]  ## short options keys where value may be omitted
   longNoVal*: seq[string] ## long option keys where value may be omitted
@@ -229,10 +228,9 @@ proc formatHuman(a: seq[string]): string =
       result.add ","
     result.add formatHuman(a[i])
 
-proc argAggHelp*(dfls: seq[string]; seqTyp, dlm: string; typ, dfl: var string) =
+proc argAggHelp*(dfls: seq[string]; seqTyp: string; typ, dfl: var string) =
   typ = fmt"{seqTyp}({typ})"
   # Note: this would print in Nim format: dfl = ($dfls)[1 .. ^1]
-  # TODO: ok to ignore dlm?
   dfl = formatHuman dfls
 
 # seqs
@@ -270,7 +268,7 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "array", a.delimit, typ, df)
+  argAggHelp(dflSeq, "array", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # strings -- after seq[T] just in case string=seq[char] may need that.
@@ -322,7 +320,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "set", a.delimit, typ, df)
+  argAggHelp(dflSeq, "set", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # HashSets
@@ -354,7 +352,7 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
-  argAggHelp(dflSeq, "hashset", a.delimit, typ, df)
+  argAggHelp(dflSeq, "hashset", typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 #import tables # Tables XXX need 2D delimiting convention

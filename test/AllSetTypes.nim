@@ -18,11 +18,4 @@ proc demo(args: seq[string],
   return 42
 
 when isMainModule:
-  import cligen
-  when defined(charClass):
-    let d = "[,:]"
-  elif defined(DPSV):
-    let d = "<D>"
-  else:
-    let d = ","
-  dispatch(demo, delimit=d)
+  import cligen; dispatch(demo)

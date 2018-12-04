@@ -215,7 +215,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
  stopWords: seq[string] = @[], positional: static string = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
- mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
+ mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
  setByParse: ptr var seq[ClParse]=nil): untyped =
   ## Generate a command-line dispatcher for proc `pro` with extra help `usage`.
@@ -269,9 +269,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## `mandatoryHelp` is the default value string in help tables for required
   ## parameters.  `mandatoryOverride` is a list of strings indicating parameter
   ## names which override mandatory-ness of anything else.
-  ##
-  ## `delimit` decides what delimiter to display in help messages for default
-  ## values of aggregate types like `seq` or `set`.  Actual delimiting is DPSV.
   ##
   ## `version` is a `Version` 2-tuple (longOpt for version, version string)
   ## which defines how a CLI user may dump the version of a program.  If you
@@ -351,7 +348,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let htRowSep = helpTabRowSep
   let htCols   = helpTabColumns
   let prlude   = prelude; let mandHelp = mandatoryHelp
-  let shortHlp = shortHelp; let delim = delimit
+  let shortHlp = shortHelp
   let setByParseId = ident("setByP")    # parse recording var seq
   let setByParseP = setByParse
 
@@ -361,7 +358,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     result.add(quote do:
       var `apId`: ArgcvtParams
       `apId`.mand = `mandHelp`
-      `apId`.delimit = `delim`
       let shortH = $(`shortHlp`)
       var `allId`: seq[string] = @[ "help", "help-syntax" ]
       var `mandId`: seq[string]
@@ -636,7 +632,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
  stopWords: seq[string] = @[], positional = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
- mandatoryOverride: seq[string] = @[], delimit=",", version: Version=("",""),
+ mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = ""): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
@@ -644,7 +640,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
-      implicitDefault, mandatoryHelp, mandatoryOverride, delimit, version,
+      implicitDefault, mandatoryHelp, mandatoryOverride, version,
       noAutoEcho, dispatchName)
   dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
