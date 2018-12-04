@@ -43,7 +43,7 @@ test/Version
 test/ResultInt
 test/ReturnNonIntNoAuto
 test/DetectSet
-test/DetectSet2
+test/ParseOnly
 test/QualifiedSym
 test/QualifiedMulti
 test/DistinctInt
