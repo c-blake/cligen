@@ -203,7 +203,7 @@ proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
   when T is seq:
     result = "append 1 val to " & parNm
   else:
-    result = "set" & parNm
+    result = "set " & parNm
 
 proc formatHuman(a: string): string =
   if a.len == 0:
