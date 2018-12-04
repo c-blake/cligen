@@ -367,7 +367,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       var `mandId`: seq[string] = @[ ]
       var `mandInFId` = true
       var `tabId`: TextTab =
-        @[ @[ "-" & shortH & ", --help", "", "", "write this help to stdout" ],
+        @[ @[ "-" & shortH & ", --help", "", "", "print this help" ],
            @[ "--help-syntax", "", "", "print cligen-specific syntax" ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
@@ -376,7 +376,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       result.add(quote do:
        var versionDflt = false
        `apId`.parNm = `vsnOpt`; `apId`.parSh = `vsnSh`; `apId`.parReq = 0
-       `tabId`.add(argHelp(versionDflt, `apId`) & "write version to stdout"))
+       `tabId`.add(argHelp(versionDflt, `apId`) & "print version"))
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     let posHelp = if posIx != -1:

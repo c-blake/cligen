@@ -3,7 +3,7 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                             write this help to stdout
+  -h, --help                             print this help
   --help-syntax                          print cligen-specific syntax
   -b=, --bl=     [bool]     EMPTY        set bl
   -B=, --Bl=     [bool]     ,false,true  set Bl
@@ -39,7 +39,7 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                                write this help to stdout
+  -h, --help                                print this help
   --help-syntax                             print cligen-specific syntax
   -b=, --bl=     {bool}    EMPTY            set bl
   -B=, --Bl=     {bool}    ,false,true      set Bl
@@ -59,7 +59,7 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -?, --help                     write this help to stdout
+  -?, --help                     print this help
   --help-syntax                  print cligen-specific syntax
   -a, --aa       bool     false  set aa
   -b=, --bb=     string   "hi"   set bb
@@ -86,7 +86,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   --alpha=       int     1      set alpha
   --abc=         float   2.0    set abc
@@ -103,7 +103,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -117,7 +117,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
@@ -127,21 +127,21 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 Usage:
   foo [optional-params] 
   Options(opt-arg sep :|=|spc):
-  -h, --help             write this help to stdout
+  -h, --help             print this help
   --help-syntax          print cligen-specific syntax
   -a=, --alpha=  int  1  set alpha
   -b=, --beta=   int  2  set beta
 
 ==> test/DetectSet2.out <==
 fooParse:
-  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    print this help\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
   (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
 no dispatch to foo
 User requested help.  Here you go
 Usage:
   foo [required&optional-params] [rest: int...]
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int  REQUIRED  set alpha
   -b=, --beta=   int  2         set beta
@@ -151,7 +151,7 @@ Usage:
 Usage:
   main [required&optional-params] 
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --age=    int  REQUIRED  set age
 
@@ -162,7 +162,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -z=, --alpha=  int     1      set alpha
   -a=, --abc=    float   2.0    set abc
@@ -176,7 +176,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -191,7 +191,7 @@ Returns the edit distance between `a` and `b`.
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
   -a=, --a=      string  REQUIRED  set a
   -b=, --b=      string  REQUIRED  set b
@@ -201,7 +201,7 @@ Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                        write this help to stdout
+  -h, --help                        print this help
   --help-syntax                     print cligen-specific syntax
   -c=, --c=      enum     REQUIRED  primary color
   -b=, --bg=     enum     red       background color
@@ -216,7 +216,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -230,7 +230,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int       1       set alpha
   -v=, --verb=   countr    0       set verb
@@ -256,7 +256,7 @@ where subcommand syntaxes are as follows:
   demo [optional-params] [files: string...]
     demo entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
-      -h, --help                    write this help to stdout
+      -h, --help                    print this help
       --help-syntax                 print cligen-specific syntax
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
@@ -266,7 +266,7 @@ where subcommand syntaxes are as follows:
   print [optional-params] [paths: string...]
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
-      -h, --help                   write this help to stdout
+      -h, --help                   print this help
       --help-syntax                print cligen-specific syntax
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
@@ -275,7 +275,7 @@ where subcommand syntaxes are as follows:
   whoa [optional-params] [names: string...]
     Another entry point; here we echoResult
     Options(opt-arg sep :|=|spc):
-      -h, --help                   write this help to stdout
+      -h, --help                   print this help
       --help-syntax                print cligen-specific syntax
       -z=, --zeta=   int    1      set zeta
       -e=, --eta=    float  2.0    set eta
@@ -284,7 +284,7 @@ where subcommand syntaxes are as follows:
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
-      -h, --help                  write this help to stdout
+      -h, --help                  print this help
       --help-syntax               print cligen-specific syntax
       --hooves=      int   4      set hooves
       -r=, --races=  int   9      set races
@@ -295,7 +295,7 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                                write this help to stdout
+  -h, --help                                print this help
   --help-syntax                             print cligen-specific syntax
   -i=, --i1=     {int8}    EMPTY            set i1
   -I=, --I1=     {int8}    ,3,4             set I1
@@ -315,7 +315,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help     write this help to stdout     
+  -h, --help     print this help               
   --help-syntax  print cligen-specific syntax  
   -z=, --alpha=  growth constant               1
   -b=, --beta=   shrink target                 2.0
@@ -329,7 +329,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b, --bypass   bool    false     set bypass
@@ -340,7 +340,7 @@ Usage:
   demo [required&optional-params] [args: int...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                      write this help to stdout
+  -h, --help                      print this help
   --help-syntax                   print cligen-specific syntax
   -a=, --alpha=  float  REQUIRED  set alpha
   -b=, --beta=   float  1.0       set beta
@@ -353,7 +353,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
@@ -367,7 +367,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
@@ -384,7 +384,7 @@ Usage:
           This does the demo.
     
     Options:
-          -h, --help                    write this help to stdout
+          -h, --help                    print this help
           --help-syntax                 print cligen-specific syntax
           -a=, --alpha=  int     1      This is a very long parameter help
                                         string which ordinarily should be
@@ -401,7 +401,7 @@ Usage:
           This shows me something.
     
     Options:
-          -h, --help                   write this help to stdout
+          -h, --help                   print this help
           --help-syntax                print cligen-specific syntax
           -g=, --gamma=  int    1      set gamma
           -i=, --iota=   float  2.0    set iota
@@ -412,7 +412,7 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                  write this help to stdout
+  -h, --help                  print this help
   --help-syntax               print cligen-specific syntax
   -a, --alpha    bool  true   set alpha
   -b=, --beta=   int   2      set beta
@@ -425,7 +425,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -439,7 +439,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   --alpha=       int     1      set alpha
   --abc=         float   2.0    set abc
@@ -451,7 +451,7 @@ Usage:
   demo [optional-params] [b: string...]
 This tests if single character parameters work as expected
   Options(opt-arg sep :|=|spc):
-  -h, --help                         write this help to stdout
+  -h, --help                         print this help
   --help-syntax                      print cligen-specific syntax
   -u=, --u=      int     1           set u
   -c=, --c=      string  "bad name"  set c
@@ -464,7 +464,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -z=, --alpha=  int     1      growth constant
   -b=, --beta=   float   2.0    shrink target
@@ -484,7 +484,7 @@ Run any given subcommand with --help to see help for that one.
 Usage:
   get [optional-params] 
   Options(opt-arg sep :|=|spc):
-  -h, --help             write this help to stdout
+  -h, --help             print this help
   --help-syntax          print cligen-specific syntax
   -a=, --a=      int  1  set a
 
@@ -496,9 +496,9 @@ Returns the edit distance between `a` and `b`.
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help                       write this help to stdout
+  -h, --help                       print this help
   --help-syntax                    print cligen-specific syntax
-  --version      bool    false     write version to stdout
+  --version      bool    false     print version
   -a=, --a=      string  REQUIRED  set a
   -b=, --b=      string  REQUIRED  set b
 
@@ -509,7 +509,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -523,7 +523,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -537,7 +537,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -551,7 +551,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -565,7 +565,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
@@ -577,7 +577,7 @@ Usage:
   multi [optional-params] [subcmd: string...]
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
-  -h, --help                 write this help to stdout
+  -h, --help                 print this help
   --help-syntax              print cligen-specific syntax
   -b=, --beta=   int     1   set beta
   -i=, --item=   string  ""  set item
@@ -589,7 +589,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 3 4" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   char    '\10'  set beta
@@ -603,7 +603,7 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 write this help to stdout
+  -h, --help                 print this help
   --help-syntax              print cligen-specific syntax
   -a=, --alpha=  int    1    growth constant
   -b=, --beta=   float  2.0  shrink target
@@ -616,7 +616,7 @@ Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                         write this help to stdout
+  -h, --help                         print this help
   --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
@@ -627,7 +627,7 @@ Usage:
   demo [required&optional-params] [ stuffies (1 or more strings) ]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                         write this help to stdout
+  -h, --help                         print this help
   --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
@@ -639,7 +639,7 @@ Usage:
 This tests if things work when a wrapped user-proc uses identifiers also
 used in our generated dispatch proc.
   Options(opt-arg sep :|=|spc):
-  -h, --help                           write this help to stdout
+  -h, --help                           print this help
   --help-syntax                        print cligen-specific syntax
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
@@ -652,8 +652,8 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
+  -h, --help                    print this help
   --help-syntax                 print cligen-specific syntax
-  --version      bool    false  write version to stdout
+  --version      bool    false  print version
   -a=, --alpha=  int     1      set alpha
   -i=, --item=   string  "hi"   set item
