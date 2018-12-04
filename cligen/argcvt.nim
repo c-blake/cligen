@@ -198,9 +198,43 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
     result.add(parsed)
   a.sep = old                     #probably don't need to restore, but eh.
 
+proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
+  if defaultHelp.len > 0: return defaultHelp # TODO: what user explicitly set it to empty?
+  when T is seq:
+    result = "append to"
+  else:
+    result = "set"
+
+  result.add " " & parNm
+
+proc formatHuman(a: string): string =
+  if a.len == 0:
+    result.addQuoted ""
+    return result
+  var isSimple = true
+  for ai in a:
+    # avoid ~ which, if given via `--foo ~bar`, is expanded by shell
+    # avoid , (would cause confusion bc of separator syntax)
+    if ai notin {'a'..'z'} + {'A'..'Z'} + {'0'..'9'} + {'-', '_', '.', '@', ':', '=', '+', '^', '/'}:
+      isSimple = false
+      break
+  if isSimple:
+    result = a
+  else:
+    result.addQuoted a
+
+proc formatHuman(a: seq[string]): string =
+  if a.len == 0: result = "EMPTY"
+  for i in 0..<a.len:
+    if i>0:
+      result.add ","
+    result.add formatHuman(a[i])
+
 proc argAggHelp*(dfls: seq[string]; brkt, dlm: string; typ, dfl: var string) =
   typ = brkt[0] & typ & brkt[1]
-  dfl = if dfls.len > 0: dlm & dfls.join(dlm) else: "EMPTY"
+  # Note: this would print in Nim format: dfl = ($dfls)[1 .. ^1]
+  # TODO: ok to ignore dlm?
+  dfl = formatHuman dfls
 
 # seqs
 proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
@@ -235,7 +269,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "[]", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
@@ -287,7 +321,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
 
 proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "{}", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
@@ -319,7 +353,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
 
 proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
-  var dflSeq: seq[string] = @[ ]
+  var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "{}", a.delimit, typ, df)
   result = @[ a.argKeys, typ, a.argDf(df) ]
