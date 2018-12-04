@@ -3,78 +3,81 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                          write this help to stdout
-  -b=, --bl=  [bool]     EMPTY        set bl
-  -B=, --Bl=  [bool]     ,false,true  set Bl
-  -s=, --s=   [string]   EMPTY        set s
-  -S=, --S=   [string]   ,ho,hey      set S
-  -i=, --i=   [int]      EMPTY        set i
-  -I=, --I=   [int]      ,1,2         set I
-  --i1=       [int8]     EMPTY        set i1
-  --I1=       [int8]     ,3,4         set I1
-  --i2=       [int16]    EMPTY        set i2
-  --I2=       [int16]    ,5,6         set I2
-  --i4=       [int32]    EMPTY        set i4
-  --I4=       [int32]    ,7,8         set I4
-  --i8=       [int64]    EMPTY        set i8
-  --I8=       [int64]    ,9,10        set I8
-  -u=, --u=   [uint]     EMPTY        set u
-  -U=, --U=   [uint]     ,11,12       set U
-  --u1=       [uint8]    EMPTY        set u1
-  --U1=       [uint8]    ,13,14       set U1
-  --u2=       [uint16]   EMPTY        set u2
-  --U2=       [uint16]   ,15,16       set U2
-  --u4=       [uint32]   EMPTY        set u4
-  --U4=       [uint32]   ,17,18       set U4
-  --u8=       [uint64]   EMPTY        set u8
-  --U8=       [uint64]   ,19,20       set U8
-  -f=, --f4=  [float32]  EMPTY        set f4
-  -F=, --F4=  [float32]  ,23.0,24.0   set F4
-  --f8=       [float]    EMPTY        set f8
-  --F8=       [float]    ,25.0,26.0   set F8
+  -h, --help                             write this help to stdout
+  --help-syntax                          print cligen-specific syntax
+  -b=, --bl=     [bool]     EMPTY        set bl
+  -B=, --Bl=     [bool]     ,false,true  set Bl
+  -s=, --s=      [string]   EMPTY        set s
+  -S=, --S=      [string]   ,ho,hey      set S
+  -i=, --i=      [int]      EMPTY        set i
+  -I=, --I=      [int]      ,1,2         set I
+  --i1=          [int8]     EMPTY        set i1
+  --I1=          [int8]     ,3,4         set I1
+  --i2=          [int16]    EMPTY        set i2
+  --I2=          [int16]    ,5,6         set I2
+  --i4=          [int32]    EMPTY        set i4
+  --I4=          [int32]    ,7,8         set I4
+  --i8=          [int64]    EMPTY        set i8
+  --I8=          [int64]    ,9,10        set I8
+  -u=, --u=      [uint]     EMPTY        set u
+  -U=, --U=      [uint]     ,11,12       set U
+  --u1=          [uint8]    EMPTY        set u1
+  --U1=          [uint8]    ,13,14       set U1
+  --u2=          [uint16]   EMPTY        set u2
+  --U2=          [uint16]   ,15,16       set U2
+  --u4=          [uint32]   EMPTY        set u4
+  --U4=          [uint32]   ,17,18       set U4
+  --u8=          [uint64]   EMPTY        set u8
+  --U8=          [uint64]   ,19,20       set U8
+  -f=, --f4=     [float32]  EMPTY        set f4
+  -F=, --F4=     [float32]  ,23.0,24.0   set F4
+  --f8=          [float]    EMPTY        set f8
+  --F8=          [float]    ,25.0,26.0   set F8
 
 ==> test/AllSetTypes.out <==
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                             write this help to stdout
-  -b=, --bl=  {bool}    EMPTY            set bl
-  -B=, --Bl=  {bool}    ,false,true      set Bl
-  -i=, --i1=  {int8}    EMPTY            set i1
-  -I=, --I1=  {int8}    ,3,4             set I1
-  --i2=       {int16}   EMPTY            set i2
-  --I2=       {int16}   ,5,6             set I2
-  -u=, --u1=  {uint8}   EMPTY            set u1
-  -U=, --U1=  {uint8}   ,13,14           set U1
-  --u2=       {uint16}  EMPTY            set u2
-  --U2=       {uint16}  ,15,16           set U2
-  -e=, --e=   {Color}   EMPTY            set e
-  -E=, --E=   {Color}   ,red,green,blue  set E
+  -h, --help                                write this help to stdout
+  --help-syntax                             print cligen-specific syntax
+  -b=, --bl=     {bool}    EMPTY            set bl
+  -B=, --Bl=     {bool}    ,false,true      set Bl
+  -i=, --i1=     {int8}    EMPTY            set i1
+  -I=, --I1=     {int8}    ,3,4             set I1
+  --i2=          {int16}   EMPTY            set i2
+  --I2=          {int16}   ,5,6             set I2
+  -u=, --u1=     {uint8}   EMPTY            set u1
+  -U=, --U1=     {uint8}   ,13,14           set U1
+  --u2=          {uint16}  EMPTY            set u2
+  --U2=          {uint16}  ,15,16           set U2
+  -e=, --e=      {Color}   EMPTY            set e
+  -E=, --E=      {Color}   ,red,green,blue  set E
 
 ==> test/AllTypes.out <==
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -?, --help                  write this help to stdout
-  -a, --aa    bool     false  set aa
-  -b=, --bb=  string   "hi"   set bb
-  -c=, --cc=  string   "ho"   set cc
-  -d=, --dd=  char     'X'    set dd
-  -e=, --ee=  int      1      set ee
-  -f=, --ff=  int8     2      set ff
-  -g=, --gg=  int16    3      set gg
-  -h=, --hh=  int32    4      set hh
-  -i=, --ii=  int64    5      set ii
-  -j=, --jj=  uint     6      set jj
-  -k=, --kk=  uint8    7      set kk
-  -l=, --ll=  uint16   8      set ll
-  -m=, --mm=  uint32   9      set mm
-  -n=, --nn=  uint64   10     set nn
-  -o=, --oo=  float    11.0   set oo
-  -p=, --pp=  float32  12.0   set pp
-  -q=, --qq=  float    13.0   set qq
+  -?, --help                     write this help to stdout
+  --help-syntax                  print cligen-specific syntax
+  -a, --aa       bool     false  set aa
+  -b=, --bb=     string   "hi"   set bb
+  -c=, --cc=     string   "ho"   set cc
+  -d=, --dd=     char     'X'    set dd
+  -e=, --ee=     int      1      set ee
+  -f=, --ff=     int8     2      set ff
+  -g=, --gg=     int16    3      set gg
+  -h=, --hh=     int32    4      set hh
+  -i=, --ii=     int64    5      set ii
+  -j=, --jj=     uint     6      set jj
+  -k=, --kk=     uint8    7      set kk
+  -l=, --ll=     uint16   8      set ll
+  -m=, --mm=     uint32   9      set mm
+  -n=, --nn=     uint64   10     set nn
+  -o=, --oo=     float    11.0   set oo
+  -p=, --pp=     float32  12.0   set pp
+  -q=, --qq=     float    13.0   set qq
 
 ==> test/BlockedShort.out <==
 Usage:
@@ -83,11 +86,12 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 write this help to stdout
-  --alpha=    int     1      set alpha
-  --abc=      float   2.0    set abc
-  -a, --aaah  bool    false  set aaah
-  --aloha=    string  ""     set aloha
+  -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
+  --alpha=       int     1      set alpha
+  --abc=         float   2.0    set abc
+  -a, --aaah     bool    false  set aaah
+  --aloha=       string  ""     set aloha
 
 ==> test/CaseDistinguised.out <==
 CaseDistinguised.nim(11, 3) Error: undeclared identifier: 'argCvtOptions'
@@ -100,6 +104,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -113,6 +118,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
   -s=, --stuff=  CSV   "ab,cd"  set stuff
@@ -122,18 +128,20 @@ Usage:
   foo [optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help             write this help to stdout
+  --help-syntax          print cligen-specific syntax
   -a=, --alpha=  int  1  set alpha
   -b=, --beta=   int  2  set beta
 
 ==> test/DetectSet2.out <==
 fooParse:
-@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] \n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
+@[(paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] \n  Options(opt-arg sep :|=|spc):\n  -h, --help                    write this help to stdout\n  --help-syntax                 print cligen-specific syntax\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly), (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)]
 no dispatch to foo
 User requested help.  Here you go
 Usage:
   foo [required&optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int  REQUIRED  set alpha
   -b=, --beta=   int  2         set beta
 
@@ -142,8 +150,9 @@ Usage:
 Usage:
   main [required&optional-params] 
   Options(opt-arg sep :|=|spc):
-  -h, --help                  write this help to stdout
-  -a=, --age=  int  REQUIRED  set age
+  -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
+  -a=, --age=    int  REQUIRED  set age
 
 ==> test/DupShort.out <==
 Usage:
@@ -153,6 +162,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -z=, --alpha=  int     1      set alpha
   -a=, --abc=    float   2.0    set abc
   --aaah         bool    false  set aaah
@@ -166,6 +176,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -179,21 +190,23 @@ Returns the edit distance between `a` and `b`.
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
-  -a=, --a=   string  REQUIRED  set a
-  -b=, --b=   string  REQUIRED  set b
+  -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
+  -a=, --a=      string  REQUIRED  set a
+  -b=, --b=      string  REQUIRED  set b
 
 ==> test/Enums.out <==
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                     write this help to stdout
-  -c=, --c=   enum     REQUIRED  primary color
-  -b=, --bg=  enum     red       background color
-  -f=, --fg=  [Color]  ,green    foreround colors
-  --curs=     {Color}  ,blue     cursor colors
-  -x=, --x=   int      0         set x
+  -h, --help                        write this help to stdout
+  --help-syntax                     print cligen-specific syntax
+  -c=, --c=      enum     REQUIRED  primary color
+  -b=, --bg=     enum     red       background color
+  -f=, --fg=     [Color]  ,green    foreround colors
+  --curs=        {Color}  ,blue     cursor colors
+  -x=, --x=      int      0         set x
 
 ==> test/External.out <==
 Usage:
@@ -203,6 +216,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -216,6 +230,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int       1       set alpha
   -v=, --verb=   countr    0       set verb
   -j=, --junk=   [string]  ,rs,tu  set junk
@@ -226,20 +241,22 @@ Usage:
   FullyAutoMulti {subcommand}
 where {subcommand} is one of:
   help demo print whoa nelly
-Run top-level cmd with -h or --help for top-level help.
+Run top-level cmd with -h, --help or --help-syntax for top-level help.
 Run top-level with subcmd "help" to get *all* helps.
 Run any given subcommand with --help to see help for that one.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
-Usage:  This is a multiple-dispatch cmd.  Usage is like
-  FullyAutoMulti subcommand [subcommand-opts & args]
+This is a multiple-dispatch command.  Top-level --help/--help-syntax
+is also available.  Usage is like:
+    FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files: string...]
     demo entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
       -h, --help                    write this help to stdout
+      --help-syntax                 print cligen-specific syntax
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
       -v, --verb     bool    false  on=chatty, off=quiet
@@ -249,6 +266,7 @@ where subcommand syntaxes are as follows:
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
       -h, --help                   write this help to stdout
+      --help-syntax                print cligen-specific syntax
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
@@ -256,15 +274,17 @@ where subcommand syntaxes are as follows:
   whoa [optional-params] [names: string...]
     Another entry point; here we echoResult
     Options(opt-arg sep :|=|spc):
-      -h, --help                  write this help to stdout
-      -z=, --zeta=  int    1      set zeta
-      -e=, --eta=   float  2.0    set eta
-      -v, --verb    bool   false  set verb
+      -h, --help                   write this help to stdout
+      --help-syntax                print cligen-specific syntax
+      -z=, --zeta=   int    1      set zeta
+      -e=, --eta=    float  2.0    set eta
+      -v, --verb     bool   false  set verb
   
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
       -h, --help                  write this help to stdout
+      --help-syntax               print cligen-specific syntax
       --hooves=      int   4      set hooves
       -r=, --races=  int   9      set races
       -v, --verb     bool  false  set verb
@@ -274,17 +294,18 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                             write this help to stdout
-  -i=, --i1=  {int8}    EMPTY            set i1
-  -I=, --I1=  {int8}    ,3,4             set I1
-  --i2=       {int16}   EMPTY            set i2
-  --I2=       {int16}   ,5,6             set I2
-  -u=, --u1=  {uint8}   EMPTY            set u1
-  -U=, --U1=  {uint8}   ,13,14           set U1
-  --u2=       {uint16}  EMPTY            set u2
-  --U2=       {uint16}  ,16,15           set U2
-  -e=, --e=   {Color}   EMPTY            set e
-  -E=, --E=   {Color}   ,red,green,blue  set E
+  -h, --help                                write this help to stdout
+  --help-syntax                             print cligen-specific syntax
+  -i=, --i1=     {int8}    EMPTY            set i1
+  -I=, --I1=     {int8}    ,3,4             set I1
+  --i2=          {int16}   EMPTY            set i2
+  --I2=          {int16}   ,5,6             set I2
+  -u=, --u1=     {uint8}   EMPTY            set u1
+  -U=, --U1=     {uint8}   ,13,14           set U1
+  --u2=          {uint16}  EMPTY            set u2
+  --U2=          {uint16}  ,16,15           set U2
+  -e=, --e=      {Color}   EMPTY            set e
+  -E=, --E=      {Color}   ,red,green,blue  set E
 
 ==> test/HelpTabCols.out <==
 Usage:
@@ -293,11 +314,12 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help     write this help to stdout  
-  -z=, --alpha=  growth constant            1
-  -b=, --beta=   shrink target              2.0
-  -v, --verb     set verb                   false
-  -i=, --item=   set item                   ""
+  -h, --help     write this help to stdout     
+  --help-syntax  print cligen-specific syntax  
+  -z=, --alpha=  growth constant               1
+  -b=, --beta=   shrink target                 2.0
+  -v, --verb     set verb                      false
+  -i=, --item=   set item                      ""
 
 ==> test/ImplicitDefault.out <==
 Usage:
@@ -307,6 +329,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b, --bypass   bool    false     set bypass
   -i=, --item=   string  ""        set item
@@ -317,6 +340,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                      write this help to stdout
+  --help-syntax                   print cligen-specific syntax
   -a=, --alpha=  float  REQUIRED  set alpha
   -b=, --beta=   float  1.0       set beta
   -v, --verb     bool   false     set verb
@@ -329,6 +353,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -342,6 +367,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -358,6 +384,7 @@ Usage:
     
     Options:
           -h, --help                    write this help to stdout
+          --help-syntax                 print cligen-specific syntax
           -a=, --alpha=  int     1      This is a very long parameter help
                                         string which ordinarily should be
                                         auto-wrapped by alignTable into a
@@ -374,6 +401,7 @@ Usage:
     
     Options:
           -h, --help                   write this help to stdout
+          --help-syntax                print cligen-specific syntax
           -g=, --gamma=  int    1      set gamma
           -i=, --iota=   float  2.0    set iota
           -v, --verb     bool   false  set verb
@@ -383,10 +411,11 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
-  -h, --help                 write this help to stdout
-  -a, --alpha   bool  true   set alpha
-  -b=, --beta=  int   2      set beta
-  -v, --verb    bool  false  set verb
+  -h, --help                  write this help to stdout
+  --help-syntax               print cligen-specific syntax
+  -a, --alpha    bool  true   set alpha
+  -b=, --beta=   int   2      set beta
+  -v, --verb     bool  false  set verb
 
 ==> test/NoPositional.out <==
 Usage:
@@ -396,6 +425,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -408,21 +438,23 @@ demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help                 write this help to stdout
-  --alpha=    int     1      set alpha
-  --abc=      float   2.0    set abc
-  --aaah      bool    false  set aaah
-  --aloha=    string  ""     set aloha
+  -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
+  --alpha=       int     1      set alpha
+  --abc=         float   2.0    set abc
+  --aaah         bool    false  set aaah
+  --aloha=       string  ""     set aloha
 
 ==> test/OneCharParams.out <==
 Usage:
   demo [optional-params] [b: string...]
 This tests if single character parameters work as expected
   Options(opt-arg sep :|=|spc):
-  -h, --help                      write this help to stdout
-  -u=, --u=   int     1           set u
-  -c=, --c=   string  "bad name"  set c
-  -g=, --g=   string  "ho"        set g
+  -h, --help                         write this help to stdout
+  --help-syntax                      print cligen-specific syntax
+  -u=, --u=      int     1           set u
+  -c=, --c=      string  "bad name"  set c
+  -g=, --g=      string  "ho"        set g
 
 ==> test/PerParam.out <==
 Usage:
@@ -432,6 +464,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -z=, --alpha=  int     1      growth constant
   -b=, --beta=   float   2.0    shrink target
   -v, --verb     bool    false  set verb
@@ -442,7 +475,7 @@ Usage:
   QualifiedMulti {subcommand}
 where {subcommand} is one of:
   help get put
-Run top-level cmd with -h or --help for top-level help.
+Run top-level cmd with -h, --help or --help-syntax for top-level help.
 Run top-level with subcmd "help" to get *all* helps.
 Run any given subcommand with --help to see help for that one.
 
@@ -450,8 +483,9 @@ Run any given subcommand with --help to see help for that one.
 Usage:
   get [optional-params] 
   Options(opt-arg sep :|=|spc):
-  -h, --help          write this help to stdout
-  -a=, --a=   int  1  set a
+  -h, --help             write this help to stdout
+  --help-syntax          print cligen-specific syntax
+  -a=, --a=      int  1  set a
 
 ==> test/ResultInt.out <==
 Usage:
@@ -461,10 +495,11 @@ Returns the edit distance between `a` and `b`.
 This uses the `Levenshtein`:idx: distance algorithm with only a linear
 memory overhead.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    write this help to stdout
-  --version   bool    false     write version to stdout
-  -a=, --a=   string  REQUIRED  set a
-  -b=, --b=   string  REQUIRED  set b
+  -h, --help                       write this help to stdout
+  --help-syntax                    print cligen-specific syntax
+  --version      bool    false     write version to stdout
+  -a=, --a=      string  REQUIRED  set a
+  -b=, --b=      string  REQUIRED  set b
 
 ==> test/ReturnEmpty.out <==
 Usage:
@@ -474,6 +509,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -487,6 +523,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -500,6 +537,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -513,6 +551,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -526,6 +565,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -536,9 +576,10 @@ Usage:
   multi [optional-params] [subcmd: string...]
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
-  -h, --help                write this help to stdout
-  -b=, --beta=  int     1   set beta
-  -i=, --item=  string  ""  set item
+  -h, --help                 write this help to stdout
+  --help-syntax              print cligen-specific syntax
+  -b=, --beta=   int     1   set beta
+  -i=, --item=   string  ""  set item
 
 ==> test/SeqInt.out <==
 Usage:
@@ -548,6 +589,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 3 4" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   char    '\10'  set beta
   -v, --verb     bool    false  set verb
@@ -561,18 +603,20 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                 write this help to stdout
+  --help-syntax              print cligen-specific syntax
   -a=, --alpha=  int    1    growth constant
   -b=, --beta=   float  2.0  shrink target
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(620, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(631, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(135, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                         write this help to stdout
+  --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
   -s=, --stuff=  [string]  REQUIRED  set stuff
@@ -583,6 +627,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                         write this help to stdout
+  --help-syntax                      print cligen-specific syntax
   -a=, --alpha=  int       1         set alpha
   -v, --verb     bool      false     set verb
   --args=        [string]  REQUIRED  set args
@@ -594,6 +639,7 @@ This tests if things work when a wrapped user-proc uses identifiers also
 used in our generated dispatch proc.
   Options(opt-arg sep :|=|spc):
   -h, --help                           write this help to stdout
+  --help-syntax                        print cligen-specific syntax
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
   -g=, --getopt=   string  "ho"        set getopt
@@ -606,6 +652,7 @@ might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    write this help to stdout
+  --help-syntax                 print cligen-specific syntax
   --version      bool    false  write version to stdout
   -a=, --alpha=  int     1      set alpha
   -i=, --item=   string  "hi"   set item

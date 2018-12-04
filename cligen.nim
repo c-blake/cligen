@@ -198,6 +198,8 @@ proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
   for i, e in x:
     if e.status in stati: return i
 
+include cligen/syntaxHelp
+
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
  prelude="Usage:\n  ", echoResult: bool=false, requireSeparator: bool=false,
@@ -356,13 +358,14 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `apId`.mand = `mandHelp`
       `apId`.delimit = `delim`
       let shortH = $(`shortHlp`)
-      var `allId`: seq[string] = @[ "help" ]
+      var `allId`: seq[string] = @[ "help", "help-syntax" ]
       var `mandId`: seq[string] = @[ ]
       var `mandInFId` = true
       var `tabId`: TextTab =
-        @[ @[ "-" & shortH & ", --help", "", "", "write this help to stdout" ] ]
-      `apId`.shortNoVal = { shortH[0] } # argHelp(bool) updates
-      `apId`.longNoVal = @[ "help" ]    # argHelp(bool) appends
+        @[ @[ "-" & shortH & ", --help", "", "", "write this help to stdout" ],
+           @[ "--help-syntax", "", "", "print cligen-specific syntax" ] ]
+      `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
+      `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParseP`)
     if vsnOpt.len > 0:
       result.add(quote do:
@@ -420,6 +423,14 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
             return                            #Do not try to keep parsing
           else:
             stdout.write(`apId`.help); raise newException(HelpOnly, "")))
+    result.add(newNimNode(nnkOfBranch).add(
+      newStrLitNode("helpsyntax")).add(
+        quote do:
+          if cast[pointer](`setByParseId`) != nil:
+            `setByParseId`[].add(("helpsyntax", "", syntaxHelp, clHelpOnly))
+            return                            #Do not try to keep parsing
+          else:
+            stdout.write(syntaxHelp); raise newException(HelpOnly, "")))
     if vsnOpt.len > 0:
       if vsnOpt in shOpt:                     #There is also a short version tag
         result.add(newNimNode(nnkOfBranch).add(
@@ -740,14 +751,15 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   $1 {subcommand}
 where {subcommand} is one of:
   $2
-Run top-level cmd with -h or --help for top-level help.
+Run top-level cmd with -h, --help or --help-syntax for top-level help.
 Run top-level with subcmd "help" to get *all* helps.
 Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
   join(`subCmdsId`, " "),
   (if cligenVersion.len>0:"\nTop-level --version also available" else: "")])
     elif `arg0Id` == "help":
-      echo ("Usage:  This is a multiple-dispatch cmd.  Usage is like\n" &
-            "  $1 subcommand [subcommand-opts & args]\n" &
+      echo ("This is a multiple-dispatch command.  Top-level " &
+            "--help/--help-syntax\nis also available.  Usage is like:\n" &
+            "    $1 subcommand [subcommand-opts & args]\n" &
             "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
       let `dashHelpId` = @[ "--help" ]
       `helpDump`
@@ -767,7 +779,7 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\n" &
      "where {subcommand} is one of:\n  " & join(`subCmdsId`, " ") & "\n" &
-     "Run top-level cmd with -h or --help for top-level help.\n" &
+     "Run top-level cmd with -h, --help or --help-syntax for top-level help.\n"&
      "Run top-level with subcmd \"help\" to get *all* helps.\n" &
      "Run any given subcommand with --help to see help for that one." &
      (if cligenVersion.len>0:"\nTop-level --version also available" else: ""))))
