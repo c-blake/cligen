@@ -6,6 +6,11 @@ import strformat
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
+from tables import Table
+proc toString*(c: char): string =
+  ## creates a string from char `c`
+  result = newStringOfCap(1)
+  if c != '\0': result.add(c)
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -267,17 +272,44 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
   except:
     return false
 
-proc argHelp*[T: object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
-  for i, ai in fieldPairs(dfl):
-    result.add @[ a.argKeys, $type(ai), a.argDf(nimEscape($ai)) ]
+proc argHelpObj*[T: object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
+  for key, ai in fieldPairs(dfl):
+    # let reti = @[ a.argKeys, $type(ai), a.argDf(nimEscape($ai)) ]
+    let reti = @[ key, $type(ai), a.argDf($ai) ]
+    echo reti
+    result.add reti
 
-proc argHelp*[T: ref object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
+proc argHelpObj*[T: ref object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
   # CHECKME: nil
   argHelp(dfl[], a)
 
 proc argParse*[T: object|ref object](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   echo "obj TODO"
   result = false
+
+# proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: seq[seq[string]], shOpt: Table[string,string])=
+# proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: var seq[seq[string]], shOpt: var Table[string, char])=
+proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: seq[seq[string]], shOpt: Table[string, char])=
+
+  echo "found obj"
+  when T is ref:
+    let defVal2 = defVal[]
+  else:
+    let defVal2 = defVal
+
+  for key, ai in fieldPairs(defVal2):
+    let parNm=key
+    apId.parNm = parNm
+    let sh = toString(shOpt.getOrDefault(parNm))
+    apId.parSh = sh
+    apId.parReq = isReq
+    let descr = getDescription(defVal, parNm, hlp)
+    let reti = @[ apId.argKeys, $type(ai), apId.argDf(nimEscape($ai)) ]
+    # let reti = @[ key, $type(ai), a.argDf($ai) ]
+    echo reti
+    # result.add reti
+    # tabId.add(reti & descr)
+    # allId.add(parNm)
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
