@@ -27,6 +27,8 @@ Options (opt&arg sep by :,=,spc):
   -v, --verb   toggle  false  set verb
 ```
 Other invocations (``foobar --foo=2 --bar=2.7 ...``) all work as expected.
+Default help tables work with automated "help to X" tools such as ``complete -F
+_longopt`` in bash, ``compdef _gnu_generic`` in zsh, or the GNU ``help2man``.
 
 When you want to produce a better help string, tack on some parameter-keyed
 metadata with Nim's association-list literals:
@@ -130,11 +132,6 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 You can, of course, also have `mergeParams` use the `parsecfg` module to convert
 `$HOME/.cmdrc`, `${XDG_CONFIG:-$HOME/.config}/cmd`, .. into a `seq[string]` that
 is relevant to `cmdNames`.
-
----
-
-Default help tables work with automated "help to X" tools such as ``complete -F
-_longopt`` in bash, ``compdef _gnu_generic`` in zsh, or the GNU ``help2man``.
 
 Even More Controls and Details
 ==============================
