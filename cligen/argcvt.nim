@@ -267,6 +267,18 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
   except:
     return false
 
+proc argHelp*[T: object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
+  for i, ai in fieldPairs(dfl):
+    result.add @[ a.argKeys, $type(ai), a.argDf(nimEscape($ai)) ]
+
+proc argHelp*[T: ref object](dfl: T, a: var ArgcvtParams): seq[seq[string]]=
+  # CHECKME: nil
+  argHelp(dfl[], a)
+
+proc argParse*[T: object|ref object](dst: var T, dfl: T, a: var ArgcvtParams): bool =
+  echo "obj TODO"
+  result = false
+
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
   var dflSeq: seq[string]

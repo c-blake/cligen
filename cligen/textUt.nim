@@ -27,6 +27,7 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   var leader = (cols.len - 1) * colGap
   for c in cols[0 .. ^2]: leader += wCol[c]
   wCol[last] = max(minLast, wTerm - leader)
+  
   for row in tab:
     for c in cols[0 .. ^2]:
       result &= row[c] & repeat(" ", wCol[c] - row[c].len + colGap)
