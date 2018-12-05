@@ -5,33 +5,33 @@ demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                 print this cligen-erated help
   --help-syntax                              advanced: prepend, multi-val,..
-  -b=, --bl=     array(bool)     <EMPTY>     append 1 val to bl
+  -b=, --bl=     array(bool)     {}          append 1 val to bl
   -B=, --Bl=     array(bool)     false,true  append 1 val to Bl
-  -s=, --s=      array(string)   <EMPTY>     append 1 val to s
+  -s=, --s=      array(string)   {}          append 1 val to s
   -S=, --S=      array(string)   ho,hey      append 1 val to S
-  -i=, --i=      array(int)      <EMPTY>     append 1 val to i
+  -i=, --i=      array(int)      {}          append 1 val to i
   -I=, --I=      array(int)      1,2         append 1 val to I
-  --i1=          array(int8)     <EMPTY>     append 1 val to i1
+  --i1=          array(int8)     {}          append 1 val to i1
   --I1=          array(int8)     3,4         append 1 val to I1
-  --i2=          array(int16)    <EMPTY>     append 1 val to i2
+  --i2=          array(int16)    {}          append 1 val to i2
   --I2=          array(int16)    5,6         append 1 val to I2
-  --i4=          array(int32)    <EMPTY>     append 1 val to i4
+  --i4=          array(int32)    {}          append 1 val to i4
   --I4=          array(int32)    7,8         append 1 val to I4
-  --i8=          array(int64)    <EMPTY>     append 1 val to i8
+  --i8=          array(int64)    {}          append 1 val to i8
   --I8=          array(int64)    9,10        append 1 val to I8
-  -u=, --u=      array(uint)     <EMPTY>     append 1 val to u
+  -u=, --u=      array(uint)     {}          append 1 val to u
   -U=, --U=      array(uint)     11,12       append 1 val to U
-  --u1=          array(uint8)    <EMPTY>     append 1 val to u1
+  --u1=          array(uint8)    {}          append 1 val to u1
   --U1=          array(uint8)    13,14       append 1 val to U1
-  --u2=          array(uint16)   <EMPTY>     append 1 val to u2
+  --u2=          array(uint16)   {}          append 1 val to u2
   --U2=          array(uint16)   15,16       append 1 val to U2
-  --u4=          array(uint32)   <EMPTY>     append 1 val to u4
+  --u4=          array(uint32)   {}          append 1 val to u4
   --U4=          array(uint32)   17,18       append 1 val to U4
-  --u8=          array(uint64)   <EMPTY>     append 1 val to u8
+  --u8=          array(uint64)   {}          append 1 val to u8
   --U8=          array(uint64)   19,20       append 1 val to U8
-  -f=, --f4=     array(float32)  <EMPTY>     append 1 val to f4
+  -f=, --f4=     array(float32)  {}          append 1 val to f4
   -F=, --F4=     array(float32)  23.0,24.0   append 1 val to F4
-  --f8=          array(float)    <EMPTY>     append 1 val to f8
+  --f8=          array(float)    {}          append 1 val to f8
   --F8=          array(float)    25.0,26.0   append 1 val to F8
 
 ==> test/AllSetTypes.out <==
@@ -41,17 +41,17 @@ demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                  print this cligen-erated help
   --help-syntax                               advanced: prepend, multi-val,..
-  -b=, --bl=     set(bool)    <EMPTY>         set bl
+  -b=, --bl=     set(bool)    {}              set bl
   -B=, --Bl=     set(bool)    false,true      set Bl
-  -i=, --i1=     set(int8)    <EMPTY>         set i1
+  -i=, --i1=     set(int8)    {}              set i1
   -I=, --I1=     set(int8)    3,4             set I1
-  --i2=          set(int16)   <EMPTY>         set i2
+  --i2=          set(int16)   {}              set i2
   --I2=          set(int16)   5,6             set I2
-  -u=, --u1=     set(uint8)   <EMPTY>         set u1
+  -u=, --u1=     set(uint8)   {}              set u1
   -U=, --U1=     set(uint8)   13,14           set U1
-  --u2=          set(uint16)  <EMPTY>         set u2
+  --u2=          set(uint16)  {}              set u2
   --U2=          set(uint16)  15,16           set U2
-  -e=, --e=      set(Color)   <EMPTY>         set e
+  -e=, --e=      set(Color)   {}              set e
   -E=, --E=      set(Color)   red,green,blue  set E
 
 ==> test/AllTypes.out <==
@@ -283,15 +283,15 @@ demo entry point with parameters of all basic types.
   -h, --help                                      print this cligen-erated help
   --help-syntax                                   advanced: prepend,
                                                   multi-val,..
-  -i=, --i1=     hashset(int8)    <EMPTY>         set i1
+  -i=, --i1=     hashset(int8)    {}              set i1
   -I=, --I1=     hashset(int8)    3,4             set I1
-  --i2=          hashset(int16)   <EMPTY>         set i2
+  --i2=          hashset(int16)   {}              set i2
   --I2=          hashset(int16)   5,6             set I2
-  -u=, --u1=     hashset(uint8)   <EMPTY>         set u1
+  -u=, --u1=     hashset(uint8)   {}              set u1
   -U=, --U1=     hashset(uint8)   13,14           set U1
-  --u2=          hashset(uint16)  <EMPTY>         set u2
+  --u2=          hashset(uint16)  {}              set u2
   --U2=          hashset(uint16)  16,15           set U2
-  -e=, --e=      hashset(Color)   <EMPTY>         set e
+  -e=, --e=      hashset(Color)   {}              set e
   -E=, --E=      hashset(Color)   red,green,blue  set E
 
 ==> test/HelpTabCols.out <==

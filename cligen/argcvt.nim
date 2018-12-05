@@ -225,7 +225,7 @@ proc formatHuman(a: string): string =
     result.addQuoted a
 
 proc formatHuman(a: seq[string]): string =
-  if a.len == 0: result = "<EMPTY>"
+  if a.len == 0: result = "{}"
   for i in 0..<a.len:
     if i>0:
       result.add ","
