@@ -165,9 +165,9 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## ** PARSING AGGREGATES (string,set,seq,..) **
 ##
 ## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` and
-## similar aggregates (set[T], HashSet[T]) with a full complement of operations:
+## such (``set[T]``, ``HashSet[T]``, ..) with a full complement of operations:
 ## prepend (``^=``), subtract/delete (``-=``), as well as the usual append
-## (``+=`` or just ``=`` as is customary, after e.g. ``cc -Ipath1 -Ipath2``).
+## (``+=`` or just ``=|nothing`` as is customary, e.g. ``cc -Ipath1 -Ipath2``).
 ## 
 ## ``string`` is treated more as a scalar variable by ``cligen`` in that an
 ## unqualified ``[:=<SPACE>]`` does an overwriting/clobbering assignment rather
@@ -185,8 +185,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## which does a clobbering assignment of ``@["V1", "V2", ...]``.  *No delimiter*
 ## (i.e. ``"--foo,@="``) clips any aggregate to its empty version, e.g. ``@[]``.
 ##
-## See more up to date comments in cligen/syntaxHelp.nim
-## TODO: keep things DRY
+## See more examples and comments in cligen/syntaxHelp.nim
 
 proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
   ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
