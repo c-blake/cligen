@@ -387,7 +387,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       let sdef = spars[i]
       result.add(newNimNode(nnkVarSection).add(sdef))     #Init vars
       if i != posIx:
-        result.add(newNimNode(nnkVarSection).add(dpars[i]))
+        result.add(newVarStmt(dpars[i][0], sdef[0]))
       callIt.add(newNimNode(nnkExprEqExpr).add(idef[0], sdef[0])) #Add to call
       if i != posIx:
         let parNm = $idef[0]
