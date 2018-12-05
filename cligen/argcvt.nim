@@ -184,6 +184,9 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## Available only in the ``,``-family is also ``,@`` as in ``,@=<D>V1<D>V2...``
 ## which does a clobbering assignment of ``@["V1", "V2", ...]``.  *No delimiter*
 ## (i.e. ``"--foo,@="``) clips any aggregate to its empty version, e.g. ``@[]``.
+##
+## See more up to date comments in cligen/syntaxHelp.nim
+## TODO: keep things DRY
 
 proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
   ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
