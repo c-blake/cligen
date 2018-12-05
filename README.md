@@ -147,8 +147,8 @@ Then there is the documentation for the three main modules:
   [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
   [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html)
 
-A good starting point for advanced usage is the many simple examples can be seen
-in my automated test suite:
+A good starting point for various advanced usages is the many examples in my
+automated test suite:
   [test/](https://github.com/c-blake/cligen/tree/master/test/).
 
 Finally, I try to keep track of possibly breaking changes and new features in
