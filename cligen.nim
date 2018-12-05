@@ -399,13 +399,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
           when `defVal` is object | ref object:
-            argHelpObjMain(`defVal`, `apId`, `parNm`, `sh`, `isReq`, `hlp`, `allId`, `tabId`, `shOpt`)
+            # argHelpObjMain(`defVal`, `apId`, `parNm`, `sh`, `isReq`, `hlp`, `allId`, `tabId`, `shOpt`)
+            argHelpObjMain(`defVal`, `apId`, `parNm`, `sh`, `isReq`, `hlp`, `allId`, `tabId`)
           else:
             `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
             let descr = getDescription(`defVal`, `parNm`, `hlp`)
             `tabId`.add(argHelp(`defVal`, `apId`) & descr); `allId`.add(`parNm`) )
-            # TODO: for object, make argHelp generate descr for each field
-            # `tabId`.add(argHelp(`defVal`, `apId`)); `allId`.add(`parNm`) )
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string

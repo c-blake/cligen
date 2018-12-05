@@ -287,9 +287,10 @@ proc argParse*[T: object|ref object](dst: var T, dfl: T, a: var ArgcvtParams): b
   echo "obj TODO"
   result = false
 
-# proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: seq[seq[string]], shOpt: Table[string,string])=
-# proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: var seq[seq[string]], shOpt: var Table[string, char])=
-proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: seq[string], tabId: seq[seq[string]], shOpt: Table[string, char])=
+# works but misses shOpt
+proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: var seq[string], tabId: var seq[seq[string]])=
+# bug_D20181204T192819
+# proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, isReq: int, hlp: string, allId: var seq[string], tabId: var seq[seq[string]], shOpt: Table[string, char])=
 
   echo "found obj"
   when T is ref:
@@ -300,16 +301,15 @@ proc argHelpObjMain*[T](defVal: T, apId: var ArgcvtParams, parNm, sh: string, is
   for key, ai in fieldPairs(defVal2):
     let parNm=key
     apId.parNm = parNm
-    let sh = toString(shOpt.getOrDefault(parNm))
+    # PRTEMP
+    # let sh = toString(shOpt.getOrDefault(parNm))
+    let sh = "" & parNm[0]
     apId.parSh = sh
     apId.parReq = isReq
     let descr = getDescription(defVal, parNm, hlp)
     let reti = @[ apId.argKeys, $type(ai), apId.argDf(nimEscape($ai)) ]
-    # let reti = @[ key, $type(ai), a.argDf($ai) ]
-    echo reti
-    # result.add reti
-    # tabId.add(reti & descr)
-    # allId.add(parNm)
+    tabId.add(reti & descr)
+    allId.add(parNm)
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var typ = $T; var df: string
