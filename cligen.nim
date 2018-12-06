@@ -169,6 +169,7 @@ type
                    clBadVal,                        ## Unparsable value
                    clNonOption,                     ## Unexpected non-option
                    clMissing,                       ## Mandatory but missing
+                   clParseOptErr,                   ## parseopt error
                    clOk,                            ## Option parse part ok
                    clPositional,                    ## Expected non-option
                    clHelpOnly, clVersionOnly        ## Early Exit requests
@@ -570,6 +571,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         while true:
           next(`pId`)
           if `pId`.kind == cmdEnd: break
+          if `pId`.kind == cmdError:
+            if cast[pointer](`setByParseId`) != nil:
+              `setByParseId`[].add(("", "", `pId`.message, clParseOptErr))
+            if not parseOnly:
+              stderr.write(`pId`.message, "\n")
+            break
           case `pId`.kind
             of cmdLongOption, cmdShortOption:
               `optCases`

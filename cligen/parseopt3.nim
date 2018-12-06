@@ -68,26 +68,26 @@ type
     cmdEnd,                   ## end of command line reached
     cmdArgument,              ## argument detected
     cmdLongOption,            ## a long option ``--option`` detected
-    cmdShortOption            ## a short option ``-c`` detected
+    cmdShortOption,           ## a short option ``-c`` detected
+    cmdError                  ## error in primary option syntax usage
   OptParser* =
       object of RootObj       ## this object implements the command line parser
-    cmd*: seq[string]         # command line being parsed
-    pos*: int                 # current command parameter to inspect
-    off*: int                 # current offset into cmd[pos] for short key block
-    optsDone*: bool           # "--" has been seen
-    shortNoVal*: set[char]    # 1-letter options not requiring optarg
-    longNoVal*: seq[string]   # long options not requiring optarg
-    stopWords*: seq[string]   # special literal parameters that act like "--"
-    requireSep*: bool         # require separator between option key & val
-    sepChars*: set[char]      # all the chars that can be valid separators
-    opChars*: set[char]       # all chars that can prefix a sepChar
+    cmd*: seq[string]         ## command line being parsed
+    pos*: int                 ## current command parameter to inspect
+    off*: int                 ## current offset in cmd[pos] for short key block
+    optsDone*: bool           ## "--" has been seen
+    shortNoVal*: set[char]    ## 1-letter options not requiring optarg
+    longNoVal*: seq[string]   ## long options not requiring optarg
+    stopWords*: seq[string]   ## special literal parameters that act like "--"
+    requireSep*: bool         ## require separator between option key & val
+    sepChars*: set[char]      ## all the chars that can be valid separators
+    opChars*: set[char]       ## all chars that can prefix a sepChar
     sep*: string              ## actual string separating key & value
+    message*: string          ## message to display upon cmdError
     kind*: CmdLineKind        ## the detected command line token
     key*, val*: TaintedString ## key and value pair; ``key`` is the option
                               ## or the argument, ``value`` is not "" if
                               ## the option was given a value
-
-proc ERR(x: varargs[string, `$`]) = stderr.write(x); stderr.write("\n")
 
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoVal: set[char] = {},
@@ -154,7 +154,8 @@ proc doShort(p: var OptParser) =
       p.pos += 1
     return
   if p.requireSep:
-    ERR "Expecting option key-val separator :|= after `", p.key, "`"
+    p.message = "Expecting option key-val separator :|= after `" & p.key & "`"
+    p.kind = cmdError
     return
   if p.cmd[p.pos].len - p.off > 0:
     p.val = p.cmd[p.pos][p.off .. ^1]
@@ -188,7 +189,8 @@ proc doLong(p: var OptParser) =
   if p.key in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
-    ERR "Expecting option key-val separator :|= after `", p.key, "`"
+    p.message = "Expecting option key-val separator :|= after `" & p.key & "`"
+    p.kind = cmdError
     return
   if p.pos < p.cmd.len:                 # Take opt arg from next param
     p.val = p.cmd[p.pos]
