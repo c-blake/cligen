@@ -176,10 +176,6 @@ proc doLong(p: var OptParser) =
   let param = p.cmd[p.pos]
   p.pos += 1                            # always consume at least 1 param
   let sep = find(param, p.sepChars)     # only very first occurrence of delim
-  if sep == 2:
-    ERR "Empty long option key at param", p.pos - 1, " (\"", param, "\")"
-    p.key = ""
-    return
   if sep > 2:
     var op = sep
     while op > 2 and param[op-1] in p.opChars:
