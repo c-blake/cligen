@@ -13,10 +13,10 @@ Version: 0.9.18
     magic command parameters is communicated to the caller of a generated
     dispatcher by raising the HelpOnly, VersionOnly, and ParseError exceptions.
     Manual invocation of dispatchers probably needs to be updated accordingly,
-    unless you want to confuse your CLI users with chatty exception messages.
+    unless chatty exception messages are ok for your CLI users.
 
     `cligen` now tries to echo results if they are not-convertible to `int`.
-    This feature may be deactivated via the `noAutoEcho=true` parameter to
+    This feature can be deactivated via the `noAutoEcho=true` parameter to
     `dispatch`/`dispatchMulti`. { Since a 1-byte exit codes/mod 256 can be
     catastrophic truncation for many returns, it is possible trying to `echo`
     being the first step would be more user friendly.  However, if people want
@@ -26,36 +26,40 @@ Version: 0.9.18
 
     `cligen` now gets its command parameters by calling `mergeParams()` which
     CLI authors may redefine arbitrarily (see `test/FullyAutoMulti.nim` and/or
-    `README.md`).  So, config files, environment variables or even network
-    requests could be used to populate the `seq[string]` dispatchers parse.
-    Right now `mergeParams()` just returns `commandLineParams()`.  It could
-    become smarter in the future if people ask.
+    `README.md`).  Config files, environment variables or even network requests
+    can be used to populate the `seq[string]` dispatchers parse.  Right now
+    `mergeParams()` just returns `commandLineParams()`.  It could become smarter
+    in the future if people ask.
 
     `argPre` and `argPost` have been retired.  If you happened to be using them
     you should be able to recreate (easily?) any behavior with `mergeParams()`.
 
-    `cligen` now tries to detect typos/spelling mistakes by suggesting nearby
-    elements in both long option keys and subcommand names where nearby is
-    according to an edit distance designed for detecting typos.
+    `cligen` now tries to detect CL user typos/spelling mistakes by suggesting
+    nearby elements in both long option keys and subcommand names where "nearby"
+    is according to an edit distance designed for detecting typos.
 
-    Commands written with `dispatchMulti` now have more gradual information
-    revelation error behavior, not dumping the full set of all helps unless
-    users request it with the help subcommand which they are informed they can
-    do upon any error.  Similarly, `dispatchGen` generates commands that only
-    print out the full help upon `--help` or `-h` (or whatever `shortHelp` is),
-    but tells the user to do that for more details.
+    Commands written with `dispatchMulti` now reveal information more gradually,
+    not dumping the full set of all helps unless users request it with the help
+    subcommand which they are informed they can do upon any error.  Similarly,
+    `dispatchGen` generates commands that only print full help upon `--help` or
+    `-h` (or whatever `shortHelp` is), but tells the user how to ask for more.
 
     `dispatchGen` now takes a couple new args: `dispatchName` and `setByParse`,
     documented in the doc comment.  `dispatchName` lets you to override the
-    default naming of the generated dispatcher to "dispatch" & $cmdName (note
-    this is different than the old `"dispatch" & $pro` default *if* you set
-    `cmdName`, but you can recover the old name with `dispatchName=` if needed).
+    default "dispatch" & $cmdName dispatcher naming (note this is different than
+    the old `"dispatch" & $pro` default *if* you set `cmdName`, but you can now
+    recover the old name with `dispatchName=` if needed).
 
     `setByParse` is a way to catch the entire sequence of `parseopt3` parsed
     strings, unparsed values, error messages and status conditions assigned to
     any parameter during the parse in command-line order.  This expert mode is
     currently only available in `dispatchGen`.  So, manual dispatch calling is
     required (eg. `dispatchGen(myProc, setByParse=addr(x)); dispatchMyProc()`).
+    NOTE: This interface is a first attempt and may change in the future.
+
+    Generated dispatchers now take a `parseOnly` flag which does everything
+    except dispatch to the wrapped proc which may be useful in combination with
+    the new `setByParse`.
 
     `dispatchGen` now generates a compile-time error if you use a parameter name
     not in the wrapped proc for `help`, `short`, `suppress`, `implicitDefault`,
@@ -67,22 +71,22 @@ Version: 0.9.18
     `positional`="" to dispatch/dispatchGen now disables entirely inference of
     what proc parameter catches positionals.
 
-    `help["positionalName"]` will now be used in the one-line command summary
-    as a help string for the parameter catching positionals.  It defaults to
-    `[ <paramName>: <type> ]`.
+    `help["positionalName"]` will now be used in the one-line command summary as
+    a help string for the parameter which catches positionals.  It defaults to
+    a Nim-esque `[ <paramName>: <type> ]`.
 
     Command-line syntax for aggregate types like `seq[T]` has changed quite a
     bit to be both simpler and more general/capable.  There is a non-delimited
     "single assignment per command-param" mode where users go `--foo^=atFront`
-    to pre-pend.  No delimiting rule is needed since all that is offloaded to
-    the shell running the command.  There is also a "splitting-assignment" mode
-    where operators like `^=` get a `,` prefix like `,^=` and users specify
-    delimiters as the first char of a value, `-f,=,a,b,c`.  This lets CLI users
-    assign many elements in a single command parameter or clobber the whole
-    collection with `,@=`.  When users need to delimit, they choose their own
-    character.  See argcvt documentation for details.  The `delimit` parameter
-    to `dispatch` has been re-purposed to just be what shows up to separate
-    default values in generated help messages.
+    to pre-pend.  No delimiting rule is needed since the user must re-issue an
+    option to give multi-arguments.  There is also a more expert mode that does
+    "splitting-assignments" where operators like `^=` get a `,` prefix like
+    `,^=` and CL users always specify delimiters as the first char of a value,
+    `-f,=,a,b,c` like common /search/replace substitution syntaxes.  Split-mode
+    lets CL users assign many elements in one command parameter or clobber a
+    whole collection with `,@=`.  See argcvt documentation for more details.
+
+    The `delimit` parameter to `dispatch` has been retired.
 
     There is a new --help-syntax line item for all commands which emits a
     hopefully eventually user-friendly description of particulars related to

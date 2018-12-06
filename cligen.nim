@@ -277,17 +277,17 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## `dispatchName` is the name of a generated dispatcher, defaulting to simply
   ## "dispatchpro" where `pro` is the name of the proc being wrapped.
   ##
-  ## `setByParse` is `addr(some var seq[ClParse])`.  If given/non-nil, this will
-  ## collect each parameter seen, keyed under its long/param name (in other
-  ## words, input from `mergeParams` but slightly cooked).  Wrapped procs can
-  ## inspect this to decide various things.  Ordinary Nim procs, from inside
-  ## calls, do not themselves know how params got their values - positional,
-  ## keyword, or defaulting.  So, any proc using `setByParse` is inherently
-  ## command-line only.  So, this `var seq` needing to be declared before the
-  ## wrapped proc is not considered onerous.  Please bear in mind that people
-  ## hateful of shell programming appreciate you keeping important functionality
-  ## Nim-callable.  `cligen` provides a few convenience proc to help interpret
-  ## `setByParse`: `contains`, `numOfStatus`, & `next`.
+  ## `setByParse` is `addr(some var seq[ClParse])`.  When provided/non-nil, this
+  ## collects each parameter seen, keyed under its long/param name (i.e., parsed
+  ## but not converted to native types).  Wrapped procs can inspect this or even
+  ## convert args themselves to revive `parseopt`-like iterative interpretation.
+  ## `cligen` provides convenience procs to interpret `setByParse`: `contains`,
+  ## `numOfStatus` & `next`.  Note that ordinary Nim procs, from inside calls,
+  ## do not know how params got their values (positional, keyword, defaulting).
+  ## Wrapped procs accessing `setByParse` are inherently command-line only.  So,
+  ## this `var seq` needing to be declared before such procs for such access is
+  ## ok.  Ideally, keep important functionality Nim-callable.  `setByParse` may
+  ## also be useful combined with the `parseOnly` arg of generated dispatchers.
 
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
