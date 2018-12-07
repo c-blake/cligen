@@ -41,18 +41,18 @@ demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                  print this cligen-erated help
   --help-syntax                               advanced: prepend, multi-val,..
-  -b=, --bl=     set(bool)    {}              set bl
-  -B=, --Bl=     set(bool)    false,true      set Bl
-  -i=, --i1=     set(int8)    {}              set i1
-  -I=, --I1=     set(int8)    3,4             set I1
-  --i2=          set(int16)   {}              set i2
-  --I2=          set(int16)   5,6             set I2
-  -u=, --u1=     set(uint8)   {}              set u1
-  -U=, --U1=     set(uint8)   13,14           set U1
-  --u2=          set(uint16)  {}              set u2
-  --U2=          set(uint16)  15,16           set U2
-  -e=, --e=      set(Color)   {}              set e
-  -E=, --E=      set(Color)   red,green,blue  set E
+  -b=, --bl=     set(bool)    {}              include 1 val in bl
+  -B=, --Bl=     set(bool)    false,true      include 1 val in Bl
+  -i=, --i1=     set(int8)    {}              include 1 val in i1
+  -I=, --I1=     set(int8)    3,4             include 1 val in I1
+  --i2=          set(int16)   {}              include 1 val in i2
+  --I2=          set(int16)   5,6             include 1 val in I2
+  -u=, --u1=     set(uint8)   {}              include 1 val in u1
+  -U=, --U1=     set(uint8)   13,14           include 1 val in U1
+  --u2=          set(uint16)  {}              include 1 val in u2
+  --U2=          set(uint16)  15,16           include 1 val in U2
+  -e=, --e=      set(Color)   {}              include 1 val in e
+  -E=, --E=      set(Color)   red,green,blue  include 1 val in E
 
 ==> test/AllTypes.out <==
 Usage:
@@ -283,16 +283,16 @@ demo entry point with parameters of all basic types.
   -h, --help                                      print this cligen-erated help
   --help-syntax                                   advanced: prepend,
                                                   multi-val,..
-  -i=, --i1=     hashset(int8)    {}              set i1
-  -I=, --I1=     hashset(int8)    3,4             set I1
-  --i2=          hashset(int16)   {}              set i2
-  --I2=          hashset(int16)   5,6             set I2
-  -u=, --u1=     hashset(uint8)   {}              set u1
-  -U=, --U1=     hashset(uint8)   13,14           set U1
-  --u2=          hashset(uint16)  {}              set u2
-  --U2=          hashset(uint16)  16,15           set U2
-  -e=, --e=      hashset(Color)   {}              set e
-  -E=, --E=      hashset(Color)   red,green,blue  set E
+  -i=, --i1=     hashset(int8)    {}              include 1 val in i1
+  -I=, --I1=     hashset(int8)    3,4             include 1 val in I1
+  --i2=          hashset(int16)   {}              include 1 val in i2
+  --I2=          hashset(int16)   5,6             include 1 val in I2
+  -u=, --u1=     hashset(uint8)   {}              include 1 val in u1
+  -U=, --U1=     hashset(uint8)   13,14           include 1 val in U1
+  --u2=          hashset(uint16)  {}              include 1 val in u2
+  --U2=          hashset(uint16)  16,15           include 1 val in U2
+  -e=, --e=      hashset(Color)   {}              include 1 val in e
+  -E=, --E=      hashset(Color)   red,green,blue  include 1 val in E
 
 ==> test/HelpTabCols.out <==
 Usage:

@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat
+import strformat, sets
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
@@ -204,6 +204,8 @@ proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
   if defaultHelp.len > 0: return defaultHelp # TODO: what user explicitly set it to empty?
   when T is seq:
     result = "append 1 val to " & parNm
+  elif T is set or T is HashSet:
+    result = "include 1 val in " & parNm
   else:
     result = "set " & parNm
 
@@ -326,7 +328,6 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # HashSets
-import sets
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
                   a: var ArgcvtParams): bool =
   result = true
