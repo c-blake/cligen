@@ -1293,6 +1293,8 @@ function main() {
     title="helpTabDefault = 2"><wbr />help<wbr />Tab<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#helpTabDescrip"
     title="helpTabDescrip = 3"><wbr />help<wbr />Tab<wbr />Descrip<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#helpTabColsDfl"
+    title="helpTabColsDfl = [0, 1, 2, 3]"><wbr />help<wbr />Tab<wbr />Cols<wbr />Dfl<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#dflUsage"
     title="dflUsage = &quot;${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep&quot;"><wbr />dfl<wbr />Usage<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#ClErrors"
@@ -1334,7 +1336,7 @@ function main() {
             sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;|&#x27;,
                                         &#x27;~&#x27;, &#x27;^&#x27;, &#x27;$&#x27;, &#x27;#&#x27;, &#x27;&lt;&#x27;, &#x27;&gt;&#x27;, &#x27;?&#x27;};
             helpTabColumnGap: int = 2; helpTabMinLast: int = 16;
-            helpTabRowSep: string = &quot;&quot;; helpTabColumns: seq[int] = @[0, 1, 2, 3];
+            helpTabRowSep: string = &quot;&quot;; helpTabColumns: seq[int] = helpTabColsDfl;
             stopWords: seq[string] = @[];
             positional: static string = positionalAuto;
             suppress: seq[string] = @[]; shortHelp = &#x27;h&#x27;;
@@ -1355,19 +1357,25 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#cligenQuit.t%2Cuntyped%2Cbool"
     title="cligenQuit(p: untyped; noAutoEcho: bool = false): auto"><wbr />cligen<wbr />Quit<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bint%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2CVersion%2Cbool%2Cstring"
+  <li><a class="reference" href="#cligenHelp.t%2Cuntyped%2Cuntyped%2Cuntyped"
+    title="cligenHelp(p: untyped; dashHelp: untyped; sep: untyped): auto"><wbr />cligen<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2Cstring%2Cbool%2Cbool%2Cint%2Cint%2Cstring%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2CChar%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2CVersion%2Cbool%2Cstring"
     title="dispatch(pro: typed{nkSym}; cmdName: string = &quot;&quot;; doc: string = &quot;&quot;; help: typed = {};
          short: typed = {}; usage: string = dflUsage; prelude = &quot;Usage:\n  &quot;;
          echoResult: bool = false; requireSeparator: bool = false;
          sepChars = {&#x27;=&#x27;, &#x27;:&#x27;}; opChars = {&#x27;+&#x27;, &#x27;-&#x27;, &#x27;*&#x27;, &#x27;&#x2F;&#x27;, &#x27;%&#x27;, &#x27;@&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;&amp;&#x27;, &#x27;|&#x27;,
                                      &#x27;~&#x27;, &#x27;^&#x27;, &#x27;$&#x27;, &#x27;#&#x27;, &#x27;&lt;&#x27;, &#x27;&gt;&#x27;, &#x27;?&#x27;};
          helpTabColumnGap: int = 2; helpTabMinLast: int = 16;
-         helpTabRowSep: string = &quot;&quot;; helpTabColumns: seq[int] = @[0, 1, 2, 3];
+         helpTabRowSep: string = &quot;&quot;; helpTabColumns = helpTabColsDfl;
          stopWords: seq[string] = @[]; positional = positionalAuto;
          suppress: seq[string] = @[]; shortHelp = &#x27;h&#x27;;
          implicitDefault: seq[string] = @[]; mandatoryHelp = &quot;REQUIRED&quot;;
          mandatoryOverride: seq[string] = @[]; version: Version = (&quot;&quot;, &quot;&quot;);
          noAutoEcho: bool = false; dispatchName: string = &quot;&quot;): untyped"><wbr />dispatch<span class="attachedType" style="visibility:hidden">Version</span></a></li>
+  <li><a class="reference" href="#unknownSubcommand.t%2Cstring"
+    title="unknownSubcommand(cmd: string)"><wbr />unknown<wbr />Subcommand<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#topLevelHelp.t%2Cauto%2Cauto"
+    title="topLevelHelp(srcBase: auto; subCmdsId: auto): string"><wbr />top<wbr />Level<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1474,6 +1482,12 @@ Parse status for param
 
 
 </dd>
+<a id="helpTabColsDfl"></a>
+<dt><pre><span class="Identifier">helpTabColsDfl</span> <span class="Other">=</span> <span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="dflUsage"></a>
 <dt><pre><span class="Identifier">dflUsage</span> <span class="Other">=</span> <span class="StringLit">&quot;${prelude}$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options$sep&quot;</span></pre></dt>
 <dd>
@@ -1545,7 +1559,7 @@ First index after startIx in <cite>setByParse seq</cite> w/parse status in <cite
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">mergeParams</span><span class="Other">(</span><span class="Identifier">cmdNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cmdLine</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-This is a dummy parameter merge to provide a hook for CLI authors to create the <cite>seq[string]</cite> to be parsed from whatever run-time sources (likely based on <cite>cmdNames</cite>) that they would like.  Here we just pass through cmdLine. In a single <cite>dispatch</cite> context, <cite>cmdNames[0]</cite> is the <cite>cmdName</cite> while in a <cite>dispatchMulti</cite> context it is <cite>@[ &lt;mainCommand&gt;, &lt;subCommand&gt; ]</cite>.
+This is a pass-through parameter merge to provide a hook for CLI authors to create the <tt class="docutils literal"><span class="pre">seq[string]</span></tt> to be parsed from any run-time sources (likely based on <tt class="docutils literal"><span class="pre">cmdNames</span></tt>) that they would like.  In a single <tt class="docutils literal"><span class="pre">dispatch</span></tt> context, <tt class="docutils literal"><span class="pre">cmdNames[0]</span></tt> is the <tt class="docutils literal"><span class="pre">cmdName</span></tt> while in a <tt class="docutils literal"><span class="pre">dispatchMulti ``context it is ``@[ &lt;mainCommand&gt;, &lt;subCommand&gt; ]</span></tt>.
 
 </dd>
 
@@ -1561,7 +1575,7 @@ This is a dummy parameter merge to provide a hook for CLI authors to create the 
     <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'$'</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">,</span> <span class="CharLit">'&lt;'</span><span class="Other">,</span> <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">;</span>
                  <span class="Identifier">helpTabColumnGap</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span> <span class="Identifier">helpTabMinLast</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span>
                  <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-                 <span class="Identifier">helpTabColumns</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span><span class="Other">;</span>
+                 <span class="Identifier">helpTabColumns</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">helpTabColsDfl</span><span class="Other">;</span>
                  <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                  <span class="Identifier">positional</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">positionalAuto</span><span class="Other">;</span>
                  <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">shortHelp</span> <span class="Other">=</span> <span class="CharLit">'h'</span><span class="Other">;</span>
@@ -1612,15 +1626,20 @@ A convenience wrapper to both generate a multi-command dispatcher and then call 
 
 
 </dd>
-<a id="dispatch.t,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[int],seq[string],seq[string],Char,seq[string],string,seq[string],Version,bool,string"></a>
+<a id="cligenHelp.t,untyped,untyped,untyped"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">cligenHelp</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">dashHelp</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">sep</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">auto</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="dispatch.t,,string,string,typed,typed,string,string,bool,bool,int,int,string,seq[string],seq[string],Char,seq[string],string,seq[string],Version,bool,string"></a>
 <dt><pre><span class="Keyword">template</span> <span class="Identifier">dispatch</span><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                  <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">short</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">usage</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">dflUsage</span><span class="Other">;</span>
                  <span class="Identifier">prelude</span> <span class="Other">=</span> <span class="StringLit">&quot;Usage:\n  &quot;</span><span class="Other">;</span> <span class="Identifier">echoResult</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
                  <span class="Identifier">requireSeparator</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">sepChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">opChars</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'+'</span><span class="Other">,</span>
     <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'$'</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">,</span> <span class="CharLit">'&lt;'</span><span class="Other">,</span> <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">;</span>
                  <span class="Identifier">helpTabColumnGap</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">;</span> <span class="Identifier">helpTabMinLast</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">;</span>
-                 <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-                 <span class="Identifier">helpTabColumns</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="DecNumber">3</span><span class="Other">]</span><span class="Other">;</span>
+                 <span class="Identifier">helpTabRowSep</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">helpTabColumns</span> <span class="Other">=</span> <span class="Identifier">helpTabColsDfl</span><span class="Other">;</span>
                  <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">positional</span> <span class="Other">=</span> <span class="Identifier">positionalAuto</span><span class="Other">;</span>
                  <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">shortHelp</span> <span class="Other">=</span> <span class="CharLit">'h'</span><span class="Other">;</span>
                  <span class="Identifier">implicitDefault</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">mandatoryHelp</span> <span class="Other">=</span> <span class="StringLit">&quot;REQUIRED&quot;</span><span class="Other">;</span>
@@ -1628,6 +1647,18 @@ A convenience wrapper to both generate a multi-command dispatcher and then call 
                  <span class="Identifier">noAutoEcho</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">dispatchName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 A convenience wrapper to both generate a command-line dispatcher and then call the dispatcher &amp; exit; Usage is the same as the dispatchGen() macro.
+
+</dd>
+<a id="unknownSubcommand.t,string"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">unknownSubcommand</span><span class="Other">(</span><span class="Identifier">cmd</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="topLevelHelp.t,auto,auto"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">topLevelHelp</span><span class="Other">(</span><span class="Identifier">srcBase</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subCmdsId</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
 
 </dd>
 
@@ -1640,7 +1671,7 @@ A convenience wrapper to both generate a command-line dispatcher and then call t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-12-10 13:47:42 UTC</small>
+        <small>Made with Nim. Generated: 2018-12-10 22:35:02 UTC</small>
       </div>
     </div>
   </div>
