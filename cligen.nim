@@ -604,12 +604,7 @@ macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym}, noA
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
   let autoEc = not noAutoEcho.boolVal
   #XXX below mess should prob be a template used both here and in dispatchMulti
-  if formalParams(pro.symbol.getImpl)[0].kind == nnkEmpty:
-    result.add(quote do:                      #No Return Type At All
-      try: `disNm`(); quit(0)
-      except HelpOnly, VersionOnly: quit(0)
-      except ParseError: quit(1))
-  elif echoResult.boolVal:
+  if echoResult.boolVal:
     result.add(quote do:                      #CLI author requests echo
       try: echo `disNm`(); quit(0)
       except HelpOnly, VersionOnly: quit(0)
@@ -620,12 +615,16 @@ macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym}, noA
         try: quit(int(`disNm`()))
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1)
-      elif bool(`autoEc`) and compiles(echo `disNm`()): #autoEc mode && have `$`
+      elif bool(`autoEc`) and compiles(echo `disNm`()): #autoEc && have `$`
         try: echo `disNm`(); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1)
-      else:                                   #unconvertible; Just ignore
+      elif compiles(type(`disNm`())):         #no convert to int,str but typed
         try: discard `disNm`(); quit(0)
+        except HelpOnly, VersionOnly: quit(0)
+        except ParseError: quit(1)
+      else:                                   #void return type
+        try: `disNm`(); quit(0)
         except HelpOnly, VersionOnly: quit(0)
         except ParseError: quit(1))
 
@@ -729,7 +728,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     let sCmdAuEc = not subCmdNoAutoEc(p)
     let nm0 = $srcBase
     let qnm = quote do: @[ `nm0`, `sCmdNm` ]    #qualified name
-    if sCmdEcR:
+    if sCmdEcR:                                 #CLI author requests echo
       cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
         try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
         except HelpOnly, VersionOnly: quit(0)
@@ -744,11 +743,11 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
           try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)
-        elif compiles(type(`disNm`())):         #there is a type to discard
+        elif compiles(type(`disNm`())):         #no convert to int,str but typed
           try: discard `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)
-        else:                                   #void return
+        else:                                   #void return type
           try: `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
           except HelpOnly, VersionOnly: quit(0)
           except ParseError: quit(1)))
