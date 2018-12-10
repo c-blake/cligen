@@ -14,16 +14,10 @@ when isMainModule:
   import cligen
 
   dispatchGen(demo, doc="  This does the demo.", help = {
-              "alpha" : "This is a very long parameter help string which " &
-                        "ordinarily should be auto-wrapped by alignTable " &
-                        "into a multi-line format unless you have eagle " &
-                        "eyes, a gigantic monitor, or maybe a little bit of " &
-                        "both. :-)",
-              "beta" : "This is more modest, but might still wrap around " &
-                       "once or twice or so.",
-              "verb" : "on=chatty, off=quiet. 'Nuff said." },
+              "alpha" : "what alpha does",
+              "beta"  : "what beta does ",
+              "verb"  : "on=chatty, off=quiet. 'Nuff said." },
               helpTabColumnGap=3, helpTabMinLast=20, helpTabRowSep="\n")
-
   dispatchGen(show, doc="  This shows me something.")
 
   proc multi(beta=1, item="", subcmd: seq[string]): int =
@@ -45,4 +39,5 @@ when isMainModule:
     else: echo "unknown subcommand: ", subcmd
     quit(1)
 
-  dispatch(multi, stopWords = @[ "demo", "show", "help" ])
+  dispatchGen(multi, stopWords = @[ "demo", "show", "help" ])
+  cligenQuit(dispatchmulti())

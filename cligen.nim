@@ -599,11 +599,28 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym}, noAutoEcho: bool, echoResult: bool): untyped =
+template cligenQuit*(p: untyped, noAutoEcho: bool=false): auto =
+  when compiles(int(p)):                      #Can convert to int
+    try: quit(int(p))
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+  elif not noAutoEcho and compiles(echo p):   #autoEcho && have `$`
+    try: echo p; quit(0)
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+  elif compiles(type(p)):                     #no convert to int,str but typed
+    try: discard p; quit(0)
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+  else:                                       #void return type
+    try: p; quit(0)
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+
+macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym},
+                   noAutoEcho: bool, echoResult: bool): untyped =
   result = newStmtList()
   let disNm = dispatchId($dispatchName, $cmdName, $pro)
-  let autoEc = not noAutoEcho.boolVal
-  #XXX below mess should prob be a template used both here and in dispatchMulti
   if echoResult.boolVal:
     result.add(quote do:                      #CLI author requests echo
       try: echo `disNm`(); quit(0)
@@ -611,22 +628,7 @@ macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym}, noA
       except ParseError: quit(1))
   else:
     result.add(quote do:
-      when compiles(int(`disNm`())):          #Can convert to int
-        try: quit(int(`disNm`()))
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)
-      elif bool(`autoEc`) and compiles(echo `disNm`()): #autoEc && have `$`
-        try: echo `disNm`(); quit(0)
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)
-      elif compiles(type(`disNm`())):         #no convert to int,str but typed
-        try: discard `disNm`(); quit(0)
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)
-      else:                                   #void return type
-        try: `disNm`(); quit(0)
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1))
+      cligenQuit(`disNm`(), `noAutoEcho`))
 
 template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
@@ -634,9 +636,9 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  sepChars={'=',':'},
  opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
- helpTabColumns: seq[int] = @[
-  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional = positionalAuto, suppress: seq[string] = @[],
+ helpTabColumns: seq[int] = @[ helpTabOption, helpTabType,
+ helpTabDefault, helpTabDescrip ], stopWords: seq[string] = @[],
+ positional = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = ""): untyped =
