@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.19
+---------------
+    Introduce clParseOptErr for requireSeparator=true mode to flag parseopt
+    level errors.
+
+    dispatchMulti generated help has better gradual reveal semantics/more
+    typical behavior (help cmd is now like cmd --help) { but there is much
+    less standardization in the multi-command world }.  Also, suggestions
+    also work now for invocations with a subcommand and options afterward.
+
 Version: 0.9.18
 ---------------
     This release adds several major features..Krux02 asked for (approximately)
