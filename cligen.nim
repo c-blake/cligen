@@ -705,10 +705,16 @@ template unknownSubcommand*(cmd: string) =
     stderr.write "It is not similar to defined subcommands.\n\n"
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
 
+#Would be nice to grab first terminalWidth-maxSubCmdLen-4 chars from each cmd's
+#doc dispatchGen param (defaulting to doc comment) for a one line per cmd table.
 template topLevelHelp*(srcBase: auto, subCmdsId: auto): string = """
-$1 {CMD}
+
+  $1 {CMD}  [sub-command options & parameters]
+
 where {CMD} is one of:
+
   $2
+
 $1 {-h|--help} or with no args at all prints this message.
 Run "$1 {help CMD|CMD --help}" to see help for just CMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
