@@ -224,12 +224,12 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/FullyAutoMulti.out <==
 Usage:
-  FullyAutoMulti {subcommand}
-where {subcommand} is one of:
+  FullyAutoMulti {CMD}
+where {CMD} is one of:
   help demo print whoa nelly
-Run top-level cmd with -h, --help or --help-syntax for top-level help.
-Run top-level with subcmd "help" to get *all* helps.
-Run any given subcommand with --help to see help for that one.
+Run top-level with -h, --help or --help-syntax for top-level help.
+Run "top-level {help CMD|CMD --help}" to see help for just CMD.
+Run "top-level help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
@@ -281,8 +281,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                      print this cligen-erated help
-  --help-syntax                                   advanced: prepend,
-                                                  multi-val,..
+  --help-syntax                                   advanced: prepend, multi-val,..
   -i=, --i1=     hashset(int8)    {}              include 1 val in i1
   -I=, --I1=     hashset(int8)    3,4             include 1 val in I1
   --i2=          hashset(int16)   {}              include 1 val in i2
@@ -372,14 +371,9 @@ Usage:
     Options:
           -h, --help                    print this cligen-erated help
           --help-syntax                 advanced: prepend, multi-val,..
-          -a=, --alpha=  int     1      This is a very long parameter help
-                                        string which ordinarily should be
-                                        auto-wrapped by alignTable into a
-                                        multi-line format unless you have eagle
-                                        eyes, a gigantic monitor, or maybe a
-                                        little bit of both. :-)
-          -b=, --beta=   float   2.0    This is more modest, but might still
-                                        wrap around once or twice or so.
+          -a=, --alpha=  int     1      This is a very long parameter help string which ordinarily should be auto-wrapped by alignTable into a multi-line format
+                                        unless you have eagle eyes, a gigantic monitor, or maybe a little bit of both. :-)
+          -b=, --beta=   float   2.0    This is more modest, but might still wrap around once or twice or so.
           -v, --verb     bool    false  on=chatty, off=quiet. 'Nuff said.
           -i=, --item=   string  ""     set item
 
@@ -474,12 +468,12 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/QualifiedMulti.out <==
 Usage:
-  QualifiedMulti {subcommand}
-where {subcommand} is one of:
+  QualifiedMulti {CMD}
+where {CMD} is one of:
   help get put
-Run top-level cmd with -h, --help or --help-syntax for top-level help.
-Run top-level with subcmd "help" to get *all* helps.
-Run any given subcommand with --help to see help for that one.
+Run top-level with -h, --help or --help-syntax for top-level help.
+Run "top-level {help CMD|CMD --help}" to see help for just CMD.
+Run "top-level help" to get *comprehensive* help.
 
 ==> test/QualifiedSym.out <==
 Usage:
@@ -611,7 +605,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(647, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(655, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(138, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
