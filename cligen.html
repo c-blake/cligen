@@ -1266,11 +1266,10 @@ function main() {
   clPositional,               ## Expected non-option
   clHelpOnly, clVersionOnly    ## Early Exit requests"><wbr />Cl<wbr />Status<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#ClParse"
-    title="ClParse = tuple[paramName,      ## Parse status for this parameter
-## A decent default error message
+    title="ClParse = tuple[paramName: string, ## Parse status for param
 ## Param name&#x2F;long opt key
-              unparsedVal,    ## Unparsed value(&quot;&quot; for missing mandatory)
-              message: string,
+              unparsedVal: string, ## Unparsed val (&quot;&quot; for missing)
+              message: string, ## default error message
               status: ClStatus]"><wbr />Cl<wbr />Parse<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1426,14 +1425,13 @@ function main() {
 
 </dd>
 <a id="ClParse"></a>
-<dt><pre><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">paramName</span><span class="Other">,</span>      <span class="Comment">## Parse status for this parameter</span>
-<span class="Comment">## A decent default error message</span>
+<dt><pre><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">paramName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Comment">## Parse status for param</span>
 <span class="Comment">## Param name/long opt key</span>
-              <span class="Identifier">unparsedVal</span><span class="Other">,</span>    <span class="Comment">## Unparsed value(&quot;&quot; for missing mandatory)</span>
-              <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span>
+              <span class="Identifier">unparsedVal</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Comment">## Unparsed val (&quot;&quot; for missing)</span>
+              <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Comment">## default error message</span>
               <span class="Identifier">status</span><span class="Other">:</span> <a href="cligen.html#ClStatus"><span class="Identifier">ClStatus</span></a><span class="Other">]</span></pre></dt>
 <dd>
-Parse status for this parameter
+Parse status for param
 
 </dd>
 
@@ -1642,7 +1640,7 @@ A convenience wrapper to both generate a command-line dispatcher and then call t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-12-10 13:36:35 UTC</small>
+        <small>Made with Nim. Generated: 2018-12-10 13:47:42 UTC</small>
       </div>
     </div>
   </div>
