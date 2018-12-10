@@ -10,7 +10,8 @@ when isMainModule:
   from strutils import split, `%`, join
   from cligen/argcvt import ArgcvtParams, argKeys, argDf  # Little helpers
 
-  proc argParse(dst: var seq[string], dfl: seq[string], a: var ArgcvtParams): bool =
+  proc argParse(dst: var seq[string], dfl: seq[string],
+                a: var ArgcvtParams): bool =
     dst = a.val.split(",")
     return true
 

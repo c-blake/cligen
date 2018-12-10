@@ -148,6 +148,8 @@ const helpTabOption*  = 0
 const helpTabType*    = 1
 const helpTabDefault* = 2
 const helpTabDescrip* = 3
+const helpTabColsDfl* = @[ helpTabOption, helpTabType,
+                           helpTabDefault, helpTabDescrip ]
 
 proc postInc*(x: var int): int =
   ## Similar to post-fix `++` in C languages: yield initial val, then increment
@@ -212,9 +214,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  sepChars={'=',':'},
  opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
- helpTabColumns: seq[int] = @[
-  helpTabOption, helpTabType, helpTabDefault, helpTabDescrip ],
- stopWords: seq[string] = @[], positional: static string = positionalAuto, suppress: seq[string] = @[],
+ helpTabColumns: seq[int] = helpTabColsDfl, stopWords: seq[string] = @[],
+ positional: static string = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
@@ -364,7 +365,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       var `mandId`: seq[string]
       var `mandInFId` = true
       var `tabId`: TextTab =
-        @[ @[ "-" & shortH & ", --help", "", "", "print this cligen-erated help" ],
+        @[ @[ "-"&shortH&", --help", "", "", "print this cligen-erated help" ],
            @[ "--help-syntax", "", "", "advanced: prepend, multi-val,.." ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
@@ -447,7 +448,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                 `setByParseId`[].add((`vsnOpt`, "", `vsnStr`, clVersionOnly))
                 return                        #Do not try to keep parsing
               else:
-                stdout.write(`vsnStr`,"\n"); raise newException(VersionOnly, "")))
+                stdout.write(`vsnStr`,"\n");raise newException(VersionOnly,"")))
       else:                                   #There is only a long version tag
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(vsnOpt)).add(
             quote do:
@@ -644,8 +645,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  sepChars={'=',':'},
  opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
- helpTabColumns: seq[int] = @[ helpTabOption, helpTabType,
- helpTabDefault, helpTabDescrip ], stopWords: seq[string] = @[],
+ helpTabColumns = helpTabColsDfl, stopWords: seq[string] = @[],
  positional = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
@@ -656,8 +656,8 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
-      implicitDefault, mandatoryHelp, mandatoryOverride, version,
-      noAutoEcho, dispatchName)
+      implicitDefault, mandatoryHelp, mandatoryOverride, version, noAutoEcho,
+      dispatchName)
   dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
 proc subCmdName(node: NimNode): string =
@@ -827,9 +827,9 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
 
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =
-  ##This is a dummy parameter merge to provide a hook for CLI authors to create
-  ##the `seq[string]` to be parsed from whatever run-time sources (likely based
-  ##on `cmdNames`) that they would like.  Here we just pass through cmdLine.
-  ##In a single `dispatch` context, `cmdNames[0]` is the `cmdName` while in a
-  ##`dispatchMulti` context it is `@[ <mainCommand>, <subCommand> ]`.
+  ##This is a pass-through parameter merge to provide a hook for CLI authors to
+  ##create the ``seq[string]`` to be parsed from any run-time sources (likely
+  ##based on ``cmdNames``) that they would like.  In a single ``dispatch``
+  ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti
+  ##``context it is ``@[ <mainCommand>, <subCommand> ]``.
   cmdLine

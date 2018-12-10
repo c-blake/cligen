@@ -200,8 +200,9 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
     result.add(parsed)
   a.sep = old                     #probably don't need to restore, but eh.
 
-proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
-  if defaultHelp.len > 0: return defaultHelp # TODO: what user explicitly set it to empty?
+proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string =
+  if defaultHelp.len > 0:         #TODO: what user explicitly set it to empty?
+    return defaultHelp
   when T is seq:
     result = "append 1 val to " & parNm
   elif T is set or T is HashSet:
@@ -210,6 +211,7 @@ proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string=
     result = "set " & parNm
 
 proc formatHuman(a: string): string =
+  const alphaNum = {'a'..'z'} + {'A'..'Z'} + {'0'..'9'}
   if a.len == 0:
     result.addQuoted ""
     return result
@@ -217,7 +219,7 @@ proc formatHuman(a: string): string =
   for ai in a:
     # avoid ~ which, if given via `--foo ~bar`, is expanded by shell
     # avoid , (would cause confusion bc of separator syntax)
-    if ai notin {'a'..'z'} + {'A'..'Z'} + {'0'..'9'} + {'-', '_', '.', '@', ':', '=', '+', '^', '/'}:
+    if ai notin alphaNum + {'-', '_', '.', '@', ':', '=', '+', '^', '/'}:
       isSimple = false
       break
   if isSimple:
@@ -346,7 +348,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
     elif a.sep == ",-=":                    # split-exclude
       dst.excl(toSet(argAggSplit[T](a)))
     else:
-      a.msg = "Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep, a.key]
+      a.msg = "Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep,a.key]
       raise newException(ElementError, "Bad operator")
   except:
     return false
