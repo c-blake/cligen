@@ -710,6 +710,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
+  let disSubcmdId = ident("dispatchSubcmd")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
@@ -790,7 +791,8 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
   result.add(multiDef)
   let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
                                         newIdentNode("cligenVersion"))
-  result.add(newCall("dispatch", multiId, newParam("stopWords", subCmdsId),
+  result.add(newCall("dispatchGen", multiId, newParam("stopWords", subCmdsId),
+                     newParam("dispatchName", newStrLitNode("dispatchSubcmd")),
                      newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}$command {subcommand}\n" &
@@ -799,6 +801,22 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
      "Run top-level with subcmd \"help\" to get *all* helps.\n" &
      "Run any given subcommand with --help to see help for that one." &
      (if cligenVersion.len>0:"\nTop-level --version also available" else: ""))))
+  result.add(quote do:
+    #This is NOT mergeParams because we want typo suggestions for subcmd (with
+    #options) based only on a CL user's actual command line entry.  Other srcs
+    #are on their own.  This could be trouble if anyone wants commandLineParams
+    #to NOT be the suffix of mergeParams, but we could also add a define switch.
+    let ps = cast[seq[string]](commandLineParams())
+    if ps.len > 0 and (ps[0].len > 0 and ps[0][0] != '-') and ps[0] notin subCmds:
+      stderr.write "Unknown subcommand \"" & ps[0] & "\".  "
+      let sugg = suggestions(ps[0], subCmds, subCmds)
+      if sugg.len > 0:
+        stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
+      else:
+        stderr.write "It is not similar to defined subcommands.\n\n"
+      stderr.write "Run again with subcommand help to get detailed usage.\n"
+    else:
+      cligenQuit(`disSubcmdId`()))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
 
 proc mergeParams*(cmdNames: seq[string],
