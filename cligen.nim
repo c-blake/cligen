@@ -652,7 +652,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       noAutoEcho, dispatchName)
   dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
-proc subCmdName(node: NimNode): string {.compileTime.} =
+proc subCmdName(node: NimNode): string =
   ## Get last cmdName argument, if any, in bracket expression, or name of 1st
   ## element of bracket if none given, unless that name is module-qualified.
   for child in node:
@@ -664,7 +664,7 @@ proc subCmdName(node: NimNode): string {.compileTime.} =
     else:
       result = $node[0]
 
-proc dispatchName(node: NimNode): string {.compileTime.} =
+proc dispatchName(node: NimNode): string =
   ## Get last dispatchName argument, if any, in bracket expression, or return
   ## "dispatch & subCmdName(node)" if none.
   result = "dispatch" & subCmdName(node)  #XXX strip illegal chars
@@ -672,14 +672,14 @@ proc dispatchName(node: NimNode): string {.compileTime.} =
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "dispatchName"):
       result = $child[1]
 
-proc subCmdEchoRes(node: NimNode): bool {.compileTime.} =
+proc subCmdEchoRes(node: NimNode): bool =
   ##Get last echoResult value, if any, in bracket expression
   result = false
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "echoResult"):
       return true
 
-proc subCmdNoAutoEc(node: NimNode): bool {.compileTime.} =
+proc subCmdNoAutoEc(node: NimNode): bool =
   ##Get last noAutoEcho value, if any, in bracket expression
   result = false
   for child in node:
