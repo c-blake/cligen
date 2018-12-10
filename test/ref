@@ -224,12 +224,20 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/FullyAutoMulti.out <==
 Usage:
-  FullyAutoMulti {CMD}
+  
+  FullyAutoMulti {CMD}  [sub-command options & parameters]
+
 where {CMD} is one of:
-  help demo print whoa nelly
-Run top-level with -h, --help or --help-syntax for top-level help.
-Run "top-level {help CMD|CMD --help}" to see help for just CMD.
-Run "top-level help" to get *comprehensive* help.
+
+  help
+  demo
+  print
+  whoa
+  nelly
+
+FullyAutoMulti {-h|--help} or with no args at all prints this message.
+Run "FullyAutoMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "FullyAutoMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
@@ -280,19 +288,18 @@ Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
-  -h, --help                                      print this cligen-erated help
-  --help-syntax                                   advanced: prepend,
-                                                  multi-val,..
-  -i=, --i1=     hashset(int8)    {}              include 1 val in i1
-  -I=, --I1=     hashset(int8)    3,4             include 1 val in I1
-  --i2=          hashset(int16)   {}              include 1 val in i2
-  --I2=          hashset(int16)   5,6             include 1 val in I2
-  -u=, --u1=     hashset(uint8)   {}              include 1 val in u1
-  -U=, --U1=     hashset(uint8)   13,14           include 1 val in U1
-  --u2=          hashset(uint16)  {}              include 1 val in u2
-  --U2=          hashset(uint16)  16,15           include 1 val in U2
-  -e=, --e=      hashset(Color)   {}              include 1 val in e
-  -E=, --E=      hashset(Color)   red,green,blue  include 1 val in E
+  -h, --help                                print this cligen-erated help
+  --help-syntax                             advanced: prepend, multi-val,..
+  -i=, --i1=     hashset(int8)    {}        include 1 val in i1
+  -I=, --I1=     hashset(int8)    2,3       include 1 val in I1
+  --i2=          hashset(int16)   {}        include 1 val in i2
+  --I2=          hashset(int16)   4,5       include 1 val in I2
+  -u=, --u1=     hashset(uint8)   {}        include 1 val in u1
+  -U=, --U1=     hashset(uint8)   6,7       include 1 val in U1
+  --u2=          hashset(uint16)  {}        include 1 val in u2
+  --U2=          hashset(uint16)  8,9       include 1 val in U2
+  -e=, --e=      hashset(Color)   {}        include 1 val in e
+  -E=, --E=      hashset(Color)   red,blue  include 1 val in E
 
 ==> test/HelpTabCols.out <==
 Usage:
@@ -474,12 +481,18 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/QualifiedMulti.out <==
 Usage:
-  QualifiedMulti {CMD}
+  
+  QualifiedMulti {CMD}  [sub-command options & parameters]
+
 where {CMD} is one of:
-  help get put
-Run top-level with -h, --help or --help-syntax for top-level help.
-Run "top-level {help CMD|CMD --help}" to see help for just CMD.
-Run "top-level help" to get *comprehensive* help.
+
+  help
+  get
+  put
+
+QualifiedMulti {-h|--help} or with no args at all prints this message.
+Run "QualifiedMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "QualifiedMulti help" to get *comprehensive* help.
 
 ==> test/QualifiedSym.out <==
 Usage:
