@@ -709,10 +709,10 @@ template topLevelHelp*(srcBase: auto, subCmdsId: auto): string = """
 $1 {CMD}
 where {CMD} is one of:
   $2
-Run top-level with -h, --help or --help-syntax for top-level help.
-Run "top-level {help CMD|CMD --help}" to see help for just CMD.
-Run "top-level help" to get *comprehensive* help.$3""" % [ srcBase,
-  join(subCmdsId, " "),
+$1 {-h|--help} or with no args at all prints this message.
+Run "$1 {help CMD|CMD --help}" to see help for just CMD.
+Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
+  join(subCmdsId, "\n  "),
   (if cligenVersion.len > 0: "\nTop-level --version also available" else: "") ]
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
