@@ -232,12 +232,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ##
   ## `short` is a {(paramNm,char)} of per-parameter single-char option keys.
   ##
-  ## Since programs can return integer exit codes (usually 1-byte) to OSes, if
-  ## the return type is convertible to `int` that value is propagated unless
-  ## `echoResult` is true.  However, if `echoResult` is true or if the result is
-  ## unconvertible and `noAutoEcho` is false then the generated dispatcher echos
-  ## the result of wrapped procs.  (Technically, dispatcher callers like
-  ## `dispatch` and `dispatchMulti` not `dispatchGen` implement this behavior.)
+  ## Since programs can return integer exit codes (often 1-byte) to OSes, if the
+  ## proc return is convertible to ``int`` that value is propagated unless
+  ## ``echoResult`` is true.  However, if ``echoResult`` is true or if the
+  ## result is unconvertible and ``noAutoEcho`` is false then the generated
+  ## dispatcher echos the result of wrapped procs.  (Technically, dispatcher
+  ## callers like ``cligenQuit`` not ``dispatchGen`` implement this behavior.)
   ##
   ## If `requireSeparator` is true, both long and short options need an element
   ## of `sepChars` before option values (if there are any).  Any series of chars
