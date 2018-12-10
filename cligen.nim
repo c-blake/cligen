@@ -617,6 +617,14 @@ template cligenQuit*(p: untyped, noAutoEcho: bool=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
+template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped): auto =
+  when compiles(type(p())):
+    try: discard p(dashHelp, prefix="  ", subSep=sep)
+    except HelpOnly: discard
+  else:
+    try: p(dashHelp, prefix="  ", subSep=sep)
+    except HelpOnly: discard
+
 macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym},
                    noAutoEcho: bool, echoResult: bool): untyped =
   result = newStmtList()
@@ -688,6 +696,25 @@ proc subCmdNoAutoEc(node: NimNode): bool =
 
 var cligenVersion* = ""
 
+template unknownSubcommand*(cmd: string) =
+  stderr.write "Unknown subcommand \"" & cmd & "\".  "
+  let sugg = suggestions(cmd, subCmds, subCmds)
+  if sugg.len > 0:
+    stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
+  else:
+    stderr.write "It is not similar to defined subcommands.\n\n"
+  stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
+
+template topLevelHelp*(srcBase: auto, subCmdsId: auto): string = """
+$1 {CMD}
+where {CMD} is one of:
+  $2
+Run top-level with -h, --help or --help-syntax for top-level help.
+Run "top-level {help CMD|CMD --help}" to see help for just CMD.
+Run "top-level help" to get *comprehensive* help.$3""" % [ srcBase,
+  join(subCmdsId, " "),
+  (if cligenVersion.len > 0: "\nTop-level --version also available" else: "") ]
+
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
   ## call the dispatcher & quit; procBrackets=arg lists for dispatchGen(), e.g,
@@ -756,23 +783,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
           except ParseError: quit(1)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
     helpDump.add(quote do:
-      when compiles(type(`disNm`())):
-        try: discard `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
-        except HelpOnly: discard
-      else:
-        try: `disNm`(`dashHelpId`, prefix="  ", subSep=`sep`)
-        except HelpOnly: discard)
+      cligenHelp(`disNm`, `dashHelpId`, `sep`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
-      echo ("""Usage:
-  $1 {subcommand}
-where {subcommand} is one of:
-  $2
-Run top-level cmd with -h, --help or --help-syntax for top-level help.
-Run top-level with subcmd "help" to get *all* helps.
-Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
-  join(`subCmdsId`, " "),
-  (if cligenVersion.len>0:"\nTop-level --version also available" else: "")])
+      echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`)
     elif `arg0Id` == "help":
       echo ("This is a multiple-dispatch command.  Top-level " &
             "--help/--help-syntax\nis also available.  Usage is like:\n" &
@@ -781,13 +795,7 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
       let `dashHelpId` = @[ "--help" ]
       `helpDump`
     else:
-      stderr.write "Unknown subcommand \"" & `arg0Id` & "\".  "
-      let sugg = suggestions(`arg0Id`, `subCmdsId`, `subCmdsId`)
-      if sugg.len > 0:
-        stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
-      else:
-        stderr.write "It is not similar to defined subcommands.\n\n"
-      stderr.write "Run again with subcommand help to get detailed usage.\n"))
+      unknownSubcommand(`arg0Id`)))
   result.add(multiDef)
   let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
                                         newIdentNode("cligenVersion"))
@@ -795,26 +803,18 @@ Run any given subcommand with --help to see help for that one.$3"""%[`srcBase`,
                      newParam("dispatchName", newStrLitNode("dispatchSubcmd")),
                      newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
-    "${prelude}$command {subcommand}\n" &
-     "where {subcommand} is one of:\n  " & join(`subCmdsId`, " ") & "\n" &
-     "Run top-level cmd with -h, --help or --help-syntax for top-level help.\n"&
-     "Run top-level with subcmd \"help\" to get *all* helps.\n" &
-     "Run any given subcommand with --help to see help for that one." &
-     (if cligenVersion.len>0:"\nTop-level --version also available" else: ""))))
+    "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`))))
   result.add(quote do:
     #This is NOT mergeParams because we want typo suggestions for subcmd (with
     #options) based only on a CL user's actual command line entry.  Other srcs
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
-    if ps.len > 0 and (ps[0].len > 0 and ps[0][0] != '-') and ps[0] notin subCmds:
-      stderr.write "Unknown subcommand \"" & ps[0] & "\".  "
-      let sugg = suggestions(ps[0], subCmds, subCmds)
-      if sugg.len > 0:
-        stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
-      else:
-        stderr.write "It is not similar to defined subcommands.\n\n"
-      stderr.write "Run again with subcommand help to get detailed usage.\n"
+    if ps.len>0 and (ps[0].len>0 and ps[0][0] != '-') and ps[0] notin subCmds:
+      unknownSubcommand(ps[0])
+    elif ps.len == 2 and ps[0] == "help":
+      if ps[1] in subCmds: cligenQuit(`disSubcmdId`(@[ ps[1], "--help" ]))
+      else: unknownSubcommand(ps[1])
     else:
       cligenQuit(`disSubcmdId`()))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
