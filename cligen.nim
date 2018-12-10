@@ -174,10 +174,10 @@ type
                    clPositional,                    ## Expected non-option
                    clHelpOnly, clVersionOnly        ## Early Exit requests
 
-  ClParse* = tuple[paramName,         ##Param name/long opt key
-                   unparsedVal,       ##Unparsed value("" for missing mandatory)
-                   message: string;   ##A decent default error message
-                   status: ClStatus]  ##Parse status for this parameter
+  ClParse* = tuple[paramName: string,   ## Param name/long opt key
+                   unparsedVal: string, ## Unparsed val ("" for missing)
+                   message: string,     ## default error message
+                   status: ClStatus]    ## Parse status for param
 
 const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
 const ClExit*   = { clHelpOnly, clVersionOnly }
