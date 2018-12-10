@@ -281,7 +281,8 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                      print this cligen-erated help
-  --help-syntax                                   advanced: prepend, multi-val,..
+  --help-syntax                                   advanced: prepend,
+                                                  multi-val,..
   -i=, --i1=     hashset(int8)    {}              include 1 val in i1
   -I=, --I1=     hashset(int8)    3,4             include 1 val in I1
   --i2=          hashset(int16)   {}              include 1 val in i2
@@ -371,9 +372,14 @@ Usage:
     Options:
           -h, --help                    print this cligen-erated help
           --help-syntax                 advanced: prepend, multi-val,..
-          -a=, --alpha=  int     1      This is a very long parameter help string which ordinarily should be auto-wrapped by alignTable into a multi-line format
-                                        unless you have eagle eyes, a gigantic monitor, or maybe a little bit of both. :-)
-          -b=, --beta=   float   2.0    This is more modest, but might still wrap around once or twice or so.
+          -a=, --alpha=  int     1      This is a very long parameter help
+                                        string which ordinarily should be
+                                        auto-wrapped by alignTable into a
+                                        multi-line format unless you have eagle
+                                        eyes, a gigantic monitor, or maybe a
+                                        little bit of both. :-)
+          -b=, --beta=   float   2.0    This is more modest, but might still
+                                        wrap around once or twice or so.
           -v, --verb     bool    false  on=chatty, off=quiet. 'Nuff said.
           -i=, --item=   string  ""     set item
 
