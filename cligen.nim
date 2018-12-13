@@ -224,7 +224,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## Parameters without defaults in the proc become mandatory command arguments
   ## while those with default values become command options.  Proc parameters
   ## and option keys are normalized so that command users may spell multi-word
-  ## option keys flexibly as in ``--dry-Run``|``--dryrun``.  Each proc parameter
+  ## option keys flexibly as in ``--dry-Run | --dryrun``.  Each proc parameter
   ## type must have in-scope argParse and argHelp procs (argcvt.nim defines
   ## argParse/Help for many basic types, set[T], seq[T], etc.).
   ##
