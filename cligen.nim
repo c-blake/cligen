@@ -225,20 +225,20 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## while those with default values become command options.  Proc parameters
   ## and option keys are normalized so that command users may spell multi-word
   ## option keys flexibly as in ``--dry-Run | --dryrun``.  Each proc parameter
-  ## type must have in-scope argParse and argHelp procs (argcvt.nim defines
-  ## argParse/Help for many basic types, set[T], seq[T], etc.).
+  ## type must have in-scope ``argParse`` and ``argHelp`` procs (``argcvt.nim``
+  ## defines ``argParse/Help`` for many basic types, ``set[T]``, ``seq[T]``, etc.).
   ##
-  ## ``help`` is a {(paramNm,str)} of per-param help, eg. ``{"quiet":"be quiet"}``.
+  ## ``help`` is a ``{(paramNm,str)}`` of per-param help, eg. ``{"quiet":"be quiet"}``.
   ## Very often, only these user-given help strings are needed for a decent CLI.
   ##
-  ## ``short`` is a {(paramNm,char)} of per-parameter single-char option keys.
+  ## ``short`` is a ``{(paramNm,char)}`` of per-parameter single-char option keys.
   ##
   ## Since programs can return integer exit codes (often 1-byte) to OSes, if the
   ## proc return is convertible to ``int`` that value is propagated unless
   ## ``echoResult`` is true.  However, if ``echoResult`` is true or if the
   ## result is unconvertible and ``noAutoEcho`` is false then the generated
   ## dispatcher echos the result of wrapped procs.  (Technically, dispatcher
-  ## callers like ``cligenQuit`` not ``dispatchGen`` implement this behavior.)
+  ## callers like ``cligenQuit`` implement this behavior.)
   ##
   ## If ``requireSeparator`` is true, both long and short options need an element
   ## of ``sepChars`` before option values (if there are any).  Any series of chars
@@ -255,7 +255,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ##
   ## By default, ``cligen`` maps the first non-defaulted ``seq[]`` proc parameter
   ## to any non-option/positional command args.  ``positional`` selects another.
-  ## Set ``positional`` to the empty string ("") to disable this entirely.
+  ## Set ``positional`` to the empty string (``""``) to disable this entirely.
   ##
   ## ``suppress`` is a list of formal parameter names to NOT include in the
   ## parsing/assigning system.  Such names are effectively pinned to whatever
@@ -272,12 +272,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## parameters.  ``mandatoryOverride`` is a list of strings indicating parameter
   ## names which override mandatory-ness of anything else.
   ##
-  ## ``version`` is a ``Version`` 2-tuple (longOpt for version, version string)
+  ## ``version`` is a ``Version`` 2-tuple ``(`longOpt for version`, `version string`)``
   ## which defines how a CLI user may dump the version of a program.  If you
   ## want to provide a short option, add a ``"version":'v'`` entry to ``short``.
   ##
   ## ``dispatchName`` is the name of a generated dispatcher, defaulting to simply
-  ## "dispatchpro" where ``pro`` is the name of the proc being wrapped.
+  ## ``"dispatchpro"`` where ``pro`` is the name of the proc being wrapped.
   ##
   ## ``setByParse`` is ``addr(some var seq[ClParse])``.  When provided/non-nil, this
   ## collects each parameter seen, keyed under its long/param name (i.e., parsed
@@ -651,7 +651,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = ""): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
-  ## call the dispatcher & exit; Usage is the same as the dispatchGen() macro.
+  ## call the dispatcher & exit; Usage is the same as the ``dispatchGen`` macro.
   dispatchGen(
     pro, cmdName, doc, help, short, usage, prelude, echoResult,
       requireSeparator, sepChars, opChars, helpTabColumnGap, helpTabMinLast,
@@ -661,7 +661,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
 proc subCmdName(node: NimNode): string =
-  ## Get last cmdName argument, if any, in bracket expression, or name of 1st
+  ## Get last `cmdName` argument, if any, in bracket expression, or name of 1st
   ## element of bracket if none given, unless that name is module-qualified.
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "cmdName"):
@@ -723,8 +723,8 @@ Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to both generate a multi-command dispatcher and then
-  ## call the dispatcher & quit; procBrackets=arg lists for dispatchGen(), e.g,
-  ## dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ]).
+  ## call the dispatcher & quit; ``procBrackets``=arg lists for ``dispatchGen``,
+  ## eg., ``dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ])``.
   result = newStmtList()
   let subCmdsId = ident("subCmds")
   result.add(quote do:
