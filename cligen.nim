@@ -722,9 +722,9 @@ Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   (if cligenVersion.len > 0: "\nTop-level --version also available" else: "") ]
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
-  ## A convenience wrapper to both generate a multi-command dispatcher and then
-  ## call the dispatcher & quit; ``procBrackets``=arg lists for ``dispatchGen``,
-  ## eg., ``dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ])``.
+  ## A convenience wrapper to generate a multi-command dispatcher, then call the
+  ## dispatcher & quit; ``procBrackets`` is arg lists for ``dispatchGen``, eg.,
+  ## ``dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ])``.
   result = newStmtList()
   let subCmdsId = ident("subCmds")
   result.add(quote do:
