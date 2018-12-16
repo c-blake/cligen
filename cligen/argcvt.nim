@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets
+import strformat, sets, cligen/textUt, parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
@@ -109,18 +109,23 @@ proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
 # enums
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   var found = false
-  if a.val.len > 0:
+  let valNorm = optionNormalize(a.val)      #Normalized strings
+  var allNorm: seq[string]
+  var allCanon: seq[string]                 #Canonical string
+  if valNorm.len > 0:
     for e in low(T)..high(T):
-      if cmpIgnoreStyle(a.val, $e) == 0:
+      allCanon.add($e)
+      allNorm.add(allCanon[^1])
+      if valNorm == allNorm[^1]:
         dst = e
         found = true
         break
   if not found:
-    var all = ""
-    for e in low(T)..high(T): all.add($e & " ")
-    all.add("\n\n")
+    let sugg = suggestions(valNorm, allNorm, allCanon)
     a.msg = "Bad enum value for option \"$1\". \"$2\" is not one of:\n  $3$4" %
-            [ a.key, a.val, all, a.help ]
+            [ a.key, a.val, (allCanon.join(" ") & "\n\n"),
+              ("Maybe you meant one of:\n  " & sugg.join("\n  ") &
+               "\n\nRun with --help for more details.\n") ]
     return false
   return true
 

@@ -11,6 +11,8 @@ Version: 0.9.19
     less standardization in the multi-command world }.  Also, suggestions
     also work now for invocations with a subcommand and options afterward.
 
+    Suggest correct alternatives for possibly misspelled enum values.
+
 Version: 0.9.18
 ---------------
     This release adds several major features..Krux02 asked for (approximately)
