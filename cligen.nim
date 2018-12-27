@@ -667,8 +667,8 @@ proc subCmdName(node: NimNode): string =
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "cmdName"):
       result = $child[1]
   if result == "":
-    if '.' in repr(node):
-      error "qualified symbol " & repr(node) & " must manually set `cmdName`."
+    if node[0].kind == nnkDotExpr:
+      result = $node[0][^1]
     else:
       result = $node[0]
 
