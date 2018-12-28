@@ -74,8 +74,8 @@ when isMainModule:
 ```
 With that, a CLI user can run `./cmd foo -m1` or `./cmd bar -y10 1.0 2.0`.
 `./cmd --help` will emit a brief help message and `./cmd help` emits a more
-comprehensive message, while `./cmd subcommand --help` emits just the message
-for `subcommand`.
+comprehensive message, while `./cmd SUBCMD --help` or `./cmd help SUBCMD` emits
+just the message for `SUBCMD` (`foo` or `bar` in this example).
 
 ---
 
@@ -98,8 +98,11 @@ short options, give `short` a key of `""`.
 
 By default, `dispatch` has `requireSeparator=false` making `-abcdBar`,
 `-abcd Bar`, `--delta Bar` or `--delta=Bar` all acceptable syntax for
-command options.  Additionally, long option keys can be spelled flexibly, e.g.
-`--dry-run` or `--dryRun`, much like Nim's style-insensitive identifiers.
+command options.
+
+Additionally, long option keys can be spelled flexibly, e.g.  `--dry-run` or
+`--dryRun`, much like Nim's style-insensitive identifiers, but with extra
+insensitivity to so-called "kebab case".
 
 ---
 
@@ -117,11 +120,11 @@ want to control program exit OR to call dispatchers more than once OR on more
 than one set of `seq[string]` args then you may need to call `dispatchGen()`
 and later call `dispatchFoo()` yourself.  This is all `dispatch` itself does.
 
-The return _types and values_ of generated dispatchers match those of the
-wrapped proc.  The first parameter is a `seq[string]`, just like a command line.
-{ Other parameters are knobs to aid in nested call settings that are defaulted
-and probably don't matter to you. } The dispatcher raises 3 exception types:
-`HelpOnly`, `VersionOnly`, `ParseError`.  These are hopefully self-explanatory.
+Return _types and values_ of generated dispatchers match the wrapped proc.
+The first parameter is a `seq[string]`, just like a command line.  { Other
+parameters aid in nested call settings, are defaulted and probably don't matter
+to you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
+`ParseError`.  These are hopefully self-explanatory.
 
 ---
 
