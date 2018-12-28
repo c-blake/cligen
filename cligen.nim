@@ -716,6 +716,7 @@ where {CMD} is one of:
   $2
 
 $1 {-h|--help} or with no args at all prints this message.
+$1 --help-syntax gives general cligen syntax help.
 Run "$1 {help CMD|CMD --help}" to see help for just CMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   join(subCmdsId, "\n  "),

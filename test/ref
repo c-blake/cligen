@@ -236,6 +236,7 @@ where {CMD} is one of:
   nelly
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
+FullyAutoMulti --help-syntax gives general cligen syntax help.
 Run "FullyAutoMulti {help CMD|CMD --help}" to see help for just CMD.
 Run "FullyAutoMulti help" to get *comprehensive* help.
 Top-level --version also available
@@ -491,6 +492,7 @@ where {CMD} is one of:
   put
 
 QualifiedMulti {-h|--help} or with no args at all prints this message.
+QualifiedMulti --help-syntax gives general cligen syntax help.
 Run "QualifiedMulti {help CMD|CMD --help}" to see help for just CMD.
 Run "QualifiedMulti help" to get *comprehensive* help.
 
