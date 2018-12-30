@@ -239,8 +239,8 @@ proc formatHuman(a: seq[string]): string =
       result.add ","
     result.add formatHuman(a[i])
 
-proc argAggHelp*(dfls: seq[string]; seqTyp: string; typ, dfl: var string) =
-  typ = fmt"{seqTyp}({typ})"
+proc argAggHelp*(dfls: seq[string]; aggTyp: string; typ, dfl: var string) =
+  typ = fmt"{aggTyp}({typ})"
   # Note: this would print in Nim format: dfl = ($dfls)[1 .. ^1]
   dfl = formatHuman dfls
 
