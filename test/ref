@@ -31,8 +31,8 @@ demo entry point with parameters of all basic types.
   --U8=          array(uint64)   19,20       append 1 val to U8
   -f=, --f4=     array(float32)  {}          append 1 val to f4
   -F=, --F4=     array(float32)  23.0,24.0   append 1 val to F4
-  --f8=          array(float)    {}          append 1 val to f8
-  --F8=          array(float)    25.0,26.0   append 1 val to F8
+  --f8=          array(float64)  {}          append 1 val to f8
+  --F8=          array(float64)  25.0,26.0   append 1 val to F8
 
 ==> test/AllSetTypes.out <==
 Usage:
