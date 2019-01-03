@@ -633,11 +633,15 @@ template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped): auto =
     try: p(dashHelp, prefix="  ", subSep=sep)
     except HelpOnly: discard
 
+proc isTrue(n: NimNode): bool =
+  result = (n.kind == nnkSym and n.strVal == "true") or
+           (n.kind == nnkConv and n[1].intVal == 1)
+
 macro cligenQuitAux*(dispatchName: string, cmdName: string, pro: untyped,
                      noAutoEcho: bool, echoResult: bool): untyped =
   result = newStmtList()
   let disNm = dispatchId($dispatchName, $cmdName, repr(pro))
-  if echoResult.boolVal:
+  if isTrue(echoResult):
     result.add(quote do:                      #CLI author requests echo
       try: echo `disNm`(); quit(0)
       except HelpOnly, VersionOnly: quit(0)
