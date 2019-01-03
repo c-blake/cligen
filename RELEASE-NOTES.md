@@ -3,19 +3,27 @@ RELEASE NOTES
 
 Version: 0.9.19
 ---------------
+    Add ability to `include cligen/mergeCfgEnv` between `import cligen` and
+    `dispatch` to get a typical `parsecfg` and then `getEnv` initial filling
+    of passed parameters.  It seems better to make CLI authors request this
+    smartness rather than have it be on by default (since evars/cfg files may
+    be in place already if the CLI names are too generic).  That said, if
+    popular demand for on-by-default ensues then I am open-minded and we can
+    have an `include cligen/mergeNoCfgEnv` instead.  Let me know.
+
     Add mergeNames to dispatchGen.  This is mostly for internal re-factoring
     purposes, but someone might find it useful for something else.
 
-    Relax the need for cmdName in dispatchMulti(qual.symb, cmdName).  The last
-    component of the DotExpr is used by default.
+    Relax the need for `cmdName` in `dispatchMulti(qual.symb, cmdName)`.
+    The last component of the `DotExpr` is used by default.
 
-    Introduce clParseOptErr for requireSeparator=true mode to flag parseopt
-    level errors.
+    Introduce `clParseOptErr` for `requireSeparator=true` mode to flag
+    `parseopt`-level errors.
 
-    dispatchMulti generated help has better gradual reveal semantics/more
-    typical behavior (help cmd is now like cmd --help) { but there is much
-    less standardization in the multi-command world }.  Also, suggestions
-    also work now for invocations with a subcommand and options afterward.
+    `dispatchMulti`-generated help has better gradual reveal semantics/more
+    typical behavior (`help cmd` is now like `cmd --help`) { There is much less
+    standardization in multi-command world for us to mimick }.  suggestions now
+    also work for invocations with a subcommand and options afterward.
 
     Suggest correct alternatives for possibly misspelled enum values.
 
