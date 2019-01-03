@@ -3,6 +3,9 @@ RELEASE NOTES
 
 Version: 0.9.19
 ---------------
+    Add mergeNames to dispatchGen.  This is mostly for internal re-factoring
+    purposes, but someone might find it useful for something else.
+
     Relax the need for cmdName in dispatchMulti(qual.symb, cmdName).  The last
     component of the DotExpr is used by default.
 
