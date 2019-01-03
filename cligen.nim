@@ -812,8 +812,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`))))
   result.add(quote do:
-    #This is NOT mergeParams because we want typo suggestions for subcmd (with
-    #options) based only on a CL user's actual command line entry.  Other srcs
+    #`ps` is NOT mergeParams because we want typo suggestions for subcmd (with
+    #options) based only on a CL user's actual *command line* entry.  Other srcs
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
