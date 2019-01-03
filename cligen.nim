@@ -219,6 +219,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
+ mergeNames: seq[string] = @[],
  setByParse: ptr var seq[ClParse]=nil): untyped =
   ## Generate a command-line dispatcher for proc ``pro`` with extra help ``usage``.
   ## Parameters without defaults in the proc become mandatory command arguments
@@ -278,6 +279,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ##
   ## ``dispatchName`` is the name of a generated dispatcher, defaulting to simply
   ## ``"dispatchpro"`` where ``pro`` is the name of the proc being wrapped.
+  ##
+  ## ``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``,
+  ## which defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
   ##
   ## ``setByParse`` is ``addr(some var seq[ClParse])``.  When provided/non-nil, this
   ## collects each parameter seen, keyed under its long/param name (i.e., parsed
@@ -551,6 +555,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
 
   let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
   let retType=fpars[0]
+  let mrgNames = if mergeNames[1].len == 0:   #@[] => Prefix[OpenSym,Bracket]
+                   quote do: @[ `cName` ]
+                 else: mergeNames
   result = quote do:
     from os               import commandLineParams
     from cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
@@ -558,7 +565,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
-    proc `disNm`(`cmdLineId`: seq[string] = mergeParams(@[ `cName` ]),
+    proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`="", parseOnly=false): `retType` =
       {.push hint[XDeclaredButNotUsed]: off.}
@@ -626,10 +633,10 @@ template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped): auto =
     try: p(dashHelp, prefix="  ", subSep=sep)
     except HelpOnly: discard
 
-macro dispatchAux*(dispatchName: string, cmdName: string, pro: typed{nkSym},
-                   noAutoEcho: bool, echoResult: bool): untyped =
+macro cligenQuitAux*(dispatchName: string, cmdName: string, pro: untyped,
+                     noAutoEcho: bool, echoResult: bool): untyped =
   result = newStmtList()
-  let disNm = dispatchId($dispatchName, $cmdName, $pro)
+  let disNm = dispatchId($dispatchName, $cmdName, repr(pro))
   if echoResult.boolVal:
     result.add(quote do:                      #CLI author requests echo
       try: echo `disNm`(); quit(0)
@@ -649,7 +656,8 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  positional = positionalAuto, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
- noAutoEcho: bool=false, dispatchName: string = ""): untyped =
+ noAutoEcho: bool=false, dispatchName: string = "",
+ mergeNames: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Usage is the same as the ``dispatchGen`` macro.
   dispatchGen(
@@ -658,7 +666,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
       implicitDefault, mandatoryHelp, mandatoryOverride, version, noAutoEcho,
       dispatchName)
-  dispatchAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
+  cligenQuitAux(dispatchName, cmdName, pro, noAutoEcho, echoResult)
 
 proc subCmdName(node: NimNode): string =
   ## Get last `cmdName` argument, if any, in bracket expression, or name of 1st
@@ -722,24 +730,29 @@ Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   join(subCmdsId, "\n  "),
   (if cligenVersion.len > 0: "\nTop-level --version also available" else: "") ]
 
+proc srcBaseName*(n: NimNode): NimNode =
+  let fileParen = lineinfo(n)      # Infer multi-cmd name from lineinfo
+  let slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
+  let paren = rfind(fileParen, ".nim(") - 1
+  newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
+
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A convenience wrapper to generate a multi-command dispatcher, then call the
   ## dispatcher & quit; ``procBrackets`` is arg lists for ``dispatchGen``, eg.,
   ## ``dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ])``.
   result = newStmtList()
+  let srcBase = srcBaseName(procBrackets)
   let subCmdsId = ident("subCmds")
   result.add(quote do:
     var `subCmdsId`: seq[string] = @[ "help" ])
   for p in procBrackets:
+    let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     c.add(newParam("prelude", newStrLitNode("")))
+    c.add(newParam("mergeNames", quote do: @[ `srcBase`, `sCmdNm` ]))
     result.add(c)
-    result.add(newCall("add", subCmdsId, newStrLitNode(subCmdName(p))))
-  let fileParen = lineinfo(procBrackets)  # Infer multi-cmd name from lineinfo
-  let slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
-  let paren = rfind(fileParen, ".nim(") - 1
-  let srcBase = newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
+    result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -759,38 +772,16 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   for p in procBrackets:
     inc(cnt)
     let sCmdNmS = subCmdName(p)
-    let disNm = dispatchId(dispatchName(p), sCmdNmS, "")
+    let disNm = dispatchName(p)
+    let disNmId = dispatchId(disNm, sCmdNmS, "")
     let sCmdNm = newStrLitNode(sCmdNmS)
     let sCmdEcR = subCmdEchoRes(p)
-    let sCmdAuEc = not subCmdNoAutoEc(p)
-    let nm0 = $srcBase
-    let qnm = quote do: @[ `nm0`, `sCmdNm` ]    #qualified name
-    if sCmdEcR:                                 #CLI author requests echo
-      cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
-        try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
-        except HelpOnly, VersionOnly: quit(0)
-        except ParseError: quit(1)))
-    else:
-      cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
-        when compiles(int(`disNm`())):          #Can convert to int
-          try: quit(int(`disNm`(mergeParams(`qnm`, `restId`))))
-          except HelpOnly, VersionOnly: quit(0)
-          except ParseError: quit(1)
-        elif bool(`sCmdAuEc`) and compiles(echo `disNm`()):  #autoEc && have `$`
-          try: echo `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
-          except HelpOnly, VersionOnly: quit(0)
-          except ParseError: quit(1)
-        elif compiles(type(`disNm`())):         #no convert to int,str but typed
-          try: discard `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
-          except HelpOnly, VersionOnly: quit(0)
-          except ParseError: quit(1)
-        else:                                   #void return type
-          try: `disNm`(mergeParams(`qnm`, `restId`)); quit(0)
-          except HelpOnly, VersionOnly: quit(0)
-          except ParseError: quit(1)))
+    let sCmdNoAuEc = subCmdNoAutoEc(p)
+    cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
+      cligenQuitAux(`disNm`,`sCmdNmS`, p[0], `sCmdNoAuEc`.bool,`sCmdEcR`.bool)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
     helpDump.add(quote do:
-      cligenHelp(`disNm`, `dashHelpId`, `sep`))
+      cligenHelp(`disNmId`, `dashHelpId`, `sep`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`)
