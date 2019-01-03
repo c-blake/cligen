@@ -8,11 +8,14 @@ proc demo(alpha: int=1, item: string="hi", args: seq[string]): int =
 
 when isMainModule:
   import cligen
+  include cligen/mergeEnvCfg
+
   when defined(versionGit):
     const vsn = staticExec "git log -1 | head -n1"
-    dispatch(demo, version = ("version", vsn))
+    dispatch(demo, cmdName="version", version = ("version", vsn))
   elif defined(versionShort):
     let vsn = "1.5"
-    dispatch(demo, version = ("version", vsn), short = { "version": 'V' })
+    dispatch(demo, cmdName="version", version = ("version", vsn),
+             short = { "version": 'V' })
   else:
-    dispatch(demo, version = ("version", "1.0"))
+    dispatch(demo, cmdName="version", version = ("version", "1.0"))

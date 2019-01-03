@@ -626,7 +626,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(655, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(665, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(138, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
@@ -663,7 +663,7 @@ used in our generated dispatch proc.
 
 ==> test/Version.out <==
 Usage:
-  demo [optional-params] [args: string...]
+  version [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation
 might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
 invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).

@@ -22,16 +22,9 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
   return "42"
 
 when isMainModule:
-  import cligen, os, strutils
+  import cligen
+  include cligen/mergeEnvCfg
   cligenVersion = "0.0.1"
-
-  proc mergeParams(cmdNames: seq[string],
-                   cmdLine=commandLineParams()): seq[string] =
-    #This is just a demo/test following usual $UPPERCASE convention.  CLI author
-    #may also want to use `parsecfg` and/or remove duplicates of certain params.
-    let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #$FULLYAUTOMULTI_DEMO
-    if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
-
   dispatchMulti([ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ whoa, echoResult=true ],
