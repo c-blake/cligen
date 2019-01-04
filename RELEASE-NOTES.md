@@ -3,6 +3,9 @@ RELEASE NOTES
 
 Version: 0.9.19
 ---------------
+    The type column for seq[T] in help tables is now the English plural of T
+    instead of array(T).  This is both more brief and more human readable.
+
     Add newline stripping & then re-wrapping to terminal width for the main doc
     comment (in both command help and in a multi-command help table off to the
     side of each command).

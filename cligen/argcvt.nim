@@ -239,8 +239,24 @@ proc formatHuman(a: seq[string]): string =
       result.add ","
     result.add formatHuman(a[i])
 
+const vowels = { 'a', 'e', 'i', 'o', 'u' }
+proc plural*(word: string): string =
+  ## Form English plural of word via all rules not needing a real dictionary.
+  proc consOr1Vowel(s: string): bool =
+    s[^1] notin vowels or (s.len > 1 and s[^2] notin vowels)
+  let w = word.toLowerAscii
+  if w.len < 2                            : word & "s"
+  elif w[^1] == 'z'                       : word & "zes"
+  elif w[^1] in { 's', 'x' }              : word & "es"
+  elif w[^2..^1] == "sh"                  : word & "es"
+  elif w[^2..^1] == "ch"                  : word & "es"   #XXX 'k'-sound => "s"
+  elif w[^1] == 'y' and w[^2] notin vowels: word[0..^2] & "ies"
+  elif w[^1] == 'f' and consOr1Vowel(w[0..^2]): word[0..^2] & "ves"
+  elif w[^2..^1] == "fe" and consOr1Vowel(w[0..^3]): word[0..^3] & "ves"
+  else                                    : word & "s"
+
 proc argAggHelp*(dfls: seq[string]; aggTyp: string; typ, dfl: var string) =
-  typ = fmt"{aggTyp}({typ})"
+  typ = if aggTyp == "array": plural(typ) else: fmt"{aggTyp}({typ})"
   # Note: this would print in Nim format: dfl = ($dfls)[1 .. ^1]
   dfl = formatHuman dfls
 
@@ -367,3 +383,16 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
 
 #import tables # Tables XXX need 2D delimiting convention
 #? intsets, lists, deques, queues, etc?
+when isMainModule:
+  assert plural("A") == "As"
+  assert plural("book") == "books"
+  assert plural("baby") == "babies"
+  assert plural("toy") == "toys"
+  assert plural("brush") == "brushes"
+  assert plural("church") == "churches"
+  assert plural("kiss") == "kisses"
+  assert plural("box") == "boxes"
+  assert plural("elf") == "elves"
+  assert plural("wife") == "wives"
+  assert plural("chief") == "chiefs"
+  assert plural("oof") == "oofs"
