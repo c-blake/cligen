@@ -219,7 +219,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
- mergeNames: seq[string] = @[],
+ mergeNames: seq[string] = @[], docs: ptr var seq[string]=nil,
  setByParse: ptr var seq[ClParse]=nil): untyped =
   ## Generate a command-line dispatcher for proc ``pro`` with extra help ``usage``.
   ## Parameters without defaults in the proc become mandatory command arguments
@@ -283,6 +283,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   ## ``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``,
   ## which defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
   ##
+  ## ``docs`` is ``addr(some var seq[string])`` to which to append each main doc
+  ## comment or its replacement doc=text.  Default of ``nil`` means do nothing.
+  ##
   ## ``setByParse`` is ``addr(some var seq[ClParse])``.  When provided/non-nil, this
   ## collects each parameter seen, keyed under its long/param name (i.e., parsed
   ## but not converted to native types).  Wrapped procs can inspect this or even
@@ -302,7 +305,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   var cmtDoc: string = $doc
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
-    cmtDoc = strip(cmtDoc)
+    cmtDoc = strip(cmtDoc).replace("\n", " ")
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
@@ -412,7 +415,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
-      let indentDoc = addPrefix(`prefixId`, `docId`)
+      let indentDoc = addPrefix(`prefixId`, wrap(`prefixId`, `docId`))
       `apId`.help = `usageId` % [ "prelude", `prlude`, "doc", indentDoc,
                      "command", `cName`, "args", `args`, "options",
                      addPrefix(`prefixId` & "  ",
@@ -558,10 +561,16 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let mrgNames = if mergeNames[1].len == 0:   #@[] => Prefix[OpenSym,Bracket]
                    quote do: @[ `cName` ]
                  else: mergeNames
+  let docsVar = if docs.kind == nnkAddr: docs[0]
+                else: newNimNode(nnkEmpty)
+  let docsStmt = if docs.kind == nnkAddr:
+                   quote do: `docsVar`.add(`cmtDoc`)
+                 else: newNimNode(nnkEmpty)
   result = quote do:
+    if cast[pointer](`docs`) != nil: `docsStmt`
     from os               import commandLineParams
     from cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
-    from cligen/textUt    import addPrefix, TextTab, alignTable, suggestions
+    from cligen/textUt    import addPrefix,wrap,TextTab, alignTable, suggestions
     from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
@@ -717,21 +726,22 @@ template unknownSubcommand*(cmd: string) =
     stderr.write "It is not similar to defined subcommands.\n\n"
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
 
-#Would be nice to grab first terminalWidth-maxSubCmdLen-4 chars from each cmd's
-#doc dispatchGen param (defaulting to doc comment) for a one line per cmd table.
-template topLevelHelp*(srcBase: auto, subCmdsId: auto): string = """
+template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
+  var pairs: seq[seq[string]]
+  for i in 0 ..< subCmds.len:
+    pairs.add(@[subCmds[i], subDocs[i]])
+  """
 
   $1 {CMD}  [sub-command options & parameters]
 
 where {CMD} is one of:
 
-  $2
-
+$2
 $1 {-h|--help} or with no args at all prints this message.
 $1 --help-syntax gives general cligen syntax help.
 Run "$1 {help CMD|CMD --help}" to see help for just CMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
-  join(subCmdsId, "\n  "),
+  addPrefix("  ", alignTable(pairs, prefixLen=2)),
   (if cligenVersion.len > 0: "\nTop-level --version also available" else: "") ]
 
 proc srcBaseName*(n: NimNode): NimNode =
@@ -747,18 +757,20 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   result = newStmtList()
   let srcBase = srcBaseName(procBrackets)
   let subCmdsId = ident("subCmds")
+  let subDocsId = ident("subDocs")
   result.add(quote do:
-    var `subCmdsId`: seq[string] = @[ "help" ])
+    var `subCmdsId`: seq[string] = @[ "help" ]
+    var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
   for p in procBrackets:
     let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     c.add(newParam("prelude", newStrLitNode("")))
     c.add(newParam("mergeNames", quote do: @[ `srcBase`, `sCmdNm` ]))
+    c.add(newParam("docs", quote do: `subDocsId`.addr))
     result.add(c)
     result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
   let arg0Id = ident("arg0")
-  let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
   let disSubcmdId = ident("dispatchSubcmd")
@@ -768,8 +780,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     proc `multiId`(subCmd: seq[string]) =
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = subCmd.len
-      let `arg0Id` = if n > 0: subCmd[0] else: ""
-      let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])
+      let `arg0Id` = if n > 0: subCmd[0] else: "")
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helpDump = newStmtList()
   var cnt = 0
@@ -788,7 +799,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       cligenHelp(`disNmId`, `dashHelpId`, `sep`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
-      echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`)
+      echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       echo ("This is a multiple-dispatch command.  Top-level " &
             "--help/--help-syntax\nis also available.  Usage is like:\n" &
@@ -805,7 +816,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
                      newParam("dispatchName", newStrLitNode("dispatchSubcmd")),
                      newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
-    "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`))))
+    "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`))))
   result.add(quote do:
     #`ps` is NOT mergeParams because we want typo suggestions for subcmd (with
     #options) based only on a CL user's actual *command line* entry.  Other srcs

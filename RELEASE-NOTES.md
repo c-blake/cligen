@@ -3,6 +3,10 @@ RELEASE NOTES
 
 Version: 0.9.19
 ---------------
+    Add newline stripping & then re-wrapping to terminal width for the main doc
+    comment (in both command help and in a multi-command help table off to the
+    side of each command).
+
     Add ability to `include cligen/mergeCfgEnv` between `import cligen` and
     `dispatch` to get a typical `parsecfg` and then `getEnv` initial filling
     of passed parameters.  It seems better to make CLI authors request this

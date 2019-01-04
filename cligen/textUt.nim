@@ -1,6 +1,10 @@
 from strutils import split, wordWrap, repeat
 from terminal import terminalWidth
 
+proc wrap*(prefix: string, s: string): string =
+  let w = terminalWidth() - 2*prefix.len
+  result = wordWrap(s, w)
+
 proc addPrefix*(prefix: string, multiline=""): string =
   result = ""
   var lines = multiline.split("\n")

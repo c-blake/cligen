@@ -82,9 +82,9 @@ demo entry point with parameters of all basic types.
 ==> test/BlockedShort.out <==
 Usage:
   demo [optional-params] 
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -99,9 +99,9 @@ CaseDistinguised.nim(11, 3) Error: undeclared identifier: 'argCvtOptions'
 ==> test/CustomCmdName.out <==
 Usage:
   deeeemo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -113,9 +113,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/CustomType.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -143,9 +143,9 @@ Usage:
 ==> test/DupShort.out <==
 Usage:
   demo [optional-params] 
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -157,9 +157,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/EarlySeq.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -171,10 +171,8 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/EchoResult.out <==
 Usage:
   editDistanceAscii [required&optional-params] 
-Returns the edit distance between `a` and `b`.
-
-This uses the `Levenshtein`:idx: distance algorithm with only a linear
-memory overhead.
+Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
+distance algorithm with only a linear memory overhead.
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend, multi-val,..
@@ -197,9 +195,9 @@ demo entry point with varied, meaningless parameters.
 ==> test/External.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -211,9 +209,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/FancyRepeats.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                           print this cligen-erated help
   --help-syntax                        advanced: prepend, multi-val,..
@@ -229,11 +227,11 @@ Usage:
 
 where {CMD} is one of:
 
-  help
-  demo
-  print
-  whoa
-  nelly
+  help   print comprehensive or per-cmd help
+  demo   demo entry point with varied, meaningless parameters.
+  print  show entry point with varied, meaningless parameters.
+  whoa   Another entry point; here we echoResult
+  nelly  Yet another entry point; here we block autoEcho
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
 FullyAutoMulti --help-syntax gives general cligen syntax help.
@@ -305,9 +303,9 @@ demo entry point with parameters of all basic types.
 ==> test/HelpTabCols.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help     print this cligen-erated help    
   --help-syntax  advanced: prepend, multi-val,..  
@@ -319,9 +317,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/ImplicitDefault.out <==
 Usage:
   demo [required&optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend, multi-val,..
@@ -343,9 +341,9 @@ demo entry point with varied, meaningless parameters.
 ==> test/Mandatory.out <==
 Usage:
   demo [required&optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend, multi-val,..
@@ -357,9 +355,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/MandatoryNoPos.out <==
 Usage:
   demo [required&optional-params] 
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend, multi-val,..
@@ -415,9 +413,9 @@ demo entry point with varied, meaningless parameters.
 ==> test/NoPositional.out <==
 Usage:
   demo [optional-params] 
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -429,9 +427,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/NoShort.out <==
 Usage:
   demo [optional-params] 
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -469,9 +467,9 @@ Usage:
 ==> test/PerParam.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -487,9 +485,9 @@ Usage:
 
 where {CMD} is one of:
 
-  help
-  get
-  put
+  help  print comprehensive or per-cmd help
+  get   
+  put   
 
 QualifiedMulti {-h|--help} or with no args at all prints this message.
 QualifiedMulti --help-syntax gives general cligen syntax help.
@@ -507,10 +505,8 @@ Usage:
 ==> test/ResultInt.out <==
 Usage:
   editDistanceAscii [required&optional-params] 
-Returns the edit distance between `a` and `b`.
-
-This uses the `Levenshtein`:idx: distance algorithm with only a linear
-memory overhead.
+Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
+distance algorithm with only a linear memory overhead.
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend, multi-val,..
@@ -521,9 +517,9 @@ memory overhead.
 ==> test/ReturnEmpty.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -535,9 +531,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/ReturnInt.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -549,9 +545,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/ReturnNonInt.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -563,9 +559,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/ReturnNonIntNoAuto.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -577,9 +573,9 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 ==> test/ReturnString.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -601,9 +597,9 @@ Run command with no parameters for a full help message.
 ==> test/SeqInt.out <==
 Usage:
   demo [optional-params] [args: int...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 3 4" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 3 4" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
@@ -615,9 +611,9 @@ invocation "demo --alpha=2 3 4" (assuming executable gets named demo).
 ==> test/Suppress.out <==
 Usage:
   demo [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                 print this cligen-erated help
   --help-syntax              advanced: prepend, multi-val,..
@@ -626,7 +622,7 @@ invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(667, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(676, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(138, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
@@ -652,8 +648,8 @@ demo entry point with varied, meaningless parameters.
 ==> test/UserDispIdCollide.out <==
 Usage:
   demo [optional-params] [args: string...]
-This tests if things work when a wrapped user-proc uses identifiers also
-used in our generated dispatch proc.
+This tests if things work when a wrapped user-proc uses identifiers also used in
+our generated dispatch proc.
   Options(opt-arg sep :|=|spc):
   -h, --help                           print this cligen-erated help
   --help-syntax                        advanced: prepend, multi-val,..
@@ -664,9 +660,9 @@ used in our generated dispatch proc.
 ==> test/Version.out <==
 Usage:
   version [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters.  A Nim invocation
-might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
-invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend, multi-val,..
