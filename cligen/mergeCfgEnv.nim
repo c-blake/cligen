@@ -33,4 +33,4 @@ proc mergeParams(cmdNames: seq[string],
   let e = os.getEnv(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   if e.len > 0:
     result = result & parseCmdLine(e)                      #See os.parseCmdLine
-  result = result & (if cmdNames.len > 1: cmdLine[1..^1] else: cmdLine)
+  result = result & cmdLine
