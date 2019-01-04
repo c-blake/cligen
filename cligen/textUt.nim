@@ -1,12 +1,12 @@
-from strutils import split, wordWrap, repeat, replace
+from strutils import split, wordWrap, repeat, replace, count
 from terminal import terminalWidth
 
 proc wrap*(prefix: string, s: string): string =
   let w = terminalWidth() - 2*prefix.len
-  if s.split("\n").len < 7:
-    result = wordWrap(s.replace("\n", " "), w)
-  else:
+  if s.count("\n ") > 1:   #Leave alone if there is any indentation
     result = s
+  else:
+    result = wordWrap(s.replace("\n", " "), w)
 
 proc addPrefix*(prefix: string, multiline=""): string =
   result = ""
