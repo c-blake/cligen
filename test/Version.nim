@@ -11,10 +11,10 @@ when isMainModule:
 
   when defined(versionGit):
     const vsn = staticExec "git log -1 | head -n1"
-    dispatch(demo, cmdName="version", version = ("version", vsn))
+    dispatch(demo, cmdName="Version", version = ("version", vsn))
   elif defined(versionShort):
     let vsn = "1.5"
-    dispatch(demo, cmdName="version", version = ("version", vsn),
+    dispatch(demo, cmdName="Version", version = ("version", vsn),
              short = { "version": 'V' })
   else:
-    dispatch(demo, cmdName="version", version = ("version", "1.0"))
+    dispatch(demo, cmdName="Version", version = ("version", "1.0"))
