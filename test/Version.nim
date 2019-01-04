@@ -7,8 +7,7 @@ proc demo(alpha: int=1, item: string="hi", args: seq[string]): int =
   return 42
 
 when isMainModule:
-  import cligen
-  include cligen/mergeEnvCfg
+  import cligen; include cligen/mergeCfgEnv
 
   when defined(versionGit):
     const vsn = staticExec "git log -1 | head -n1"

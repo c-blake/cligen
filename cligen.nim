@@ -839,4 +839,4 @@ proc mergeParams*(cmdNames: seq[string],
   ##based on ``cmdNames``) that they would like.  In a single ``dispatch``
   ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti
   ##``context it is ``@[ <mainCommand>, <subCommand> ]``.
-  cmdLine
+  if cmdNames.len > 1: cmdLine[1..^1] else: cmdLine
