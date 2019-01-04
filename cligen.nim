@@ -73,7 +73,7 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
       let lo: string = (losh[1][0]).strVal
       let sh: char = char((losh[1][1]).intVal)
       result[lo] = sh
-      if lo.len > 0 and not fpars.containsParam(lo):
+      if lo.len > 0 and not fpars.containsParam(lo) and lo != "version":
         error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
