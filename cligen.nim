@@ -305,7 +305,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   var cmtDoc: string = $doc
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
-    cmtDoc = strip(cmtDoc).replace("\n", " ")
+    cmtDoc = strip(cmtDoc)
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
@@ -729,7 +729,7 @@ template unknownSubcommand*(cmd: string) =
 template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
   var pairs: seq[seq[string]]
   for i in 0 ..< subCmds.len:
-    pairs.add(@[subCmds[i], subDocs[i]])
+    pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
   """
 
   $1 {CMD}  [sub-command options & parameters]

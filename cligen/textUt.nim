@@ -1,9 +1,12 @@
-from strutils import split, wordWrap, repeat
+from strutils import split, wordWrap, repeat, replace
 from terminal import terminalWidth
 
 proc wrap*(prefix: string, s: string): string =
   let w = terminalWidth() - 2*prefix.len
-  result = wordWrap(s, w)
+  if s.split("\n").len < 7:
+    result = wordWrap(s.replace("\n", " "), w)
+  else:
+    result = s
 
 proc addPrefix*(prefix: string, multiline=""): string =
   result = ""
