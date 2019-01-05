@@ -800,8 +800,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       cligenQuitAux(`disNm`, `sCmdNmS`, p[0], `sCmdNoAuEc`.bool,
                     `sCmdEcR`.bool, @[`srcBase`, `sCmdNmS`], `restId`)))
     let sep = if cnt < len(procBrackets): "\n" else: ""
-    helpDump.add(quote do:
-      cligenHelp(`disNmId`, `dashHelpId`, `sep`))
+    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
