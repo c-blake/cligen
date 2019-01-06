@@ -719,7 +719,7 @@ proc subCmdNoAutoEc(node: NimNode): bool =
 
 var cligenVersion* = ""
 
-template unknownSubcommand*(cmd: string) =
+template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   stderr.write "Unknown subcommand \"" & cmd & "\".  "
   let sugg = suggestions(cmd, subCmds, subCmds)
   if sugg.len > 0:
@@ -812,7 +812,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       let `dashHelpId` = @[ "--help" ]
       `helpDump`
     else:
-      unknownSubcommand(`arg0Id`)))
+      unknownSubcommand(`arg0Id`, `subCmdsId`)))
   result.add(multiDef)
   let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
                                         newIdentNode("cligenVersion"))
@@ -828,10 +828,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
     if ps.len>0 and (ps[0].len>0 and ps[0][0] != '-') and ps[0] notin subCmds:
-      unknownSubcommand(ps[0])
+      unknownSubcommand(ps[0], `subCmdsId`)
     elif ps.len == 2 and ps[0] == "help":
       if ps[1] in subCmds: cligenQuit(`disSubcmdId`(@[ ps[1], "--help" ]))
-      else: unknownSubcommand(ps[1])
+      else: unknownSubcommand(ps[1], `subCmdsId`)
     else:
       cligenQuit(`disSubcmdId`()))
   when defined(printMultiDisp): echo repr(result)  # maybe print generated code
