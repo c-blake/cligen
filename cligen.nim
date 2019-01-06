@@ -152,7 +152,7 @@ const helpTabColsDfl* = @[ helpTabOption, helpTabType,
                            helpTabDefault, helpTabDescrip ]
 
 proc postInc*(x: var int): int =
-  ## Similar to post-fix ``++`` in C languages: yield initial val, then increment
+  ##Similar to post-fix ``++`` in C languages: yield initial val, then increment
   result = x
   inc(x)
 
@@ -221,82 +221,82 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  noAutoEcho: bool=false, dispatchName: string = "",
  mergeNames: seq[string] = @[], docs: ptr var seq[string]=nil,
  setByParse: ptr var seq[ClParse]=nil): untyped =
-  ## Generate a command-line dispatcher for proc ``pro`` with extra help ``usage``.
-  ## Parameters without defaults in the proc become mandatory command arguments
-  ## while those with default values become command options.  Proc parameters
-  ## and option keys are normalized so that command users may spell multi-word
-  ## option keys flexibly as in ``--dry-Run | --dryrun``.  Each proc parameter
-  ## type must have in-scope ``argParse`` and ``argHelp`` procs (``argcvt.nim``
-  ## defines ``argParse/Help`` for many basic types, ``set[T]``, ``seq[T]``, etc.).
+  ##Generate command-line dispatcher for proc ``pro`` with extra help ``usage``.
+  ##Parameters without defaults in the proc become mandatory command arguments
+  ##while those with default values become command options.  Proc parameters
+  ##and option keys are normalized so that command users may spell multi-word
+  ##option keys flexibly as in ``--dry-Run | --dryrun``.  Each proc parameter
+  ##type must have in-scope ``argParse`` and ``argHelp`` procs (``argcvt.nim``
+  ##defines ``argParse/Help`` for many basic types, ``seq[T], set[T], ..``).
   ##
-  ## ``help`` is a ``{(paramNm,str)}`` of per-param help, eg. ``{"quiet":"be quiet"}``.
-  ## Very often, only these user-given help strings are needed for a decent CLI.
+  ##``help`` is a ``{(paramNm, str)}`` of per-param help, eg. ``{"quiet": "be
+  ##quiet"}``.  Often, only these help strings are needed for a decent CLI.
   ##
-  ## ``short`` is a ``{(paramNm,char)}`` of per-parameter single-char option keys.
+  ##``short`` is a ``{(paramNm,char)}`` of per-param single-char option keys.
   ##
-  ## Since programs can return integer exit codes (often 1-byte) to OSes, if the
-  ## proc return is convertible to ``int`` that value is propagated unless
-  ## ``echoResult`` is true.  However, if ``echoResult`` is true or if the
-  ## result is unconvertible and ``noAutoEcho`` is false then the generated
-  ## dispatcher echos the result of wrapped procs.  (Technically, dispatcher
-  ## callers like ``cligenQuit`` implement this behavior.)
+  ##Since programs can return integer exit codes (often 1-byte) to OSes, if the
+  ##proc return is convertible to ``int`` that value is propagated unless
+  ##``echoResult`` is true.  However, if ``echoResult`` is true or if the
+  ##result is unconvertible and ``noAutoEcho`` is false then the generated
+  ##dispatcher echos the result of wrapped procs.  (Technically, dispatcher
+  ##callers like ``cligenQuit`` implement this behavior.)
   ##
-  ## If ``requireSeparator`` is true, both long and short options need an element
-  ## of ``sepChars`` before option values (if there are any).  Any series of chars
-  ## in ``opChars`` may prefix an element of ``sepChars`` as in ``parseopt3``.
+  ##If ``requireSeparator`` is true, both long & short options need an element
+  ##of ``sepChars`` before option values (if there are any). Any series of chars
+  ##in ``opChars`` may prefix an element of ``sepChars`` as in ``parseopt3``.
   ##
-  ## ``stopWords`` is a seq[string] of words beyond which ``-`` or ``--`` will no
-  ## longer signify an option (like the common sole ``--`` command argument).
+  ##``stopWords`` is a seq[string] of words beyond which ``-.*`` will no
+  ##longer signify an option (like the common sole ``--`` command argument).
   ##
-  ## ``helpTabColumnGap`` and ``helpTabMinLast`` control format parameters of the
-  ## options help table, and ``helpTabRowSep`` ("" by default) separates rows.
-  ## ``helpTabColumns`` selects columns to format and is a seq of some subset of
-  ## ``{ helpTabOption, helpTabType, helpTabDefault, helpTabDescrip }``, though
-  ## only the final column in a help table row auto-word-wraps.
+  ##``helpTabColumnGap`` and ``helpTabMinLast`` control format parameters of the
+  ##options help table, and ``helpTabRowSep`` ("" by default) separates rows.
+  ##``helpTabColumns`` selects columns to format and is a seq of some subset of
+  ##``{ helpTabOption, helpTabType, helpTabDefault, helpTabDescrip }``, though
+  ##only the final column in a help table row auto-word-wraps.
   ##
-  ## By default, ``cligen`` maps the first non-defaulted ``seq[]`` proc parameter
-  ## to any non-option/positional command args.  ``positional`` selects another.
-  ## Set ``positional`` to the empty string (``""``) to disable this entirely.
+  ##By default, ``cligen`` maps the first non-defaulted ``seq[]`` proc parameter
+  ##to any non-option/positional command args.  ``positional`` selects another.
+  ##Set ``positional`` to the empty string (``""``) to disable this entirely.
   ##
-  ## ``suppress`` is a list of formal parameter names to NOT include in the
-  ## parsing/assigning system.  Such names are effectively pinned to whatever
-  ## their default values are.
+  ##``suppress`` is a list of formal parameter names to NOT include in the
+  ##parsing/assigning system.  Such names are effectively pinned to whatever
+  ##their default values are.
   ##
-  ## ``shortHelp`` is a char to use for a short option key analogue of --help.
+  ##``shortHelp`` is a char to use for a short option key analogue of --help.
   ##
-  ## ``implicitDefault`` is a list of formal parameter names allowed to default
-  ## to the Nim default value for a type, rather than becoming mandatory, even
-  ## when they are missing an explicit initializer. ``mandatoryHelp`` is how the
-  ## default value appears in help messages for mandatory parameters.
+  ##``implicitDefault`` is a list of formal parameter names allowed to default
+  ##to the Nim default value for a type, rather than becoming mandatory, even
+  ##when they are missing an explicit initializer. ``mandatoryHelp`` is how the
+  ##default value appears in help messages for mandatory parameters.
   ##
-  ## ``mandatoryHelp`` is the default value string in help tables for required
-  ## parameters.  ``mandatoryOverride`` is a list of strings indicating parameter
-  ## names which override mandatory-ness of anything else.
+  ##``mandatoryHelp`` is the default value string in help tables for required
+  ##parameters.  ``mandatoryOverride`` is a list of strings indicating parameter
+  ##names which override mandatory-ness of anything else.
   ##
-  ## ``version`` is a ``Version`` 2-tuple ``(`longOpt for version`, `version string`)``
-  ## which defines how a CLI user may dump the version of a program.  If you
-  ## want to provide a short option, add a ``"version":'v'`` entry to ``short``.
+  ##``version`` is a ``Version`` 2-tuple ``(longOpt for vrsn`, `vrsn string)``
+  ##which defines how a CLI user may dump the version of a program.  If you
+  ##want to provide a short option, add a ``"version":'v'`` entry to ``short``.
   ##
-  ## ``dispatchName`` is the name of a generated dispatcher, defaulting to simply
-  ## ``"dispatchpro"`` where ``pro`` is the name of the proc being wrapped.
+  ##``dispatchName`` is the name of a generated dispatcher, defaulting to simply
+  ##``"dispatchpro"`` where ``pro`` is the name of the proc being wrapped.
   ##
-  ## ``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``,
-  ## which defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
+  ##``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``,
+  ##which defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
   ##
-  ## ``docs`` is ``addr(some var seq[string])`` to which to append each main doc
-  ## comment or its replacement doc=text.  Default of ``nil`` means do nothing.
+  ##``docs`` is ``addr(some var seq[string])`` to which to append each main doc
+  ##comment or its replacement doc=text.  Default of ``nil`` means do nothing.
   ##
-  ## ``setByParse`` is ``addr(some var seq[ClParse])``.  When provided/non-nil, this
-  ## collects each parameter seen, keyed under its long/param name (i.e., parsed
-  ## but not converted to native types).  Wrapped procs can inspect this or even
-  ## convert args themselves to revive ``parseopt``-like iterative interpretation.
-  ## ``cligen`` provides convenience procs to interpret ``setByParse``: ``contains``,
-  ## ``numOfStatus`` & ``next``.  Note that ordinary Nim procs, from inside calls,
-  ## do not know how params got their values (positional, keyword, defaulting).
-  ## Wrapped procs accessing ``setByParse`` are inherently command-line only.  So,
-  ## this ``var seq`` needing to be declared before such procs for such access is
-  ## ok.  Ideally, keep important functionality Nim-callable.  ``setByParse`` may
-  ## also be useful combined with the ``parseOnly`` arg of generated dispatchers.
+  ##``setByParse`` is ``addr(some var seq[ClParse])``.  When non-nil, this var
+  ##collects each parameter seen, keyed under its long/param name (i.e., parsed
+  ##but not converted to native types).  Wrapped procs can inspect this or even
+  ##convert args themselves to revive ``parseopt``-like iterative interpreting.
+  ##``cligen`` provides convenience procs to use ``setByParse``: ``contains``,
+  ##``numOfStatus`` & ``next``. Note that ordinary Nim procs, from inside calls,
+  ##do not know how params got their values (positional, keyword, defaulting).
+  ##Wrapped procs accessing ``setByParse`` are inherently command-line only. So,
+  ##this ``var seq`` needing to be declared before such procs for such access is
+  ##ok.  Ideally, keep important functionality Nim-callable.  ``setByParse`` may
+  ##also be useful combined with the ``parseOnly`` arg of generated dispatchers.
 
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
