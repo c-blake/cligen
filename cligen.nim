@@ -752,17 +752,17 @@ proc srcBaseName*(n: NimNode): NimNode =
   let paren = rfind(fileParen, ".nim(") - 1
   newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
 
-macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
-  ## A convenience wrapper to generate a multi-command dispatcher, then call the
-  ## dispatcher & quit; ``procBrackets`` is arg lists for ``dispatchGen``, eg.,
-  ## ``dispatchMulti([ foo, short={"dryRun": "n"} ], [ bar, doc="Um" ])``.
+macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
+  ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
+  ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
   result = newStmtList()
-  let srcBase = srcBaseName(procBrackets)
+  let srcBase = srcBaseName(procBkts)
   let subCmdsId = ident("subCmds")
   let subDocsId = ident("subDocs")
   result.add(quote do:
     var `subCmdsId`: seq[string] = @[ "help" ]
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
+  let procBrackets = if procBkts.kind == nnkArgList: procBkts[0] else: procBkts
   for p in procBrackets:
     let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
@@ -776,7 +776,6 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
   let multiId = ident("multi")
-  let disSubcmdId = ident("dispatchSubcmd")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
@@ -821,6 +820,14 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
                      newParam("version", vsnTree),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`))))
+  when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
+
+macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
+  ## A wrapper to generate a multi-command dispatcher, then call it, and quit.
+  let disSubcmdId = ident("dispatchSubcmd")
+  let subCmdsId = ident("subCmds")
+  result = newStmtList()
+  result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
   result.add(quote do:
     #`ps` is NOT mergeParams because we want typo suggestions for subcmd (with
     #options) based only on a CL user's actual *command line* entry.  Other srcs
@@ -834,7 +841,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       else: unknownSubcommand(ps[1], `subCmdsId`)
     else:
       cligenQuit(`disSubcmdId`()))
-  when defined(printMultiDisp): echo repr(result)  # maybe print generated code
+  when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =
