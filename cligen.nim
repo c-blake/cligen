@@ -755,6 +755,7 @@ proc srcBaseName*(n: NimNode): NimNode =
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
   ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
+  let procBrackets = if procBkts.kind == nnkArgList: procBkts[0] else: procBkts
   result = newStmtList()
   let srcBase = srcBaseName(procBkts)
   let subCmdsId = ident("subCmds")
@@ -762,7 +763,6 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   result.add(quote do:
     var `subCmdsId`: seq[string] = @[ "help" ]
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
-  let procBrackets = if procBkts.kind == nnkArgList: procBkts[0] else: procBkts
   for p in procBrackets:
     let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
