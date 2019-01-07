@@ -410,6 +410,23 @@ demo entry point with varied, meaningless parameters.
   -b=, --beta=   int   2      set beta
   -v, --verb     bool  false  set verb
 
+==> test/MultiMulti.out <==
+Usage:
+  
+  MultiMulti {CMD}  [sub-command options & parameters]
+
+where {CMD} is one of:
+
+  help     print comprehensive or per-cmd help
+  apple    
+  cobbler  
+
+MultiMulti {-h|--help} or with no args at all prints this message.
+MultiMulti --help-syntax gives general cligen syntax help.
+Run "MultiMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "MultiMulti help" to get *comprehensive* help.
+Top-level --version also available
+
 ==> test/NoPositional.out <==
 Usage:
   demo [optional-params] 
