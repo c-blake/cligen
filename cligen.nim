@@ -757,13 +757,19 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
   let procBrackets = if procBkts.kind == nnkArgList: procBkts[0] else: procBkts
   result = newStmtList()
+  var prefix = "multi"
+  if procBrackets[0][0].kind == nnkStrLit:
+    prefix = procBrackets[0][0].strVal
   let srcBase = srcBaseName(procBkts)
-  let subCmdsId = ident("subCmds")
-  let subDocsId = ident("subDocs")
+  let multiId = ident(prefix)
+  let subCmdsId = ident(prefix & "SubCmds")
+  let subDocsId = ident(prefix & "SubDocs")
   result.add(quote do:
     var `subCmdsId`: seq[string] = @[ "help" ]
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
   for p in procBrackets:
+    if p[0].kind == nnkStrLit:
+      continue
     let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
@@ -775,7 +781,6 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
-  let multiId = ident("multi")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
@@ -786,9 +791,9 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helpDump = newStmtList()
-  var cnt = 0
-  for p in procBrackets:
-    inc(cnt)
+  for cnt, p in procBrackets:
+    if p[0].kind == nnkStrLit:
+      continue
     let sCmdNmS = subCmdName(p)
     let disNm = dispatchName(p)
     let disNmId = dispatchId(disNm, sCmdNmS, "")
@@ -798,7 +803,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
       cligenQuitAux(`disNm`, `sCmdNmS`, p[0], `sCmdNoAuEc`.bool,
                     `sCmdEcR`.bool, @[`srcBase`, `sCmdNmS`], `restId`)))
-    let sep = if cnt < len(procBrackets): "\n" else: ""
+    let sep = if cnt+1 < len(procBrackets): "\n" else: ""
     helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
@@ -824,8 +829,11 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A wrapper to generate a multi-command dispatcher, then call it, and quit.
+  var prefix = "multi"
+  if procBrackets[0][0].kind == nnkStrLit:
+    prefix = procBrackets[0][0].strVal
+  let subCmdsId = ident(prefix & "SubCmds")
   let disSubcmdId = ident("dispatchSubcmd")
-  let subCmdsId = ident("subCmds")
   result = newStmtList()
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
   result.add(quote do:
@@ -834,10 +842,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
-    if ps.len>0 and (ps[0].len>0 and ps[0][0] != '-') and ps[0] notin subCmds:
+    if ps.len>0 and (ps[0].len>0 and ps[0][0]!='-') and ps[0] notin `subCmdsId`:
       unknownSubcommand(ps[0], `subCmdsId`)
     elif ps.len == 2 and ps[0] == "help":
-      if ps[1] in subCmds: cligenQuit(`disSubcmdId`(@[ ps[1], "--help" ]))
+      if ps[1] in `subCmdsId`: cligenQuit(`disSubcmdId`(@[ ps[1], "--help" ]))
       else: unknownSubcommand(ps[1], `subCmdsId`)
     else:
       cligenQuit(`disSubcmdId`()))
