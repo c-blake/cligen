@@ -755,7 +755,7 @@ proc srcBaseName*(n: NimNode): NimNode =
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
   ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
-  let procBrackets = if procBkts.kind == nnkArgList: procBkts[0] else: procBkts
+  let procBrackets = if procBkts.len < 2: procBkts[0] else: procBkts
   result = newStmtList()
   var prefix = "multi"
   if procBrackets[0][0].kind == nnkStrLit:
@@ -818,13 +818,6 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     else:
       unknownSubcommand(`arg0Id`, `subCmdsId`)))
   result.add(multiDef)
-  let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
-                                        newIdentNode("cligenVersion"))
-  result.add(newCall("dispatchGen", multiId, newParam("stopWords", subCmdsId),
-                     newParam("dispatchName", newStrLitNode("dispatchSubcmd")),
-                     newParam("version", vsnTree),
-                     newParam("cmdName", srcBase), newParam("usage", quote do:
-    "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`))))
   when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
@@ -832,10 +825,21 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   var prefix = "multi"
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
+  let srcBase = srcBaseName(procBrackets)
+  let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
-  let disSubcmdId = ident("dispatchSubcmd")
+  let subDocsId = ident(prefix & "SubDocs")
+  let disSubcmdId = ident(prefix & "disSubs")
   result = newStmtList()
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
+  let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
+                                        newIdentNode("cligenVersion"))
+  result.add(newCall("dispatchGen", multiId, newParam("stopWords", subCmdsId),
+                     newParam("dispatchName",
+                              newStrLitNode(prefix & "disSubs")),
+                     newParam("version", vsnTree),
+                     newParam("cmdName", srcBase), newParam("usage", quote do:
+    "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`))))
   result.add(quote do:
     #`ps` is NOT mergeParams because we want typo suggestions for subcmd (with
     #options) based only on a CL user's actual *command line* entry.  Other srcs
