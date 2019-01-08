@@ -606,10 +606,11 @@ Usage:
   multi [optional-params] [subcmd: string...]
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
-  -h, --help                 print this cligen-erated help
-  --help-syntax              advanced: prepend, multi-val,..
-  -b=, --beta=   int     1   set beta
-  -i=, --item=   string  ""  set item
+  -h, --help                    print this cligen-erated help
+  --help-syntax                 advanced: prepend, multi-val,..
+  -b=, --beta=   int     1      set beta
+  -i=, --item=   string  ""     set item
+  -v, --verb     bool    false  set verb
 
 ==> test/SeqInt.out <==
 Usage:
