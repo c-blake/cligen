@@ -6,66 +6,56 @@ programming knowledge in general to assume on the part of a CLI user.
 ]#
 
 const syntaxHelp = """
-AGGREGATES (seq, set, HashSet, string, ..)
+cligen-using commands can parse plural types like "strings" with several
+updating operations: prepend ("^="), subtract/delete ("-="), as well as the
+usual append ("+=", just "=", or nothing at all, as is customary for compiler
+commands, eg. "cc -Ipath1 -Ipath2").  "string" is treated more as singular
+variable by cligen in that unqualified assignment overwrites/clobbers, but "+="
+appends if desired.
 
-cligen can parse `seq[T]` and similar aggregates (`set[T]`, `HashSet[T]`) with
-a full complement of operations: prepend (`^=`), subtract/delete (`-=`), as well
-as the usual append (`+=` or just `=` or nothing at all, as is customary for
-compiler commands, e.g. `-Ipath1` in `cc -Ipath1 -Ipath2`).
+Plural types also support a ','-prefixed family of Delimiter-Prefixed Separated
+Value (DPSV) operators that allow passing multiple slots to the above operators
+in one command parameter.  DPSV is like typical regex substitution syntax (eg.,
+"/old/new" or "%search%replace") where the first character of a value indicates
+the delimiter for the rest.  Delimiting is strict (a trailing delimiter means an
+empty slot).  No delimiter ("--foo,=") sets any aggregate to its empty version.
+",@=" works like a set empty followed by an append.  I.e., "--foo,@=/V1/V2" is
+just like "--foo,= --foo=/V1/V2".
 
-`string` is treated more as a scalar variable by cligen in that an unqualified
-[:=<SPACE>] overwrites/clobbers rather than appending, but `+=` does append if
-desired.  E.g., `--foo=""` overwrites the value to be an empty string,
-`--foo+=""` leaves it unaltered, and `--foo^=bar` prepends `bar`.
+Cheat sheet:
+  * "--foo=val" is same as "--foo:val" and "--foo val"
+  * likewise with -f instead of --foo; in addition -fval is also possible
 
-cligen also supports a `,`-prefixed family of enhanced Delimiter-Prefixed
-Separated Value (DPSV) operators that allow passing multiple slots to the above
-operators.  DPSV is like typical regex substitution syntax, e.g., `/old/new` or
-`%search%replace` where the first char indicates the delimiter for the rest.
-Delimiting is strict. (E.g., `--foo,^=/foo/` prepends 2 items `["foo", ""]` to
-some aggregate `foo`).  Available only in the `,`-family is also
-`,@=` as in `,@=<D>V1<D>V2`  which does a clobbering assignment of
-`["V1", "V2"]`.  No delimiter at all (i.e. `--foo,=`) clips any aggregate to its
-empty version, e.g. `[]`. 
+  * "bool" values for flags "foo", "bar" with short options 'f', 'b':
+    default value false: -f | --foo sets the flag to true
+    default value true: -b | --bar sets the flag to false
+    "-f=true" or "-b=true" always sets either to true (likewise for "false").
+    Multiple bool flags can combine: "-bf" means "-b -f"
+    "on",  "yes", "t", "y", and "1" are all synonyms for "true"
+    "off", "no",  "f", "n", and "0" are all synonyms for "false"
 
-Cheat-sheat:
+  * "int"/other numeric values are simple, but must be numbers.
+    Quote a leading space to distinguish negative numbers from options.
 
-for `foo` of any type:
-* `--foo=val` is same as `--foo:val` and `--foo val`
-* likewise with -f instead of --foo; in addition -fval is also possible
+  * Singular "string" values for option "foo" defaulting to "bar":
+    --foo=val     => val      ; clobbers
+    --foo=        => ""       ; clears
+    --foo+=val    => barval   ; appends
+    --foo^=val    => valbar   ; prepends
 
-* case of `bool`:
--f, --foo      bool           true           set foo
-  these set to true: `-f` `-f:true` `-f=true` `-f true`
-  multiple bool flags can combine: `-abc` means `-a -b -c`
-
-* case of `string`:
--f=, --foo=    string         "bar"          set foo
-  --foo=val  => `val`               : clobbers
-  --foo=     => ``                  : clears
-  --foo+=val => `barval`            : append
-  --foo^=val => `valbar             : prepend
-
-* case of `int`, `float`:
--f=, --foo=    float          10.2            set foo
-  --foo=30.4  => `30.4`             : assign
-
-* case of `array(string)`:
--f=, --foo=    array(string)  b1,b2    append 1 val to foo
-single val syntaxes
---foo=val    => `b1,b2,val`         : append
---foo=       => `b1,b2,""`          : append (an empty string)
---foo+=val   => `b1,b2,val`         : append
---foo^=val   => `val,b1,b2`         : prepend
---foo-=b1  => `b2`                  : remove (0 or more) entries equal to `b1`
-
-multi-val syntaxes
---foo,=        => ``                : clears
---foo,=,v1,v2  => `b1,b2,v1,v2`     : append multi
---foo,=/v1/    => `b1,b2,v1,""      : ditto (note trailing delimiter effect)
---foo,=,       => `b1,b2,""`        : ditto
---foo,+=,v1,v2 => `b1,b2,v1,v2`     : append multi
---foo,^=,v1,v2 => `v1,v2,b1,b2`     : prepend multi
---foo,-=,b1,b2 => ``                : removes multi (here, ends up empty)
---foo,@=,v1,v2 => `v1,v2`           : clobbering multi assignment
+  * Plural "strings" values for option "foo" defaulting to "A,B":
+    --foo=val     => A,B,val  ; append
+    --foo=        => A,B,""   ; append (an empty string)
+    --foo+=val    => A,B,val  ; append
+    --foo^=val    => val,A,B  ; prepend
+    --foo-=A      => B        ; remove (0 or more) entries equal to "A"
+  Multi-value syntaxes for option "foo" defaulting to "A,B":
+    --foo,=       => {}       ; clears
+    --foo,=,C,D   => A,B,C,D  ; append multi
+    --foo,=/C/    => A,B,C,"" ; ditto (note trailing delimiter effect)
+    --foo,=,      => A,B,""   ; ditto
+    --foo,+=,C,D  => A,B,C,D  ; ditto
+    --foo,^=,C,D  => C,D,A,B  ; prepend multi
+    --foo,-=,A,B  => {}       ; removes multi (here, ends up empty)
+    --foo,@=,C,D  => C,D      ; clobbering multi assignment
 """
