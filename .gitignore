@@ -47,4 +47,5 @@ test/ParseOnly
 test/QualifiedSym
 test/QualifiedMulti
 test/DistinctInt
+test/SemiMultMult
 test/MultiMulti
