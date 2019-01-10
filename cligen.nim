@@ -635,31 +635,32 @@ template cligenQuit*(p: untyped, noAutoEcho: bool=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
-template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped): auto =
+template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped, usage: untyped, prefix: untyped): auto =
   when compiles(type(p())):
-    try: discard p(dashHelp, prefix="  ", subSep=sep)
+    try: discard p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
     except HelpOnly: discard
   else:
-    try: p(dashHelp, prefix="  ", subSep=sep)
+    try: p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
     except HelpOnly: discard
 
 proc isTrue(n: NimNode): bool =
   result = (n.kind == nnkSym and n.strVal == "true") or
            (n.kind == nnkConv and n[1].intVal == 1)
 
-macro cligenQuitAux*(dispatchName: string, cmdName: string, pro: untyped,
-                     noAutoEcho: bool, echoResult: bool,
-                     mergeNames: seq[string], cmdLine: seq[string]): untyped =
+macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
+                     pro: untyped, noAutoEcho: bool, echoResult: bool,
+                     mergeNames: seq[string] = @[]): untyped =
   result = newStmtList()
   let disNm = dispatchId($dispatchName, $cmdName, repr(pro))
+  let mergeNms = toStrSeq(mergeNames) & cmdName.strVal
   if isTrue(echoResult):
     result.add(quote do:                      #CLI author requests echo
-      try: echo `disNm`(mergeParams(`mergeNames`, `cmdLine`)); quit(0)
+      try: echo `disNm`(mergeParams(`mergeNms`, `cmdLine`)); quit(0)
       except HelpOnly, VersionOnly: quit(0)
       except ParseError: quit(1))
   else:
     result.add(quote do:
-      cligenQuit(`disNm`(mergeParams(`mergeNames`, `cmdLine`)), `noAutoEcho`))
+      cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)), `noAutoEcho`))
 
 template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
@@ -681,8 +682,8 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
       implicitDefault, mandatoryHelp, mandatoryOverride, version, noAutoEcho,
       dispatchName)
-  cligenQuitAux(dispatchName, cmdName, pro, noAutoEcho, echoResult,
-                @[ cmdName ], os.commandLineParams())
+  cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, noAutoEcho,
+                echoResult)
 
 proc subCmdName(node: NimNode): string =
   ## Get last `cmdName` argument, if any, in bracket expression, or name of 1st
@@ -782,14 +783,19 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
+  let cmdLineId = ident("cmdLine")
+  let usageId = ident("usage")
+  let prefixId = ident("prefix")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
-    proc `multiId`(subCmd: seq[string]) =
+    proc `multiId`(`cmdLineId`: seq[string],
+                   `usageId`=dflUsage,
+                   `prefixId`="") =
       {.push hint[XDeclaredButNotUsed]: off.}
-      let n = subCmd.len
-      let `arg0Id` = if n > 0: subCmd[0] else: ""
-      let `restId`: seq[string] = if n > 1: subCmd[1..<n] else: @[ ])
+      let n = `cmdLineId`.len
+      let `arg0Id` = if n > 0: `cmdLineId`[0] else: ""
+      let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ])
   var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helpDump = newStmtList()
   for cnt, p in procBrackets:
@@ -802,10 +808,10 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdNoAuEc = subCmdNoAutoEc(p)
     cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
-      cligenQuitAux(`disNm`, `sCmdNmS`, p[0], `sCmdNoAuEc`.bool,
-                    `sCmdEcR`.bool, @[`srcBase`, `sCmdNmS`], `restId`)))
+      cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdNoAuEc`.bool,
+                    `sCmdEcR`.bool, @[`srcBase`])))  #XXX pass mergeNames here?
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
-    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`))
+    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
@@ -830,15 +836,13 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
   let subDocsId = ident(prefix & "SubDocs")
-  let disSubcmdId = ident(prefix & "disSubs")
+  let SubsDispId = ident(prefix & "Subs")
   result = newStmtList()
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
-  let vsnTree = newTree(nnkTupleConstr, newStrLitNode("version"),
-                                        newIdentNode("cligenVersion"))
   result.add(newCall("dispatchGen", multiId, newParam("stopWords", subCmdsId),
-                     newParam("dispatchName",
-                              newStrLitNode(prefix & "disSubs")),
-                     newParam("version", vsnTree),
+                     newParam("dispatchName", newStrLitNode(prefix & "Subs")),
+                     newParam("version", quote do: ("version", cligenVersion)),
+                     newParam("suppress", quote do: @[ "usage", "prefix" ]),
                      newParam("cmdName", srcBase), newParam("usage", quote do:
     "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`))))
   result.add(quote do:
@@ -850,10 +854,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     if ps.len>0 and (ps[0].len>0 and ps[0][0]!='-') and ps[0] notin `subCmdsId`:
       unknownSubcommand(ps[0], `subCmdsId`)
     elif ps.len == 2 and ps[0] == "help":
-      if ps[1] in `subCmdsId`: cligenQuit(`disSubcmdId`(@[ ps[1], "--help" ]))
+      if ps[1] in `subCmdsId`: cligenQuit(`SubsDispId`(@[ ps[1], "--help" ]))
       else: unknownSubcommand(ps[1], `subCmdsId`)
     else:
-      cligenQuit(`disSubcmdId`()))
+      cligenQuit(`SubsDispId`()))
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],
