@@ -19,28 +19,24 @@ when isMainModule:
               helpTabRowSep="\n")                     #double space help table
   dispatchGen(show)
 
-  let multisubs = @[ "demo", "show" ]
-  let multidocs = @[ "demo entry point", "show entry point" ]
-  let multimergeNms = @[ "SemiAutoMulti" ]
-  let multiprefix = ""
-  proc multi(beta=1, item="", verb=false, subcmd: seq[string]): int =
+  let multiSubs = @[ "demo", "show" ]
+  let multiDocs = @[ "demo entry point", "show entry point" ]
+  let multiPrefix = ""
+  proc multi(subCmd: seq[string]): int =
     ## Run command with no parameters for a full help message.
-    if verb:
-      echo "globalbeta:", beta
-      echo "globalitem:", item
-    let arg0 = if subcmd.len > 0: subcmd[0] else: "help"
+    let arg0 = if subCmd.len > 0: subCmd[0] else: "help"
     let subc = optionNormalize(arg0)
-    let rest: seq[string] = if subcmd.len > 1: subcmd[1..^1] else: @[]
-    var subcmdsN: seq[string]
-    for s in multisubs: subcmdsN.add(optionNormalize(s))
-    if subcmd.len == 0:
-      echo "Usage:\n  ", topLevelHelp(multimergeNms[0], multisubs, multidocs)
+    let rest: seq[string] = if subCmd.len > 1: subCmd[1..^1] else: @[]
+    var subCmdsN: seq[string]
+    for s in multiSubs: subCmdsN.add(optionNormalize(s))
+    if subCmd.len == 0:
+      echo "Usage:\n  ", topLevelHelp("SemiAutoMulti", multiSubs, multiDocs)
       raise newException(HelpOnly, "")
     case subc
-    of "demo": cligenQuitAux("dispatchdemo", "demo", dispatchdemo, false, false,
-                             multimergeNms & "demo", rest)
-    of "show": cligenQuitAux("dispatchshow", "show", dispatchshow, false, false,
-                             multimergeNms & "show", rest)
+    of "demo": cligenQuitAux(rest, "dispatchdemo", "demo", dispatchdemo, false,
+                             false, @[ "SemiAutoMulti" ])
+    of "show": cligenQuitAux(rest, "dispatchshow", "show", dispatchshow, false,
+                             false, @[ "SemiAutoMulti" ])
     of "help":
       if rest.len > 0:
         let sub = optionNormalize(rest[0])
@@ -53,21 +49,21 @@ when isMainModule:
           raise newException(HelpOnly, "")
         else:
           echo "unknown subcommand: ", sub
-          echo "Did you mean: ",suggestions(sub,subcmdsN,multisubs).join("  \n")
+          echo "Did you mean: ",suggestions(sub,subCmdsN,multiSubs).join("  \n")
           quit(1)
       echo "Usage:\n  SemiAutoMulti demo|show|help [subcommand-args]\n"
       echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
-      # Don't have multiple Usage: stuff in there.  Also indent subcmd help.
-      let u="SemiAutoMulti [globlOpts] $command $args\n$doc\nOptions:\n$options"
-      try: discard dispatchdemo(@["--help"], prefix=multiprefix&"    ", usage=u)
+      # Don't have multiple Usage: stuff in there.  Also indent subCmd help.
+      let u="SemiAutoMulti $command $args\n$doc\nOptions:\n$options"
+      try: discard dispatchdemo(@["--help"], prefix=multiPrefix&"    ", usage=u)
       except HelpOnly: discard
-      try: dispatchshow(@["--help"], prefix=multiprefix&"    ", usage=u)
+      try: dispatchshow(@["--help"], prefix=multiPrefix&"    ", usage=u)
       except HelpOnly: discard
       raise newException(HelpOnly, "")
     else:
       echo "unknown subcommand: ", subc
-      echo "Did you mean: ", suggestions(subc, subcmdsN, multisubs).join("  \n")
+      echo "Did you mean: ", suggestions(subc, subCmdsN, multiSubs).join("  \n")
       quit(1)
 
-  dispatchGen(multi, stopWords = multisubs & "help")
+  dispatchGen(multi, stopWords = multiSubs & "help")
   cligenQuit(dispatchmulti())
