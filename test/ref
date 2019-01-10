@@ -603,14 +603,11 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/SemiAutoMulti.out <==
 Usage:
-  multi [optional-params] [subcmd: string...]
+  multi [optional-params] [subCmd: string...]
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
-  -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
-  -b=, --beta=   int     1      set beta
-  -i=, --item=   string  ""     set item
-  -v, --verb     bool    false  set verb
+  -h, --help         print this cligen-erated help
+  --help-syntax      advanced: prepend, multi-val,..
 
 ==> test/SeqInt.out <==
 Usage:
@@ -640,8 +637,8 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(677, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(138, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(679, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(139, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
