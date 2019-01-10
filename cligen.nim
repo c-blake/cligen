@@ -23,8 +23,9 @@ proc toStrLitNode(n: NimNode): NimNode =
 
 proc toStrSeq(strSeqInitializer: NimNode): seq[string] =
   result = newSeq[string]()
-  for kid in strSeqInitializer[1]:
-    result.add($kid)
+  if strSeqInitializer.len > 1:
+    for kid in strSeqInitializer[1]:
+      result.add($kid)
 
 proc containsParam(fpars: NimNode, key: string): bool =
   for declIx in 1 ..< len(fpars):           #default for result = false
@@ -423,7 +424,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                                           `htColGap`, `htMinLst`, `htRowSep`,
                                           `htCols`)),
                      "sep", `subSepId` ]
-      if `apId`.help[^1] != '\n':            # ensure newline @end of help
+      if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
