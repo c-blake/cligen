@@ -617,8 +617,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-template cligenQuit*(p: untyped, noAutoEcho: bool=false): auto =
-  when compiles(int(p)):                      #Can convert to int
+template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
+  when echoResult:                            #CLI author requests echo
+    try: echo p; quit(0)                      #May compile-time fail, but do..
+    except HelpOnly, VersionOnly: quit(0)     #..want bubble up to CLI auth.
+    except ParseError: quit(1)
+  elif compiles(int(p)):                      #Can convert to int
     try: quit(int(p))
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
@@ -635,7 +639,8 @@ template cligenQuit*(p: untyped, noAutoEcho: bool=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
-template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped, usage: untyped, prefix: untyped): auto =
+template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped,
+                     usage: untyped, prefix: untyped): auto =
   when compiles(type(p())):
     try: discard p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
     except HelpOnly: discard
@@ -643,24 +648,13 @@ template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped, usage: untyped
     try: p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
     except HelpOnly: discard
 
-proc isTrue(n: NimNode): bool =
-  result = (n.kind == nnkSym and n.strVal == "true") or
-           (n.kind == nnkConv and n[1].intVal == 1)
-
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
-                     pro: untyped, noAutoEcho: bool, echoResult: bool,
+                     pro: untyped, echoResult: bool, noAutoEcho: bool,
                      mergeNames: seq[string] = @[]): untyped =
-  result = newStmtList()
   let disNm = dispatchId($dispatchName, $cmdName, repr(pro))
   let mergeNms = toStrSeq(mergeNames) & cmdName.strVal
-  if isTrue(echoResult):
-    result.add(quote do:                      #CLI author requests echo
-      try: echo `disNm`(mergeParams(`mergeNms`, `cmdLine`)); quit(0)
-      except HelpOnly, VersionOnly: quit(0)
-      except ParseError: quit(1))
-  else:
-    result.add(quote do:
-      cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)), `noAutoEcho`))
+  quote do: cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)),
+                       `echoResult`, `noAutoEcho`)
 
 template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
@@ -682,8 +676,8 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       helpTabRowSep, helpTabColumns, stopWords, positional, suppress, shortHelp,
       implicitDefault, mandatoryHelp, mandatoryOverride, version, noAutoEcho,
       dispatchName)
-  cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, noAutoEcho,
-                echoResult)
+  cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
+                noAutoEcho)
 
 proc subCmdName(node: NimNode): string =
   ## Get last `cmdName` argument, if any, in bracket expression, or name of 1st
@@ -808,8 +802,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdNoAuEc = subCmdNoAutoEc(p)
     cases[^1].add(newNimNode(nnkOfBranch).add(sCmdNm).add(quote do:
-      cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdNoAuEc`.bool,
-                    `sCmdEcR`.bool, @[`srcBase`])))  #XXX pass mergeNames here?
+      cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
+                    `sCmdNoAuEc`.bool, @[`srcBase`])))  #XXX pass mergeNames?
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
     helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
