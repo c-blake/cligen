@@ -805,7 +805,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, @[`srcBase`])))  #XXX pass mergeNames?
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
-    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
+    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`,
+                                      `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)

@@ -68,7 +68,7 @@ when isMainModule:
       echo "Usage:\n  SemiMultMult apple|cobbler|help [subcommand-args]\n"
       echo "    This is a multiple-dispatch cmd.  Subcommand syntax:\n"
       # Don't have multiple Usage: stuff in there.  Also indent subCmd help.
-      let u = multiPrefix & "SemiMultMult $command $args\n$doc Options:\n$options\n"
+      let u=multiPrefix&"SemiMultMult $command $args\n$doc Options:\n$options\n"
       try: apple(@["help"], usage = u, prefix = multiPrefix & "    ")
       except HelpOnly: discard
       try: cobbler(@["help"], usage = u, prefix = multiPrefix & "    ")
