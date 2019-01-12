@@ -120,7 +120,7 @@ want to control program exit OR to call dispatchers more than once OR on more
 than one set of `seq[string]` args then you may need to call `dispatchGen()`
 and later call `dispatchFoo()` yourself.  This is all `dispatch` itself does.
 
-Return _types and values_ of generated dispatchers match the wrapped proc.
+***Return*** _types and values_ of generated dispatchers match the wrapped proc.
 The first parameter is a `seq[string]`, just like a command line.  { Other
 parameters aid in nested call settings, are defaulted and probably don't matter
 to you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
