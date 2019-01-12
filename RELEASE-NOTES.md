@@ -22,7 +22,7 @@ Version: 0.9.19
     purposes, but someone might find it useful for something else.
 
     Relax the need for `cmdName` in `dispatchMulti(qual.symb, cmdName)`.
-    The last component of the `DotExpr` is used by default.
+    The last component of the `DotExpr` is used for `cmdName` by default.
 
     Introduce `clParseOptErr` for `requireSeparator=true` mode to flag
     `parseopt`-level errors.
