@@ -20,11 +20,12 @@ Usage:
 Some existing API call
 
 Options (opt&arg sep by :,=,spc):
-  -h, --help                  print this help message
+  -h, --help                  print this cligen-erated help
+  --help-syntax               advanced: prepend, multi-val,..
   -f=, --foo=  int     1      set foo
   -b=, --bar=  float   2.0    set bar
   --baz=       string  "hi"   set baz
-  -v, --verb   toggle  false  set verb
+  -v, --verb   bool    false  set verb
 ```
 Other invocations (`foobar --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
