@@ -49,3 +49,4 @@ test/QualifiedMulti
 test/DistinctInt
 test/SemiMultMult
 test/MultiMulti
+test/MultMultMult

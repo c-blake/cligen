@@ -399,6 +399,24 @@ Usage:
           -i=, --iota=   float  2.0    set iota
           -v, --verb     bool   false  set verb
 
+==> test/MultMultMult.out <==
+Usage:
+  
+  MultMultMult {CMD}  [sub-command options & parameters]
+
+where {CMD} is one of:
+
+  help   print comprehensive or per-cmd help
+  apple  
+  whoa   Another entry point; here we echoResult
+  nelly  Yet another entry point; here we block autoEcho
+
+MultMultMult {-h|--help} or with no args at all prints this message.
+MultMultMult --help-syntax gives general cligen syntax help.
+Run "MultMultMult {help CMD|CMD --help}" to see help for just CMD.
+Run "MultMultMult help" to get *comprehensive* help.
+Top-level --version also available
+
 ==> test/MultiFlag.out <==
 Usage:
   demo [optional-params] [args: string...]
