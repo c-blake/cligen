@@ -417,9 +417,10 @@ Usage:
 
 where {CMD} is one of:
 
-  help     print comprehensive or per-cmd help
-  apple    
-  cobbler  
+  help   print comprehensive or per-cmd help
+  apple  
+  whoa   Another entry point; here we echoResult
+  nelly  Yet another entry point; here we block autoEcho
 
 MultiMulti {-h|--help} or with no args at all prints this message.
 MultiMulti --help-syntax gives general cligen syntax help.
