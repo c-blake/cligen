@@ -29,7 +29,7 @@ when isMainModule:
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
                      mergeNames = @["MultiMulti", "apple", "demo"] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
-                     mergeNames = @["MultiMulti", "apple", "demo"] ])
+                     mergeNames = @["MultiMulti", "apple", "show"] ])
   dispatchMulti([ apple, stopWords = @["demo", "show"] ],
                 [ whoa, echoResult=true ],
                 [ nelly, noAutoEcho=true ])
