@@ -22,12 +22,14 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
   return "42"
 
 when isMainModule:
-  import cligen; include cligen/mergeCfgEnv
+  import cligen
+  include cligen/mergeCfgEnv
   cligenVersion = "0.0.1"
   dispatchMultiGen([ "apple" ],
-                   [ demo, help = { "verb": "on=chatty, off=quiet" } ],
-                   [ show, cmdName="print", short = { "gamma": 'z' } ])
-  dispatchMultiGen([ "cobbler" ],
-                   [ whoa, echoResult=true ],
-                   [ nelly, noAutoEcho=true ])
-  dispatchMulti([ apple ], [ cobbler ])
+                   [ demo, help = { "verb": "on=chatty, off=quiet" },
+                     mergeNames = @["MultiMulti", "apple", "demo"] ],
+                   [ show, cmdName="print", short = { "gamma": 'z' },
+                     mergeNames = @["MultiMulti", "apple", "demo"] ])
+  dispatchMulti([ apple, stopWords = @["demo", "show"] ],
+                [ whoa, echoResult=true ],
+                [ nelly, noAutoEcho=true ])
