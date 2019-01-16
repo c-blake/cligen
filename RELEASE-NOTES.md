@@ -3,6 +3,12 @@ RELEASE NOTES
 
 Version: 0.9.19
 ---------------
+    Get `test/MultiMulti.nim` and even `test/MultMultMult.nim` mostly working.
+    Now you can create dizzyingly deeply nested subcommands (but you will
+    likely need to write your own `parsecfg` and `mergeParams` rather than just
+    using `include cligen/mergeCfgEnv` if you want to use that in a config file
+    as `stdlib.parsecfg` is only one level deep).
+
     The type column for seq[T] in help tables is now the English plural of T
     instead of array(T).  This is both more brief and more human readable.
 
