@@ -748,7 +748,7 @@ proc srcBaseName*(n: NimNode): NimNode =
   let paren = rfind(fileParen, ".nim(") - 1
   newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
 
-proc kwArgPresent(n: NimNode, kwArg: string): bool =
+proc paramPresent(n: NimNode, kwArg: string): bool =
   for k in n:
     if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
       return true
@@ -775,11 +775,11 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdNm = subCmdName(p)
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
-    if not c.kwArgPresent("prelude"):
+    if not c.paramPresent("prelude"):
       c.add(newParam("prelude", newStrLitNode("")))
-    if not c.kwArgPresent("mergeNames"):
+    if not c.paramPresent("mergeNames"):
       c.add(newParam("mergeNames", quote do: @[ `srcBase`, `sCmdNm` ]))
-    if not c.kwArgPresent("docs"):
+    if not c.paramPresent("docs"):
       c.add(newParam("docs", quote do: `subDocsId`.addr))
     result.add(c)
     result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
