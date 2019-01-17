@@ -24,7 +24,8 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
   cligenVersion = "0.0.1"
-  dispatchMulti([ demo, help = { "verb": "on=chatty, off=quiet" } ],
+  dispatchMulti([ "multi", requireSeparator=true ],
+                [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ whoa, echoResult=true ],
                 [ nelly, noAutoEcho=true ] )
