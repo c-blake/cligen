@@ -640,12 +640,12 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     except ParseError: quit(1)
 
 template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped,
-                     usage: untyped, prefix: untyped): auto =
+                     use: untyped, pfx: untyped): auto =
   when compiles(type(p())):
-    try: discard p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
+    try: discard p(dashHelp, subSep=sep, usage=use, prefix=pfx)
     except HelpOnly: discard
   else:
-    try: p(dashHelp, subSep=sep, usage=usage, prefix=prefix)
+    try: p(dashHelp, subSep=sep, usage=use, prefix=pfx)
     except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
@@ -754,6 +754,8 @@ proc paramPresent(n: NimNode, kwArg: string): bool =
       return true
   false
 
+var multiNames*: seq[string]
+
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
   ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
@@ -786,20 +788,22 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
+  let helpSCmdId = ident("helpSCmdId")
   let cmdLineId = ident("cmdLine")
   let usageId = ident("usage")
   let prefixId = ident("prefix")
   var multiDef = newStmtList()
   multiDef.add(quote do:
     import os
+    multiNames.add("dispatch" & `prefix`)
     proc `multiId`(`cmdLineId`: seq[string],
                    `usageId`=dflUsage,
-                   `prefixId`="") =
+                   `prefixId`="  ") =
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = `cmdLineId`.len
       let `arg0Id` = if n > 0: `cmdLineId`[0] else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ])
-  var cases = multiDef[0][1][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
+  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helpDump = newStmtList()
   for cnt, p in procBrackets:
     if p[0].kind == nnkStrLit:
@@ -814,8 +818,11 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, @[`srcBase`])))  #XXX pass mergeNames?
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
-    helpDump.add(quote do: cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`,
-                                      `prefixId`))
+    helpDump.add(quote do:
+      if `disNm` in multiNames:
+        cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `usageId`, `prefixId` & "  ")
+      else:
+        cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
@@ -825,6 +832,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
             "    $1 subcommand [subcommand-opts & args]\n" &
             "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
       let `dashHelpId` = @[ "--help" ]
+      let `helpSCmdId` = @[ "help" ]
       `helpDump`
     else:
       unknownSubcommand(`arg0Id`, `subCmdsId`)))
