@@ -829,8 +829,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in multiNames and `prefix` != "multi":
-        echo ("  $1 $2 subcommand [subcommand-opts & args]\n" &
-              "    where subcommand syntax is:") % [ `srcBase`, `prefix` ]
+        echo ("  $1 $2 subsubcommand [subsubcommand-opts & args]\n" &
+              "    where subsubcommand syntax is:") % [ `srcBase`, `prefix` ]
       else:
         echo ("This is a multiple-dispatch command.  Top-level " &
               "--help/--help-syntax\nis also available.  Usage is like:\n" &
