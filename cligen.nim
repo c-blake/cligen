@@ -839,8 +839,9 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   result.add(newCall("dispatchGen", multiId))
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
-    if procBrackets[0].len > 1:
-      result[^1].add(procBrackets[0][1..^1])
+    let main = procBrackets[0]
+    for e in 1 ..< main.len:
+      result[^1].add(main[e])
   let srcBase = srcBaseName(procBrackets)
   let subCmdsId = ident(prefix & "SubCmds")
   let subDocsId = ident(prefix & "SubDocs")
