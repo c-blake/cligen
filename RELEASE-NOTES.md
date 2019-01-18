@@ -7,7 +7,12 @@ Version: 0.9.19
     Now you can create dizzyingly deeply nested subcommands (but you will
     likely need to write your own `parsecfg` and `mergeParams` rather than just
     using `include cligen/mergeCfgEnv` if you want to use that in a config file
-    as `stdlib.parsecfg` is only one level deep).
+    as `stdlib.parsecfg` is only one level deep). [ As part of this work, add a
+    new string-instead-of symbol first [] parameter entry for `dispatchMulti`
+    like parameter lists to control name of the generated multi dispatcher, and
+    named params after that string are sent to the `dispatchGen` used internally
+    for that dispatcher.  Right now this is a little buggy, but someday it
+    should allow controlling things like cmdName, version, usage, etc. ]
 
     The type column for seq[T] in help tables is now the English plural of T
     instead of array(T).  This is both more brief and more human readable.
