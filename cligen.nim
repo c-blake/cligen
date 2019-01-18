@@ -639,13 +639,13 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
-template cligenHelp*(p: untyped, dashHelp: untyped, sep: untyped,
-                     use: untyped, pfx: untyped): auto =
+template cligenHelp*(p: untyped, hlp: untyped, sep: untyped, use: untyped,
+                     pfx: untyped): auto =
   when compiles(type(p())):
-    try: discard p(dashHelp, subSep=sep, usage=use, prefix=pfx)
+    try: discard p(hlp, subSep=sep, usage=use, prefix=pfx)
     except HelpOnly: discard
   else:
-    try: p(dashHelp, subSep=sep, usage=use, prefix=pfx)
+    try: p(hlp, subSep=sep, usage=use, prefix=pfx)
     except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
