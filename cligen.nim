@@ -821,6 +821,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     helpDump.add(quote do:
       if `disNm` in multiNames:
         cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `usageId`, `prefixId` & "  ")
+        echo ""
       else:
         cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
@@ -829,7 +830,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in multiNames and `prefix` != "multi":
         echo ("  $1 $2 subcommand [subcommand-opts & args]\n" &
-              "    where subcommand syntax is:\n") % [ `srcBase`, `prefix` ]
+              "    where subcommand syntax is:") % [ `srcBase`, `prefix` ]
       else:
         echo ("This is a multiple-dispatch command.  Top-level " &
               "--help/--help-syntax\nis also available.  Usage is like:\n" &
