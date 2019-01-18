@@ -827,10 +827,14 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     if `arg0Id` == "":
       echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
-      echo ("This is a multiple-dispatch command.  Top-level " &
-            "--help/--help-syntax\nis also available.  Usage is like:\n" &
-            "    $1 subcommand [subcommand-opts & args]\n" &
-            "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
+      if ("dispatch" & `prefix`) in multiNames and `prefix` != "multi":
+        echo ("      $1 $2 subcommand [subcommand-opts & args]\n" &
+              "    where subcommand syntax is:\n") % [ `srcBase`, `prefix` ]
+      else:
+        echo ("This is a multiple-dispatch command.  Top-level " &
+              "--help/--help-syntax\nis also available.  Usage is like:\n" &
+              "    $1 subcommand [subcommand-opts & args]\n" &
+              "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
       let `dashHelpId` = @[ "--help" ]
       let `helpSCmdId` = @[ "help" ]
       `helpDump`
