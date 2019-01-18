@@ -245,42 +245,42 @@ is also available.  Usage is like:
     FullyAutoMulti subcommand [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
-demo [optional-params] [files: string...]
-demo entry point with varied, meaningless parameters.
-  Options(opt-arg sep :|=|spc):
-  -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
-  -a=, --alpha=  int     1      set alpha
-  -b=, --beta=   float   2.0    set beta
-  -v, --verb     bool    false  on=chatty, off=quiet
-  -i=, --item=   string  ""     set item
-
-print [optional-params] [paths: string...]
-show entry point with varied, meaningless parameters.
-  Options(opt-arg sep :|=|spc):
-  -h, --help                   print this cligen-erated help
-  --help-syntax                advanced: prepend, multi-val,..
-  -z=, --gamma=  int    1      set gamma
-  -i=, --iota=   float  2.0    set iota
-  -v, --verb     bool   false  set verb
-
-whoa [optional-params] [names: string...]
-Another entry point; here we echoResult
-  Options(opt-arg sep :|=|spc):
-  -h, --help                   print this cligen-erated help
-  --help-syntax                advanced: prepend, multi-val,..
-  -z=, --zeta=   int    1      set zeta
-  -e=, --eta=    float  2.0    set eta
-  -v, --verb     bool   false  set verb
-
-nelly [optional-params] [names: string...]
-Yet another entry point; here we block autoEcho
-  Options(opt-arg sep :|=|spc):
-  -h, --help                  print this cligen-erated help
-  --help-syntax               advanced: prepend, multi-val,..
-  --hooves=      int   4      set hooves
-  -r=, --races=  int   9      set races
-  -v, --verb     bool  false  set verb
+  demo [optional-params] [files: string...]
+    demo entry point with varied, meaningless parameters.
+    Options(opt-arg sep :|=|spc):
+      -h, --help                    print this cligen-erated help
+      --help-syntax                 advanced: prepend, multi-val,..
+      -a=, --alpha=  int     1      set alpha
+      -b=, --beta=   float   2.0    set beta
+      -v, --verb     bool    false  on=chatty, off=quiet
+      -i=, --item=   string  ""     set item
+  
+  print [optional-params] [paths: string...]
+    show entry point with varied, meaningless parameters.
+    Options(opt-arg sep :|=|spc):
+      -h, --help                   print this cligen-erated help
+      --help-syntax                advanced: prepend, multi-val,..
+      -z=, --gamma=  int    1      set gamma
+      -i=, --iota=   float  2.0    set iota
+      -v, --verb     bool   false  set verb
+  
+  whoa [optional-params] [names: string...]
+    Another entry point; here we echoResult
+    Options(opt-arg sep :|=|spc):
+      -h, --help                   print this cligen-erated help
+      --help-syntax                advanced: prepend, multi-val,..
+      -z=, --zeta=   int    1      set zeta
+      -e=, --eta=    float  2.0    set eta
+      -v, --verb     bool   false  set verb
+  
+  nelly [optional-params] [names: string...]
+    Yet another entry point; here we block autoEcho
+    Options(opt-arg sep :|=|spc):
+      -h, --help                  print this cligen-erated help
+      --help-syntax               advanced: prepend, multi-val,..
+      --hooves=      int   4      set hooves
+      -r=, --races=  int   9      set races
+      -v, --verb     bool  false  set verb
 
 ==> test/HashSets.out <==
 Usage:
