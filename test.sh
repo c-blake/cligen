@@ -12,4 +12,4 @@ head -n900 test/*.out | grep -v '^Hint: ' |
      sed -e 's@.*/cligen.nim(@cligen.nim(@' \
          -e 's@.*/cligen/test@cligen/test@' > test/out
 rm -f test/*.out
-diff --ignore-all-space test/ref test/out
+diff test/ref test/out

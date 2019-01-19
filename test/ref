@@ -436,8 +436,8 @@ Usage:
 where {CMD} is one of:
 
   help   print comprehensive or per-cmd help
-  apple  apple sub-sub commands
   whoa   Another entry point; here we echoResult
+  apple  apple sub-sub commands
   nelly  Yet another entry point; here we block autoEcho
 
 MultiMulti {-h|--help} or with no args at all prints this message.
