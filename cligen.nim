@@ -864,6 +864,11 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
     result[^1].add(newParam("version", quote do: ("version", cligenVersion)))
   if not result[^1][0].paramPresent("suppress"):
     result[^1].add(newParam("suppress", quote do: @[ "usage", "prefix" ]))
+  let srcBase = srcBaseName(procBrackets)
+  let subDocsId = ident(prefix & "SubDocs")
+  if not result[^1][0].paramPresent("usage"):
+    result[^1].add(newParam("usage", quote do:
+      "${prelude}" & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)))
   when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
