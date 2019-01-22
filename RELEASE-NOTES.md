@@ -47,8 +47,8 @@ Version: 0.9.19
 
 Version: 0.9.18
 ---------------
-    This release adds several major features..Krux02 asked for (approximately)
-    mergeParams, alaviss asked for qualified proc name support, and Timotheecour
+    This release adds some major features. ArneTheDuck asked for (approximately)
+    mergeParams, alaviss asked for qualified proc name support, and TimotheeCour
     requested non-quitting invocation & something like setByParse and the new
     aggregate parsing and pointed out other bugs/helped implement some things.
 
