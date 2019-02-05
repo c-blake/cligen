@@ -55,8 +55,9 @@ proc foobar(myMandatory: float, mynums: seq[int], foo=1, verb=false): int =
 when isMainModule:  # Preserve ability to `import api` & call from Nim
   import cligen; dispatch(foobar)
 ```
-the command-line user will have to enter `--myMandatory=2.0` somewhere, and
-any non-option arguments will have to be parsable as `int`.
+the command-line user must give `--myMandatory=something` somewhere.  Non-option
+arguments must be parsable as `int` with whitespace stripped, e.g.
+`./foobar --myMandatory=2.0 1 2 " -3"`.
 
 ---
 
