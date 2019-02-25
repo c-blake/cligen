@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets, cligen/textUt, parseopt3
+import strformat, sets, ./textUt, parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  # needed for $T
