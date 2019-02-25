@@ -1,4 +1,4 @@
-import macros, tables, cligen/parseopt3, strutils, os
+import macros, tables, ./cligen/parseopt3, strutils, os
 type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
@@ -207,7 +207,7 @@ proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
   for i, e in x:
     if e.status in stati: return i
 
-include cligen/syntaxHelp
+include ./cligen/syntaxHelp
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  help: typed = {}, short: typed = {}, usage: string=dflUsage,
@@ -570,9 +570,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   result = quote do:
     if cast[pointer](`docs`) != nil: `docsStmt`
     from os               import commandLineParams
-    from cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
-    from cligen/textUt    import addPrefix,wrap,TextTab, alignTable, suggestions
-    from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
+    from ./cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
+    from ./cligen/textUt    import addPrefix,wrap,TextTab, alignTable, suggestions
+    from ./cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
                                  cmdShortOption, optionNormalize
     import tables, strutils # import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
