@@ -374,7 +374,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       var `mandInFId` = true
       var `tabId`: TextTab =
         @[ @[ "-"&shortH&", --help", "", "", "print this cligen-erated help" ],
-           @[ "--help-syntax", "", "", "advanced: prepend, multi-val,.." ] ]
+           @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParseP`)
