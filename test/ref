@@ -4,7 +4,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                           print this cligen-erated help
-  --help-syntax                        advanced: prepend, multi-val,..
+  --help-syntax                        advanced: prepend,plurals,..
   -b=, --bl=     bools     {}          append 1 val to bl
   -B=, --Bl=     bools     false,true  append 1 val to Bl
   -s=, --s=      strings   {}          append 1 val to s
@@ -40,7 +40,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                  print this cligen-erated help
-  --help-syntax                               advanced: prepend, multi-val,..
+  --help-syntax                               advanced: prepend,plurals,..
   -b=, --bl=     set(bool)    {}              include 1 val in bl
   -B=, --Bl=     set(bool)    false,true      include 1 val in Bl
   -i=, --i1=     set(int8)    {}              include 1 val in i1
@@ -60,7 +60,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -?, --help                     print this cligen-erated help
-  --help-syntax                  advanced: prepend, multi-val,..
+  --help-syntax                  advanced: prepend,plurals,..
   -a, --aa       bool     false  set aa
   -b=, --bb=     string   "hi"   set bb
   -c=, --cc=     string   "ho"   set cc
@@ -87,7 +87,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   --alpha=       int     1      set alpha
   --abc=         float   2.0    set abc
   -a, --aaah     bool    false  set aaah
@@ -104,7 +104,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -118,7 +118,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int   1        set alpha
   -v, --verb     bool  false    set verb
   -s=, --stuff=  CSV   "ab,cd"  append 1 val to stuff
@@ -128,7 +128,7 @@ Usage:
   foo [optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help             print this cligen-erated help
-  --help-syntax          advanced: prepend, multi-val,..
+  --help-syntax          advanced: prepend,plurals,..
   -a=, --alpha=  int  1  set alpha
   -b=, --beta=   int  2  set beta
 
@@ -137,7 +137,7 @@ Usage:
   main [required&optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --age=    int  REQUIRED  set age
 
 ==> test/DupShort.out <==
@@ -148,7 +148,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -z=, --alpha=  int     1      set alpha
   -a=, --abc=    float   2.0    set abc
   --aaah         bool    false  set aaah
@@ -162,7 +162,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -175,7 +175,7 @@ Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
 distance algorithm with only a linear memory overhead.
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
-  --help-syntax                    advanced: prepend, multi-val,..
+  --help-syntax                    advanced: prepend,plurals,..
   -a=, --a=      string  REQUIRED  set a
   -b=, --b=      string  REQUIRED  set b
 
@@ -185,7 +185,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                           print this cligen-erated help
-  --help-syntax                        advanced: prepend, multi-val,..
+  --help-syntax                        advanced: prepend,plurals,..
   -c=, --c=      Color       REQUIRED  primary color
   -b=, --bg=     Color       red       background color
   -f=, --fg=     Colors      green     foreround colors
@@ -200,7 +200,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -214,7 +214,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                     print this cligen-erated help
-  --help-syntax                  advanced: prepend, multi-val,..
+  --help-syntax                  advanced: prepend,plurals,..
   -a=, --alpha=  int      1      set alpha
   -v=, --verb=   countr   0      set verb
   -j=, --junk=   strings  rs,tu  append 1 val to junk
@@ -249,7 +249,7 @@ where subcommand syntaxes are as follows:
     demo entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
       -h, --help                    print this cligen-erated help
-      --help-syntax                 advanced: prepend, multi-val,..
+      --help-syntax                 advanced: prepend,plurals,..
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
       -v, --verb     bool    false  on=chatty, off=quiet
@@ -259,7 +259,7 @@ where subcommand syntaxes are as follows:
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
       -h, --help                   print this cligen-erated help
-      --help-syntax                advanced: prepend, multi-val,..
+      --help-syntax                advanced: prepend,plurals,..
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
@@ -268,7 +268,7 @@ where subcommand syntaxes are as follows:
     Another entry point; here we echoResult
     Options(opt-arg sep :|=|spc):
       -h, --help                   print this cligen-erated help
-      --help-syntax                advanced: prepend, multi-val,..
+      --help-syntax                advanced: prepend,plurals,..
       -z=, --zeta=   int    1      set zeta
       -e=, --eta=    float  2.0    set eta
       -v, --verb     bool   false  set verb
@@ -277,7 +277,7 @@ where subcommand syntaxes are as follows:
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
       -h, --help                  print this cligen-erated help
-      --help-syntax               advanced: prepend, multi-val,..
+      --help-syntax               advanced: prepend,plurals,..
       --hooves=      int   4      set hooves
       -r=, --races=  int   9      set races
       -v, --verb     bool  false  set verb
@@ -288,7 +288,7 @@ Usage:
 demo entry point with parameters of all basic types.
   Options(opt-arg sep :|=|spc):
   -h, --help                                print this cligen-erated help
-  --help-syntax                             advanced: prepend, multi-val,..
+  --help-syntax                             advanced: prepend,plurals,..
   -i=, --i1=     hashset(int8)    {}        include 1 val in i1
   -I=, --I1=     hashset(int8)    2,3       include 1 val in I1
   --i2=          hashset(int16)   {}        include 1 val in i2
@@ -307,12 +307,12 @@ demo entry point with varied, meaningless parameters.  A Nim invocation might
 be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
-  -h, --help     print this cligen-erated help    
-  --help-syntax  advanced: prepend, multi-val,..  
-  -z=, --alpha=  growth constant                  1
-  -b=, --beta=   shrink target                    2.0
-  -v, --verb     set verb                         false
-  -i=, --item=   set item                         ""
+  -h, --help     print this cligen-erated help  
+  --help-syntax  advanced: prepend,plurals,..   
+  -z=, --alpha=  growth constant                1
+  -b=, --beta=   shrink target                  2.0
+  -v, --verb     set verb                       false
+  -i=, --item=   set item                       ""
 
 ==> test/ImplicitDefault.out <==
 Usage:
@@ -322,7 +322,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
-  --help-syntax                    advanced: prepend, multi-val,..
+  --help-syntax                    advanced: prepend,plurals,..
   -a=, --alpha=  int     REQUIRED  set alpha
   -b, --bypass   bool    false     set bypass
   -i=, --item=   string  ""        set item
@@ -333,7 +333,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                      print this cligen-erated help
-  --help-syntax                   advanced: prepend, multi-val,..
+  --help-syntax                   advanced: prepend,plurals,..
   -a=, --alpha=  float  REQUIRED  set alpha
   -b=, --beta=   float  1.0       set beta
   -v, --verb     bool   false     set verb
@@ -346,7 +346,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
-  --help-syntax                    advanced: prepend, multi-val,..
+  --help-syntax                    advanced: prepend,plurals,..
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -360,7 +360,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
-  --help-syntax                    advanced: prepend, multi-val,..
+  --help-syntax                    advanced: prepend,plurals,..
   -a=, --alpha=  int     REQUIRED  set alpha
   -b=, --beta=   float   2.0       set beta
   -v, --verb     bool    false     set verb
@@ -377,7 +377,7 @@ Usage:
     
     Options:
           -h, --help                    print this cligen-erated help
-          --help-syntax                 advanced: prepend, multi-val,..
+          --help-syntax                 advanced: prepend,plurals,..
           -a=, --alpha=  int     1      This is a very long parameter help
                                         string which ordinarily should be
                                         auto-wrapped by alignTable into a
@@ -394,7 +394,7 @@ Usage:
     
     Options:
           -h, --help                   print this cligen-erated help
-          --help-syntax                advanced: prepend, multi-val,..
+          --help-syntax                advanced: prepend,plurals,..
           -g=, --gamma=  int    1      set gamma
           -i=, --iota=   float  2.0    set iota
           -v, --verb     bool   false  set verb
@@ -423,7 +423,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                  print this cligen-erated help
-  --help-syntax               advanced: prepend, multi-val,..
+  --help-syntax               advanced: prepend,plurals,..
   -a, --alpha    bool  true   set alpha
   -b=, --beta=   int   2      set beta
   -v, --verb     bool  false  set verb
@@ -454,7 +454,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -468,7 +468,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   --alpha=       int     1      set alpha
   --abc=         float   2.0    set abc
   --aaah         bool    false  set aaah
@@ -480,14 +480,14 @@ Usage:
 This tests if single character parameters work as expected
   Options(opt-arg sep :|=|spc):
   -h, --help                         print this cligen-erated help
-  --help-syntax                      advanced: prepend, multi-val,..
+  --help-syntax                      advanced: prepend,plurals,..
   -u=, --u=      int     1           set u
   -c=, --c=      string  "bad name"  set c
   -g=, --g=      string  "ho"        set g
 
 ==> test/ParseOnly.out <==
 fooParse:
-  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend, multi-val,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\n  Options(opt-arg sep :|=|spc):\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
   (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
 would not have called foo
 User requested help.  Here you go
@@ -495,7 +495,7 @@ Usage:
   foo [required&optional-params] [rest: int...]
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int  REQUIRED  set alpha
   -b=, --beta=   int  2         set beta
 
@@ -508,7 +508,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -z=, --alpha=  int     1      growth constant
   -b=, --beta=   float   2.0    shrink target
   -v, --verb     bool    false  set verb
@@ -535,7 +535,7 @@ Usage:
   get [optional-params] 
   Options(opt-arg sep :|=|spc):
   -h, --help             print this cligen-erated help
-  --help-syntax          advanced: prepend, multi-val,..
+  --help-syntax          advanced: prepend,plurals,..
   -a=, --a=      int  1  set a
 
 ==> test/ResultInt.out <==
@@ -545,7 +545,7 @@ Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
 distance algorithm with only a linear memory overhead.
   Options(opt-arg sep :|=|spc):
   -h, --help                       print this cligen-erated help
-  --help-syntax                    advanced: prepend, multi-val,..
+  --help-syntax                    advanced: prepend,plurals,..
   --version      bool    false     print version
   -a=, --a=      string  REQUIRED  set a
   -b=, --b=      string  REQUIRED  set b
@@ -558,7 +558,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -572,7 +572,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -586,7 +586,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -600,7 +600,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -614,7 +614,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   float   2.0    set beta
   -v, --verb     bool    false  set verb
@@ -626,7 +626,7 @@ Usage:
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
   -h, --help         print this cligen-erated help
-  --help-syntax      advanced: prepend, multi-val,..
+  --help-syntax      advanced: prepend,plurals,..
 
 ==> test/SemiMultMult.out <==
 Usage:
@@ -634,7 +634,7 @@ Usage:
 Run command with no parameters for a full help message.
   Options(opt-arg sep :|=|spc):
   -h, --help         print this cligen-erated help
-  --help-syntax      advanced: prepend, multi-val,..
+  --help-syntax      advanced: prepend,plurals,..
 
 ==> test/SeqInt.out <==
 Usage:
@@ -644,7 +644,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 3 4" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
   -b=, --beta=   char    '\10'  set beta
   -v, --verb     bool    false  set verb
@@ -658,7 +658,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                 print this cligen-erated help
-  --help-syntax              advanced: prepend, multi-val,..
+  --help-syntax              advanced: prepend,plurals,..
   -a=, --alpha=  int    1    growth constant
   -b=, --beta=   float  2.0  shrink target
 
@@ -671,7 +671,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                        print this cligen-erated help
-  --help-syntax                     advanced: prepend, multi-val,..
+  --help-syntax                     advanced: prepend,plurals,..
   -a=, --alpha=  int      1         set alpha
   -v, --verb     bool     false     set verb
   -s=, --stuff=  strings  REQUIRED  append 1 val to stuff
@@ -682,7 +682,7 @@ Usage:
 demo entry point with varied, meaningless parameters.
   Options(opt-arg sep :|=|spc):
   -h, --help                        print this cligen-erated help
-  --help-syntax                     advanced: prepend, multi-val,..
+  --help-syntax                     advanced: prepend,plurals,..
   -a=, --alpha=  int      1         set alpha
   -v, --verb     bool     false     set verb
   --args=        strings  REQUIRED  append 1 val to args
@@ -694,7 +694,7 @@ This tests if things work when a wrapped user-proc uses identifiers also used in
 our generated dispatch proc.
   Options(opt-arg sep :|=|spc):
   -h, --help                           print this cligen-erated help
-  --help-syntax                        advanced: prepend, multi-val,..
+  --help-syntax                        advanced: prepend,plurals,..
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
   -g=, --getopt=   string  "ho"        set getopt
@@ -707,7 +707,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   --version      bool    false  print version
   -a=, --alpha=  int     1      set alpha
   -i=, --item=   string  "hi"   set item
