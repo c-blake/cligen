@@ -562,9 +562,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let mrgNames = if mergeNames[1].len == 0:   #@[] => Prefix[OpenSym,Bracket]
                    quote do: @[ `cName` ]
                  else: mergeNames
-  let docsVar = if docs.kind == nnkAddr: docs[0]
+  let docsVar = if   docs.kind == nnkAddr: docs[0]
+                elif docs.kind == nnkCall: docs[1]
                 else: newNimNode(nnkEmpty)
-  let docsStmt = if docs.kind == nnkAddr:
+  let docsStmt = if docs.kind == nnkAddr or docs.kind == nnkCall:
                    quote do: `docsVar`.add(`cmtDoc`)
                  else: newNimNode(nnkEmpty)
   result = quote do:
