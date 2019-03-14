@@ -5,7 +5,8 @@
 import strformat, sets, textUt, parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
-from typetraits import `$`  # needed for $T
+when NimVersion < "0.19.2":
+  from typetraits import `$`  # needed for $T before 0.19.2 when system got it
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
