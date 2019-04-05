@@ -24,12 +24,14 @@ just like "--foo,= --foo=/V1/V2".
 
 Cheat sheet:
   * "--foo=val" is same as "--foo:val" and "--foo val"
-  * likewise with -f instead of --foo; in addition -fval is also possible
+  * Likewise with -f instead of --foo; in addition -fval is also possible
+  * Long option & enum names are "CLI-style-insensitive", meaning that only the
+    case of the first letter matters otherwise; --foo is the same as --f_O-o
 
   * "bool" values for flags "foo", "bar" with short options 'f', 'b':
     default value false: -f | --foo sets the flag to true
     default value true: -b | --bar sets the flag to false
-    "-f=true" or "-b=true" always sets either to true (likewise for "false").
+    "-f=true" or "-b=true" always sets either to true (likewise for "false")
     Multiple bool flags can combine: "-bf" means "-b -f"
     "on",  "yes", "t", "y", and "1" are all synonyms for "true"
     "off", "no",  "f", "n", and "0" are all synonyms for "false"
