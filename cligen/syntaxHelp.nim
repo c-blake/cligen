@@ -39,12 +39,10 @@ well as the usual append ("+=", "=", or repetition, as in "cc -Ipath1 -Ipath2").
 
 Plural types also support a ','-prefixed family of Delimiter-Prefixed Separated
 Value (DPSV) operators that allow passing MULTIPLE SLOTS to the above operators
-in ONE COMMAND PARAMETER.  DPSV is like typical regex substitution syntax (eg.,
-"/old/new" or "%search%replace") where the first character of a value indicates
-the delimiter for the rest.  Delimiting is strict (a trailing delimiter means
-an empty slot).  No delimiter ("--foo,=") sets any plural to its empty version.
-",@=" works like a set empty followed by an append.  I.e., "--foo,@=/V1/V2" is
-just like "--foo,= --foo=/V1/V2".
+in ONE COMMAND PARAMETER.  DPSV is like regex substitution (eg., "/old/new" or
+"%search%replace") where the first character says how to delimit the rest.
+Delimiting is strict (a trailing delimiter means an empty slot).  No delimiter
+("--foo,=") sets to empty while ",@=" works like set-empty followed by append.
  * Example multi-value updates for strings option "foo" defaulting to "A,B":
    --foo,=       => {}       ; clears
    --foo,=,C,D   => A,B,C,D  ; append multi
