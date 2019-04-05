@@ -6,7 +6,7 @@ programming knowledge in general to assume on the part of a CLI user.
 ]#
 
 const syntaxHelp = """
-Basic Cheat Sheet:
+BASIC CHEAT SHEET:
  * "--foo=val" is same as "--foo:val" and "--foo val".
  * Likewise with -f instead of --foo; in addition -fval is also possible.
  * Long option & enum names are "CLI-style-insensitive", meaning that only the
@@ -38,15 +38,14 @@ well as the usual append ("+=", "=", or repetition, as in "cc -Ipath1 -Ipath2").
    --foo^=val    => valbar   ; prepends to the string
 
 Plural types also support a ','-prefixed family of Delimiter-Prefixed Separated
-Value (DPSV) operators that allow passing MULTIPLE slots to the above operators
-in ONE command parameter.  DPSV is like typical regex substitution syntax (eg.,
+Value (DPSV) operators that allow passing MULTIPLE SLOTS to the above operators
+in ONE COMMAND PARAMETER.  DPSV is like typical regex substitution syntax (eg.,
 "/old/new" or "%search%replace") where the first character of a value indicates
 the delimiter for the rest.  Delimiting is strict (a trailing delimiter means
 an empty slot).  No delimiter ("--foo,=") sets any plural to its empty version.
 ",@=" works like a set empty followed by an append.  I.e., "--foo,@=/V1/V2" is
 just like "--foo,= --foo=/V1/V2".
-
- * Example multi-value updates for option "foo" defaulting to "A,B":
+ * Example multi-value updates for strings option "foo" defaulting to "A,B":
    --foo,=       => {}       ; clears
    --foo,=,C,D   => A,B,C,D  ; append multi
    --foo,=/C/    => A,B,C,"" ; ditto (note trailing delimiter effect)
