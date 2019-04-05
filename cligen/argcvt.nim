@@ -115,7 +115,7 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   if valNorm.len > 0:
     for e in low(T)..high(T):
       allCanon.add($e)
-      allNorm.add(allCanon[^1])
+      allNorm.add(optionNormalize(allCanon[^1]))
       if valNorm == allNorm[^1]:
         dst = e
         found = true
