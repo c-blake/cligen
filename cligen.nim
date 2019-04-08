@@ -412,7 +412,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         result.add(quote do:
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
-         `tabId`.add(argHelp(`defVal`, `apId`) & descr); `allId`.add(`parNm`) )
+         `tabId`.add(argHelp(`defVal`, `apId`) & descr)
+         `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
@@ -506,7 +507,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       if `pId`.kind == cmdLongOption:
         k = "long"
         var idNorm: seq[string]
-        for id in allParams: idNorm.add(optionNormalize(id))  #Use `normalize`?
+        for id in allParams: idNorm.add(optionNormalize(id))
         let sugg = suggestions(optionNormalize(`pId`.key), idNorm, allParams)
         if sugg.len > 0:
           mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
@@ -570,12 +571,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                  else: newNimNode(nnkEmpty)
   result = quote do:
     if cast[pointer](`docs`) != nil: `docsStmt`
-    from os               import commandLineParams
-    from cligen/argcvt    import ArgcvtParams, argParse, argHelp, getDescription
-    from cligen/textUt    import addPrefix,wrap,TextTab, alignTable, suggestions
-    from cligen/parseopt3 import initOptParser, next, cmdEnd, cmdLongOption,
-                                 cmdShortOption, optionNormalize
-    import tables, strutils # import join, `%`
+    import os               #commandLineParams
+    import cligen/argcvt    #ArgcvtParams arg(Parse|Help) getDescrip helpCase
+    import cligen/textUt    #addPrefix wrap TextTab alignTable suggestions
+    import cligen/parseopt3 #initOptParser next cmd* optionNormalize
+    import tables, strutils #import join, `%`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`="", parseOnly=false): `retType` =

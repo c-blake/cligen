@@ -6,6 +6,7 @@ import strformat, sets, textUt, parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
+include helpCase
 
 proc nimEscape*(s: string): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -58,7 +59,9 @@ type ArgcvtParams* = object ## \
 
 proc argKeys*(a: ArgcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
-  result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh, a.parNm, argSep ]
+  result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh,
+                                                   helpCase(a.parNm, clLongOpt),
+                                                   argSep ]
            else              : "--" & a.parNm & argSep
 
 proc argDf*(a: ArgcvtParams, dv: string): string =
