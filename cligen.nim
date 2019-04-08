@@ -804,7 +804,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       let n = `cmdLineId`.len
       let `arg0Id` = if n > 0: `cmdLineId`[0] else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ])
-  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
+  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(newCall("optionNormalize", arg0Id)))
   var helpDump = newStmtList()
   for cnt, p in procBrackets:
     if p[0].kind == nnkStrLit:
@@ -888,7 +888,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
-    if ps.len>0 and (ps[0].len>0 and ps[0][0]!='-') and ps[0] notin `subCmdsId`:
+    if ps.len>0 and (ps[0].len>0 and ps[0][0]!='-') and optionNormalize(ps[0]) notin `subCmdsId`:
       unknownSubcommand(ps[0], `subCmdsId`)
     elif ps.len == 2 and ps[0] == "help":
       if ps[1] in `subCmdsId`: cligenQuit(`SubsDispId`(@[ ps[1], "--help" ]))

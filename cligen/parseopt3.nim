@@ -249,6 +249,7 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ##       case optionNormalize(key)
   ##       of "myoptkey", "m": doSomething()
   result = newString(s.len)
+  if s.len == 0: return
   var wordSeps: set[char]   # compile a set[char] from ``wordSeparators``
   for c in wordSeparators:
     wordSeps.incl(c)
