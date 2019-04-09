@@ -16,7 +16,7 @@ proc nimEscape*(s: string): string =
   result.add('"')
 
 proc unescape*(s: string): string =
-  ## Only handles \XX hex and ASCII right now
+  ## Only handles \xDD hex and ASCII right now
   let hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                     'a', 'b', 'c', 'd', 'e', 'f'}
   proc toHexDig(c: char): int =
@@ -29,7 +29,7 @@ proc unescape*(s: string): string =
       if i + 3 >= s.len:
         raise newException(ValueError, "Incomplete 4-byte hex constant")
       if s[i+1].toLowerAscii != 'x':
-        raise newException(ValueError, "hex constant not of form \xDD")
+        raise newException(ValueError, "hex constant not of form \\xDD")
       let dhi = toLowerAscii(s[i+2])
       let dlo = toLowerAscii(s[i+3])
       if dhi notin hexdigits or dlo notin hexdigits:
