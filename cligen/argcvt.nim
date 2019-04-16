@@ -16,7 +16,7 @@ proc nimEscape*(s: string): string =
   result.add('"')
 
 proc unescape*(s: string): string =
-  ## Only handles \xDD hex and ASCII right now
+  ## Handles 1-byte octal, \[abtnvfre], and \xDD hex escapes
   let hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                     'a', 'b', 'c', 'd', 'e', 'f'}
   proc toHexDig(c: char): int =
@@ -24,18 +24,31 @@ proc unescape*(s: string): string =
   result = newStringOfCap(s.len)
   var i = 0
   while i < s.len:
-    case s[i]:
+    case s[i]
     of '\\':
-      if i + 3 >= s.len:
-        raise newException(ValueError, "Incomplete 4-byte hex constant")
-      if s[i+1].toLowerAscii != 'x':
-        raise newException(ValueError, "hex constant not of form \\xDD")
-      let dhi = toLowerAscii(s[i+2])
-      let dlo = toLowerAscii(s[i+3])
-      if dhi notin hexdigits or dlo notin hexdigits:
-        raise newException(ValueError, "non-hexadecimal constant: " & s[i..i+3])
-      result.add(char(toHexDig(dhi)*16 + toHexDig(dlo)))
-      inc(i, 4)
+      if i + 1 >= s.len:
+        raise newException(ValueError, "incomplete escaped char")
+      case s[i+1]
+      of '0' .. '7': result.add(chr(ord(s[i+1]) - ord('0'))); inc(i, 2)
+      of 'a': result.add(chr(0x07)); inc(i, 2)       #bell
+      of 'b': result.add(chr(0x08)); inc(i, 2)       #backspace
+      of 't': result.add(chr(0x09)); inc(i, 2)       #horizontal tab
+      of 'n': result.add(chr(0x0A)); inc(i, 2)       #new line
+      of 'v': result.add(chr(0x0B)); inc(i, 2)       #vertical tab
+      of 'f': result.add(chr(0x0C)); inc(i, 2)       #form feed
+      of 'r': result.add(chr(0x0D)); inc(i, 2)       #carriage ret
+      of 'e': result.add(chr(0x1B)); inc(i, 2)       #escape
+      else:
+        if i + 3 >= s.len:
+          raise newException(ValueError, "incomplete 2-nibble hex escape")
+        if s[i+1].toLowerAscii != 'x':
+          raise newException(ValueError, "hex escape not of form \\xDD")
+        let dhi = toLowerAscii(s[i+2])
+        let dlo = toLowerAscii(s[i+3])
+        if dhi notin hexdigits or dlo notin hexdigits:
+          raise newException(ValueError, "non-hex escape: " & s[i..i+3])
+        result.add(char(toHexDig(dhi)*16 + toHexDig(dlo)))
+        inc(i, 4)
     else:
       result.add(s[i])
       inc(i, 1)
@@ -176,7 +189,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 ## such (``set[T]``, ``HashSet[T]``, ..) with a full complement of operations:
 ## prepend (``^=``), subtract/delete (``-=``), as well as the usual append
 ## (``+=`` or just ``=|nothing`` as is customary, e.g. ``cc -Ipath1 -Ipath2``).
-## 
+##
 ## ``string`` is treated more as a scalar variable by ``cligen`` in that an
 ## unqualified ``[:=<SPACE>]`` does an overwriting/clobbering assignment rather
 ## than adding to the end of the string, but ``+=`` effects the append if
