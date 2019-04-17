@@ -302,6 +302,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
   let impl = pro.symbol.getImpl
+  if impl == nil: error "getImpl(" & $pro & ") returned nil."
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
