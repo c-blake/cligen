@@ -75,7 +75,7 @@ proc argKeys*(a: ArgcvtParams, argSep="="): string =
   result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh,
                                                    helpCase(a.parNm, clLongOpt),
                                                    argSep ]
-           else              : "--" & a.parNm & argSep
+           else              : "--" & helpCase(a.parNm, clLongOpt) & argSep
 
 proc argDf*(a: ArgcvtParams, dv: string): string =
   ## argDf is an argHelp space-saving utility proc to decide default column.
