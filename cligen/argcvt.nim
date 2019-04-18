@@ -8,12 +8,12 @@ from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
 include helpCase
 
-proc nimEscape*(s: string): string =
+proc nimEscape*(s: string, quote='"'): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
   result = newStringOfCap(s.len + 2 + s.len shr 2)
-  result.add('"')
+  result.add(quote)
   for c in s: result.addEscapedChar(c)
-  result.add('"')
+  result.add(quote)
 
 proc unescape*(s: string): string =
   ## Handles 1-byte octal, \[abtnvfre], and \xDD hex escapes
@@ -120,7 +120,7 @@ proc argParse*(dst: var char, dfl: char, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "char", a.argDf(repr(dfl)) ]
+  result = @[ a.argKeys, "char", a.argDf(nimEscape($dfl, quote='\'')) ]
 
 # enums
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
