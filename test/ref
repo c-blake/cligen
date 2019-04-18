@@ -510,7 +510,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   -h, --help                     print this cligen-erated help
   --help-syntax                  advanced: prepend,plurals,..
   -z=, --al-pha=  int     1      growth constant
-  -b=, --be-ta=   float   2.0    shrink target
+  --be-ta=        float   2.0    shrink target
   -v, --verb      bool    false  set verb
   -i=, --item=    string  ""     set item
 

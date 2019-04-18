@@ -10,4 +10,5 @@ when isMainModule:
   dispatch(demo,
            help = { "al_pha" : "growth constant",
                     "be_ta"  : "shrink target" },
-           short = { "al_pha" : 'z' })
+           short = { "al_pha" : 'z',
+                     "be_ta" : '\0' })
