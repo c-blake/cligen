@@ -646,7 +646,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
   -a=, --alpha=  int     1      set alpha
-  -b=, --beta=   char    '\10'  set beta
+  -b=, --beta=   char    '\n'   set beta
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 
