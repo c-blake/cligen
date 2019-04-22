@@ -182,6 +182,10 @@ type
                    message: string,     ## default error message
                    status: ClStatus]    ## Parse status for param
 
+  ClHelpContext* = enum clLongOpt,      ## a long option identifier
+                        clSubCmd,       ## a sub-command name identifier
+                        clEnumVal       ## an enum value name identifier
+
 const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
 const ClExit*   = { clHelpOnly, clVersionOnly }
 const ClNoCall* = ClErrors + ClExit
@@ -383,6 +387,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       result.add(quote do:
        var versionDflt = false
        `apId`.parNm = `vsnOpt`; `apId`.parSh = `vsnSh`; `apId`.parReq = 0
+       `apId`.parRend = `vsnOpt`
        `tabId`.add(argHelp(versionDflt, `apId`) & "print version"))
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
@@ -412,6 +417,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
+         `apId`.parRend = helpCase(`parNm`, clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          `allId`.add(helpCase(`parNm`, clLongOpt)))
@@ -482,6 +488,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.val = `pId`.val
         `apId`.sep = `pId`.sep
         `apId`.parNm = `parNm`
+        `apId`.parRend = helpCase(`parNm`, clLongOpt)
         `keyCountId`.inc(`parNm`)
         `apId`.parCount = `keyCountId`[`parNm`]
         if cast[pointer](`setByParseId`) != nil:
@@ -536,6 +543,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.val = `pId`.key
         `apId`.sep = "="
         `apId`.parNm = `apId`.key
+        `apId`.parRend = helpCase(`apId`.key, clLongOpt)
         `apId`.parCount = 1
         let msg = "Cannot parse " & `apId`.key
         if cast[pointer](`setByParseId`) != nil:
@@ -906,3 +914,9 @@ proc mergeParams*(cmdNames: seq[string],
   ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti
   ##``context it is ``@[ <mainCommand>, <subCommand> ]``.
   cmdLine
+
+proc helpCase*(inp: string, context = clSubCmd): string =
+  ##This is a string-to-string transformer hook to convert whatever the native
+  ##Nim code identifier casing is into a string for presentation to CLI users
+  ##in help messages/errors.  By default it converts snake_case to kebab-case.
+  result = inp.replace('_', '-')
