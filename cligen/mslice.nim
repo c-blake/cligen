@@ -102,10 +102,6 @@ proc msplit*(mslc: MSlice, fs: var seq[MSlice], sep=' ', eat='\0') =
     inc(n)
   fs.setLen(n)
 
-#proc msplit*(ms: MSlice, sep=' ', eat='\0'): seq[MSlice] {.inline.} =
-#  ## Like ``msplit(MSlice, var seq[MSlice])``, but return the ``seq``.
-#  msplit(ms, result, sep)
-
 const wspace* = {' ', '\t', '\v', '\r', '\l', '\f'}  ## == strutils.Whitespace
 
 proc charEq(x, c: char): bool {.inline.} = x == c
@@ -157,7 +153,7 @@ proc msplit*(s: MSlice, n=0, seps=wspace, repeat=true): seq[MSlice] {.inline.} =
   discard msplit(s, result, seps, n, repeat)
 
 proc msplit*(s: string, fs: var seq[MSlice], sep=' ', n=0, repeat=false):int=
-  ## msplit w/reused ``fs[]`` & bounded cols ``n``. ``fs.setLen(msplit())``.
+  ## msplit w/reused ``fs[]`` & bounded cols ``n``. ``discard msplit(..)``.
   defSplit(s, fs, n, repeat, sep, cmemchr, charEq)
 
 proc msplit*(s: string, sep: char, n=0, repeat=false): seq[MSlice] {.inline.} =
