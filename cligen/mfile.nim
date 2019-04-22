@@ -154,14 +154,15 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
-iterator mSlices*(path: string, sep='\l', eat='\r'): MSlice {.inline.} =
+iterator mSlices*(path: string, sep='\l', eat='\r', keep=false): MSlice {.inline.} =
   ## A convenient input iterator that ``mopen()``s path or if that fails falls
-  ## back to ordinary file IO but constructs ``MSlice`` from lines.
+  ## back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
+  ## means backing MFile is kept open for remaining life of program.
   let mf = mopen(path)
   if mf.mem != nil:
     for ms in mSlices(mf.toMSlice, sep, eat):
       yield ms
-    mf.close()
+    if not keep: mf.close()
   else:
     let f = open(path)
     for s in lines(f):
