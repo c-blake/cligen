@@ -98,3 +98,24 @@ proc suggestions*[T](wrong: string; match, right: openArray[T],
         result.add(right[i])
     if result.len >= enoughResults:
       break
+
+proc printedLen*(a: string): int {.inline.} =
+  ## compute width when printed on a terminal; Currently this just elides
+  ## the ANSI style sequences "\e[[^m]*m"
+  result = 0
+  var i = 0
+  let n = a.len                         # memchr('\e') and memchr('m')?
+  while i < n:
+    if a[i] == '\x1b' and i + 1 < n and a[i + 1] == '[':
+      let j = i
+      inc(i)
+      while i < n:
+        inc(i)
+        if a[i] == 'm':
+          break
+      if a[i] != 'm':                   # unterminated escape sequence
+        result += i - j                 #? +1 if ^[ printed, -1 for \e ignored
+        break
+    else:
+      inc(result)
+    inc(i)
