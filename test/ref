@@ -187,7 +187,7 @@ demo entry point with varied, meaningless parameters.
   -h, --help                           print this cligen-erated help
   --help-syntax                        advanced: prepend,plurals,..
   -c=, --c=      Color       REQUIRED  primary color
-  -b=, --bg=     Color       red       background color
+  -b=, --bg=     Color       re-d      background color
   -f=, --fg=     Colors      green     foreround colors
   --curs=        set(Color)  blue      cursor colors
   -x=, --x=      int         0         set x

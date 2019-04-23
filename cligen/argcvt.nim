@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets, textUt, parseopt3
+import strformat, sets, textUt, parseopt3, cligen
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
@@ -125,10 +125,10 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   var found = false
   let valNorm = optionNormalize(a.val)      #Normalized strings
   var allNorm: seq[string]
-  var allCanon: seq[string]                 #Canonical string
+  var allCanon: seq[string]                 #Canonical/helpCased string
   if valNorm.len > 0:
     for e in low(T)..high(T):
-      allCanon.add($e)
+      allCanon.add(helpCase($e, clEnumVal))
       allNorm.add(optionNormalize(allCanon[^1]))
       if valNorm == allNorm[^1]:
         dst = e
@@ -144,7 +144,7 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, $T, a.argDf($dfl) ]
+  result = @[ a.argKeys, $T, a.argDf(helpCase($dfl, clEnumVal)) ]
 
 # various numeric types
 proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
