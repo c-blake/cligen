@@ -1,4 +1,8 @@
-import cligen, editDistance
+import cligen
+when NimVersion <= "0.19.4":
+  import editDistance
+else:
+  import std/editDistance
 
 dispatchGen(editDistanceAscii, version = ("version", "1.0"))
 
