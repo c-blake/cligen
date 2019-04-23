@@ -120,8 +120,10 @@ template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
   fs.setLen(if n < 1: 16 else: n)
   var b   = slc.mem
   var eob = b +! slc.len
-  var e: pointer
-  e = nextSep(b, s, eob -! b)
+  while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], s):
+    b = b +! 1
+    if b == eob: fs.setLen(0); return
+  var e = nextSep(b, s, eob -! b)
   while e != nil:
     if n < 1:                               #Unbounded msplit
       if result == fs.len - 1:              #Expand capacity
@@ -135,9 +137,10 @@ template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
       e = e +! 1
     b = e +! 1
     e = nextSep(b, s, eob -! b)
-  fs[result].mem = b
-  fs[result].len = eob -! b
-  result += 1
+  if not repeat or eob -! b > 0:
+    fs[result].mem = b
+    fs[result].len = eob -! b
+    result += 1
   fs.setLen(result)
 
 proc msplit*(s: MSlice, fs: var seq[MSlice], sep=' ', n=0, repeat=false):int=
@@ -167,6 +170,49 @@ proc msplit*(s: string, fs: var seq[MSlice], seps=wspace, n=0, repeat=true):int=
 proc msplit*(s: string, seps=wspace, n=0, repeat=true): seq[MSlice] {.inline.}=
   discard msplit(s, result, seps, n, repeat)
 
+template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
+                   s: untyped, nextSep: untyped, isSep: untyped) {.dirty.} =
+  fs.setLen(if n < 1: 16 else: n)
+  var b0  = slc.mem
+  var b   = b0
+  var eob = b +! slc.len
+  while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], s):
+    b = b +! 1
+    if b == eob: fs.setLen(0); return
+  var e = nextSep(b, s, eob -! b)
+  while e != nil:
+    if n < 1:                               #Unbounded splitr
+      if result == fs.len - 1:              #Expand capacity
+        fs.setLen(if fs.len < 512: 2*fs.len else: fs.len + 512)
+    elif result == n - 1:                   #Need 1 more slot for final field
+      break
+    fs[result] = slc[(b -! b0) ..< (e -! b0)]
+    result += 1
+    while repeat and eob -! e > 0 and isSep((cast[cstring](e))[1], s):
+      e = e +! 1
+    b = e +! 1
+    e = nextSep(b, s, eob -! b)
+  if not repeat or eob -! b > 0:
+    fs[result] = slc[(b -! b0) ..< (eob -! b0)]
+    result += 1
+  fs.setLen(result)
+
+proc splitr*(s: string, fs: var seq[string], sep=' ', n=0, repeat=false):int=
+  ##split w/reused ``fs[]`` & bounded cols ``n``, maybe-repeatable sep.
+  defSplitr(s, fs, n, repeat, sep, cmemchr, charEq)
+
+proc splitr*(s: string, sep: char, n=0, repeat=false): seq[string] {.inline.} =
+  ##Like ``splitr(string, var seq[string], int, char)``, but return the ``seq``.
+  discard splitr(s, result, sep, n, repeat)
+
+proc splitr*(s: string, fs: var seq[string], seps=wspace, n=0, repeat=true):int=
+  ##split w/reused fs[], bounded cols char-of-set sep which can maybe repeat.
+  defSplitr(s, fs, n, repeat, seps, mempbrk, charIn)
+
+proc splitr*(s: string, seps=wspace, n=0, repeat=true): seq[string] {.inline.}=
+  ##Like ``splitr(string, var seq[string], int, set[char])``,but return ``seq``.
+  discard splitr(s, result, seps, n, repeat)
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
@@ -177,3 +223,15 @@ when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
     assert s.msplit('_', i) == m.msplit('_', i)
   for i in 0..4:
     assert s.msplit('_', i, repeat=true) == m.msplit('_', i, repeat=true)
+  for i in 0..5:
+    for j, ms in m.msplit('_', i):
+      assert s.splitr('_', i)[j] == $ms
+  for i in 0..5:
+    for j, ms in m.msplit('_', i, repeat=true):
+      assert s.splitr('_', i, repeat=true)[j] == $ms
+  echo "1_2__3".splitr('_', repeat=true)
+  echo "__1_2__3".splitr('_', repeat=true)
+  echo "__1_2__3__".splitr('_', repeat=true)
+  echo "___".splitr('_', repeat=true)
+  echo "___1".splitr('_', repeat=true)
+  echo "1___".splitr('_', repeat=true)
