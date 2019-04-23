@@ -375,23 +375,26 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, a.argDf(df) ]
 
 # HashSets
+when NimVersion <= "0.19.4":
+  proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
+
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
                   a: var ArgcvtParams): bool =
   result = true
   try:
     if a.sep.len <= 1:                      # No Sep|No Op => Append
-      dst.incl(toSet(argAggSplit[T](a, false)))
+      dst.incl(toHashSet(argAggSplit[T](a, false)))
       return
-    if   a.sep == "+=": dst.incl(toSet(argAggSplit[T](a, false)))
-    elif a.sep == "-=": dst.excl(toSet(argAggSplit[T](a, false)))
+    if   a.sep == "+=": dst.incl(toHashSet(argAggSplit[T](a, false)))
+    elif a.sep == "-=": dst.excl(toHashSet(argAggSplit[T](a, false)))
     elif a.val == "" and a.sep == ",=":     # just clobber
       dst.clear()
     elif a.sep == ",@=":                    # split-clobber-assign
-      dst.clear(); dst.incl(toSet(argAggSplit[T](a)))
+      dst.clear(); dst.incl(toHashSet(argAggSplit[T](a)))
     elif a.sep == ",=" or a.sep == ",+=":   # split-include
-      dst.incl(toSet(argAggSplit[T](a)))
+      dst.incl(toHashSet(argAggSplit[T](a)))
     elif a.sep == ",-=":                    # split-exclude
-      dst.excl(toSet(argAggSplit[T](a)))
+      dst.excl(toHashSet(argAggSplit[T](a)))
     else:
       a.msg = "Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep,a.key]
       raise newException(ElementError, "Bad operator")
