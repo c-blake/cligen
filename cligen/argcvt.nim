@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets, textUt, parseopt3, cligen
+import strformat, sets, ./textUt, parseopt3, cligen
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
@@ -121,27 +121,37 @@ proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "char", a.argDf(nimEscape($dfl, quote='\'')) ]
 
 # enums
+import critbits, sequtils
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
-  var found = false
   let valNorm = optionNormalize(a.val)      #Normalized strings
   var allNorm: seq[string]
   var allCanon: seq[string]                 #Canonical/helpCased string
+  type enumCanon[T] = tuple[e: T; canon: string]
+  var crbt: CritBitTree[enumCanon[T]]
   if valNorm.len > 0:
     for e in low(T)..high(T):
       allCanon.add(helpCase($e, clEnumVal))
-      allNorm.add(optionNormalize(allCanon[^1]))
-      if valNorm == allNorm[^1]:
-        dst = e
-        found = true
-        break
-  if not found:
+      let norm = optionNormalize(allCanon[^1])
+      allNorm.add(norm)
+      crbt[norm] = (e, allCanon[^1])
+  var ks: seq[string]; var es: seq[T]
+  for v in crbt.valuesWithPrefix(valNorm):
+    ks.add(v.canon)
+    es.add(v.e)
+  if ks.len == 1:
+    dst = es[0]
+    return true
+  if ks.len > 1:
+    a.msg = ("Ambiguous enum value prefix for option \"$1\".  " &
+             "\"$2\" matches:\n  $3$4") % [ a.key, a.val, ks.join("\n  "),
+            "\nRun with --help for more details.\n" ]
+  else:
     let sugg = suggestions(valNorm, allNorm, allCanon)
     a.msg = "Bad enum value for option \"$1\". \"$2\" is not one of:\n  $3$4" %
             [ a.key, a.val, (allCanon.join(" ") & "\n\n"),
               ("Maybe you meant one of:\n  " & sugg.join("\n  ") &
                "\n\nRun with --help for more details.\n") ]
-    return false
-  return true
+  return false
 
 proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, $T, a.argDf(helpCase($dfl, clEnumVal)) ]
