@@ -1,6 +1,30 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.20
+---------------
+    Some clean-up of the --help-syntax output, including mentioning style-
+    insensitivity.
+
+    Improve character literal escape interpretation (single digit octal and
+    various standard abbreviations like \n ,\e, etc.) and also better match
+    the non-printable rendering of such char's in default values.
+
+    Add ability via helpCase to convert snake_case to kebab-case help text for
+    long option keys and default values.
+
+    Add ability to accept any unique prefix spelling of enum values (like cmd /
+    option autocompletion in most shells but without TAB key involvement or any
+    shell support required). ( See https://github.com/c-blake/cligen/issues/97
+    and and https://github.com/c-blake/cligen/issues/99 )
+
+    Add a fully worked out not useless example program `examples/dups.nim`.
+    Distribute several support modules for it that may help authors of similar
+    CLI utilities via cligen/[tmUt, fileUt, osUt, sysUt, strUt, mfile, mslice].
+
+    Adapt to several deprecations/changes in Nim.  Seems to work on 0.19.2 and
+    0.19.4 as well as a current devel branch.  Also fix some bugs here & there.
+
 Version: 0.9.19
 ---------------
     Get `test/MultiMulti.nim` and even `test/MultMultMult.nim` mostly working.
