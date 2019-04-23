@@ -5,11 +5,11 @@ type ParseError*  = object of Exception
 
 const positionalAuto = "<AUTO>"
 
-proc dispatchId(name: string="", cmd: string="", rep: string=""): NimIdent =
+proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
   ## Build Nim ident for generated parser-dispatcher proc
-  result = if name.len > 0: toNimIdent(name)
-           elif cmd.len > 0: toNimIdent("dispatch" & cmd)  #XXX illegal chars
-           else: toNimIdent("dispatch" & rep)
+  result = if name.len > 0: ident(name)
+           elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars
+           else: ident("dispatch" & rep)
 
 proc toString(c: char): string =
   ##Creates a string from char ``c``
@@ -305,7 +305,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
 
   #XXX quote-do fails to access macro args in sub-scopes. So `help`, `cmdName`..
   #XXX need either to be used at top-level or assigned in a shadow local.
-  let impl = pro.symbol.getImpl
+  let impl = pro.getImpl
   if impl == nil: error "getImpl(" & $pro & ") returned nil."
   let fpars = formalParams(impl, toStrSeq(suppress))
   var cmtDoc: string = $doc
