@@ -4,7 +4,7 @@
 ## layered differently, has non-system.open-colliding type constructors, and
 ## uses ``.len`` instead of ``.size`` for constency with other Nim things.
 
-import os, posix, osUt, mslice # perror cMemCmp mSlices
+import os, posix, ./osUt, ./mslice # perror cMemCmp mSlices
 
 type
   MFile* = object   ## Like MemFile but safe in an MT-environment
@@ -142,9 +142,10 @@ iterator lines*(mf: MFile, buf: var string, sep='\l', eat='\r'): string {.inline
   ## .. code-block:: nim
   ##   var buffer: string = ""
   ##   for line in lines(mopen("foo"), buffer): echo line
-  for ms in mSlices(mf, sep, eat):
-    ms.toString buf
-    yield buf
+  if mf.mem != nil:
+    for ms in mSlices(mf, sep, eat):
+      ms.toString buf
+      yield buf
 
 iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
   ## Exactly like ``lines(MFile, var string)`` but yields new Nim strings.
