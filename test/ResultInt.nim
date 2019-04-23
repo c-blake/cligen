@@ -1,4 +1,4 @@
-import cligen, std/editDistance
+import cligen, editDistance
 
 dispatchGen(editDistanceAscii, version = ("version", "1.0"))
 
