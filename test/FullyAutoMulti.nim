@@ -15,7 +15,7 @@ proc whoa(zeta=1, eta=2.0, verb=false, names: seq[string]): int =
   for i, n in names: echo "args[", i, "]: ", repr(n)
   return 12345
 
-proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
+proc nel_Ly(hooves=4, races=9, verb=false, names: seq[string]): string =
   ## Yet another entry point; here we block autoEcho
   echo "hooves:", hooves, " races:", races, " verb:", verb
   for i, n in names: echo "args[", i, "]: ", repr(n)
@@ -28,4 +28,4 @@ when isMainModule:
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ whoa, echoResult=true ],
-                [ nelly, noAutoEcho=true ] )
+                [ nel_Ly, cmdName="nel-ly", noAutoEcho=true ] )

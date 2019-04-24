@@ -63,6 +63,39 @@
 
 import os, strutils
 
+proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
+  ## Normalizes option key `s` to allow command syntax to be style-insensitive
+  ## in a similar way to Nim identifier syntax.
+  ##
+  ## Specifically this means to convert *all but the first* char to lower case
+  ## and remove chars in ``wordSeparators`` ('_' and '-') by default.  This way
+  ## users can type "command --my-opt-key" or "command --myOptKey" and so on.
+  ##
+  ## Example:
+  ##
+  ## .. code-block:: nim
+  ##   for kind, key, val in p.getopt():
+  ##     case kind
+  ##     of cmdLongOption, cmdShortOption:
+  ##       case optionNormalize(key)
+  ##       of "myoptkey", "m": doSomething()
+  result = newString(s.len)
+  if s.len == 0: return
+  var wordSeps: set[char]   # compile a set[char] from ``wordSeparators``
+  for c in wordSeparators:
+    wordSeps.incl(c)
+  result[0] = s[0]
+  var j = 1
+  for i in 1..len(s) - 1:
+    if s[i] in {'A'..'Z'}:
+      result[j] = chr(ord(s[i]) + (ord('a') - ord('A')))
+      inc j
+    elif s[i] notin wordSeps:
+      result[j] = s[i]
+      inc j
+  if j != s.len:
+    setLen(result, j)
+
 type
   CmdLineKind* = enum         ## the detected command line token
     cmdEnd,                   ## end of command line reached
@@ -117,7 +150,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
-  result.stopWords = stopWords
+  result.stopWords = @[ ]
+  for w in stopWords: result.stopWords.add(optionNormalize(w))
   result.off = 0
   result.optsDone = false
 
@@ -211,7 +245,7 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
-    if p.cmd[p.pos] in p.stopWords:     #Step4: check for stop word
+    if optionNormalize(p.cmd[p.pos]) in p.stopWords:  #Step4: chk for stop word
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
     return
@@ -231,39 +265,6 @@ proc next*(p: var OptParser) =
     else:                               #Step6b: maybe a block of short options
       p.off = 1                         # skip the initial "-"
       doShort(p)
-
-proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
-  ## Normalizes option key `s` to allow command syntax to be style-insensitive
-  ## in a similar way to Nim identifier syntax.
-  ##
-  ## Specifically this means to convert *all but the first* char to lower case
-  ## and remove chars in ``wordSeparators`` ('_' and '-') by default.  This way
-  ## users can type "command --my-opt-key" or "command --myOptKey" and so on.
-  ##
-  ## Example:
-  ##
-  ## .. code-block:: nim
-  ##   for kind, key, val in p.getopt():
-  ##     case kind
-  ##     of cmdLongOption, cmdShortOption:
-  ##       case optionNormalize(key)
-  ##       of "myoptkey", "m": doSomething()
-  result = newString(s.len)
-  if s.len == 0: return
-  var wordSeps: set[char]   # compile a set[char] from ``wordSeparators``
-  for c in wordSeparators:
-    wordSeps.incl(c)
-  result[0] = s[0]
-  var j = 1
-  for i in 1..len(s) - 1:
-    if s[i] in {'A'..'Z'}:
-      result[j] = chr(ord(s[i]) + (ord('a') - ord('A')))
-      inc j
-    elif s[i] notin wordSeps:
-      result[j] = s[i]
-      inc j
-  if j != s.len:
-    setLen(result, j)
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]

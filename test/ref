@@ -224,11 +224,11 @@ Usage:
 
 where {CMD} is one of:
 
-  help   print comprehensive or per-cmd help
-  demo   demo entry point with varied, meaningless parameters.
-  print  show entry point with varied, meaningless parameters.
-  whoa   Another entry point; here we echoResult
-  nelly  Yet another entry point; here we block autoEcho
+  help    print comprehensive or per-cmd help
+  demo    demo entry point with varied, meaningless parameters.
+  print   show entry point with varied, meaningless parameters.
+  whoa    Another entry point; here we echoResult
+  nel-ly  Yet another entry point; here we block autoEcho
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
 FullyAutoMulti --help-syntax gives general cligen syntax help.
@@ -270,7 +270,7 @@ where subcommand syntaxes are as follows:
       -e=, --eta=    float  2.0    set eta
       -v, --verb     bool   false  set verb
   
-  nelly [optional-params] [names: string...]
+  nel-ly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
       -h, --help                  print this cligen-erated help
