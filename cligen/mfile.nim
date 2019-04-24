@@ -16,31 +16,31 @@ type
     mem*  : pointer ## First addr to use in [buf0, buf0 + len)
 
 proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
-            a=0, b = -1, allowRemap=false, noShrink=false): MFile =
+            a=0.Off, b = Off(-1), allowRemap=false, noShrink=false): MFile =
   ## mmap(2) wrapper to simplify life.  Byte range [a,b) of the file pointed to
   ## by 'fd' translates to [result.mem ..< .len).
-  var b0 = b                                #Will be adjusting this, pre-map
+  var b0 = Off(b)                           #Will be adjusting this, pre-map
   if fd == -1: return
   result.fd    = fd
   result.st    = st
   result.prot  = prot
   result.flags = flags
-  if (prot and PROT_WRITE) != 0 and st.st_size != b:
-    if b > st.st_size or not noShrink:
+  if (prot and PROT_WRITE) != 0 and Off(st.st_size) != b:
+    if b > Off(st.st_size) or not noShrink:
       if ftruncate(fd, b) == -1:            #Writable & too small => grow
         perror cstring("ftruncate"), 9
         return                              #Likely passed non-writable fd
       discard fstat(fd, result.st)          #Refresh st data ftrunc; Cannot fail
-  elif b == -1:                             #Do special whole file mode
-    b0 = int(result.st.st_size)
-  b0 = min(b0, int(result.st.st_size))      #Do not exceed file sz
+  elif b == Off(-1):                        #Do special whole file mode
+    b0 = Off(result.st.st_size)
+  b0 = min(b0, Off(result.st.st_size))      #Do not exceed file sz
   if b0 == a: perror cstring("length0slice"), 12; return
-  result.mem = mmap(nil, b0 - a, prot, flags, fd, Off(a))
+  result.mem = mmap(nil, int(b0 - a), prot, flags, fd, Off(a))
   if result.mem == cast[pointer](MAP_FAILED):
     perror cstring("mmap"), 4
     result.mem = nil
     return
-  result.len = b0 - a
+  result.len = int(b0 - a)
 
 proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
            a=0, b = -1, allowRemap=false, noShrink=false): MFile =
