@@ -11,7 +11,7 @@ BASIC CHEAT SHEET:
  * Likewise with -f instead of --foo; in addition -fval is also possible.
  * Long option & enum names are "CLI-style-insensitive", meaning that only the
    case of the first letter matters otherwise; --foo is the same as --f_O-o.
- * For enum values, the shortest prefix unique among enum values is enough.
+ * For enum values and long option keys, any unambiguous prefix is enough.
  * "bool" values for flags "foo", "bar" with short options 'f', 'b':
      default value false: -f | --foo sets the flag to true
      default value true: -b | --bar sets the flag to false

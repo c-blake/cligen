@@ -29,6 +29,8 @@ Some existing API call
 Other invocations (`foobar --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
+`cligen`-erated parsers accept any unambiguous prefix for long options.
+So, hitting the TAB key is unnecessary, though might pop-up some useful help.
 
 When you want more specific help than `set foo` and `set bar`, just add some
 parameter-keyed metadata with Nim's association-list literals:
