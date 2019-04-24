@@ -32,8 +32,8 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
         return                              #Likely passed non-writable fd
       discard fstat(fd, result.st)          #Refresh st data ftrunc; Cannot fail
   elif b == -1:                             #Do special whole file mode
-    b0 = result.st.st_size
-  b0 = min(b0, result.st.st_size)           #Do not exceed file sz
+    b0 = int(result.st.st_size)
+  b0 = min(b0, int(result.st.st_size))      #Do not exceed file sz
   if b0 == a: perror cstring("length0slice"), 12; return
   result.mem = mmap(nil, b0 - a, prot, flags, fd, Off(a))
   if result.mem == cast[pointer](MAP_FAILED):
