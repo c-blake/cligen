@@ -1,4 +1,4 @@
-import macros, tables, cligen/parseopt3, strutils, os
+import macros, tables, cligen/parseopt3, strutils, os, critbits
 type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
@@ -161,6 +161,25 @@ proc delItem*[T](x: var seq[T], item: T): int =
   result = find(x, item)
   if result >= 0:
     x.del(Natural(result))
+
+proc lengthen*(cb: CritBitTree[void], p: var OptParser): string =
+  ##Convert p.key from any unique prefix abbreviation to normalized long form
+  if p.kind != cmdLongOption:
+    return p.key
+  let n = optionNormalize(p.key)
+  var ks: seq[string]
+  for k in cb.keysWithPrefix(n): ks.add(k)
+  if ks.len == 1:
+    p.key = ks[0]
+    return p.key
+  if ks.len > 1:    # Can still have an exact match if..
+    for k in ks:    #..one long key fully prefixes another,
+      if k == n:    #..like "help" prefixing "help-syntax".
+        p.key = n
+        return p.key
+  if ks.len > 1:    #No exact prefix-match above => ambiguity
+    return ""       #=> of-clause that reports ambiguity in .msg.
+  return n  #ks.len==0 => case-else clause suggests spelling in .msg.
 
 type Version* = tuple[longOpt: string, output: string]
 
@@ -353,6 +372,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
+  let cbId = ident("crbt")              # CritBitTree for prefix lengthening
   let mandId = ident("mand")            # local list of mandatory parameters
   let mandInFId = ident("mandInForce")  # mandatory-in-force flag
   let apId = ident("ap")                # ArgcvtParams
@@ -375,6 +395,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `apId`.mand = `mandHelp`
       let shortH = $(`shortHlp`)
       var `allId`: seq[string] = @[ "help", "help-syntax" ]
+      var `cbId`: CritBitTree[void]
+      `cbId`.incl(optionNormalize("help"))
+      `cbId`.incl(optionNormalize("help-syntax"))
       var `mandId`: seq[string]
       var `mandInFId` = true
       var `tabId`: TextTab =
@@ -420,6 +443,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
          `apId`.parRend = helpCase(`parNm`, clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
+         `cbId`.incl(optionNormalize(`parNm`))
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
@@ -438,7 +462,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
   proc defOptCases(): NimNode =
-    result = newNimNode(nnkCaseStmt).add(quote do: optionNormalize(`pId`.key))
+    result = newNimNode(nnkCaseStmt).add(quote do: lengthen(`cbId`, `pId`))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
@@ -509,6 +533,17 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
           newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
+    let ambigReport = quote do:
+      var ks: seq[string]
+      for k in `cbId`.keysWithPrefix(optionNormalize(p.key)): ks.add(k)
+      let msg = ("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[ `pId`.key,
+                ks.join("\n  ")]) & "\nRun with --help for more details.\n"
+      if cast[pointer](`setByParseId`) != nil:
+        `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+      else:
+        stderr.write(msg)
+        raise newException(ParseError, "Unknown option")
+    result.add(newNimNode(nnkOfBranch).add(newStrLitNode("")).add(ambigReport))
     result.add(newNimNode(nnkElse).add(quote do:
       var mb, k: string
       k = "short"
@@ -584,7 +619,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     import cligen/argcvt    #ArgcvtParams arg(Parse|Help) getDescrip helpCase
     import cligen/textUt    #addPrefix wrap TextTab alignTable suggestions
     import cligen/parseopt3 #initOptParser next cmd* optionNormalize
-    import tables, strutils #import join, `%`
+    import tables, strutils, critbits #import join, `%`, CritBitTree
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`="", parseOnly=false): `retType` =
