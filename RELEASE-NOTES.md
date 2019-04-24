@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.22
+---------------
+    Add ability to accept any unambiguous prefix spelling of long option keys
+    like cmd / option autocompletion in most shells but without TAB key press
+    or any shell support required). https://github.com/c-blake/cligen/issues/99
+
+    Minor clean-ups.
+
 Version: 0.9.20
 ---------------
     Some clean-up of the --help-syntax output, including mentioning style-
@@ -16,7 +24,7 @@ Version: 0.9.20
     Add ability to accept any unique prefix spelling of enum values (like cmd /
     option autocompletion in most shells but without TAB key involvement or any
     shell support required). ( See https://github.com/c-blake/cligen/issues/97
-    and and https://github.com/c-blake/cligen/issues/99 )
+    and https://github.com/c-blake/cligen/issues/99 )
 
     Add a fully worked out not useless example program `examples/dups.nim`.
     Distribute several support modules for it that may help authors of similar
