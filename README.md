@@ -29,8 +29,8 @@ Some existing API call
 Other invocations (`foobar --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
-`cligen`-erated parsers accept any unambiguous prefix for long options.
-So, hitting the TAB key is unnecessary, though might pop-up some useful help.
+`cligen`-erated parsers accept *any unambiguous prefix* for long options.
+So, hitting the TAB key is unnecessary, though might pop-up useful help.
 
 When you want more specific help than `set foo` and `set bar`, just add some
 parameter-keyed metadata with Nim's association-list literals:
@@ -76,9 +76,12 @@ when isMainModule:
   import cligen; dispatchMulti([foo, help={"myMandatory": "Need it!"}], [bar])
 ```
 With that, a CLI user can run `./cmd foo -m1` or `./cmd bar -y10 1.0 2.0`.
-`./cmd --help` will emit a brief help message and `./cmd help` emits a more
-comprehensive message, while `./cmd SUBCMD --help` or `./cmd help SUBCMD` emits
-just the message for `SUBCMD` (`foo` or `bar` in this example).
+`./cmd` or `./cmd --help` will emit a brief help message while `./cmd help`
+emits a more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help
+SUBCMD` emits just the message for `SUBCMD` (`foo` or `bar` in this example).
+Like long option keys or enum values, *any unambiguous prefix* is accepted.
+So, in the above `./cmd f -m1` would also work.  This is patterned after,
+e.g. Mercurial, gdb, or gnuplot.
 
 ---
 
