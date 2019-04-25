@@ -162,21 +162,18 @@ proc delItem*[T](x: var seq[T], item: T): int =
   if result >= 0:
     x.del(Natural(result))
 
-proc lengthen*(cb: CritBitTree[void], p: var OptParser): string =
-  ##Convert p.key from any unique prefix abbreviation to normalized long form
-  if p.kind != cmdLongOption:
-    return p.key
-  let n = optionNormalize(p.key)
+proc lengthen*(cb: CritBitTree[void], key: string): string =
+  ##Use ``cb`` to convert ``key`` from unambiguous prefix to long form.  Return
+  ##unchanged string on no match or empty string if ambiguous.
+  let n = optionNormalize(key)
   var ks: seq[string]
   for k in cb.keysWithPrefix(n): ks.add(k)
   if ks.len == 1:
-    p.key = ks[0]
-    return p.key
+    return ks[0]
   if ks.len > 1:    # Can still have an exact match if..
     for k in ks:    #..one long key fully prefixes another,
       if k == n:    #..like "help" prefixing "help-syntax".
-        p.key = n
-        return p.key
+        return key
   if ks.len > 1:    #No exact prefix-match above => ambiguity
     return ""       #=> of-clause that reports ambiguity in .msg.
   return n  #ks.len==0 => case-else clause suggests spelling in .msg.
@@ -462,7 +459,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
   proc defOptCases(): NimNode =
-    result = newNimNode(nnkCaseStmt).add(quote do: lengthen(`cbId`, `pId`))
+    result = newNimNode(nnkCaseStmt).add(quote do:
+      if p.kind == cmdLongOption: lengthen(`cbId`, `pId`.key) else: `pId`.key)
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), toStrLitNode(shortHlp)).add(
         quote do:
