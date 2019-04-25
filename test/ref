@@ -647,6 +647,22 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 
+==> test/SubScope.out <==
+Usage:
+  
+  SubScope {CMD}  [sub-command options & parameters]
+
+where {CMD} is one of:
+
+  help  print comprehensive or per-cmd help
+  get   
+  put   
+
+SubScope {-h|--help} or with no args at all prints this message.
+SubScope --help-syntax gives general cligen syntax help.
+Run "SubScope {help CMD|CMD --help}" to see help for just CMD.
+Run "SubScope help" to get *comprehensive* help.
+
 ==> test/Suppress.out <==
 Usage:
   demo [optional-params] [args: string...]
@@ -661,8 +677,8 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(702, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(139, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(696, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(144, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.

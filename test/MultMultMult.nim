@@ -33,14 +33,14 @@ when isMainModule:
   cligenVersion = "0.0.1"
   dispatchMultiGen([ "cobbler" ],
                    [ yikes,
-                     mergeNames = @["MultiMulti", "apple", "cobbler", "yikes"]])
+                     mergeNames = @["MultiMulti", "apple", "cobbler" ]])
   dispatchMultiGen([ "apple" ],
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
-                     mergeNames = @["MultiMulti", "apple", "demo"] ],
+                     mergeNames = @["MultiMulti", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
-                     mergeNames = @["MultiMulti", "apple", "show"] ],
+                     mergeNames = @["MultiMulti", "apple" ] ],
                    [ cobbler, stopWords = @[ "yikes" ],
-                     mergeNames = @["MultiMulti", "apple", "cobbler"] ])
+                     mergeNames = @["MultiMulti", "apple" ] ])
   dispatchMulti([ apple, stopWords = @["demo", "show", "cobbler" ] ],
                 [ whoa, echoResult=true ],
                 [ nelly, noAutoEcho=true ])

@@ -50,3 +50,4 @@ test/DistinctInt
 test/SemiMultMult
 test/MultiMulti
 test/MultMultMult
+test/SubScope

@@ -27,9 +27,9 @@ when isMainModule:
   cligenVersion = "0.0.1"
   dispatchMultiGen([ "apple" ],
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
-                     mergeNames = @["MultiMulti", "apple", "demo"] ],
+                     mergeNames = @["MultiMulti", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
-                     mergeNames = @["MultiMulti", "apple", "show"] ])
+                     mergeNames = @["MultiMulti", "apple" ] ])
   dispatchMulti([ whoa, echoResult=true ],
                 [ apple, stopWords = @["demo", "show"],
                          doc = "apple sub-sub commands" ],

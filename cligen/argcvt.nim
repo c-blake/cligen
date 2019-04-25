@@ -2,10 +2,21 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets, ./textUt, parseopt3, cligen
+import strformat, sets, ./textUt, parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
+
+type
+  ClHelpContext* = enum clLongOpt,      ## a long option identifier
+                        clSubCmd,       ## a sub-command name identifier
+                        clEnumVal       ## an enum value name identifier
+
+proc helpCase*(inp: string, context: ClHelpContext = clSubCmd): string =
+  ##This is a string-to-string transformer hook to convert whatever the native
+  ##Nim code identifier casing is into a string for presentation to CLI users.
+  ##By default it converts snake_case to kebab-case.
+  result = inp.replace('_', '-')
 
 proc nimEscape*(s: string, quote='"'): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -121,7 +132,6 @@ proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "char", a.argDf(nimEscape($dfl, quote='\'')) ]
 
 # enums
-import critbits, sequtils
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   let valNorm = optionNormalize(a.val)      #Normalized strings
   var allNorm: seq[string]

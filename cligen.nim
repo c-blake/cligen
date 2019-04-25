@@ -1,4 +1,9 @@
-import macros, tables, cligen/parseopt3, strutils, os, critbits
+import os, macros, tables, cligen/[parseopt3,argcvt,textUt], strutils, critbits
+export commandLineParams, lengthen, initOptParser, next, optionNormalize,
+       ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
+       incl, keysWithPrefix, contains, addPrefix, wrap, TextTab, alignTable,
+       suggestions, split
+
 type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
@@ -162,8 +167,6 @@ proc delItem*[T](x: var seq[T], item: T): int =
   if result >= 0:
     x.del(Natural(result))
 
-export lengthen
-
 type Version* = tuple[longOpt: string, output: string]
 
 const dflUsage* = "${prelude}$command $args\n" &
@@ -183,10 +186,6 @@ type
                    unparsedVal: string, ## Unparsed val ("" for missing)
                    message: string,     ## default error message
                    status: ClStatus]    ## Parse status for param
-
-  ClHelpContext* = enum clLongOpt,      ## a long option identifier
-                        clSubCmd,       ## a sub-command name identifier
-                        clEnumVal       ## an enum value name identifier
 
 const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
 const ClExit*   = { clHelpOnly, clVersionOnly }
@@ -599,11 +598,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
                  else: newNimNode(nnkEmpty)
   result = quote do:
     if cast[pointer](`docs`) != nil: `docsStmt`
-    import os               #commandLineParams
-    import cligen/argcvt    #ArgcvtParams arg(Parse|Help) getDescrip helpCase
-    import cligen/textUt    #addPrefix wrap TextTab alignTable suggestions
-    import cligen/parseopt3 #initOptParser next cmd* optionNormalize
-    import tables, strutils, critbits #import join, `%`, CritBitTree
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
                  `prefixId`="", `subSepId`="", parseOnly=false): `retType` =
@@ -742,7 +736,9 @@ proc subCmdNoAutoEc(node: NimNode): bool =
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "noAutoEcho"):
       return true
 
+{.push hint[GlobalVar]: off.}
 var cligenVersion* = ""
+{.pop.}
 
 template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   stderr.write "Unknown subcommand \"" & cmd & "\".  "
@@ -784,7 +780,11 @@ proc paramPresent(n: NimNode, kwArg: string): bool =
       return true
   false
 
-var multiNames*: seq[string]
+proc paramVal(n: NimNode, kwArg: string): NimNode =
+  for k in n:
+    if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
+      return k[1]
+  nil
 
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
@@ -798,8 +798,10 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
   let subMchsId = ident(prefix & "SubMchs")
+  let multiNmsId = ident(prefix & "multiNames")
   let subDocsId = ident(prefix & "SubDocs")
   result.add(quote do:
+    var `multiNmsId`: seq[string]
     var `subCmdsId`: seq[string] = @[ "help" ]
     var `subMchsId`: CritBitTree[void]
     `subMchsId`.incl("help")
@@ -827,19 +829,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let cmdLineId = ident("cmdLine")
   let usageId = ident("usage")
   let prefixId = ident("prefix")
-  var multiDef = newStmtList()
-  multiDef.add(quote do:
-    import os
-    multiNames.add("dispatch" & `prefix`)
-    proc `multiId`(`cmdLineId`: seq[string],
-                   `usageId`=dflUsage,
-                   `prefixId`="  ") =
-      {.push hint[XDeclaredButNotUsed]: off.}
-      let n = `cmdLineId`.len
-      let `arg0Id` =if n>0: `subMchsId`.lengthen optionNormalize(`cmdLineId`[0])
-                    else: ""
-      let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ])
-  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
+  var cases = newNimNode(nnkCaseStmt).add(arg0Id)
   var helpDump = newStmtList()
   for cnt, p in procBrackets:
     if p[0].kind == nnkStrLit:
@@ -850,17 +840,21 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdNm = newStrLitNode(sCmdNmS)
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdNoAuEc = subCmdNoAutoEc(p)
-    cases[^1].add(newNimNode(nnkOfBranch).add(newCall("optionNormalize", sCmdNm)).add(quote do:
+    let mn = if p.paramPresent("mergeNames"):
+               p.paramVal("mergeNames")
+             else:
+               quote do: @[ `srcBase` ] #, `sCmdNm` ]
+    cases.add(newNimNode(nnkOfBranch).add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
-                    `sCmdNoAuEc`.bool, @[`srcBase`])))  #XXX pass mergeNames?
+                    `sCmdNoAuEc`.bool, `mn`)))
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
     helpDump.add(quote do:
-      if `disNm` in multiNames:
+      if `disNm` in `multiNmsId`:
         cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `usageId`, `prefixId` & "  ")
         echo ""
       else:
         cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
-  cases[^1].add(newNimNode(nnkElse).add(quote do:
+  cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0:
         var ks: seq[string]
@@ -873,7 +867,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       else:
         echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
-      if ("dispatch" & `prefix`) in multiNames and `prefix` != "multi":
+      if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
         echo ("  $1 $2 subsubcommand [subsubcommand-opts & args]\n" &
               "    where subsubcommand syntax is:") % [ `srcBase`, `prefix` ]
       else:
@@ -886,7 +880,17 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       `helpDump`
     else:
       unknownSubcommand(`arg0Id`, `subCmdsId`)))
-  result.add(multiDef)
+  result.add(quote do:
+    `multiNmsId`.add("dispatch" & `prefix`)
+    proc `multiId`(`cmdLineId`: seq[string],
+                   `usageId`=dflUsage,
+                   `prefixId`="  ") =
+      {.push hint[XDeclaredButNotUsed]: off.}
+      let n = `cmdLineId`.len
+      let `arg0Id` =if n>0: `subMchsId`.lengthen optionNormalize(`cmdLineId`[0])
+                    else: ""
+      let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ]
+      `cases`)
   when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
 
 macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
@@ -952,9 +956,3 @@ proc mergeParams*(cmdNames: seq[string],
   ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti
   ##``context it is ``@[ <mainCommand>, <subCommand> ]``.
   cmdLine
-
-proc helpCase*(inp: string, context = clSubCmd): string =
-  ##This is a string-to-string transformer hook to convert whatever the native
-  ##Nim code identifier casing is into a string for presentation to CLI users
-  ##in help messages/errors.  By default it converts snake_case to kebab-case.
-  result = inp.replace('_', '-')
