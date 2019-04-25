@@ -61,7 +61,7 @@
 ## E.g, a user entering "="  causes ``sep == "="`` while entering "+=" gets
 ## ``sep == "+="``, and "+/-+=" gets ``sep == "+/-+="``.
 
-import os, strutils
+import os, strutils, critbits
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ## Normalizes option key `s` to allow command syntax to be style-insensitive
@@ -95,6 +95,22 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
       inc j
   if j != s.len:
     setLen(result, j)
+
+proc lengthen*(cb: CritBitTree[void], key: string): string =
+  ##Use ``cb`` to convert ``key`` from unambiguous prefix to long form.  Return
+  ##unchanged string on no match or empty string if ambiguous.
+  let n = optionNormalize(key)
+  var ks: seq[string]
+  for k in cb.keysWithPrefix(n): ks.add(k)
+  if ks.len == 1:
+    return ks[0]
+  if ks.len > 1:    # Can still have an exact match if..
+    for k in ks:    #..one long key fully prefixes another,
+      if k == n:    #..like "help" prefixing "help-syntax".
+        return key
+  if ks.len > 1:    #No exact prefix-match above => ambiguity
+    return ""       #=> of-clause that reports ambiguity in .msg.
+  return n  #ks.len==0 => case-else clause suggests spelling in .msg.
 
 type
   CmdLineKind* = enum         ## the detected command line token

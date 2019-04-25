@@ -162,21 +162,7 @@ proc delItem*[T](x: var seq[T], item: T): int =
   if result >= 0:
     x.del(Natural(result))
 
-proc lengthen*(cb: CritBitTree[void], key: string): string =
-  ##Use ``cb`` to convert ``key`` from unambiguous prefix to long form.  Return
-  ##unchanged string on no match or empty string if ambiguous.
-  let n = optionNormalize(key)
-  var ks: seq[string]
-  for k in cb.keysWithPrefix(n): ks.add(k)
-  if ks.len == 1:
-    return ks[0]
-  if ks.len > 1:    # Can still have an exact match if..
-    for k in ks:    #..one long key fully prefixes another,
-      if k == n:    #..like "help" prefixing "help-syntax".
-        return key
-  if ks.len > 1:    #No exact prefix-match above => ambiguity
-    return ""       #=> of-clause that reports ambiguity in .msg.
-  return n  #ks.len==0 => case-else clause suggests spelling in .msg.
+export lengthen
 
 type Version* = tuple[longOpt: string, output: string]
 
