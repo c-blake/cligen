@@ -10,6 +10,9 @@ Version: 0.9.23
     Add unambiguous prefix matching for subcommand names.  E.g.,
     `./test/MultMultMult a c y`.
 
+    Multi-commands now exit with status 1 on parsing errors (ambiguous or
+    unknown subcommand names).
+
 Version: 0.9.22
 ---------------
     Add ability to accept any unambiguous prefix spelling of long option keys
