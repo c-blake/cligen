@@ -127,7 +127,7 @@ type
     optsDone*: bool           ## "--" has been seen
     shortNoVal*: set[char]    ## 1-letter options not requiring optarg
     longNoVal*: seq[string]   ## long options not requiring optarg
-    stopWords*: seq[string]   ## special literal parameters that act like "--"
+    stopWords*: CritBitTree[void] ## special literal parameters acting like "--"
     requireSep*: bool         ## require separator between option key & val
     sepChars*: set[char]      ## all the chars that can be valid separators
     opChars*: set[char]       ## all chars that can prefix a sepChar
@@ -166,8 +166,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
-  result.stopWords = @[ ]
-  for w in stopWords: result.stopWords.add(optionNormalize(w))
+  for w in stopWords:
+    if w.len > 0: result.stopWords.incl(optionNormalize(w))
   result.off = 0
   result.optsDone = false
 
@@ -261,7 +261,8 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
-    if optionNormalize(p.cmd[p.pos]) in p.stopWords:  #Step4: chk for stop word
+    let k = lengthen(p.stopWords, optionNormalize(p.cmd[p.pos]))
+    if k in p.stopWords:                #Step4: chk for stop word
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
     return

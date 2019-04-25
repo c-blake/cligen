@@ -752,6 +752,7 @@ template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   else:
     stderr.write "It is not similar to defined subcommands.\n\n"
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
+  quit(1)
 
 template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
   var pairs: seq[seq[string]]
@@ -800,7 +801,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let subDocsId = ident(prefix & "SubDocs")
   result.add(quote do:
     var `subCmdsId`: seq[string] = @[ "help" ]
-    var `subMchsId`: seq[string] = @[ "help" ]
+    var `subMchsId`: CritBitTree[void]
+    `subMchsId`.incl("help")
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
   for p in procBrackets:
     if p[0].kind == nnkStrLit:
@@ -816,7 +818,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       c.add(newParam("docs", quote do: `subDocsId`.addr))
     result.add(c)
     result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
-    result.add(newCall("add", subMchsId, newCall("optionNormalize", newStrLitNode(sCmdNm))))
+    result.add(newCall("incl", subMchsId, newCall("optionNormalize",
+                                                  newStrLitNode(sCmdNm))))
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -833,9 +836,10 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
                    `prefixId`="  ") =
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = `cmdLineId`.len
-      let `arg0Id` = if n > 0: optionNormalize(`cmdLineId`[0]) else: ""
+      let `arg0Id` =if n>0: `subMchsId`.lengthen optionNormalize(`cmdLineId`[0])
+                    else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ])
-  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(newCall("optionNormalize", arg0Id)))
+  var cases = multiDef[0][2][^1].add(newNimNode(nnkCaseStmt).add(arg0Id))
   var helpDump = newStmtList()
   for cnt, p in procBrackets:
     if p[0].kind == nnkStrLit:
@@ -858,7 +862,16 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
         cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases[^1].add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
-      echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
+      if `cmdLineId`.len > 0:
+        var ks: seq[string]
+        for k in `subMchsId`.keysWithPrefix(optionNormalize(`cmdLineId`[0])):
+          ks.add(k)
+        stderr.write "Ambiguous subcommand \"", `cmdLineId`[0], "\" matches:\n"
+        stderr.write "  ", ks.join("\n  "), "\n"
+        stderr.write "Run with no-argument or \"help\" for more details.\n"
+        quit(1)
+      else:
+        echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in multiNames and `prefix` != "multi":
         echo ("  $1 $2 subsubcommand [subsubcommand-opts & args]\n" &
@@ -920,8 +933,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     let ps = cast[seq[string]](commandLineParams())
-    let ps0 = if ps.len >= 1: optionNormalize(ps[0]) else: ""
-    let ps1 = if ps.len >= 2: optionNormalize(ps[1]) else: ""
+    let ps0 = if ps.len>=1: `subMchsId`.lengthen optionNormalize(ps[0]) else: ""
+    let ps1 = if ps.len>=2: `subMchsId`.lengthen optionNormalize(ps[1]) else: ""
     if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
       unknownSubcommand(ps[0], `subCmdsId`)
     elif ps.len == 2 and ps0 == "help":

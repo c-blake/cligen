@@ -227,7 +227,7 @@ where {CMD} is one of:
   help    print comprehensive or per-cmd help
   demo    demo entry point with varied, meaningless parameters.
   print   show entry point with varied, meaningless parameters.
-  whoa    Another entry point; here we echoResult
+  punt    Another entry point; here we echoResult
   nel-ly  Yet another entry point; here we block autoEcho
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
@@ -261,7 +261,7 @@ where subcommand syntaxes are as follows:
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
   
-  whoa [optional-params] [names: string...]
+  punt [optional-params] [names: string...]
     Another entry point; here we echoResult
     Options(opt-arg sep :|=|spc):
       -h, --help                   print this cligen-erated help
@@ -661,7 +661,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(718, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(702, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(139, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]

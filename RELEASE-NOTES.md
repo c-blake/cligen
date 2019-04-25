@@ -3,9 +3,12 @@ RELEASE NOTES
 
 Version: 0.9.23
 ---------------
-    Add CLI-style insensitivity to subcommand name matching.  e.g.,
-    `./test/FullyAutoMulti nel-ly` works (or ./test/FullyAutoMulti de-mo
+    Add CLI-style insensitivity to subcommand name matching.  E.g.,
+    `./test/FullyAutoMulti nel-ly` works (or ./test/FullyAutoMulti d-e-m-o
     for that matter).  To show a dash in help text requires using `cmdName`.
+
+    Add unambiguous prefix matching for subcommand names.  E.g.,
+    `./test/MultMultMult a c y`.
 
 Version: 0.9.22
 ---------------

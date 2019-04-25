@@ -9,7 +9,7 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
   for i, p in paths: echo "args[", i, "]: ", repr(p)
   return 42
 
-proc whoa(zeta=1, eta=2.0, verb=false, names: seq[string]): int =
+proc punt(zeta=1, eta=2.0, verb=false, names: seq[string]): int =
   ## Another entry point; here we echoResult
   echo "zeta:", zeta, " eta:", eta, " verb:", verb
   for i, n in names: echo "args[", i, "]: ", repr(n)
@@ -27,5 +27,5 @@ when isMainModule:
   dispatchMulti([ "multi", requireSeparator=true ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
-                [ whoa, echoResult=true ],
+                [ punt, echoResult=true ],
                 [ nel_Ly, cmdName="nel-ly", noAutoEcho=true ] )
