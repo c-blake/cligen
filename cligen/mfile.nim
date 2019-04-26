@@ -158,7 +158,7 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
 iterator mSlices*(path: string, sep='\l', eat='\r', keep=false): MSlice {.inline.} =
   ## A convenient input iterator that ``mopen()``s path or if that fails falls
   ## back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
-  ## means backing MFile is kept open for remaining life of program.
+  ## means MFile or strings backing MSlice's are kept alive for life of program.
   let mf = mopen(path)
   if mf.mem != nil:
     for ms in mSlices(mf.toMSlice, sep, eat):
@@ -167,5 +167,10 @@ iterator mSlices*(path: string, sep='\l', eat='\r', keep=false): MSlice {.inline
   else:
     let f = open(path)
     for s in lines(f):
-      yield toMSlice(s)
+      if keep:
+        var scpy = $s
+        GC_ref(scpy)
+        yield toMSlice(scpy)
+      else:
+        yield toMSlice(s)
     f.close()
