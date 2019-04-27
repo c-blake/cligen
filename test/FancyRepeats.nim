@@ -9,7 +9,7 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
 
 when isMainModule:
   from strutils import split, `%`, join, strip
-  from cligen/argcvt import ArgcvtParams, argKeys, argDf  # Little helpers
+  from cligen/argcvt import ArgcvtParams, argKeys         # Little helpers
   from parseutils import parseInt
 
   proc argParse*(dst: var int, dfl: int; a: var ArgcvtParams): bool =
@@ -24,11 +24,11 @@ when isMainModule:
 
   proc argHelp*(defVal: int, a: var ArgcvtParams): seq[string] =
     if a.parNm == "verb":    # This is a parNm-conditional hybrid of bool & int
-      result = @[ a.argKeys, "countr", a.argDf($defVal) ]
+      result = @[ a.argKeys, "countr", $defVal ]
       if a.parSh.len > 0: a.shortNoVal.incl(a.parSh[0])
       a.longNoVal.add(a.parNm)
     else:
-      result = @[ a.argKeys, "int", a.argDf($defVal) ]
+      result = @[ a.argKeys, "int", $defVal ]
 
   import cligen
   dispatch(demo)

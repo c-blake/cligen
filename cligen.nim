@@ -425,6 +425,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
          `apId`.parRend = helpCase(`parNm`, clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
+         if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.mand
          `cbId`.incl(optionNormalize(`parNm`))
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:

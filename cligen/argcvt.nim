@@ -87,9 +87,9 @@ proc argKeys*(a: ArgcvtParams, argSep="="): string =
   result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh, a.parRend, argSep ]
            else              : "--" & a.parRend & argSep
 
-proc argDf*(a: ArgcvtParams, dv: string): string =
-  ## argDf is an argHelp space-saving utility proc to decide default column.
-  (if a.parReq != 0: a.mand else: dv)
+proc argDf*(a: ArgcvtParams, dv: string): string {.deprecated:
+     "Deprecated since v0.9.24; No longer needed."} = dv
+  ## Deprecated since v0.9.24; No longer needed.  Remove call.
 
 # bools
 proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
@@ -106,7 +106,7 @@ proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys(argSep=""), "bool", a.argDf($dfl) ]
+  result = @[ a.argKeys(argSep=""), "bool", $dfl ]
   if a.parSh.len > 0:
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal.add(a.parNm)        # So, add to *NoVal.
@@ -117,7 +117,7 @@ proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*(dfl: cstring; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "string", a.argDf(nimEscape($dfl)) ]
+  result = @[ a.argKeys, "string", nimEscape($dfl) ]
 
 # chars
 proc argParse*(dst: var char, dfl: char, a: var ArgcvtParams): bool =
@@ -130,7 +130,7 @@ proc argParse*(dst: var char, dfl: char, a: var ArgcvtParams): bool =
   return true
 
 proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "char", a.argDf(nimEscape($dfl, quote='\'')) ]
+  result = @[ a.argKeys, "char", nimEscape($dfl, quote='\'') ]
 
 # enums
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
@@ -165,7 +165,7 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   return false
 
 proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, $T, a.argDf(helpCase($dfl, clEnumVal)) ]
+  result = @[ a.argKeys, $T, helpCase($dfl, clEnumVal) ]
 
 # various numeric types
 proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
@@ -187,7 +187,7 @@ template argParseHelpNum*(WideT: untyped, parse: untyped, T: untyped): untyped =
     return true
 
   proc argHelp*(dfl: T, a: var ArgcvtParams): seq[string] =
-    result = @[ a.argKeys, $T, a.argDf($dfl) ]
+    result = @[ a.argKeys, $T, $dfl ]
 
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int    )  #ints
 argParseHelpNum(BiggestInt  , parseBiggestInt  , int8   )
@@ -331,7 +331,7 @@ proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "array", typ, df)
-  result = @[ a.argKeys, typ, a.argDf(df) ]
+  result = @[ a.argKeys, typ, df ]
 
 # strings -- after seq[T] just in case string=seq[char] may need that.
 proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
@@ -346,7 +346,7 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
     return false
 
 proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "string", a.argDf(nimEscape(dfl)) ]
+  result = @[ a.argKeys, "string", nimEscape(dfl) ]
 
 # sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
@@ -383,7 +383,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "set", typ, df)
-  result = @[ a.argKeys, typ, a.argDf(df) ]
+  result = @[ a.argKeys, typ, df ]
 
 # HashSets
 when NimVersion <= "0.19.4":
@@ -417,7 +417,7 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   var dflSeq: seq[string]
   for d in dfl: dflSeq.add($d)
   argAggHelp(dflSeq, "hashset", typ, df)
-  result = @[ a.argKeys, typ, a.argDf(df) ]
+  result = @[ a.argKeys, typ, df ]
 
 #import tables # Tables XXX need 2D delimiting convention
 #? intsets, lists, deques, queues, etc?
