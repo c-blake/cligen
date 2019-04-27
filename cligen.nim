@@ -1,7 +1,7 @@
 import os, macros, tables, cligen/[parseopt3,argcvt,textUt], strutils, critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
-       incl, keysWithPrefix, contains, addPrefix, wrap, TextTab, alignTable,
+       incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, split
 
 type HelpOnly*    = object of Exception
@@ -377,9 +377,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       `apId`.mand = `mandHelp`
       let shortH = $(`shortHlp`)
       var `allId`: seq[string] = @[ "help", "help-syntax" ]
-      var `cbId`: CritBitTree[void]
-      `cbId`.incl(optionNormalize("help"))
-      `cbId`.incl(optionNormalize("help-syntax"))
+      var `cbId`: CritBitTree[string]
+      `cbId`.incl(optionNormalize("help"), "help")
+      `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
       var `mandId`: seq[string]
       var `mandInFId` = true
       var `tabId`: TextTab =
@@ -426,7 +426,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.mand
-         `cbId`.incl(optionNormalize(`parNm`))
+         `cbId`.incl(optionNormalize(`parNm`), `parNm`)
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
@@ -518,8 +518,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
       else:                                   # only a long option
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     let ambigReport = quote do:
-      var ks: seq[string]
-      for k in `cbId`.keysWithPrefix(optionNormalize(p.key)): ks.add(k)
+      let ks = `cbId`.valsWithPfx(p.key)
       let msg=("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[`pId`.key,
               ks.join("\n  ")]) & "\nRun with --help for more details.\n"
       if cast[pointer](`setByParseId`) != nil:
@@ -751,6 +750,12 @@ template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
   quit(1)
 
+template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
+  stderr.write "Ambiguous subcommand \"", attempt, "\" matches:\n"
+  stderr.write "  ", cb.valsWithPfx(attempt).join("\n  "), "\n"
+  stderr.write "Run with no-argument or \"help\" for more details.\n"
+  quit(1)
+
 template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
   {.push hint[GlobalVar]: off.}
   var pairs: seq[seq[string]]
@@ -807,8 +812,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     {.push hint[GlobalVar]: off.}
     var `multiNmsId`: seq[string]
     var `subCmdsId`: seq[string] = @[ "help" ]
-    var `subMchsId`: CritBitTree[void]
-    `subMchsId`.incl("help")
+    var `subMchsId`: CritBitTree[string]
+    `subMchsId`.incl("help", "help")
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ]
     {.pop.})
   for p in procBrackets:
@@ -825,8 +830,9 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       c.add(newParam("docs", quote do: `subDocsId`.addr))
     result.add(c)
     result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
-    result.add(newCall("incl", subMchsId, newCall("optionNormalize",
-                                                  newStrLitNode(sCmdNm))))
+    result.add(newCall("incl",
+                 subMchsId, newCall("optionNormalize", newStrLitNode(sCmdNm)),
+                            newStrLitNode(sCmdNm)))
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -862,16 +868,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
         cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
-      if `cmdLineId`.len > 0:
-        var ks: seq[string]
-        for k in `subMchsId`.keysWithPrefix(optionNormalize(`cmdLineId`[0])):
-          ks.add(k)
-        stderr.write "Ambiguous subcommand \"", `cmdLineId`[0], "\" matches:\n"
-        stderr.write "  ", ks.join("\n  "), "\n"
-        stderr.write "Run with no-argument or \"help\" for more details.\n"
-        quit(1)
-      else:
-        echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
+      if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
+      else: echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
         echo ("  $1 $2 subsubcommand [subsubcommand-opts & args]\n" &
@@ -893,8 +891,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
                    `prefixId`="  ") =
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = `cmdLineId`.len
-      let `arg0Id` =if n>0: `subMchsId`.lengthen optionNormalize(`cmdLineId`[0])
-                    else: ""
+      let `arg0Id` = if n > 0: `subMchsId`.lengthen `cmdLineId`[0] else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ]
       `cases`)
   when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
@@ -945,18 +942,23 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
     block:
      {.push hint[GlobalVar]: off.}
+     {.push warning[ProveField]: off.}
      let ps = cast[seq[string]](commandLineParams())
-     let ps0 = if ps.len>=1: `subMchsId`.lengthen optionNormalize(ps[0]) else:""
-     let ps1 = if ps.len>=2: `subMchsId`.lengthen optionNormalize(ps[1]) else:""
+     let ps0 = if ps.len >= 1: `subMchsId`.lengthen ps[0] else: ""
+     let ps1 = if ps.len >= 2: `subMchsId`.lengthen ps[1] else: ""
      if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
        unknownSubcommand(ps[0], `subCmdsId`)
+     elif ps.len > 0 and ps0.len == 0:
+       ambigSubcommand(`subMchsId`, ps[0])
      elif ps.len == 2 and ps0 == "help":
        if ps1 in `subMchsId`: cligenQuit(`SubsDispId`(@[ ps1, "--help" ]))
+       elif ps1.len == 0: ambigSubcommand(`subMchsId`, ps[1])
        else: unknownSubcommand(ps[1], `subCmdsId`)
      else:
        cligenQuit(`SubsDispId`())
-     {.pop.}
-    {.pop.})
+     {.pop.}  #ProveField
+     {.pop.}  #GlobalVar
+    {.pop.}) #GcUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],

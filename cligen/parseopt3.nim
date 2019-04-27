@@ -97,9 +97,12 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
     setLen(result, j)
 
 {.push warning[ProveField]: off.}
-proc lengthen*(cb: CritBitTree[void], key: string): string =
-  ##Use ``cb`` to convert ``key`` from unambiguous prefix to long form.  Return
-  ##unchanged string on no match or empty string if ambiguous.
+proc valsWithPfx*(cb: CritBitTree[string], key: string): seq[string] =
+  for v in cb.valuesWithPrefix(optionNormalize(key)): result.add(v)
+
+proc lengthen*(cb: CritBitTree[string], key: string): string =
+  ## Use ``cb`` to find normalized long form of ``key``. Return empty string if
+  ## ambiguous or unchanged string on no match.
   let n = optionNormalize(key)
   var ks: seq[string]
   for k in cb.keysWithPrefix(n): ks.add(k)
@@ -108,12 +111,11 @@ proc lengthen*(cb: CritBitTree[void], key: string): string =
   if ks.len > 1:    # Can still have an exact match if..
     for k in ks:    #..one long key fully prefixes another,
       if k == n:    #..like "help" prefixing "help-syntax".
-        return key
+        return n
   if ks.len > 1:    #No exact prefix-match above => ambiguity
     return ""       #=> of-clause that reports ambiguity in .msg.
   return n  #ks.len==0 => case-else clause suggests spelling in .msg.
 {.pop.}
-#{.warning[ProveField]: on.}
 
 type
   CmdLineKind* = enum         ## the detected command line token
@@ -130,7 +132,7 @@ type
     optsDone*: bool           ## "--" has been seen
     shortNoVal*: set[char]    ## 1-letter options not requiring optarg
     longNoVal*: seq[string]   ## long options not requiring optarg
-    stopWords*: CritBitTree[void] ## special literal parameters acting like "--"
+    stopWords*: CritBitTree[string] ## special literal parameters acting like "--"
     requireSep*: bool         ## require separator between option key & val
     sepChars*: set[char]      ## all the chars that can be valid separators
     opChars*: set[char]       ## all chars that can prefix a sepChar
@@ -169,8 +171,10 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
+  {.push warning[ProveField]: off.}
   for w in stopWords:
-    if w.len > 0: result.stopWords.incl(optionNormalize(w))
+    if w.len > 0: result.stopWords.incl(optionNormalize(w), w)
+  {.pop.}
   result.off = 0
   result.optsDone = false
 
@@ -265,7 +269,7 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
-    let k = lengthen(p.stopWords, optionNormalize(p.cmd[p.pos]))
+    let k = p.stopWords.lengthen(p.cmd[p.pos])  #Q: maybe let through ambig?
     if k in p.stopWords:                #Step4: chk for stop word
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
