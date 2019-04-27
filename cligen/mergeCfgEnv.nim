@@ -1,5 +1,6 @@
 import os, parsecfg, strutils, streams
 
+{.push warning[ProveField]: off.}
 proc mergeParams(cmdNames: seq[string],
                  cmdLine=os.commandLineParams()): seq[string] =
   ## This is an include file to provide query & merge of alternate sources for
@@ -35,3 +36,4 @@ proc mergeParams(cmdNames: seq[string],
   if e.len > 0:
     result = result & parseCmdLine(e)                      #See os.parseCmdLine
   result = result & cmdLine
+{.pop.}
