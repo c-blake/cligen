@@ -2,7 +2,7 @@ import os, macros, tables, cligen/[parseopt3,argcvt,textUt], strutils, critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split
+       suggestions, split, helpCase
 
 type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
@@ -426,7 +426,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.mand
-         `cbId`.incl(optionNormalize(`parNm`), `parNm`)
+         `cbId`.incl(optionNormalize(`parNm`), `apId`.parRend)
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
@@ -832,7 +832,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     result.add(newCall("add", subCmdsId, newStrLitNode(sCmdNm)))
     result.add(newCall("incl",
                  subMchsId, newCall("optionNormalize", newStrLitNode(sCmdNm)),
-                            newStrLitNode(sCmdNm)))
+                            newCall("helpCase", newStrLitNode(sCmdNm))))
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
