@@ -159,7 +159,7 @@ proc msplit*(s: string, fs: var seq[MSlice], sep=' ', n=0, repeat=false):int=
   defSplit(s, fs, n, repeat, sep, cmemchr, charEq)
 
 proc msplit*(s: string, sep: char, n=0, repeat=false): seq[MSlice] {.inline.} =
-  ## Like ``msplit(string, var seq[MSlice], int, char)``, but return the ``seq``.
+  ##Like ``msplit(string, var seq[MSlice], int, char)``, but return the ``seq``.
   discard msplit(s, result, sep, n, repeat)
 
 proc msplit*(s: string, fs: var seq[MSlice], seps=wspace, n=0, repeat=true):int=

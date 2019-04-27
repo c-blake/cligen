@@ -131,7 +131,7 @@ iterator mSlices*(mf: MFile, sep='\l', eat='\r'): MSlice {.inline.} =
   for ms in mSlices(mf.toMSlice, sep, eat):
     yield ms
 
-iterator lines*(mf: MFile, buf: var string, sep='\l', eat='\r'): string {.inline.} =
+iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'):string {.inline.}=
   ## Copy each line in ``mf`` to passed ``buf``, like ``system.lines(File)``.
   ## ``sep``, ``eat``, and delimiting logic is as for ``mslice.mSlices``, but
   ## Nim strings are returned.  Default parameters parse lines ending in either
@@ -155,10 +155,10 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
-iterator mSlices*(path: string, sep='\l', eat='\r', keep=false): MSlice {.inline.} =
-  ## A convenient input iterator that ``mopen()``s path or if that fails falls
-  ## back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
-  ## means MFile or strings backing MSlice's are kept alive for life of program.
+iterator mSlices*(path:string, sep='\l', eat='\r', keep=false):MSlice{.inline.}=
+  ##A convenient input iterator that ``mopen()``s path or if that fails falls
+  ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
+  ##means MFile or strings backing MSlice's are kept alive for life of program.
   let mf = mopen(path)
   if mf.mem != nil:
     for ms in mSlices(mf.toMSlice, sep, eat):
