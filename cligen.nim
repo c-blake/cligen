@@ -930,6 +930,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   let subMchsId = ident(prefix & "SubMchs")
   let SubsDispId = ident(prefix & "Subs")
   result = newStmtList()
+  result.add(quote do: {.push warning[GCUnsafe]: off.})
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
   result.add(newCall("dispatchMultiDG", copyNimTree(procBrackets)))
   result.add(quote do:
@@ -946,7 +947,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
       if ps1 in `subMchsId`: cligenQuit(`SubsDispId`(@[ ps1, "--help" ]))
       else: unknownSubcommand(ps[1], `subCmdsId`)
     else:
-      cligenQuit(`SubsDispId`()))
+      cligenQuit(`SubsDispId`())
+    {.pop.})
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],
