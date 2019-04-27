@@ -1,16 +1,12 @@
-#[
-This should maybe be re-written to be oriented toward a CLI user, not a
-CLI author. { and re-written and written again until questions stop. }
-In particular, it's hard to know how much Nim knowledge or beyond shell
-programming knowledge in general to assume on the part of a CLI user.
-]#
+#[ This text should be iterated upon until questions stop.  In particular, it's
+   hard to know how much Nim (or beyond general shell) knowledge to assume. ]#
 
 const syntaxHelp = """
 BASIC CHEAT SHEET:
  * "--foo=val" is same as "--foo:val" and "--foo val".
- * Likewise with -f instead of --foo; in addition -fval is also possible.
- * Long option & enum names are "CLI-style-insensitive", meaning that only the
-   case of the first letter matters otherwise; --foo is the same as --f_O-o.
+ * Likewise with -f instead of --foo; in addition -fval|-f=val|-f:val also work.
+ * Long option, enum values and subcommands are "CLI-style-insensitive", meaning
+   that the case of the first letter matters, but [_-] do not; --bar == --b_A-r.
  * Any unambiguous prefix is enough for long options, enum values & subcommands.
  * "bool" values for flags "foo", "bar" with short options 'f', 'b':
      default value false: -f | --foo sets the flag to true
@@ -18,9 +14,9 @@ BASIC CHEAT SHEET:
      "-f=true" or "-b=true" always sets either to true (likewise for "false")
      synonyms for "true":  "on",  "yes", "t", "y", and "1"
      synonyms for "false": "off", "no",  "f", "n", and "0"
- * Multiple bool flags can combine: "-bf" means "-b -f"
- * Non-option numeric values are ok, but numbers < 0 must be distinguished
-   from options by a leading space, usually requiring command shell quoting.
+ * Multiple bool flags can combine: "-bfgVAL" means "-b -f -gVAL"
+ * Non-option numeric values < 0 are ok but must be distinguished from options
+   by leading white space (usually requiring command shell quoting).
 
 Unlike most CLI frameworks, cligen directly supports managing plural types like
 "strings" with UPDATING OPERATIONS: prepend ("^="), subtract/delete ("-="), as
