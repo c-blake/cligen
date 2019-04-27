@@ -96,6 +96,7 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   if j != s.len:
     setLen(result, j)
 
+{.push warning[ProveField]: off.}
 proc lengthen*(cb: CritBitTree[void], key: string): string =
   ##Use ``cb`` to convert ``key`` from unambiguous prefix to long form.  Return
   ##unchanged string on no match or empty string if ambiguous.
@@ -111,6 +112,8 @@ proc lengthen*(cb: CritBitTree[void], key: string): string =
   if ks.len > 1:    #No exact prefix-match above => ambiguity
     return ""       #=> of-clause that reports ambiguity in .msg.
   return n  #ks.len==0 => case-else clause suggests spelling in .msg.
+{.pop.}
+#{.warning[ProveField]: on.}
 
 type
   CmdLineKind* = enum         ## the detected command line token
@@ -249,6 +252,7 @@ proc doLong(p: var OptParser) =
     p.val = ""
     p.pos += 1
 
+{.push warning[ProveField]: off.}
 proc next*(p: var OptParser) =
   p.sep = ""
   if p.off > 0:                         #Step1: handle any remaining short opts
@@ -282,6 +286,7 @@ proc next*(p: var OptParser) =
     else:                               #Step6b: maybe a block of short options
       p.off = 1                         # skip the initial "-"
       doShort(p)
+{.pop.}
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
