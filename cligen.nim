@@ -520,8 +520,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
     let ambigReport = quote do:
       var ks: seq[string]
       for k in `cbId`.keysWithPrefix(optionNormalize(p.key)): ks.add(k)
-      let msg = ("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[ `pId`.key,
-                ks.join("\n  ")]) & "\nRun with --help for more details.\n"
+      let msg=("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[`pId`.key,
+              ks.join("\n  ")]) & "\nRun with --help for more details.\n"
       if cast[pointer](`setByParseId`) != nil:
         `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
       else:
@@ -849,7 +849,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
                p.paramVal("mergeNames")
              else:
                quote do: @[ `srcBase` ] #, `sCmdNm` ]
-    cases.add(newNimNode(nnkOfBranch).add(newCall("optionNormalize", sCmdNm)).add(quote do:
+    cases.add(newNimNode(nnkOfBranch).
+              add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, `mn`)))
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
