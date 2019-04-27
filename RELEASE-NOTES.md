@@ -12,6 +12,8 @@ Version: 0.9.24
     In general, be more careful with namespace stuff.  Silence false positive
     warnings, and fix a few bugs.
 
+    Have better `helpCase`-using ambiguity error messages.
+
 Version: 0.9.23
 ---------------
     Add CLI-style insensitivity to subcommand name matching.  E.g.,
