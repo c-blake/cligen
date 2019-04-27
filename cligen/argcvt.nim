@@ -47,6 +47,7 @@ proc unescape*(s: string): string =
       of 'v': result.add(chr(0x0B)); inc(i, 2)       #vertical tab
       of 'f': result.add(chr(0x0C)); inc(i, 2)       #form feed
       of 'r': result.add(chr(0x0D)); inc(i, 2)       #carriage ret
+      of '\\': result.add(chr(0x5C)); inc(i, 2)      #backslash
       of 'e': result.add(chr(0x1B)); inc(i, 2)       #escape
       else:
         if i + 3 >= s.len:
