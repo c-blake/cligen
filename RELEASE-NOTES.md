@@ -1,6 +1,17 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.24
+---------------
+    Remove need for using `argcvt.argDf` in any custom `argHelp` impls.
+    A deprecated identity proc is provided for transition.
+
+    Have cligen.nim export all symbols needed by generated procs so `dispatch`
+    can now be invoked in a sub-scope within a proc.  See `test/SubScope.nim`.
+
+    In general, be more careful with namespace stuff.  Silence false positive
+    warnings, and fix a few bugs.
+
 Version: 0.9.23
 ---------------
     Add CLI-style insensitivity to subcommand name matching.  E.g.,
