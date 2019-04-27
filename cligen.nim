@@ -752,7 +752,9 @@ template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   quit(1)
 
 template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
+  {.push hint[GlobalVar]: off.}
   var pairs: seq[seq[string]]
+  {.push hint[GlobalVar]: off.}
   for i in 0 ..< subCmds.len:
     pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
   """
@@ -802,11 +804,13 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   let multiNmsId = ident(prefix & "multiNames")
   let subDocsId = ident(prefix & "SubDocs")
   result.add(quote do:
+    {.push hint[GlobalVar]: off.}
     var `multiNmsId`: seq[string]
     var `subCmdsId`: seq[string] = @[ "help" ]
     var `subMchsId`: CritBitTree[void]
     `subMchsId`.incl("help")
-    var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ])
+    var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ]
+    {.pop.})
   for p in procBrackets:
     if p[0].kind == nnkStrLit:
       continue
@@ -938,16 +942,19 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     #options) based only on a CL user's actual *command line* entry.  Other srcs
     #are on their own.  This could be trouble if anyone wants commandLineParams
     #to NOT be the suffix of mergeParams, but we could also add a define switch.
-    let ps = cast[seq[string]](commandLineParams())
-    let ps0 = if ps.len>=1: `subMchsId`.lengthen optionNormalize(ps[0]) else: ""
-    let ps1 = if ps.len>=2: `subMchsId`.lengthen optionNormalize(ps[1]) else: ""
-    if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
-      unknownSubcommand(ps[0], `subCmdsId`)
-    elif ps.len == 2 and ps0 == "help":
-      if ps1 in `subMchsId`: cligenQuit(`SubsDispId`(@[ ps1, "--help" ]))
-      else: unknownSubcommand(ps[1], `subCmdsId`)
-    else:
-      cligenQuit(`SubsDispId`())
+    block:
+     {.push hint[GlobalVar]: off.}
+     let ps = cast[seq[string]](commandLineParams())
+     let ps0 = if ps.len>=1: `subMchsId`.lengthen optionNormalize(ps[0]) else:""
+     let ps1 = if ps.len>=2: `subMchsId`.lengthen optionNormalize(ps[1]) else:""
+     if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
+       unknownSubcommand(ps[0], `subCmdsId`)
+     elif ps.len == 2 and ps0 == "help":
+       if ps1 in `subMchsId`: cligenQuit(`SubsDispId`(@[ ps1, "--help" ]))
+       else: unknownSubcommand(ps[1], `subCmdsId`)
+     else:
+       cligenQuit(`SubsDispId`())
+     {.pop.}
     {.pop.})
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
