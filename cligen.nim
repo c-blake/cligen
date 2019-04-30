@@ -8,7 +8,7 @@ type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
 
-const positionalAuto = "<AUTO>"
+const AUTO = "<..AUTO..>"     #Just some "impossible-ish" identifier
 
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
   ## Build Nim ident for generated parser-dispatcher proc
@@ -129,7 +129,7 @@ proc posIxGet(positional: string, fpars: NimNode): int =
   ## Find the proc param to map to optional positional arguments of a command.
   if positional == "":
     return -1
-  if positional != positionalAuto:
+  if positional != AUTO:
     result = findByName(positional, fpars)
     if result == -1:
       error("requested positional argument catcher " & positional &
@@ -221,7 +221,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
  helpTabColumns: seq[int] = helpTabColsDfl, stopWords: seq[string] = @[],
- positional: static string = positionalAuto, suppress: seq[string] = @[],
+ positional: static string = AUTO, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
@@ -686,7 +686,7 @@ template dispatch*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  opChars={'+','-','*','/','%','@',',','.','&','|','~','^','$','#','<','>','?'},
  helpTabColumnGap: int=2, helpTabMinLast: int=16, helpTabRowSep: string="",
  helpTabColumns = helpTabColsDfl, stopWords: seq[string] = @[],
- positional = positionalAuto, suppress: seq[string] = @[],
+ positional = AUTO, suppress: seq[string] = @[],
  shortHelp = 'h', implicitDefault: seq[string] = @[], mandatoryHelp="REQUIRED",
  mandatoryOverride: seq[string] = @[], version: Version=("",""),
  noAutoEcho: bool=false, dispatchName: string = "",
