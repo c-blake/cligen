@@ -212,6 +212,41 @@ proc splitr*(s: string, seps=wspace, n=0, repeat=true): seq[string] {.inline.}=
   ##Like ``splitr(string, var seq[string], int, set[char])``,but return ``seq``.
   discard splitr(s, result, seps, n, repeat)
 
+type Splitr* = tuple[ repeat: bool, chrDlm: char, setDlm: set[char], n: int ]
+
+proc initSplitr*(delim: string): Splitr =
+  ##Abstract single-string hybrid specification of maybe-repeat-folding 1-char |
+  ##maybe-repeat-folding char set delimiting.  Specifically, if ``delim`` chars
+  ##are all the same, ``repeat=delim.len>1`` & delimiting is 1-char.  Else, if
+  ##``delim`` chars vary, ``repeat=*ANY*dup``. Magic val ``"white"``=>repeated
+  ##white space chars. Eg.: ``","``=strict CSV, ``"<SPC><SPC>"``=folding spaces
+  ##``",:"``=strict comma-colon-separation, ",::"= repeat-folding common-colon.
+  if delim == "white":          #User can use any other permutation if needed
+    result.repeat = true
+    result.chrDlm = ' '
+    result.setDlm = wspace
+    result.n      = wspace.card #=6 unless wspace defn changes
+    return
+  for c in delim:
+    if c in result.setDlm:
+      result.repeat = true
+      continue
+    result.setDlm.incl(c)
+    inc(result.n)
+  if result.n == 1:             #support n==1 test to allow memchr optimization
+    result.chrDlm = delim[0]
+
+proc split*(s: Splitr, line: MSlice, cols: var seq[MSlice], n=0) {.inline.} =
+  if s.n > 1: discard msplit(line, cols, seps=s.setDlm, n, s.repeat)
+  else      : discard msplit(line, cols, s.chrDlm     , n, s.repeat)
+
+proc split*(s: Splitr, line: string, cols: var seq[string], n=0) {.inline.} =
+  if s.n > 1: discard splitr(line, cols, seps=s.setDlm, n, s.repeat)
+  else      : discard splitr(line, cols, s.chrDlm     , n, s.repeat)
+
+proc split*(s: Splitr, line: string, n=0): seq[string] {.inline.} =
+  s.split(line, result, n)
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
