@@ -103,7 +103,8 @@ proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
     if sh notin used and parNm notin result: # still available
       result[parNm] = sh
       used.incl(sh)
-  for k, v in result:
+  let tmp = result
+  for k, v in tmp:
     if v == '\0': result.del(k)
 
 proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
