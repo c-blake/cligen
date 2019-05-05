@@ -3,7 +3,7 @@ RELEASE NOTES
 
 Version: 0.9.25
 ---------------
-    Add convenient mslice.Splitr abstraction for CLI utilities delimintg inputs
+    Add convenient mslice.Splitr abstraction for CLI utilities delimiting inputs
     in a variety of ways.  Add demo program examples/cols.nim showing use.
 
 Version: 0.9.24
