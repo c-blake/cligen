@@ -6,6 +6,9 @@ Version: 0.9.25
     Add convenient mslice.Splitr abstraction for CLI utilities delimiting inputs
     in a variety of ways.  Add demo program examples/cols.nim showing use.
 
+    Fix `dupBlock` bug related to table modification during iteration exposed
+    by https://github.com/nim-lang/Nim/pull/11160
+
 Version: 0.9.24
 ---------------
     Remove need for using `argcvt.argDf` in any custom `argHelp` impls.
