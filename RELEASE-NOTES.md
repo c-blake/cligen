@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.26
+---------------
+    Get `dispatchMulti` working without sub-scopes with C++ backend (nim cpp)
+    on Nim versions 0.19.2 and 0.19.4. For details see:
+      https://github.com/c-blake/cligen/issues/94
+
 Version: 0.9.25
 ---------------
     Add convenient mslice.Splitr abstraction for CLI utilities delimiting inputs
