@@ -757,10 +757,8 @@ template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "Run with no-argument or \"help\" for more details.\n"
   quit(1)
 
-template topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
-  {.push hint[GlobalVar]: off.}
+proc topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
   var pairs: seq[seq[string]]
-  {.push hint[GlobalVar]: off.}
   for i in 0 ..< subCmds.len:
     pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
   """

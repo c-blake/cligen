@@ -5,7 +5,7 @@
 import strformat, sets, ./textUt, parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
-from typetraits import `$`  #Nim0.19.2, system got this $; Leave for a while.
+when NimVersion <= "0.19.4": import typetraits #$T -> system
 
 type
   ClHelpContext* = enum clLongOpt,      ## a long option identifier
