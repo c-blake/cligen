@@ -66,21 +66,22 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
   # Compute a table giving the help text for any parameter
   result = initTable[string, string]()
   for ph in helps:
-      let p: string = (ph[1][0]).strVal
-      let h: string = (ph[1][1]).strVal
-      result[p] = h
-      if not fpars.containsParam(p):
-        error $proNm & " has no param matching `help` key \"" & p & "\""
+    let p: string = (ph[1][0]).strVal
+    let h: string = (ph[1][1]).strVal
+    result[p] = h
+    if not fpars.containsParam(p):
+      error $proNm & " has no param matching `help` key \"" & p & "\""
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   # Compute a table giving the user-specified short option for any parameter
   result = initTable[string, char]()
   for losh in shorts:
-      let lo: string = (losh[1][0]).strVal
-      let sh: char = char((losh[1][1]).intVal)
-      result[lo] = sh
-      if lo.len > 0 and not fpars.containsParam(lo) and lo != "version":
-        error $proNm & " has no param matching `short` key \"" & lo & "\""
+    let lo: string = (losh[1][0]).strVal
+    let sh: char = char((losh[1][1]).intVal)
+    result[lo] = sh
+    if lo.len > 0 and not fpars.containsParam(lo) and
+         lo != "version" and lo != "help" and lo != "help-syntax":
+      error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, hlpCh: NimNode,
               userSpec: Table[string, char]): Table[string, char] =
