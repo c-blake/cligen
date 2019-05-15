@@ -404,7 +404,7 @@ Usage:
 where {CMD} is one of:
 
   help   print comprehensive or per-cmd help
-  apple  
+  apple  apple SUB-SUB commands
   whoa   Another entry point; here we echoResult
   nelly  Yet another entry point; here we block autoEcho
 
@@ -442,6 +442,36 @@ MultiMulti --help-syntax gives general cligen syntax help.
 Run "MultiMulti {help CMD|CMD --help}" to see help for just CMD.
 Run "MultiMulti help" to get *comprehensive* help.
 Top-level --version also available
+
+==> test/MultiMultiTopLvl.out <==
+This is a multiple-dispatch command.  Top-level --help/--help-syntax
+is also available.  Usage is like:
+    MultiMulti subcommand [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  whoa [optional-params] [names: string...]
+    Another entry point; here we echoResult
+    Options(opt-arg sep :|=|spc):
+      -h, --help                   print this cligen-erated help
+      --help-syntax                advanced: prepend,plurals,..
+      -z=, --zeta=   int    1      set zeta
+      -e=, --eta=    float  2.0    set eta
+      -v, --verb     bool   false  set verb
+  
+  apple [optional-params] [cmdLine: seq...]
+    apple sub-sub commands
+    Options(opt-arg sep :|=|spc):
+      -h, --help         print this cligen-erated help
+      --help-syntax      advanced: prepend,plurals,..
+  
+  nelly [optional-params] [names: string...]
+    Yet another entry point; here we block autoEcho
+    Options(opt-arg sep :|=|spc):
+      -h, --help                  print this cligen-erated help
+      --help-syntax               advanced: prepend,plurals,..
+      --hooves=      int   4      set hooves
+      -r=, --races=  int   9      set races
+      -v, --verb     bool  false  set verb
 
 ==> test/NoPositional.out <==
 Usage:

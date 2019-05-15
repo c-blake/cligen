@@ -39,8 +39,12 @@ when isMainModule:
                      mergeNames = @["MultiMulti", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
                      mergeNames = @["MultiMulti", "apple" ] ],
-                   [ cobbler, stopWords = @[ "yikes" ],
-                     mergeNames = @["MultiMulti", "apple" ] ])
-  dispatchMulti([ apple, stopWords = @["demo", "show", "cobbler" ] ],
+                   [ cobbler, doc = "apple cobbler SUB-SUB-SUB commands",
+                              stopWords = @[ "yikes" ],
+                              suppress = @[ "usage", "prefix" ],
+                              mergeNames = @["MultiMulti", "apple" ] ])
+  dispatchMulti([ apple, doc = "apple SUB-SUB commands",
+                         stopWords = @["demo", "show", "cobbler" ],
+                         suppress = @[ "usage", "prefix" ] ],
                 [ whoa, echoResult=true ],
                 [ nelly, noAutoEcho=true ])

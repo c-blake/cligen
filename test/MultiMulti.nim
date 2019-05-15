@@ -32,5 +32,7 @@ when isMainModule:
                      mergeNames = @["MultiMulti", "apple" ] ])
   dispatchMulti([ whoa, echoResult=true ],
                 [ apple, stopWords = @["demo", "show"],
-                         doc = "apple sub-sub commands" ],
+                         doc = "apple sub-sub commands",
+                         usage = " ",
+                         suppress = @[ "usage", "prefix" ] ],
                 [ nelly, noAutoEcho=true ])
