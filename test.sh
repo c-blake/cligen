@@ -10,6 +10,7 @@ for n in test/[A-Z]*.nim; do
 done
 wait
 ./test/FullyAutoMulti help > test/FullyAutoMultiTopLvl.out 2>&1
+./test/MultiMulti help > test/MultiMultiTopLvl.out 2>&1
 head -n900 test/*.out | grep -v '^Hint: ' |
      sed -e 's@.*/cligen.nim(@cligen.nim(@' \
          -e 's@.*/cligen/test@cligen/test@' > test/out
