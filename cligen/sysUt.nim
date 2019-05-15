@@ -27,3 +27,13 @@ macro enumerate*(x: ForLoopStmt): untyped =
   newFor.add x[^2][1]
   newFor.add body
   result.add newFor
+
+proc postInc*(x: var int): int =
+  ##Similar to post-fix ``++`` in C languages: yield initial val, then increment
+  result = x
+  inc(x)
+
+proc delItem*[T](x: var seq[T], item: T): int =
+  result = find(x, item)
+  if result >= 0:
+    x.del(Natural(result))

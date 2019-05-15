@@ -1,8 +1,8 @@
-import os, macros, tables, cligen/[parseopt3,argcvt,textUt], strutils, critbits
+import os,macros,tables,cligen/[parseopt3,argcvt,textUt,sysUt],strutils,critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split, helpCase
+       suggestions, split, helpCase, postInc, delItem
 
 type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
@@ -158,16 +158,6 @@ const helpTabDefault* = 2
 const helpTabDescrip* = 3
 const helpTabColsDfl* = @[ helpTabOption, helpTabType,
                            helpTabDefault, helpTabDescrip ]
-
-proc postInc*(x: var int): int =
-  ##Similar to post-fix ``++`` in C languages: yield initial val, then increment
-  result = x
-  inc(x)
-
-proc delItem*[T](x: var seq[T], item: T): int =
-  result = find(x, item)
-  if result >= 0:
-    x.del(Natural(result))
 
 type Version* = tuple[longOpt: string, output: string]
 
