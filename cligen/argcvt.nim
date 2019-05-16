@@ -5,7 +5,7 @@
 import strformat, sets, ./textUt, parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
-when NimVersion <= "0.19.4": import typetraits #$T -> system
+when NimVersion <= "0.19.8": import typetraits #$T -> system
 
 type
   ClHelpContext* = enum clLongOpt,      ## a long option identifier
@@ -386,7 +386,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, df ]
 
 # HashSets
-when NimVersion <= "0.19.4":
+when NimVersion <= "0.19.8":
   proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
 
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
