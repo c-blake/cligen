@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.27
+---------------
+    Mostly just a release that supports nim-0.19.6.
+
 Version: 0.9.26
 ---------------
     Get `dispatchMulti` working without sub-scopes with C++ backend (nim cpp)
