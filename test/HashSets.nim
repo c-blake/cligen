@@ -1,5 +1,5 @@
 import sets
-when NimVersion <= "0.19.4":
+when NimVersion <= "0.19.8":
   proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
   proc initHashSet[A](initialSize=64): HashSet[A] = initSet[A](initialSize)
 

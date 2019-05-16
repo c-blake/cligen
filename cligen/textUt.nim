@@ -1,6 +1,6 @@
 from strutils import split, repeat, replace, count
 from terminal import terminalWidth
-when NimVersion <= "0.19.4":
+when NimVersion <= "0.19.8":
   import strutils
   proc wrapWords(x: string, maxLineWidth: int): string=wordWrap(x, maxLineWidth)
 else:
