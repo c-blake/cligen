@@ -434,7 +434,7 @@ where {CMD} is one of:
 
   help   print comprehensive or per-cmd help
   whoa   Another entry point; here we echoResult
-  apple  apple sub-sub commands
+  apple  apple/apple help for sub-sub commands
   nelly  Yet another entry point; here we block autoEcho
 
 MultiMulti {-h|--help} or with no args at all prints this message.
@@ -458,11 +458,7 @@ where subcommand syntaxes are as follows:
       -e=, --eta=    float  2.0    set eta
       -v, --verb     bool   false  set verb
   
-  apple [optional-params] [cmdLine: seq...]
-    apple sub-sub commands
-    Options(opt-arg sep :|=|spc):
-      -h, --help         print this cligen-erated help
-      --help-syntax      advanced: prepend,plurals,..
+    apple/apple help for sub-sub commands
   
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho

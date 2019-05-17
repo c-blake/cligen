@@ -732,6 +732,12 @@ proc subCmdNoAutoEc(node: NimNode): bool =
 var cligenVersion* = ""
 {.pop.}
 
+proc subCmdUsage(node: NimNode): string =
+  result = dflUsage
+  for child in node:
+    if child.kind == nnkExprEqExpr and eqIdent(child[0], "usage"):
+      return child[1].strVal
+
 template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   stderr.write "Unknown subcommand \"" & cmd & "\".  "
   let sugg = suggestions(cmd, subCmds, subCmds)
@@ -841,6 +847,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdNm = newStrLitNode(sCmdNmS)
     let sCmdEcR = subCmdEchoRes(p)
     let sCmdNoAuEc = subCmdNoAutoEc(p)
+    let sCmdUsage = subCmdUsage(p)
     let mn = if p.paramPresent("mergeNames"):
                p.paramVal("mergeNames")
              else:
@@ -852,10 +859,10 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sep = if cnt+1 < len(procBrackets): "\n" else: ""
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:
-        cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `usageId`, `prefixId` & "  ")
+        cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `sCmdUsage`, `prefixId` & "  ")
         echo ""
       else:
-        cligenHelp(`disNmId`, `dashHelpId`, `sep`, `usageId`, `prefixId`))
+        cligenHelp(`disNmId`, `dashHelpId`, `sep`, `sCmdUsage`, `prefixId`))
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
