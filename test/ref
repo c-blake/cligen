@@ -251,7 +251,7 @@ where subcommand syntaxes are as follows:
       -b=, --beta=   float   2.0    set beta
       -v, --verb     bool    false  on=chatty, off=quiet
       -i=, --item=   string  ""     set item
-  
+
   print [optional-params] [paths: string...]
     show entry point with varied, meaningless parameters.
     Options(opt-arg sep :|=|spc):
@@ -260,7 +260,7 @@ where subcommand syntaxes are as follows:
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
-  
+
   punt [optional-params] [names: string...]
     Another entry point; here we echoResult
     Options(opt-arg sep :|=|spc):
@@ -269,7 +269,7 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=   int    1      set zeta
       -e=, --eta=    float  2.0    set eta
       -v, --verb     bool   false  set verb
-  
+
   nel-ly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
@@ -457,9 +457,10 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=   int    1      set zeta
       -e=, --eta=    float  2.0    set eta
       -v, --verb     bool   false  set verb
-  
+
     apple/apple help for sub-sub commands
   
+
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
     Options(opt-arg sep :|=|spc):
@@ -703,7 +704,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(688, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(683, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(146, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]

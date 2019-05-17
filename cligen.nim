@@ -162,7 +162,7 @@ const helpTabColsDfl* = @[ helpTabOption, helpTabType,
 type Version* = tuple[longOpt: string, output: string]
 
 const dflUsage* = "${prelude}$command $args\n" &
-                  "$doc  Options(opt-arg sep :|=|spc):\n" & "$options$sep"
+                  "$doc  Options(opt-arg sep :|=|spc):\n" & "$options"
 
 type
   ClStatus* = enum clBadKey,                        ## Unknown long key
@@ -336,14 +336,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
           mandatory.add(i)
   let posNoId = ident("posNo")          # positional arg number
   let keyCountId = ident("keyCount")    # positional arg number
-  let docId = ident("doc")              # gen proc parameter
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let vsnOpt = $version[0]              # Need string lits here for CL parse
   let vsnSh = if vsnOpt in shOpt: $shOpt[vsnOpt] else: ""
   let vsnStr = version[1]               # value must just work in stdout.write
   let prefixId = ident("prefix")        # local help prefix param
-  let subSepId = ident("subSep")        # sub cmd help separator
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
   let cbId = ident("crbt")              # CritBitTree for prefix lengthening
@@ -423,14 +421,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
-      let indentDoc = addPrefix(`prefixId`, wrap(`prefixId`, `docId`))
+      let indentDoc = addPrefix(`prefixId`, wrap(`prefixId`, `cmtDoc`))
       `apId`.help = `usageId` % [ "prelude", `prlude`, "doc", indentDoc,
                      "command", `cName`, "args", `args`, "options",
                      addPrefix(`prefixId` & "  ",
                                alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                           `htColGap`, `htMinLst`, `htRowSep`,
-                                          `htCols`)),
-                     "sep", `subSepId` ]
+                                          `htCols`))]
       if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -591,8 +588,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   result = quote do:
     if cast[pointer](`docs`) != nil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
-                 `docId`: string = `cmtDoc`, `usageId`: string = `usage`,
-                 `prefixId`="", `subSepId`="", parseOnly=false): `retType` =
+                 `usageId`=`usage`, `prefixId`="", parseOnly=false): `retType` =
       {.push hint[XDeclaredButNotUsed]: off.}
       `iniVar`
       proc parser(args=`cmdLineId`) =
@@ -654,13 +650,12 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
-template cligenHelp*(p: untyped, hlp: untyped, sep: untyped, use: untyped,
-                     pfx: untyped): auto =
+template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped): auto=
   when compiles(type(p())):
-    try: discard p(hlp, subSep=sep, usage=use, prefix=pfx)
+    try: discard p(hlp, usage=use, prefix=pfx)
     except HelpOnly: discard
   else:
-    try: p(hlp, subSep=sep, usage=use, prefix=pfx)
+    try: p(hlp, usage=use, prefix=pfx)
     except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
@@ -856,13 +851,14 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
               add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, `mn`)))
-    let sep = if cnt+1 < len(procBrackets): "\n" else: ""
+    let spc = if cnt + 1 < len(procBrackets):
+                quote do: echo ""
+              else: newNimNode(nnkEmpty)
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:
-        cligenHelp(`disNmId`, `helpSCmdId`, `sep`, `sCmdUsage`, `prefixId` & "  ")
-        echo ""
+        cligenHelp(`disNmId`,`helpSCmdId`,`sCmdUsage`,`prefixId` & "  "); `spc`
       else:
-        cligenHelp(`disNmId`, `dashHelpId`, `sep`, `sCmdUsage`, `prefixId`))
+        cligenHelp(`disNmId`, `dashHelpId`, `sCmdUsage`, `prefixId`); `spc`)
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
