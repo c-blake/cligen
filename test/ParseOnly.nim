@@ -5,7 +5,8 @@
 #control flow decisions by passing a `setByParse` to `dispatch(foo)` as shown
 #below.  This will cause a `dispatch` to generate a parser-dispatcher which
 #returns to the caller on abnormal exit rather than raising an exception.
-#If everything goes smoothly the wrapped function is still called, though.
+#If everything goes smoothly the wrapped function is still called, though,
+#*unless* `parseOnly=true` is passed.
 
 import cligen
 
