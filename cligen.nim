@@ -8,7 +8,7 @@ type HelpOnly*    = object of Exception
 type VersionOnly* = object of Exception
 type ParseError*  = object of Exception
 
-const AUTO = "<..AUTO..>"     #Just some "impossible-ish" identifier
+const AUTO = "\0"             #Just some "impossible-ish" identifier
 
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
   ## Build Nim ident for generated parser-dispatcher proc
