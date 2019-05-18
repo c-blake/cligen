@@ -69,12 +69,14 @@ Version: 0.9.27
 
 Version: 0.9.26
 ---------------
+
     Get `dispatchMulti` working without sub-scopes with C++ backend (nim cpp)
     on Nim versions 0.19.2 and 0.19.4. For details see:
       https://github.com/c-blake/cligen/issues/94
 
 Version: 0.9.25
 ---------------
+
     Add convenient mslice.Splitr abstraction for CLI utilities delimiting inputs
     in a variety of ways.  Add demo program examples/cols.nim showing use.
 
@@ -83,6 +85,7 @@ Version: 0.9.25
 
 Version: 0.9.24
 ---------------
+
     Remove need for using `argcvt.argDf` in any custom `argHelp` impls.
     A deprecated identity proc is provided for transition.
 
@@ -96,6 +99,7 @@ Version: 0.9.24
 
 Version: 0.9.23
 ---------------
+
     Add CLI-style insensitivity to subcommand name matching.  E.g.,
     `./test/FullyAutoMulti nel-ly` works (or ./test/FullyAutoMulti d-e-m-o
     for that matter).  To show a dash in help text requires using `cmdName`.
@@ -108,6 +112,7 @@ Version: 0.9.23
 
 Version: 0.9.22
 ---------------
+
     Add ability to accept any unambiguous prefix spelling of long option keys
     like cmd / option autocompletion in most shells but without TAB key press
     or any shell support required). https://github.com/c-blake/cligen/issues/99
@@ -116,6 +121,7 @@ Version: 0.9.22
 
 Version: 0.9.20
 ---------------
+
     Some clean-up of the --help-syntax output, including mentioning style-
     insensitivity.
 
@@ -140,6 +146,7 @@ Version: 0.9.20
 
 Version: 0.9.19
 ---------------
+
     Get `test/MultiMulti.nim` and even `test/MultMultMult.nim` mostly working.
     Now you can create dizzyingly deeply nested subcommands (but you will
     likely need to write your own `parsecfg` and `mergeParams` rather than just
@@ -184,6 +191,7 @@ Version: 0.9.19
 
 Version: 0.9.18
 ---------------
+
     This release adds some major features. ArneTheDuck asked for (approximately)
     mergeParams, alaviss asked for qualified proc name support, and TimotheeCour
     requested non-quitting invocation & something like setByParse and the new
@@ -275,6 +283,7 @@ Version: 0.9.18
 
 Version: 0.9.17
 ---------------
+
     Add ability for [1] element of Version 2-tuple-literals to be compile-time
     constant strings rather than string literals.  See `test/Version.nim`.
     [ This also works for `cligenVersion`, but you must `const foo = ..` and
@@ -293,6 +302,7 @@ Version: 0.9.17
 
 Version: 0.9.14
 ---------------
+
     Add range checking for all numeric types to argParseHelpNum
 
     Adapt code to new Nim nil world order.  One visible consequence is that
@@ -300,6 +310,7 @@ Version: 0.9.14
 
 Version: 0.9.13
 ---------------
+
     Add `version` parameter to `dispatchGen` and `dispatch`.
 
     Send "--help" and "--version"-type output to `stdout` not `stderr` for
@@ -307,6 +318,7 @@ Version: 0.9.13
 
 Version: 0.9.12
 ---------------
+
     Rename to be more NEP1 compliant. User-visible renames should be limited to:
       argcvtParams         -> ArgcvtParams
       argcvtParams.Help    -> ArgcvtParams.help
@@ -324,12 +336,14 @@ Version: 0.9.12
 
 Version: 0.9.11
 ---------------
+
     Add new `mandatoryOverride` parameter to dispatchGen/dispatch for
     situations like --version where it is assumed the proc will exit before
     trying to meaningfully use any mandatory parameters.
 
 Version: 0.9.10
 ---------------
+
     Appease nimble structure requirements.  The only breaking change should
     be the need to import cligen/argcvt if you define your own converters.
 
