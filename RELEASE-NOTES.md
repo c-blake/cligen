@@ -3,10 +3,10 @@ RELEASE NOTES
 
 Version: 0.9.28
 ---------------
-===============================================================================
+
     TL;DR: **IF** your compile breaks, just change `dispatch` -> `dispatch2`.
     If that fails, read on to update your code to the new API.
-===============================================================================
+
     Do ancient TODO item/close https://github.com/c-blake/cligen/issues/43.
     Remove 2 unneeded & lift 9 "proc signature independent-ish/CLI stylistic"
     of 28 `dispatchGen` (26 `dispatch`) parameters into an object of the new
