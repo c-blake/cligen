@@ -61,6 +61,8 @@ Version: 0.9.28
       `test/FullyAutoMulti.nim`
       `test/HelpTabCols.nim`
 
+    **Also** add `versionFromNimble` for `clCfg.version=versionFromNimble(..)`.
+
 Version: 0.9.27
 ---------------
     Mostly just a release that supports nim-0.19.6.

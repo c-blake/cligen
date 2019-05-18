@@ -906,6 +906,15 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     {.pop.}) #GcUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
+proc versionFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use nimble2version(foo)
+  result = "unparsable nimble version"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("version"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =
   ##This is a pass-through parameter merge to provide a hook for CLI authors to

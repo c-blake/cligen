@@ -12,10 +12,14 @@ when isMainModule:
   when defined(versionGit):
     const vsn = staticExec "git log -1 | head -n1"
     clCfg.version = vsn
-    dispatch(demo, cmdName="Version")
+    dispatch(demo)
+  elif defined(versionNimble):
+    const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
+    clCfg.version = versionFromNimble(nimbleFile)
+    dispatch(demo)
   else:
     clCfg.version = "1.5"
     when defined(versionShort):
-      dispatch(demo, cmdName="Version", short = { "version": 'V' })
+      dispatch(demo, short = { "version": 'V' })
     else:
       dispatch(demo, cmdName="Version")
