@@ -81,7 +81,9 @@ emits a more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help
 SUBCMD` emits just the message for `SUBCMD` (`foo` or `bar` in this example).
 Like long option keys or enum values, *any unambiguous prefix* is accepted.
 So, in the above `./cmd f -m1` would also work.  This is patterned after,
-e.g. Mercurial, gdb, or gnuplot.
+e.g. Mercurial, gdb, or gnuplot.  Additionally, long option keys can be spelled
+flexibly, e.g.  `--dry-run` or `--dryRun`, much like Nim's style-insensitive
+identifiers, but with extra insensitivity to so-called "kebab case".
 
 ---
 
@@ -102,34 +104,21 @@ short options, give `short` a key of `""`.
 
 ---
 
-By default, `dispatch` has `requireSeparator=false` making `-abcdBar`,
-`-abcd Bar`, `--delta Bar` or `--delta=Bar` all acceptable syntax for
-command options.
-
-Additionally, long option keys can be spelled flexibly, e.g.  `--dry-run` or
-`--dryRun`, much like Nim's style-insensitive identifiers, but with extra
-insensitivity to so-called "kebab case".
-
----
-
-If it makes more sense to echo a convertible-to-int8-exit-code result of a proc
-then just pass `echoResult=true`:
+The default exit protocol is `quit(int(result)) or (echo $result or discard;
+quit(0))`.  If `echoResult==true`, it's just `echo $result; quit(0)`, while if
+`noAutoEcho==true` it's just `quit(int(result)) or (discard; quit(0))`.  So,
 ```nim
 import editdistance, cligen   # gen a CLI for Nim stdlib's editDistance
 dispatch(editDistanceASCII, echoResult=true)
 ```
-If result _cannot_ be converted to `int`, `cligen` tries to `echo` the result
-if possible (unless you tell it not to by passing `noAutoEcho=true`).
+prints the edit distance between two mandatory parameters, `a`, and `b`.
 
-If _neither_ `echo`, nor conversion to `int` exit codes does the trick OR if you
-want to control program exit OR to call dispatchers more than once OR on more
-than one set of `seq[string]` args then you may need to call `dispatchGen()`
-and later call `dispatchFoo()` yourself.  This is all `dispatch` itself does.
-
-***Return*** _types and values_ of generated dispatchers match the wrapped proc.
-The first parameter is a `seq[string]`, just like a command line.  { Other
-parameters aid in nested call settings, are defaulted and probably don't matter
-to you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
+If these exit protocols are inadequate then you may need to call `dispatchGen()`
+and later call `try: dispatchFoo(someSeqString) except: discard` yourself.
+This is all `dispatch` itself does.  ***Return*** _types and values_ of the
+generated dispatcher matches the wrapped proc. { Other parameters to generated
+dispatchers are for internal use in `dispatchMulti` and probably don't matter to
+you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
 `ParseError`.  These are hopefully self-explanatory.
 
 ---
