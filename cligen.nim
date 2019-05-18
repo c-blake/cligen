@@ -233,7 +233,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##the proc become mandatory command arguments while those with default values
   ##become command options. Each proc parameter type needs in-scope ``argParse``
   ##& ``argHelp`` procs.  ``cligen/argcvt`` defines them for basic types & basic
-  ##collections of them (``seq[T], set[T], ..``).
+  ##collections (``int``, ``string``, ``enum``, .., ``seq[T], set[T], ..``).
   ##
   ##``help`` is a ``{(paramNm, str)}`` of per-param help, eg. ``{"quiet": "be
   ##quiet"}``.  Often, only these help strings are needed for a decent CLI.
