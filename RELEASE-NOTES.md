@@ -1,6 +1,66 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.28
+---------------
+-------------------------------------------------------------------------------
+    TL;DR: **IF** your compile breaks, just change `dispatch` -> `dispatch2`.
+    If that fails, read on to update your code to the new API.
+-------------------------------------------------------------------------------
+    Do ancient TODO item/close https://github.com/c-blake/cligen/issues/43.
+    Remove 2 unneeded & lift 9 "proc signature independent-ish/CLI stylistic"
+    of 28 `dispatchGen` (26 `dispatch`) parameters into an object of the new
+    type `ClCfg`.  The idea here is to lift anything that very likely "program
+    global" in a `dispatchMulti` setting to set in one place.  Per-proc edits
+    remain possible via distinct `ClCfg` instances.  The detailed mapping is:
+
+      Old dispatchGen param | New way to adjust settings
+      --------------------- | --------------------------
+      version/cligenVersion | ClCfg.version:string #MUST be "--version" now
+                            |   arg version=("a","b") --> clCfg.version="b"
+                            |   cligenVersion="b" --> clCfg.version="b"
+      requireSeparator      | ClCfg.reqSep
+      helpTabColumnGap      | ClCfg.hTabCols
+      helpTabMinLast        | ClCfg.hTabRowSep
+      helpTabRowSep         | ClCfg.hTabColGap
+      helpTabColumns        | ClCfg.hTabMinLast
+      mandatoryHelp         | ClCfg.hTabVal4req
+      sepChars              | ClCfg.sepChars
+      opChars               | ClCfg.opChars
+      shortHelp             | Gone; Use short={"help", '?'} instead
+      prelude               | Gone; Just use `usage` directly instead
+
+    Client code not messing with anything in the left column and always passing
+    `dispatch` params via keywords should need no changes.  `dispatch` params
+    start changing at slot 7 (now `cf`) via mutations/removals.  Param order is
+    otherwise the same except for `noAutoEcho` moving to after `echoResult` and
+    `stopWords` moving to after `mandatoryOverride`.  This seems unlikely to
+    matter.  Keyword calling seems pretty compelling at >=7 params & examples
+    all use it.  `template dispatch` shows the new full argument list.
+
+    So, this change is BREAKING-ISH in that it MAY require client code updates,
+    but only in rare cases.  Most likely only `version`/`cligenVersion` users
+    need to do anything at all, and that is to just lift one assignment out of
+    a parameter list/change one variable name.  The only loss in flexibility is
+    "--version" spelling becoming as fixed as "--help" (flexibility to spell it
+    otherwise was always pretty iffy, IMO).
+
+    Apologies if I'm wrong about impact rarity, but 16 is much cleaner than 26
+    and the new way is far more practical for `dispatchMulti` adjustments.  More
+    changes like this are unlikely.  Remaining `dispatch` params depend strongly
+    on formal parameter lists which are likely to vary across wrapped procs in
+    a `dispatchMulti` setting (except `usage`/`echoResult`,`noAutoEcho` which
+    have sub-sub-command/compile-time reasons to not move into `cf`).  After a
+    trial period to resolve issues, I'll stamp a 1.0 version with the hope to
+    make no more backward incompatible changes unless there is a great reason.
+
+    An exported global var `clCfg`, the default for the new `cf` parameter, can
+    simplify common cases.  Examples showing how to adjust the above settings
+    the new way are in:
+      `test/Version.nim`
+      `test/FullyAutoMulti.nim`
+      `test/HelpTabCols.nim`
+
 Version: 0.9.27
 ---------------
     Mostly just a release that supports nim-0.19.6.

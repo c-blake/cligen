@@ -4,7 +4,8 @@ when NimVersion <= "0.19.8":
 else:
   import std/editDistance
 
-dispatchGen(editDistanceAscii, version = ("version", "1.0"))
+clCfg.version = "1.0"
+dispatchGen(editDistanceAscii)
 
 try:
   echo "edit distance is ", dispatchEditDistanceAscii()

@@ -76,7 +76,7 @@ type ArgcvtParams* = object ## \
   parSh*: string      ## short key for this option key
   parCount*: int      ## count of times this parameter has been invoked
   parReq*: int        ## flag indicating parameter is mandatory
-  mand*: string       ## how a mandatory defaults is rendered in help
+  val4req*: string    ## how a required/mandatory default value is rendered
   help*: string       ## the whole help string, for parse errors
   msg*: string        ## Error message from a bad parse
   shortNoVal*: set[char]  ## short options keys where value may be omitted
@@ -84,8 +84,9 @@ type ArgcvtParams* = object ## \
 
 proc argKeys*(a: ArgcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
-  result = if a.parSh.len > 0: "-$1$3, --$2$3" % [ a.parSh, a.parRend, argSep ]
-           else              : "--" & a.parRend & argSep
+  let hasShort = a.parSh.len > 0 and a.parSh != "\0"
+  result = if hasShort: "-$1$3, --$2$3" % [ a.parSh, a.parRend, argSep ]
+           else       : "--" & a.parRend & argSep
 
 proc argDf*(a: ArgcvtParams, dv: string): string {.deprecated:
      "Deprecated since v0.9.24; No longer needed."} = dv

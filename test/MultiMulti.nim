@@ -24,7 +24,7 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
 when isMainModule:
   import cligen
   include cligen/mergeCfgEnv
-  cligenVersion = "0.0.1"
+  clCfg.version = "0.0.1"
   dispatchMultiGen([ "apple" ],
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
                      mergeNames = @["MultiMulti", "apple" ] ],

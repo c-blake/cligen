@@ -7,8 +7,9 @@ proc demo(alpha=1, beta=2.0, verb=false, item="", args: seq[string]) =
 
 when isMainModule:
   import cligen
+  clCfg.hTabCols = @[ clOptKeys, clDescrip, clDflVal ]
+  clCfg.reqSep = true
   dispatch(demo,
            help = { "alpha" : "growth constant",
                     "beta"  : "shrink target" },
-           short = { "alpha" : 'z' },
-           helpTabColumns = @[helpTabOption, helpTabDescrip, helpTabDefault])
+           short = { "alpha" : 'z' })

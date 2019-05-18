@@ -1,8 +1,3 @@
-  Might be nice to have some encapsulation/abstraction of macro parameters since
-  some might be re-used a lot, especially in a ``dispatchMulti`` setting.  Maybe
-  `parseCtl`, `helpCtl`, `dispatchCtl`.  Using a Nim template/macro wrapper is
-  easy for `dispatch`, but that would not help with `dispatchMulti`.
-
   This is really advanced and goes beyond most CLI APIs, but it may also be nice
   to have input data from stdin (optionally mergeable with argv) auto-parsed to
   designated input `seq[T]` and also allow formatting controls for result echo.

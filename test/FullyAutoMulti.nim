@@ -23,9 +23,12 @@ proc nel_Ly(hooves=4, races=9, verb=false, names: seq[string]): string =
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
-  cligenVersion = "0.0.1"
-  dispatchMulti([ "multi", requireSeparator=true ],
+  clCfg.version = "0.0.1"
+  clCfg.reqSep = true
+  var noVsn = clCfg
+  noVsn.version = ""
+  dispatchMulti([ "multi" ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
-                [ punt, echoResult=true ],
+                [ punt, echoResult=true, cf=noVsn ],
                 [ nel_Ly, cmdName="nel-ly", noAutoEcho=true ] )

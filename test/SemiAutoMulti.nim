@@ -12,11 +12,14 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]) =
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
 
+  var cc = clCfg
+  cc.hTabColGap = 3
+  cc.hTabMinLast = 20
+  cc.hTabRowSep = "\n"
   dispatchGen(demo, help = { "alpha" : "what alpha does",
                              "beta"  : "what beta does ",
                              "verb"  : "on=chatty, off=quiet. 'Nuff said." },
-              helpTabColumnGap=3, helpTabMinLast=20,  #test help tab tweaks
-              helpTabRowSep="\n")                     #double space help table
+              cf=cc)
   dispatchGen(show)
 
   let multiSubs = @[ "demo", "show" ]
