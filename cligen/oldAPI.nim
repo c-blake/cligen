@@ -17,7 +17,9 @@ type Version* = tuple[longOpt: string, output: string]
 # UFCS is nice generally, but in this compatibility API case creates trouble
 # since it is natural for the new name of the field to be the old name of the
 # parameter, but this creates an identifier conflict.  So, we provide setters
-# under distinct names for fields that are the same name as old params.
+# under distinct names for fields that are the same name as old params. I guess
+# this is only for templates, which we need here to receive pro:typed{nkSym}:
+#   https://github.com/nim-lang/Nim/issues/984
 proc `vsnStr=`*(cf: var ClCfg, arg: string) = cf.version = arg
 template `sepChar=`*(cf: var ClCfg, arg: untyped) = cf.sepChars = arg
 template `opChar=`*(cf: var ClCfg, arg: untyped) = cf.opChars = arg
