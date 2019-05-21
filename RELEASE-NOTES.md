@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.29
+---------------
+  Add feature requested in both https://github.com/c-blake/cligen/issues/2 and
+  https://github.com/c-blake/cligen/issues/30 .  At present, a nim-devel
+  compiler seems needed for these to not error out with an "attempting to call
+  undeclared routine: 'field='" message, but I think that can be worked around.
+
 Version: 0.9.28
 ---------------
 

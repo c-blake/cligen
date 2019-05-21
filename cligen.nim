@@ -906,6 +906,48 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     {.pop.}) #GcUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
+macro initGen*(default:typed, T:untyped, suppress:seq[string] = @[]): untyped =
+  ##This macro generates an ``init`` proc for object|tuples of type ``T`` with
+  ##param names equal to top-level field names & default values from ``default``
+  ##like ``init(field1=default.field1,...): T = result.field1=field1; ..``. 
+  var ti = default.getTypeImpl
+  case ti.typeKind:
+  of ntyTuple: discard            #For tuples IdentDefs are top level
+  of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
+  else: error "default value is not a tuple or object"
+  let empty = newNimNode(nnkEmpty)
+  let suppressed = toStrSeq(suppress)
+  var params = @[ quote do: `T` ] #Return type
+  var assigns = newStmtList()     #List of assignments 
+  for kid in ti.children:         #iterate over fields
+    if kid.kind != nnkIdentDefs: warning "case objects unsupported"
+    let nm = kid[0].strVal
+    if nm in suppressed: continue
+    let id = ident(nm)            #XXX just use `kid`?
+    params.add(newIdentDefs(id, empty, quote do: `default`.`id`))
+    assigns.add(quote do: result.`id` = `id`)
+  result = newProc(name = ident("init"), params = params, body = assigns)
+  when defined(printInit): echo repr(result)  # maybe print gen code
+
+template initFromCL*[T](default: T, xcmdName: string="", xdoc: string="",
+    xhelp: typed={}, xshort: typed={}, xusage: string=clUsage, xcf: ClCfg=clCfg,
+    xsuppress: seq[string] = @[], xmandatoryOverride: seq[string] = @[],
+    xmergeNames: seq[string] = @[]): T =
+  ##This is like ``dispatch`` but does not ``quit`` (unless user issues either
+  ##--help|--version or bad CL syntax).  Instead it returns a ``T`` populated
+  ##from the default values in object|tuple ``default`` and then command-line.
+  ##Top level fields must have types with ``argParse``&``argHelp`` overloads.
+  ##Parameters to this also common to ``dispatchGen`` begin with an 'x'.
+  proc callIt(): T =
+    initGen(default, T, suppress=xsuppress)   #Anything else?
+    dispatchGen(init, dispatchName="x", cmdName=xcmdName, doc=xdoc, help=xhelp,
+                short=xshort, usage=xusage, cf=xcf, mergeNames=xmergeNames,
+                mandatoryOverride=xmandatoryOverride)
+    try: result = x()
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+  callIt()      #inside proc is not strictly necessary, but probably safer.
+
 proc versionFromNimble*(nimbleContents: string): string =
   ## const foo = staticRead "relPathToDotNimbleFile"; use nimble2version(foo)
   result = "unparsable nimble version"

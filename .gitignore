@@ -51,3 +51,5 @@ test/SemiMultMult
 test/MultiMulti
 test/MultMultMult
 test/SubScope
+test/InitOb
+test/InitTup
