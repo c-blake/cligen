@@ -10,7 +10,7 @@ when isMainModule:
   import cligen; include cligen/mergeCfgEnv
 
   when defined(versionGit):
-    const vsn = staticExec "git log -1 | head -n1"
+    const vsn = staticExec "git describe --tags HEAD"
     clCfg.version = vsn
     dispatch(demo)
   elif defined(versionNimble):
