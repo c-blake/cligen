@@ -5,7 +5,7 @@ type App* = tuple[
   show: bool,        ## show informative compiler info
   synth: string ]    ## synthetic inferred from other args
 
-const dfl* = (nim: "nimcc", srcFile: "", show: false, synth: "")
+const dfl* = (nim:"nimcc", srcFile: "", show: false, synth: "") #Need all fields
 
 proc logic*(a: var App) =
   a.synth = a.nim & " FOOBAR"
