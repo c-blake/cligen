@@ -138,6 +138,23 @@ You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as shown
 above, if that works for you.
 
+Rather than dispatching to a proc and exiting, you can also initialize the
+fields of an object/tuple from the command-line:
+```nim
+type App* = object
+  srcFile*: string
+  show*: bool
+const dfl* = App(srcFile: "junk") #set any defaults != default for type
+
+proc logic*(a: var App) = echo "app is: ", a
+
+when isMainModule:
+  import cligen
+  var app = initFromCL(dfl, xCmdName="myApp", xdoc="yadda", xshort={"show":'S'},
+                       xhelp = { "srcFile":"script", "show":"show something" })
+  app.logic()
+```
+
 Even More Controls and Details
 ==============================
 After many feature requests `cligen` grew many knobs & levers.  First there are
