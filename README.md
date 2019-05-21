@@ -148,11 +148,7 @@ const dfl* = App(srcFile: "junk") #set any defaults != default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
-when isMainModule:
-  import cligen
-  var app = initFromCL(dfl, xCmdName="myApp", xdoc="yadda", xshort={"show":'S'},
-                       xhelp = { "srcFile":"script", "show":"show something" })
-  app.logic()
+when isMainModule: import cligen; var app = initFromCL(dfl); app.logic()
 ```
 
 Even More Controls and Details
