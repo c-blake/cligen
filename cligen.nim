@@ -924,8 +924,13 @@ macro initGen*(default:typed, T:untyped, suppress:seq[string] = @[]): untyped =
     let nm = kid[0].strVal
     if nm in suppressed: continue
     let id = ident(nm)            #XXX just use `kid`?
+    let sid = ident("set" & nm); let sidEq = ident("set" & nm & "=")
+    let argId = ident("arg"); let obId = ident("ob")
     params.add(newIdentDefs(id, empty, quote do: `default`.`id`))
-    assigns.add(quote do: result.`id` = `id`)
+    let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
+    assigns.add(quote do:
+      proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
+      `r`.`sid` = `id`)
   result = newProc(name = ident("init"), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code
 
