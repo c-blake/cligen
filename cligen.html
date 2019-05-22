@@ -938,6 +938,8 @@ function main() {
     title="dispatchMultiDG(procBkts: varargs[untyped]): untyped"><wbr />dispatch<wbr />Multi<wbr />DG<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#dispatchMulti.m%2Cvarargs%5Buntyped%5D"
     title="dispatchMulti(procBrackets: varargs[untyped]): untyped"><wbr />dispatch<wbr />Multi<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#initGen.m%2Ctyped%2Cuntyped%2Cseq%5BT%5D%5Bstring%5D"
+    title="initGen(default: typed; T: untyped; suppress: seq[string] = @[]): untyped"><wbr />init<wbr />Gen<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -959,6 +961,12 @@ function main() {
     title="unknownSubcommand(cmd: string; subCmds: seq[string])"><wbr />unknown<wbr />Subcommand<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ambigSubcommand.t%2CCritBitTree%5Bstring%5D%2Cstring"
     title="ambigSubcommand(cb: CritBitTree[string]; attempt: string)"><wbr />ambig<wbr />Subcommand<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#initFromCL.t%2CT%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2CClCfg%2Cseq%5BT%5D%5Bstring%5D%2Cseq%5BT%5D%5Bstring%5D%2Cseq%5BT%5D%5Bstring%5D"
+    title="initFromCL[T](default: T; xcmdName: string = &quot;&quot;; xdoc: string = &quot;&quot;; xhelp: typed = {};
+              xshort: typed = {}; xusage: string = clUsage; xcf: ClCfg = clCfg;
+              xsuppress: seq[string] = @[];
+              xmandatoryOverride: seq[string] = @[];
+              xmergeNames: seq[string] = @[]): T"><wbr />init<wbr />From<wbr />CL<span class="attachedType">ClCfg</span></a></li>
   <li><a class="reference" href="#sepChar%3D.t%2CClCfg%2Cuntyped"
     title="sepChar=(cf: var ClCfg; arg: untyped)"><wbr />sep<wbr />Char=<span class="attachedType">ClCfg</span></a></li>
   <li><a class="reference" href="#opChar%3D.t%2CClCfg%2Cuntyped"
@@ -1272,6 +1280,12 @@ Generate multi-cmd dispatch. <tt class="docutils literal"><span class="pre">proc
 A wrapper to generate a multi-command dispatcher, then call it, and quit.
 
 </dd>
+<a id="initGen.m,typed,untyped,seq[T][string]"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#initGen.m%2Ctyped%2Cuntyped%2Cseq%5BT%5D%5Bstring%5D"><span class="Identifier">initGen</span></a><span class="Other">(</span><span class="Identifier">default</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+This macro generates an <tt class="docutils literal"><span class="pre">init</span></tt> proc for object|tuples of type <tt class="docutils literal"><span class="pre">T</span></tt> with param names equal to top-level field names &amp; default values from <tt class="docutils literal"><span class="pre">default</span></tt> like <tt class="docutils literal"><span class="pre">init(field1=default.field1,...): T = result.field1=field1; ..</span></tt>. 
+
+</dd>
 
 </dl></div>
 <div class="section" id="18">
@@ -1309,6 +1323,19 @@ A convenience wrapper to both generate a command-line dispatcher and then call t
 <a id="ambigSubcommand.t,CritBitTree[string],string"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#ambigSubcommand.t%2CCritBitTree%5Bstring%5D%2Cstring"><span class="Identifier">ambigSubcommand</span></a><span class="Other">(</span><span class="Identifier">cb</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">attempt</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
 <dd>
+
+
+</dd>
+<a id="initFromCL.t,T,string,string,typed,typed,string,ClCfg,seq[T][string],seq[T][string],seq[T][string]"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#initFromCL.t%2CT%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cstring%2CClCfg%2Cseq%5BT%5D%5Bstring%5D%2Cseq%5BT%5D%5Bstring%5D%2Cseq%5BT%5D%5Bstring%5D"><span class="Identifier">initFromCL</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">default</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">xcmdName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">xdoc</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+                      <span class="Identifier">xhelp</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">xshort</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">xusage</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Identifier">clUsage</span><span class="Other">;</span>
+                      <span class="Identifier">xcf</span><span class="Other">:</span> <a href="cligen.html#ClCfg"><span class="Identifier">ClCfg</span></a> <span class="Other">=</span> <span class="Identifier">clCfg</span><span class="Other">;</span> <span class="Identifier">xsuppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
+                      <span class="Identifier">xmandatoryOverride</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
+                      <span class="Identifier">xmergeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
+<dd>
+This is like <tt class="docutils literal"><span class="pre">dispatch</span></tt> but does not <tt class="docutils literal"><span class="pre">quit</span></tt> (unless user issues either<table frame="void"><tr><th align="left">--help|--version or bad CL syntax).</th><td align="left">Instead it returns a <tt class="docutils literal"><span class="pre">T</span></tt> populated</td>
+</tr>
+</table><p>from the default values in object|tuple <tt class="docutils literal"><span class="pre">default</span></tt> and then command-line. Top level fields must have types with <tt class="docutils literal"><span class="pre">argParse``&amp;``argHelp</span></tt> overloads. Parameters to this also common to <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> begin with an 'x'.</p>
 
 
 </dd>
@@ -1358,7 +1385,7 @@ A convenience wrapper to both generate a command-line dispatcher and then call t
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-05-18 15:54:19 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-22 11:40:17 UTC</small>
       </div>
     </div>
   </div>
