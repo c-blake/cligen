@@ -39,7 +39,7 @@ Value (DPSV) operators that allow passing MULTIPLE SLOTS to the above operators
 in ONE COMMAND PARAMETER.  DPSV is like regex substitution (eg., "/old/new" or
 "%search%replace") where the first character says how to delimit the rest.
 Delimiting is strict (a trailing delimiter means an empty slot).  No delimiter
-("--foo,=") sets to empty while ",@=" works like set-empty followed by append.
+("--foo,=") clears while ",@=" works like a clear followed by append.
  * Example multi-value updates for strings option "foo" defaulting to "A,B":
    --foo,=       => {}       ; clears
    --foo,=,C,D   => A,B,C,D  ; append multi
