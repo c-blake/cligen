@@ -906,7 +906,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     {.pop.}) #GcUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
-macro initGen*(default:typed, T:untyped, suppress:seq[string] = @[]): untyped =
+macro initGen*(default:typed, T:untyped, xsuppress:seq[string] = @[]): untyped =
   ##This macro generates an ``init`` proc for object|tuples of type ``T`` with
   ##param names equal to top-level field names & default values from ``default``
   ##like ``init(field1=default.field1,...): T = result.field1=field1; ..``. 
@@ -916,7 +916,7 @@ macro initGen*(default:typed, T:untyped, suppress:seq[string] = @[]): untyped =
   of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
-  let suppressed = toStrSeq(suppress)
+  let suppressed = toStrSeq(xsuppress)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
   for kid in ti.children:         #iterate over fields
@@ -934,20 +934,30 @@ macro initGen*(default:typed, T:untyped, suppress:seq[string] = @[]): untyped =
   result = newProc(name = ident("init"), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code
 
-template initFromCL*[T](default: T, xcmdName: string="", xdoc: string="",
+template initGx(default:typed, T:untyped, xsuppress:seq[string] = @[]): untyped=
+  initGen(default, T, xsuppress)  #This&next ugly hacks so can keep same kw args
+
+template dispatchGx(pro: typed{nkSym}, xcmdName: string="", xdoc: string="",
     xhelp: typed={}, xshort: typed={}, xusage: string=clUsage, xcf: ClCfg=clCfg,
-    xsuppress: seq[string] = @[], xmandatoryOverride: seq[string] = @[],
-    xmergeNames: seq[string] = @[]): T =
-  ##This is like ``dispatch`` but does not ``quit`` (unless user issues bad CL 
-  ##syntax, --help, or --version).  Instead it returns a ``T`` populated from
-  ##values in object|tuple ``default`` and then from the command-line. Top-level
-  ##fields must have types with ``argParse`` & ``argHelp`` overloads.  Params to
-  ##this also common to ``dispatchGen`` begin with an 'x'.
+    xdispatchName="", xmergeNames: seq[string] = @[]): untyped =
+  dispatchGen(pro, cmdName=xcmdName, doc=xdoc, help=xhelp, short=xshort,
+              usage=xusage, cf=xcf, dispatchName=xdispatchName,
+              mergeNames=xmergeNames)
+
+template initFromCL*[T](default: T, cmdName: string="", doc: string="",
+    help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
+    suppress: seq[string] = @[], mergeNames: seq[string] = @[]): T =
+  ## Like ``dispatch`` but only ``quit`` when user gave bad CL, --help,
+  ## or --version.  On success, returns ``T`` populated from object|tuple
+  ## ``default`` and then from the ``mergeNames``/the command-line.  Top-level
+  ## fields must have types with ``argParse`` & ``argHelp`` overloads.  Params
+  ## to this common to ``dispatchGen`` mean the same thing. (The inability here
+  ## to distinguish between *explicit* assignment & Nim type defaults eliminates
+  ## several features).
   proc callIt(): T =
-    initGen(default, T, suppress=xsuppress)   #Anything else?
-    dispatchGen(init, dispatchName="x", cmdName=xcmdName, doc=xdoc, help=xhelp,
-                short=xshort, usage=xusage, cf=xcf, mergeNames=xmergeNames,
-                mandatoryOverride=xmandatoryOverride)
+    initGx(default, T, xsuppress=suppress)
+    dispatchGx(init, xdispatchName="x", xcmdName=cmdName, xdoc=doc, xhelp=help,
+               xshort=short, xusage=usage, xcf=cf, xmergeNames=mergeNames)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)

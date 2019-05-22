@@ -12,11 +12,11 @@ proc logic*(a: var App) =
 
 when isMainModule:    #Q: why can one not say {.outputFile: "InitOb".}?
   import cligen
-  var app = initFromCL(dfl, xCmdName = "InitOb", xdoc = "do some app",
-                       xsuppress = @[ "synth" ], xshort = {"show": 'S'},
-                       xhelp = { "nim":       "compiler to use",
-                                 "srcFile":  "script to run",
-                                 "show": "show informative compiler info" })
+  var app = initFromCL(dfl, cmdName = "InitOb", doc = "do some app",
+                       suppress = @[ "synth" ], short = {"show": 'S'},
+                       help = { "nim":       "compiler to use",
+                                "srcFile":  "script to run",
+                                "show": "show informative compiler info" })
   #var app = initFromCL(App())  #also works if type defaults are ok
   app.logic()
   echo "app: ", app
