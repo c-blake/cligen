@@ -1333,10 +1333,7 @@ A convenience wrapper to both generate a command-line dispatcher and then call t
                       <span class="Identifier">xmandatoryOverride</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                       <span class="Identifier">xmergeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
 <dd>
-This is like <tt class="docutils literal"><span class="pre">dispatch</span></tt> but does not <tt class="docutils literal"><span class="pre">quit</span></tt> (unless user issues either<table frame="void"><tr><th align="left">--help|--version or bad CL syntax).</th><td align="left">Instead it returns a <tt class="docutils literal"><span class="pre">T</span></tt> populated</td>
-</tr>
-</table><p>from the default values in object|tuple <tt class="docutils literal"><span class="pre">default</span></tt> and then command-line. Top level fields must have types with <tt class="docutils literal"><span class="pre">argParse``&amp;``argHelp</span></tt> overloads. Parameters to this also common to <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> begin with an 'x'.</p>
-
+This is like <tt class="docutils literal"><span class="pre">dispatch</span></tt> but does not <tt class="docutils literal"><span class="pre">quit</span></tt> (unless user issues bad CL syntax, --help, or --version).  Instead it returns a <tt class="docutils literal"><span class="pre">T</span></tt> populated from values in object|tuple <tt class="docutils literal"><span class="pre">default</span></tt> and then from the command-line. Top-level fields must have types with <tt class="docutils literal"><span class="pre">argParse</span></tt> &amp; <tt class="docutils literal"><span class="pre">argHelp</span></tt> overloads.  Params to this also common to <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> begin with an 'x'.
 
 </dd>
 <a id="sepChar=.t,ClCfg,untyped"></a>
@@ -1385,7 +1382,7 @@ This is like <tt class="docutils literal"><span class="pre">dispatch</span></tt>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-05-22 11:44:44 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-22 11:52:36 UTC</small>
       </div>
     </div>
   </div>

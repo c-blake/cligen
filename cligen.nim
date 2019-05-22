@@ -938,11 +938,11 @@ template initFromCL*[T](default: T, xcmdName: string="", xdoc: string="",
     xhelp: typed={}, xshort: typed={}, xusage: string=clUsage, xcf: ClCfg=clCfg,
     xsuppress: seq[string] = @[], xmandatoryOverride: seq[string] = @[],
     xmergeNames: seq[string] = @[]): T =
-  ##This is like ``dispatch`` but does not ``quit`` (unless user issues either
-  ##--help|--version or bad CL syntax).  Instead it returns a ``T`` populated
-  ##from the default values in object|tuple ``default`` and then command-line.
-  ##Top level fields must have types with ``argParse``&``argHelp`` overloads.
-  ##Parameters to this also common to ``dispatchGen`` begin with an 'x'.
+  ##This is like ``dispatch`` but does not ``quit`` (unless user issues bad CL 
+  ##syntax, --help, or --version).  Instead it returns a ``T`` populated from
+  ##values in object|tuple ``default`` and then from the command-line. Top-level
+  ##fields must have types with ``argParse`` & ``argHelp`` overloads.  Params to
+  ##this also common to ``dispatchGen`` begin with an 'x'.
   proc callIt(): T =
     initGen(default, T, suppress=xsuppress)   #Anything else?
     dispatchGen(init, dispatchName="x", cmdName=xcmdName, doc=xdoc, help=xhelp,
