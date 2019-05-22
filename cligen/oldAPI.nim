@@ -1,7 +1,6 @@
-## This file is just for dispatch->dispatch2 backward compatibility.  The
-## include pulling it in automatically will be removed after several cligen
-## releases go by.  The file itself may stick around for a while after.
-
+# This file is just for dispatch->dispatch2 backward compatibility.  The
+# include pulling it in automatically will be removed after several cligen
+# releases go by.  The file itself may stick around for a while after.
 const helpTabOption*  = 0
 const helpTabType*    = 1
 const helpTabDefault* = 2
