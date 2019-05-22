@@ -139,7 +139,8 @@ Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as shown
 above, if that works for you.
 
 Rather than dispatching to a proc and exiting, you can also initialize the
-fields of an object/tuple from the command-line:
+fields of an object/tuple from the command-line with `initFromCL` which has
+the same keyword parameters as the most salient features of `dispatch`:
 ```nim
 type App* = object
   srcFile*: string
@@ -148,8 +149,13 @@ const dfl* = App(srcFile: "junk") #set any defaults != default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
-when isMainModule: import cligen; var app = initFromCL(dfl); app.logic()
+when isMainModule:
+    import cligen
+    var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
+    app.logic()
 ```
+Top-level types in the object/tuple just need in-scope `argParse` / `argHelp`
+definitions.
 
 Even More Controls and Details
 ==============================
