@@ -860,8 +860,8 @@ proc mergeParams*(cmdNames: seq[string],
   ##This is a pass-through parameter merge to provide a hook for CLI authors to
   ##create the ``seq[string]`` to be parsed from any run-time sources (likely
   ##based on ``cmdNames``) that they would like.  In a single ``dispatch``
-  ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti
-  ##``context it is ``@[ <mainCommand>, <subCommand> ]``.
+  ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti``
+  ##context it is ``@[ <mainCommand>, <subCommand> ]``.
   cmdLine
 
 include cligen/oldAPI   #TEMPORARY SUPPORT FOR THE OLD CALLING CONVENTION
