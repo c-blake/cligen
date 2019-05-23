@@ -97,9 +97,9 @@ proc containsParam(fpars: NimNode, key: string): bool =
       if optionNormalize($idefs[i]) == k: return true        #..`suppress` is itself one of
     if optionNormalize($idefs[^3]) == k: return true         #..the symbol lists we check.
 
-proc formalParamExpand*(fpars: NimNode, n: auto,
-                        suppress: seq[string]= @[]): NimNode =
-  ## a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
+proc formalParamExpand(fpars: NimNode, n: auto,
+                       suppress: seq[string]= @[]): NimNode =
+  # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
   result = newNimNode(nnkFormalParams)
   result.add(fpars[0])                                  # just copy ret value
   for p in suppress:
@@ -113,9 +113,8 @@ proc formalParamExpand*(fpars: NimNode, n: auto,
     if $idefs[^3] notin suppress:
       result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
 
-proc formalParams*(n: NimNode, suppress: seq[string]= @[]): NimNode =
-  ## Extract expanded formal parameter list from the return value of .getImpl
-  for kid in n:
+proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
+  for kid in n: #Extract expanded formal parameter list from getImpl return val.
     if kid.kind == nnkFormalParams:
       return formalParamExpand(kid, n, suppress)
   error "formalParams requires a proc argument."
