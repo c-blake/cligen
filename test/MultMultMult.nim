@@ -33,16 +33,16 @@ when isMainModule:
   clCfg.version = "0.0.1"
   dispatchMultiGen([ "cobbler" ],
                    [ yikes,
-                     mergeNames = @["MultiMulti", "apple", "cobbler" ]])
+                     mergeNames = @["MultMultMult", "apple", "cobbler" ]])
   dispatchMultiGen([ "apple" ],
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
-                     mergeNames = @["MultiMulti", "apple" ] ],
+                     mergeNames = @["MultMultMult", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
-                     mergeNames = @["MultiMulti", "apple" ] ],
+                     mergeNames = @["MultMultMult", "apple" ] ],
                    [ cobbler, doc = "apple cobbler SUB-SUB-SUB commands",
                               stopWords = @[ "yikes" ],
                               suppress = @[ "usage", "prefix" ],
-                              mergeNames = @["MultiMulti", "apple" ] ])
+                              mergeNames = @["MultMultMult", "apple" ] ])
   dispatchMulti([ apple, doc = "apple SUB-SUB commands",
                          stopWords = @["demo", "show", "cobbler" ],
                          suppress = @[ "usage", "prefix" ] ],
