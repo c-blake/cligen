@@ -229,6 +229,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
     collectComments(cmtDoc, impl)
     cmtDoc = strip(cmtDoc)
   let cf = cf #sub-scope quote-do's cannot access macro args w/o shadow locals.
+  let setByParse = setByParse
   let proNm = $pro                      # Name of wrapped proc
   let cName = if len($cmdName) == 0: proNm else: $cmdName
   let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
@@ -276,7 +277,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   callIt.add(pro)
   let shortHlp = newStrLitNode($shortH)
   let setByParseId = ident("setByP")    # parse recording var seq
-  let setByParseP = setByParse
 
   proc initVars(): NimNode =            # init vars & build help str
     result = newStmtList()
@@ -296,7 +296,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
            @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
-      let `setByParseId`: ptr seq[ClParse] = `setByParseP`)
+      let `setByParseId`: ptr seq[ClParse] = `setByParse`)
     result.add(quote do:
       if `cf`.version.len > 0:
         `apId`.parNm = "version"; `apId`.parSh = `vsnSh`
