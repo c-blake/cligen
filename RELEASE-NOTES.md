@@ -4,7 +4,8 @@ RELEASE NOTES
 Version: 0.9.29
 ---------------
   Add feature requested in both https://github.com/c-blake/cligen/issues/2 and
-  https://github.com/c-blake/cligen/issues/30 .
+  https://github.com/c-blake/cligen/issues/30 .  See initFromCL documentation
+  and test/InitOb.nim, test/InitTup.nim for how to use.
 
 Version: 0.9.28
 ---------------
