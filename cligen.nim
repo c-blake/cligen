@@ -852,7 +852,7 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
   callIt()      #inside proc is not strictly necessary, but probably safer.
 
 proc versionFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use nimble2version(foo)
+  ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
   result = "unparsable nimble version"
   for line in nimbleContents.split("\n"):
     if line.startsWith("version"):
