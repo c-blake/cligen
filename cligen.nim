@@ -6,9 +6,9 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        suggestions, split, helpCase, postInc, delItem
 
 const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
-const clUsage* = "Usage:\n  " & clUse
+const clUsage* = "Usage:\n  " & clUse   #Use is for dispatchMulti else Usage
 
-type    # Main defns CLI authors need be aware of besides top-level API calls
+type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
 
   ClCfg* = object  ## Settings tending to be program- or CLI-author-global
