@@ -1,4 +1,4 @@
-type Color = enum re_d, green, blue
+type Color = enum re_d, green = "gre-en", blue
 
 proc demo(c: Color, bg=red, fg= @[green], curs={blue}, x=0, args: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
