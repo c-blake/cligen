@@ -794,58 +794,53 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     {.pop.}) #GcUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
-macro initGen*(default:typed, T:untyped, xsuppress:seq[string] = @[]): untyped =
+macro initGen*(default: typed, T: untyped, positional="",
+               suppress: seq[string] = @[], initName=""): untyped =
   ##This macro generates an ``init`` proc for object|tuples of type ``T`` with
   ##param names equal to top-level field names & default values from ``default``
-  ##like ``init(field1=default.field1,...): T = result.field1=field1; ..``. 
+  ##like ``init(field1=default.field1,...): T = result.field1=field1; ..``,
+  ##except if ``fieldN==positional fieldN: typeN`` is used instead which in turn
+  ##makes ``dispatchGen`` bind that ``seq`` to catch positional CL args.
   var ti = default.getTypeImpl
   case ti.typeKind:
   of ntyTuple: discard            #For tuples IdentDefs are top level
   of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
-  let suppressed = toStrSeq(xsuppress)
+  let suppressed = toStrSeq(suppress)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
   for kid in ti.children:         #iterate over fields
     if kid.kind != nnkIdentDefs: warning "case objects unsupported"
     let nm = kid[0].strVal
     if nm in suppressed: continue
-    let id = ident(nm)            #XXX just use `kid`?
-    let sid = ident("set" & nm); let sidEq = ident("set" & nm & "=")
+    let id = ident(nm)
     let argId = ident("arg"); let obId = ident("ob")
-    params.add(newIdentDefs(id, empty, quote do: `default`.`id`))
+    params.add(if nm == positional.strVal: newIdentDefs(id, kid[1], empty)
+               else: newIdentDefs(id, empty, quote do: `default`.`id`))
     let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
+    let sid = ident("set" & nm); let sidEq = ident("set" & nm & "=")
     assigns.add(quote do:
       proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
       `r`.`sid` = `id`)
-  result = newProc(name = ident("init"), params = params, body = assigns)
+  let initNm = if initName.strVal.len > 0: initName.strVal else: "init"
+  result = newProc(name = ident(initNm), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code
-
-template initGx(default:typed, T:untyped, xsuppress:seq[string] = @[]): untyped=
-  initGen(default, T, xsuppress)  #This&next ugly hacks so can keep same kw args
-
-template dispatchGx(pro: typed{nkSym}, xcmdName: string="", xdoc: string="",
-    xhelp: typed={}, xshort: typed={}, xusage: string=clUsage, xcf: ClCfg=clCfg,
-    xdispatchName="", xmergeNames: seq[string] = @[]): untyped =
-  dispatchGen(pro, cmdName=xcmdName, doc=xdoc, help=xhelp, short=xshort,
-              usage=xusage, cf=xcf, dispatchName=xdispatchName,
-              mergeNames=xmergeNames)
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
-    suppress: seq[string] = @[], mergeNames: seq[string] = @[]): T =
+    positional="", suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T=
   ## Like ``dispatch`` but only ``quit`` when user gave bad CL, --help,
   ## or --version.  On success, returns ``T`` populated from object|tuple
   ## ``default`` and then from the ``mergeNames``/the command-line.  Top-level
   ## fields must have types with ``argParse`` & ``argHelp`` overloads.  Params
-  ## to this common to ``dispatchGen`` mean the same thing. (The inability here
-  ## to distinguish between *explicit* assignment & Nim type defaults eliminates
-  ## several features).
+  ## to this common to ``dispatchGen`` mean the same thing.  The inability here
+  ## to distinguish between syntactically explicit assigns & Nim type defaults
+  ## eliminates several features and makes the `positional` default be empty.
   proc callIt(): T =
-    initGx(default, T, xsuppress=suppress)
-    dispatchGx(init, xdispatchName="x", xcmdName=cmdName, xdoc=doc, xhelp=help,
-               xshort=short, xusage=usage, xcf=cf, xmergeNames=mergeNames)
+    initGen(default, T, positional, suppress, "ini")
+    dispatchGen(ini, cmdName, doc, help, short, usage, cf, false, false,
+                AUTO, @[], @[], @[], @[], "x", mergeNames)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)

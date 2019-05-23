@@ -1,9 +1,9 @@
 type App* = object
   nim*: string       ## compiler to use
-  srcFile*: string   ## script to run
   # non-doc comment: this won't appear in `help`
   show*: bool        ## show informative compiler info
   synth*: string     ## synthetic inferred from other args
+  iters*: seq[int]   ## iteration counts
 
 const dfl* = App(nim: "nimcc") #set any defaults != default for type
 
@@ -13,10 +13,10 @@ proc logic*(a: var App) =
 when isMainModule:    #Q: why can one not say {.outputFile: "InitOb".}?
   import cligen
   var app = initFromCL(dfl, cmdName = "InitOb", doc = "do some app",
-                       suppress = @[ "synth" ], short = {"show": 'S'},
-                       help = { "nim":       "compiler to use",
-                                "srcFile":  "script to run",
-                                "show": "show informative compiler info" })
+                       positional = "iters", suppress = @[ "synth" ],
+                       help = { "nim":   "compiler to use",
+                                "show":  "show informative compiler info",
+                                "iters": "loops per slot" })
   #var app = initFromCL(App())  #also works if type defaults are ok
   app.logic()
   echo "app: ", app

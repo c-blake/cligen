@@ -329,14 +329,13 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/InitOb.out <==
 Usage:
-  InitOb [optional-params] 
+  InitOb [optional-params] loops per slot
 do some app
   Options(opt-arg sep :|=|spc):
-  -h, --help                        print this cligen-erated help
-  --help-syntax                     advanced: prepend,plurals,..
-  -n=, --nim=      string  "nimcc"  compiler to use
-  -s=, --srcFile=  string  ""       script to run
-  -S, --show       bool    false    show informative compiler info
+  -h, --help                      print this cligen-erated help
+  --help-syntax                   advanced: prepend,plurals,..
+  -n=, --nim=    string  "nimcc"  compiler to use
+  -s, --show     bool    false    show informative compiler info
 
 ==> test/InitTup.out <==
 Usage:
