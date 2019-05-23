@@ -5,12 +5,85 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, split, helpCase, postInc, delItem
 
-type HelpOnly*    = object of Exception
-type VersionOnly* = object of Exception
-type ParseError*  = object of Exception
+const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
+const clUsage* = "Usage:\n  " & clUse
 
-const AUTO = "\0"             #Just some "impossible-ish" identifier
+type    # Main defns CLI authors need be aware of besides top-level API calls
+  ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
 
+  ClCfg* = object  ## Settings tending to be program- or CLI-author-global
+    version*:     string
+    hTabCols*:    seq[ClHelpCol] ## selects columns to format
+    hTabRowSep*:  string         ## separates rows, e.g. "\n" double spaces
+    hTabColGap*:  int            ## number of spaces to separate cols by
+    hTabMinLast*: int            ## narrowest rightmost col no matter term width
+    hTabVal4req*: string         ## ``"REQUIRED"`` (or ``"NEEDED"``, etc.).
+    reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
+    sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
+    opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
+
+  HelpOnly*    = object of Exception
+  VersionOnly* = object of Exception
+  ParseError*  = object of Exception
+
+{.push hint[GlobalVar]: off.}
+var clCfg* = ClCfg(
+  version:     "",
+  hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
+  hTabRowSep:  "",
+  hTabColGap:  2,
+  hTabMinLast: 16,
+  hTabVal4req: "REQUIRED",
+  reqSep:      false,
+  sepChars:    { '=', ':' },
+  opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
+                 '|', '~', '^', '$', '#', '<', '>', '?'})
+{.pop.}
+
+proc toInts*(x: seq[ClHelpCol]): seq[int] =
+  ##Internal routine to convert help column enums to just ints for `alignTable`.
+  for e in x: result.add(int(e))
+
+type    #Utility types/code for generated parser/dispatchers for parseOnly mode
+  ClStatus* = enum clBadKey,                        ## Unknown long key
+                   clBadVal,                        ## Unparsable value
+                   clNonOption,                     ## Unexpected non-option
+                   clMissing,                       ## Mandatory but missing
+                   clParseOptErr,                   ## parseopt error
+                   clOk,                            ## Option parse part ok
+                   clPositional,                    ## Expected non-option
+                   clHelpOnly, clVersionOnly        ## Early Exit requests
+
+  ClParse* = tuple[paramName: string,   ## Param name/long opt key
+                   unparsedVal: string, ## Unparsed val ("" for missing)
+                   message: string,     ## default error message
+                   status: ClStatus]    ## Parse status for param
+const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
+const ClExit*   = { clHelpOnly, clVersionOnly }
+const ClNoCall* = ClErrors + ClExit
+
+proc contains*(x: openArray[ClParse], paramName: string): bool =
+  ##Test if the ``seq`` updated via ``setByParse`` contains a parameter.
+  for e in x:
+    if e.paramName == paramName: return true
+
+proc contains*(x: openArray[ClParse], status: ClStatus): bool =
+  ##Test if the ``seq`` updated via ``setByParse`` contains a certain status.
+  for e in x:
+    if e.status == status: return true
+
+proc numOfStatus*(x: openArray[ClParse], stati: set[ClStatus]): int =
+  ##Count elements in the ``setByParse seq`` with parse status in ``stati``.
+  for e in x:
+    if e.status in stati: inc(result)
+
+proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
+  ##First index after startIx in ``setByParse seq`` w/parse status in ``stati``.
+  result = -1
+  for i, e in x:
+    if e.status in stati: return i
+
+#***** From here until defined(printDispatch) is the main event *****#
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
   # Build Nim ident for generated parser-dispatcher proc
   result = if name.len > 0: ident(name)
@@ -40,9 +113,8 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
      Table[string, char] =
-  # Compute a table giving the short option for any long option, being
-  # careful to only allow one such short option if the 1st letters of
-  # two or more long options collide.
+  # Compute a table giving the short option for any long option, allowing only
+  # such short option if the 1st letters of two or more long options collide.
   result = initTable[string, char]()         # short option for param
   var used: set[char] = {}                   # used shorts; bit vector ok
   if "help" notin userSpec:
@@ -75,6 +147,8 @@ proc findByName(parNm: string, fpars: NimNode): int =
   if result == -1:
     warning("specified positional argument `" & parNm & "` not found")
 
+const AUTO = "\0"             #Just some "impossible-ish" identifier
+
 proc posIxGet(positional: string, fpars: NimNode): int =
   # Find the proc param to map to optional positional arguments of a command.
   if positional == "":
@@ -96,80 +170,6 @@ proc posIxGet(positional: string, fpars: NimNode): int =
                 "Use `positional` parameter to `dispatch` to override this.")
       else:
         result = i
-
-const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
-const clUsage* = "Usage:\n  " & clUse
-
-type
-  ClStatus* = enum clBadKey,                        ## Unknown long key
-                   clBadVal,                        ## Unparsable value
-                   clNonOption,                     ## Unexpected non-option
-                   clMissing,                       ## Mandatory but missing
-                   clParseOptErr,                   ## parseopt error
-                   clOk,                            ## Option parse part ok
-                   clPositional,                    ## Expected non-option
-                   clHelpOnly, clVersionOnly        ## Early Exit requests
-
-  ClParse* = tuple[paramName: string,   ## Param name/long opt key
-                   unparsedVal: string, ## Unparsed val ("" for missing)
-                   message: string,     ## default error message
-                   status: ClStatus]    ## Parse status for param
-const ClErrors* = { clBadKey, clBadVal, clNonOption, clMissing }
-const ClExit*   = { clHelpOnly, clVersionOnly }
-const ClNoCall* = ClErrors + ClExit
-
-type
-  ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
-
-  ClCfg* = object  ## Settings tending to be program- or CLI-author-global
-    version*:     string
-    hTabCols*:    seq[ClHelpCol] ## selects columns to format
-    hTabRowSep*:  string         ## separates rows, e.g. "\n" double spaces
-    hTabColGap*:  int            ## number of spaces to separate cols by
-    hTabMinLast*: int            ## narrowest rightmost col no matter term width
-    hTabVal4req*: string         ## ``"REQUIRED"`` (or ``"NEEDED"``, etc.).
-    reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
-    sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
-    opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
-
-{.push hint[GlobalVar]: off.}
-var clCfg* = ClCfg(
-  version:     "",
-  hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
-  hTabRowSep:  "",
-  hTabColGap:  2,
-  hTabMinLast: 16,
-  hTabVal4req: "REQUIRED",
-  reqSep:      false,
-  sepChars:    { '=', ':' },
-  opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
-                 '|', '~', '^', '$', '#', '<', '>', '?'})
-{.pop.}
-
-proc toInts*(x: seq[ClHelpCol]): seq[int] =
-  ##Internal routine to convert help column enums to just ints for `alignTable`.
-  for e in x: result.add(int(e))
-
-proc contains*(x: openArray[ClParse], paramName: string): bool =
-  ##Test if the ``seq`` updated via ``setByParse`` contains a parameter.
-  for e in x:
-    if e.paramName == paramName: return true
-
-proc contains*(x: openArray[ClParse], status: ClStatus): bool =
-  ##Test if the ``seq`` updated via ``setByParse`` contains a certain status.
-  for e in x:
-    if e.status == status: return true
-
-proc numOfStatus*(x: openArray[ClParse], stati: set[ClStatus]): int =
-  ##Count elements in the ``setByParse seq`` with parse status in ``stati``.
-  for e in x:
-    if e.status in stati: inc(result)
-
-proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
-  ##First index after startIx in ``setByParse seq`` w/parse status in ``stati``.
-  result = -1
-  for i, e in x:
-    if e.status in stati: return i
 
 include cligen/syntaxHelp
 
