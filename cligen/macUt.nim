@@ -76,7 +76,7 @@ proc paramPresent*(n: NimNode, kwArg: string): bool =
       return true
 
 proc paramVal*(n: NimNode, kwArg: string): NimNode =
-  ## Get the RHS/value of a keyword argument/named parameter
+  ## Get the FIRST RHS/value of a keyword argument/named parameter
   for k in n:
     if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
       return k[1]

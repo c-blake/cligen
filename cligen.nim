@@ -587,43 +587,12 @@ template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
   cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
 
-proc subCmdName(node: NimNode): string =
-  # Get last `cmdName` argument, if any, in bracket expression, or name of 1st
-  # element of bracket if none given, unless that name is module-qualified.
-  for child in node:
-    if child.kind == nnkExprEqExpr and eqIdent(child[0], "cmdName"):
-      result = $child[1]
-  if result == "":
-    if node[0].kind == nnkDotExpr:
-      result = $node[0][^1]
-    else:
-      result = $node[0]
-
-proc dispatchName(node: NimNode): string =
-  # Get last dispatchName value, if any, in bracket expression, else return
-  # "dispatch & subCmdName(node)".
-  result = "dispatch" & subCmdName(node)  #XXX illegal chars?
-  for child in node:
-    if child.kind == nnkExprEqExpr and eqIdent(child[0], "dispatchName"):
-      result = $child[1]
-
-proc subCmdEchoRes(node: NimNode): bool =
-  result = false    #First echoResult value, if any, in bracket expression
-  for child in node:
-    if child.kind == nnkExprEqExpr and eqIdent(child[0], "echoResult"):
-      return true
-
-proc subCmdNoAutoEc(node: NimNode): bool =
-  result = false    #First noAutoEcho value, if any, in bracket expression
-  for child in node:
-    if child.kind == nnkExprEqExpr and eqIdent(child[0], "noAutoEcho"):
-      return true
-
-proc subCmdUsage(node: NimNode): string =
-  result = clUse    #First noAutoEcho value, if any, in bracket expression
-  for child in node:
-    if child.kind == nnkExprEqExpr and eqIdent(child[0], "usage"):
-      return child[1].strVal
+proc subCmdName(p: NimNode): string =
+  if p.paramPresent("cmdName"):     #CLI author-specified
+    result = $p.paramVal("cmdName")
+  else:                             #1st elt of bracket
+    result = if p[0].kind == nnkDotExpr: $p[0][^1]  #qualified (1-level)
+             else: $p[0]                            #unqualified
 
 template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   stderr.write "Unknown subcommand \"" & cmd & "\".  "
@@ -684,7 +653,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   for p in procBrackets:
     if p[0].kind == nnkStrLit:
       continue
-    let sCmdNm = subCmdName(p)
+    let sCmdNm = p.subCmdName
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     if not c.paramPresent("usage"):
@@ -710,23 +679,24 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   for cnt, p in procBrackets:
     if p[0].kind == nnkStrLit:
       continue
-    let sCmdNmS = subCmdName(p)
-    let disNm = dispatchName(p)
+    let sCmdNmS = p.subCmdName
+    let disNm = if p.paramPresent("dispatchName"): $p.paramVal("dispatchName")
+                else: "dispatch" & p.subCmdName  #XXX illegal chars?
     let disNmId = dispatchId(disNm, sCmdNmS, "")
     let sCmdNm = newStrLitNode(sCmdNmS)
-    let sCmdEcR = subCmdEchoRes(p)
-    let sCmdNoAuEc = subCmdNoAutoEc(p)
-    let sCmdUsage = subCmdUsage(p)
-    let mn = if p.paramPresent("mergeNames"):
-               p.paramVal("mergeNames")
-             else:
-               quote do: @[ `srcBase` ] #, `sCmdNm` ]
+    let sCmdEcR    = if p.paramPresent("echoResult"): p.paramVal("echoResult")
+                     else: newLit(false)
+    let sCmdNoAuEc = if p.paramPresent("noAutoEcho"): p.paramVal("noAutoEcho")
+                     else: newLit(false)
+    let sCmdUsage  = if p.paramPresent("usage"): p.paramVal("usage").strVal
+                     else: clUse
+    let mn = if p.paramPresent("mergeNames"): p.paramVal("mergeNames")
+             else: quote do: @[ `srcBase` ] #, `sCmdNm` ]
     cases.add(newNimNode(nnkOfBranch).
               add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, `mn`)))
-    let spc = if cnt + 1 < len(procBrackets):
-                quote do: echo ""
+    let spc = if cnt + 1 < len(procBrackets): quote do: echo ""
               else: newNimNode(nnkEmpty)
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:

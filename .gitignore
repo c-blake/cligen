@@ -1,5 +1,6 @@
 *.swp
 *.ndb
+test/*.out
 test/CaseDistinguised
 test/CustomCmdName
 test/CustomType
