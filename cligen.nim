@@ -83,16 +83,14 @@ proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
   for i, e in x:
     if e.status in stati: return i
 
-#***** From here until defined(printDispatch) is the main event *****#
+#[ Define many things used to interpolate into Overall Structure below ]#
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
-  # Build Nim ident for generated parser-dispatcher proc
-  result = if name.len > 0: ident(name)
+  result = if name.len > 0: ident(name)   #Nim ident for gen'd parser-dispatcher
            elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars
            else: ident("dispatch" & rep)
 
 proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
-  # Compute a table giving the help text for any parameter
-  result = initTable[string, string]()
+  result = initTable[string, string]()    #table giving help text for any param
   for ph in helps:
     let p: string = (ph[1][0]).strVal
     let h: string = (ph[1][1]).strVal
@@ -101,8 +99,7 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
       error $proNm & " has no param matching `help` key \"" & p & "\""
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
-  # Compute a table giving the user-specified short option for any parameter
-  result = initTable[string, char]()
+  result = initTable[string, char]()  #table giving user-specified short options
   for losh in shorts:
     let lo: string = (losh[1][0]).strVal
     let sh: char = char((losh[1][1]).intVal)
@@ -112,9 +109,7 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
       error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
-     Table[string, char] =
-  # Compute a table giving the short option for any long option, allowing only
-  # such short option if the 1st letters of two or more long options collide.
+     Table[string, char] =      # Table giving short[param] avoiding collisions
   result = initTable[string, char]()         # short option for param
   var used: set[char] = {}                   # used shorts; bit vector ok
   if "help" notin userSpec:
@@ -136,16 +131,6 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
   let tmp = result        #One might just put sh != '\0' above, but this lets
   for k, v in tmp:        #CLI authors also block -h via short={"help": '\0'}.
     if v == '\0': result.del(k)
-
-proc findByName(parNm: string, fpars: NimNode): int =
-  result = -1
-  if len(parNm) == 0: return
-  for i in 1 ..< len(fpars):
-    if $fpars[i][0] == parNm:
-      result = i
-      break
-  if result == -1:
-    warning("specified positional argument `" & parNm & "` not found")
 
 const AUTO = "\0"             #Just some "impossible-ish" identifier
 
@@ -508,7 +493,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let docsStmt = if docs.kind == nnkAddr or docs.kind == nnkCall:
                    quote do: `docsVar`.add(`cmtDoc`)
                  else: newNimNode(nnkEmpty)
-  result = quote do:
+  result = quote do:                                    #Overall Structure
     if cast[pointer](`docs`) != nil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `usageId`=`usage`, `prefixId`="", parseOnly=false): `retType` =
@@ -603,8 +588,8 @@ template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
                 noAutoEcho)
 
 proc subCmdName(node: NimNode): string =
-  ## Get last `cmdName` argument, if any, in bracket expression, or name of 1st
-  ## element of bracket if none given, unless that name is module-qualified.
+  # Get last `cmdName` argument, if any, in bracket expression, or name of 1st
+  # element of bracket if none given, unless that name is module-qualified.
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "cmdName"):
       result = $child[1]
@@ -615,29 +600,27 @@ proc subCmdName(node: NimNode): string =
       result = $node[0]
 
 proc dispatchName(node: NimNode): string =
-  ## Get last dispatchName argument, if any, in bracket expression, or return
-  ## "dispatch & subCmdName(node)" if none.
+  # Get last dispatchName argument, if any, in bracket expression, or return
+  # "dispatch & subCmdName(node)" if none.
   result = "dispatch" & subCmdName(node)  #XXX strip illegal chars
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "dispatchName"):
       result = $child[1]
 
 proc subCmdEchoRes(node: NimNode): bool =
-  ##Get last echoResult value, if any, in bracket expression
-  result = false
+  result = false    #Last echoResult value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "echoResult"):
       return true
 
 proc subCmdNoAutoEc(node: NimNode): bool =
-  ##Get last noAutoEcho value, if any, in bracket expression
-  result = false
+  result = false    #Get last noAutoEcho value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "noAutoEcho"):
       return true
 
 proc subCmdUsage(node: NimNode): string =
-  result = clUse
+  result = clUse    #Get last noAutoEcho value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "usage"):
       return child[1].strVal
