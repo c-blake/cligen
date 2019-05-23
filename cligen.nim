@@ -86,7 +86,7 @@ proc next*(x: openArray[ClParse], stati: set[ClStatus], start=0): int =
 #[ Define many things used to interpolate into Overall Structure below ]#
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
   result = if name.len > 0: ident(name)   #Nim ident for gen'd parser-dispatcher
-           elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars
+           elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars?
            else: ident("dispatch" & rep)
 
 proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
@@ -600,27 +600,27 @@ proc subCmdName(node: NimNode): string =
       result = $node[0]
 
 proc dispatchName(node: NimNode): string =
-  # Get last dispatchName argument, if any, in bracket expression, or return
-  # "dispatch & subCmdName(node)" if none.
-  result = "dispatch" & subCmdName(node)  #XXX strip illegal chars
+  # Get last dispatchName value, if any, in bracket expression, else return
+  # "dispatch & subCmdName(node)".
+  result = "dispatch" & subCmdName(node)  #XXX illegal chars?
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "dispatchName"):
       result = $child[1]
 
 proc subCmdEchoRes(node: NimNode): bool =
-  result = false    #Last echoResult value, if any, in bracket expression
+  result = false    #First echoResult value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "echoResult"):
       return true
 
 proc subCmdNoAutoEc(node: NimNode): bool =
-  result = false    #Get last noAutoEcho value, if any, in bracket expression
+  result = false    #First noAutoEcho value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "noAutoEcho"):
       return true
 
 proc subCmdUsage(node: NimNode): string =
-  result = clUse    #Get last noAutoEcho value, if any, in bracket expression
+  result = clUse    #First noAutoEcho value, if any, in bracket expression
   for child in node:
     if child.kind == nnkExprEqExpr and eqIdent(child[0], "usage"):
       return child[1].strVal
