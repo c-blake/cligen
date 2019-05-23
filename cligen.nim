@@ -1,4 +1,5 @@
-import os,macros,tables,cligen/[parseopt3,argcvt,textUt,sysUt],strutils,critbits
+import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
+       strutils, critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
@@ -11,46 +12,10 @@ type ParseError*  = object of Exception
 const AUTO = "\0"             #Just some "impossible-ish" identifier
 
 proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
-  ## Build Nim ident for generated parser-dispatcher proc
+  # Build Nim ident for generated parser-dispatcher proc
   result = if name.len > 0: ident(name)
            elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars
            else: ident("dispatch" & rep)
-
-proc toStrSeq(strSeqInitializer: NimNode): seq[string] =
-  result = newSeq[string]()
-  if strSeqInitializer.len > 1:
-    for kid in strSeqInitializer[1]:
-      result.add($kid)
-
-proc containsParam(fpars: NimNode, key: string): bool =
-  for declIx in 1 ..< len(fpars):           #default for result = false
-    let idefs = fpars[declIx]               #Must use similar logic to..
-    for i in 0 ..< len(idefs) - 3:          #..formalParamExpand because
-      if $idefs[i] == key: return true      #..`suppress` is itself one of
-    if $idefs[^3] == key: return true       #..the symbol lists we check.
-
-proc formalParamExpand(fpars: NimNode, n:auto, supp: seq[string]= @[]): NimNode=
-  # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
-  result = newNimNode(nnkFormalParams)
-  result.add(fpars[0])                                  # just copy ret value
-  for p in supp:
-    if not fpars.containsParam(p):
-      error repr(n[0]) & " has no param matching `suppress` key \"" & p & "\""
-  for declIx in 1 ..< len(fpars):
-    let idefs = fpars[declIx]
-    for i in 0 ..< len(idefs) - 3:
-      if $idefs[i] notin supp:
-        result.add(newIdentDefs(idefs[i], idefs[^2]))
-    if $idefs[^3] notin supp:
-      result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
-
-proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
-  # Extract formal parameter list from the return value of .symbol.getImpl
-  for kid in n:
-    if kid.kind == nnkFormalParams:
-      return formalParamExpand(kid, n, suppress)
-  error "formalParams requires a proc argument."
-  return nil                #not-reached
 
 proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
   # Compute a table giving the help text for any parameter
@@ -100,15 +65,6 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
   for k, v in tmp:        #CLI authors also block -h via short={"help": '\0'}.
     if v == '\0': result.del(k)
 
-proc collectComments(buf: var string, n: NimNode, depth: int = 0) =
-  if n.len > 1:
-    for kid in n: collectComments(buf, kid, depth + 1)
-  else:
-    if n.kind == nnkCommentStmt and depth < 4:
-      if n.strVal.len != 0:
-        buf.add(" ")
-        buf.add(n.strVal)
-
 proc findByName(parNm: string, fpars: NimNode): int =
   result = -1
   if len(parNm) == 0: return
@@ -120,7 +76,7 @@ proc findByName(parNm: string, fpars: NimNode): int =
     warning("specified positional argument `" & parNm & "` not found")
 
 proc posIxGet(positional: string, fpars: NimNode): int =
-  ## Find the proc param to map to optional positional arguments of a command.
+  # Find the proc param to map to optional positional arguments of a command.
   if positional == "":
     return -1
   if positional != AUTO:
@@ -140,9 +96,6 @@ proc posIxGet(positional: string, fpars: NimNode): int =
                 "Use `positional` parameter to `dispatch` to override this.")
       else:
         result = i
-
-proc newParam(id: string, rhs: NimNode): NimNode =
-  return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
 const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
 const clUsage* = "Usage:\n  " & clUse
@@ -722,24 +675,6 @@ Run "$1 {help CMD|CMD --help}" to see help for just CMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   addPrefix("  ", alignTable(pairs, prefixLen=2)),
   (if clCfg.version.len > 0: "\nTop-level --version also available" else: "") ]
-
-proc srcBaseName(n: NimNode): NimNode =
-  let fileParen = lineinfo(n)      # Infer multi-cmd name from lineinfo
-  let slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
-  let paren = rfind(fileParen, ".nim(") - 1
-  newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
-
-proc paramPresent(n: NimNode, kwArg: string): bool =
-  for k in n:
-    if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
-      return true
-  false
-
-proc paramVal(n: NimNode, kwArg: string): NimNode =
-  for k in n:
-    if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
-      return k[1]
-  nil
 
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
