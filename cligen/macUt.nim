@@ -7,8 +7,9 @@ proc findByName*(parNm: string, fpars: NimNode): int =
   ## formal param slot of named parameter
   result = -1
   if len(parNm) == 0: return
+  let parId = ident(parNm)
   for i in 1 ..< len(fpars):
-    if $fpars[i][0] == parNm:
+    if fpars[i][0] == parId:
       result = i
       break
   if result == -1:
@@ -40,14 +41,16 @@ proc srcBaseName*(n: NimNode): NimNode =
 
 proc paramPresent*(n: NimNode, kwArg: string): bool =
   ## Check if a particular keyword argument parameter is present
+  let kwArgId = ident(kwArg)
   for k in n:
-    if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
+    if k.kind == nnkExprEqExpr and k[0] == kwArgId:
       return true
 
 proc paramVal*(n: NimNode, kwArg: string): NimNode =
   ## Get the FIRST RHS/value of a keyword argument/named parameter
+  let kwArgId = ident(kwArg)
   for k in n:
-    if k.kind == nnkExprEqExpr and k[0].strVal == kwArg:
+    if k.kind == nnkExprEqExpr and k[0] == kwArgId:
       return k[1]
   nil
 
