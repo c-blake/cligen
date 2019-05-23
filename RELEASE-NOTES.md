@@ -7,6 +7,14 @@ Version: 0.9.29
   https://github.com/c-blake/cligen/issues/30 .  See initFromCL documentation
   and test/InitOb.nim, test/InitTup.nim for how to use.
 
+  Both issue https://github.com/c-blake/cligen/issues/28 and
+  https://github.com/c-blake/cligen/issues/100 had a desire for CLI author
+  controlled help-casing.  Now whatever string key is uses in `help = { }` is
+  what shows up in help output.  So, e.g., `help = { "print-DNA": "yadda" }`
+  should show up as `-p, --print-DNA= ..`.  If there is no `help` entry then
+  `helpCase` is still used (though it would be weird for a CLI author to care
+  about help table output long option spelling more than the parameter help).
+
 Version: 0.9.28
 ---------------
 
