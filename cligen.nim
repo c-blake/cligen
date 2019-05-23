@@ -825,7 +825,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 macro initGen*(default: typed, T: untyped, positional="",
-               suppress: seq[string] = @[], initName=""): untyped =
+               suppress: seq[string] = @[], name=""): untyped =
   ##This macro generates an ``init`` proc for object|tuples of type ``T`` with
   ##param names equal to top-level field names & default values from ``default``
   ##like ``init(field1=default.field1,...): T = result.field1=field1; ..``,
@@ -853,8 +853,8 @@ macro initGen*(default: typed, T: untyped, positional="",
     assigns.add(quote do:
       proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
       `r`.`sid` = `id`)
-  let initNm = if initName.strVal.len > 0: initName.strVal else: "init"
-  result = newProc(name = ident(initNm), params = params, body = assigns)
+  let nm = if name.strVal.len > 0: name.strVal else: "init"
+  result = newProc(name = ident(nm), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
