@@ -8,7 +8,7 @@ proc demo(al_pha=1, be_ta=2.0, verb=false, item="", args: seq[string]) =
 when isMainModule:
   import cligen
   dispatch(demo,
-           help = { "al_pha" : "growth constant",
-                    "be_ta"  : "shrink target" },
-           short = { "al_pha" : 'z',
-                     "be_ta" : '\0' })
+           help = { "al-pha" : "growth constant",
+                    "be-ta"  : "shrink target" },
+           short = { "a-lpha" : 'z',
+                     "b-eta" : '\0' })

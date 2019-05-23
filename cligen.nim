@@ -89,23 +89,56 @@ proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
            elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars?
            else: ident("dispatch" & rep)
 
-proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,string]=
-  result = initTable[string, string]()    #table giving help text for any param
+proc containsParam(fpars: NimNode, key: string): bool =
+  let k = key.optionNormalize
+  for declIx in 1 ..< len(fpars):           #default for result = false
+    let idefs = fpars[declIx]               #Must use similar logic to..
+    for i in 0 ..< len(idefs) - 3:          #..formalParamExpand because
+      if optionNormalize($idefs[i]) == k: return true        #..`suppress` is itself one of
+    if optionNormalize($idefs[^3]) == k: return true         #..the symbol lists we check.
+
+proc formalParamExpand*(fpars: NimNode, n: auto,
+                        suppress: seq[string]= @[]): NimNode =
+  ## a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
+  result = newNimNode(nnkFormalParams)
+  result.add(fpars[0])                                  # just copy ret value
+  for p in suppress:
+    if not fpars.containsParam(p):
+      error repr(n[0]) & " has no param matching `suppress` key \"" & p & "\""
+  for declIx in 1 ..< len(fpars):
+    let idefs = fpars[declIx]
+    for i in 0 ..< len(idefs) - 3:
+      if $idefs[i] notin suppress:
+        result.add(newIdentDefs(idefs[i], idefs[^2]))
+    if $idefs[^3] notin suppress:
+      result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
+
+proc formalParams*(n: NimNode, suppress: seq[string]= @[]): NimNode =
+  ## Extract expanded formal parameter list from the return value of .getImpl
+  for kid in n:
+    if kid.kind == nnkFormalParams:
+      return formalParamExpand(kid, n, suppress)
+  error "formalParams requires a proc argument."
+  return nil                #not-reached
+
+proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,(string,string)]=
+  result = initTable[string, (string, string)]() #help key & text for any param
   for ph in helps:
     let p: string = (ph[1][0]).strVal
+    let k: string = (ph[1][0]).strVal.optionNormalize
     let h: string = (ph[1][1]).strVal
-    result[p] = h
-    if not fpars.containsParam(p):
+    result[k] = (p, h)
+    if not fpars.containsParam(k):
       error $proNm & " has no param matching `help` key \"" & p & "\""
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   result = initTable[string, char]()  #table giving user-specified short options
   for losh in shorts:
-    let lo: string = (losh[1][0]).strVal
+    let lo: string = (losh[1][0]).strVal.optionNormalize
     let sh: char = char((losh[1][1]).intVal)
     result[lo] = sh
     if lo.len > 0 and not fpars.containsParam(lo) and
-         lo != "version" and lo != "help" and lo != "help-syntax":
+         lo != "version" and lo != "help" and lo != "helpsyntax":
       error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
@@ -121,7 +154,7 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
     used.incl(sh)
   for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
     if i == posIx: continue                  # positionals get no option char
-    let parNm = $(fpars[i][0])
+    let parNm = optionNormalize($fpars[i][0])
     if parNm.len == 1 and parNm[0] == result["help"]:
       error "`"&parNm&"` collides with `short[\"help\"]`.  Change help short."
     let sh = parNm[0]                        # abbreviation is 1st character
@@ -235,8 +268,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
   let helps = parseHelps(help, proNm, fpars)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
-  var shortTab = parseShorts(short, proNm, fpars)
-  let shOpt = dupBlock(fpars, posIx, shortTab)
+  let shOpt = dupBlock(fpars, posIx, parseShorts(short, proNm, fpars))
   let shortH = shOpt["help"]
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
@@ -305,7 +337,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     let posHelp = if posIx != -1:
-                    if $fpars[posIx][0] in helps: helps[$fpars[posIx][0]]
+                    if $fpars[posIx][0] in helps:
+                      helps[optionNormalize($fpars[posIx][0])][1]
                     else:
                       let typeName = fpars[posIx][1][1].strVal
                       "[" & $(fpars[posIx][0]) & ": " & typeName & "...]"
@@ -320,17 +353,15 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       callIt.add(newNimNode(nnkExprEqExpr).add(idef[0], sdef[0])) #Add to call
       if i != posIx:
         let parNm = $idef[0]
-        let sh = $shOpt.getOrDefault(parNm)      #Add to perPar helpTab
         let defVal = sdef[0]
-        let hlp =
-          if parNm in helps:
-            helps.getOrDefault(parNm)
-          else:
-            ""
+        let pNm = parNm.optionNormalize
+        let sh = $shOpt.getOrDefault(pNm)       #Add to perPar helpTab
+        let hky = helps.getOrDefault(pNm)[0]
+        let hlp = helps.getOrDefault(pNm)[1]
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
-         `apId`.parRend = helpCase(`parNm`, clLongOpt)
+         `apId`.parRend = if `hky`.len>0: `hky` else:helpCase(`parNm`,clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.val4req
@@ -408,8 +439,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
         `maybeMandInForce`
-      if parNm in shOpt and lopt.len > 1:     # both a long and short option
-        let parShOpt = $shOpt.getOrDefault(parNm)
+      if lopt in shOpt and lopt.len > 1:      # both a long and short option
+        let parShOpt = $shOpt.getOrDefault(lopt)
         result.add(newNimNode(nnkOfBranch).add(
           newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
       else:                                   # only a long option
