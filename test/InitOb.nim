@@ -16,7 +16,7 @@ when isMainModule:    #Q: why can one not say {.outputFile: "InitOb".}?
                        positional = "iters", suppress = @[ "synth" ],
                        help = { "nim":   "compiler to use",
                                 "show":  "show informative compiler info",
-                                "iters": "loops per slot" })
+                                "iters": "[iters: int (loops per slot)]" })
   #var app = initFromCL(App())  #also works if type defaults are ok
   app.logic()
   echo "app: ", app
