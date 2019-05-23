@@ -329,7 +329,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/InitOb.out <==
 Usage:
-  InitOb [optional-params] loops per slot
+  InitOb [optional-params] [iters: int (loops per slot)]
 do some app
   Options(opt-arg sep :|=|spc):
   -h, --help                      print this cligen-erated help
