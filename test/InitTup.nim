@@ -17,6 +17,5 @@ when isMainModule:    #Q: why can one not say {.outputFile: "InitOb".}?
                        help = { "nim":       "compiler to use",
                                 "srcFile":  "script to run",
                                 "show": "show informative compiler info" })
-  #var app = initFromCL(App())  #also works if type defaults are ok
   app.logic()
   echo "app: ", app
