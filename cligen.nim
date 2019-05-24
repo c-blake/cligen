@@ -26,8 +26,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
   VersionOnly* = object of Exception
   ParseError*  = object of Exception
 
-{.push hint[GlobalVar]: off.}
-var clCfg* = ClCfg(
+proc defaultClCfg(): ClCfg =
+  return ClCfg(
   version:     "",
   hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
   hTabRowSep:  "",
@@ -38,6 +38,20 @@ var clCfg* = ClCfg(
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?'})
+
+{.push hint[GlobalVar]: off.}
+var clCfg* {.global.} = defaultClCfg() # for tests
+#var clCfg* = ClCfg(
+#  version:     "",
+#  hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
+#  hTabRowSep:  "",
+#  hTabColGap:  2,
+#  hTabMinLast: 16,
+#  hTabVal4req: "REQUIRED",
+#  reqSep:      false,
+#  sepChars:    { '=', ':' },
+#  opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
+#                 '|', '~', '^', '$', '#', '<', '>', '?'})
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
@@ -191,7 +205,7 @@ proc posIxGet(positional: string, fpars: NimNode): int =
 include cligen/syntaxHelp
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
-  help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
+  help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=defaultClCfg(),
   echoResult=false, noAutoEcho=false, positional: static string=AUTO,
   suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
   mandatoryOverride: seq[string] = @[], stopWords: seq[string] = @[],
@@ -605,7 +619,7 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
                        `echoResult`, `noAutoEcho`)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
- short:typed={},usage=clUsage, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
+ short:typed={},usage=clUsage, cf:ClCfg=defaultClCfg(),echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
  mandatoryOverride: seq[string] = @[], dispatchName="",
  mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
@@ -656,7 +670,7 @@ $1 --help-syntax gives general cligen syntax help.
 Run "$1 {help CMD|CMD --help}" to see help for just CMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   addPrefix("  ", alignTable(pairs, prefixLen=2)),
-  (if clCfg.version.len > 0: "\nTop-level --version also available" else: "") ]
+  (if defaultClCfg().version.len > 0: "\nTop-level --version also available" else: "") ]
 
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
@@ -858,7 +872,7 @@ macro initGen*(default: typed, T: untyped, positional="",
   when defined(printInit): echo repr(result)  # maybe print gen code
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
-    help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
+    help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=defaultClCfg(),
     positional="", suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T=
   ## Like ``dispatch`` but only ``quit`` when user gave bad CL, --help,
   ## or --version.  On success, returns ``T`` populated from object|tuple
