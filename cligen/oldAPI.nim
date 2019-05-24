@@ -37,7 +37,9 @@ template dispatch2*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
  mergeNames: seq[string] = @[]): untyped {.deprecated: "Use ClCfg-based `dispatch`".} =
  ##**Deprecated since cligen-0.9.28**: Use ``ClCfg``-based ``dispatch`` instead
  if shortHelp != 'h':
-   stderr.write "cligen.dispatch2: non-default shortHelp unsupported\n"
+   stderr.write "cligen.dispatch2: shortHelp unsupported; use help[\"help\"].\n"
+ if mandatoryOverride.len > 0:
+   stderr.write "cligen.dispatch2: mandatoryOverride was removed\n"
  proc defineAndCall(cf: ClCfg) =
   var c = cf
   c.vsnStr      = version[1]
@@ -50,6 +52,6 @@ template dispatch2*(pro: typed{nkSym}, cmdName: string = "", doc: string = "",
   c.hTabVal4req = mandatoryHelp
   c.opChar      = opChars
   dispatch(pro, cmdName, doc, help, short, prelude & usage, c, echoResult,
-           noAutoEcho, positional, suppress, implicitDefault, mandatoryOverride,
-           dispatchName, mergeNames, stopWords)
+           noAutoEcho, positional, suppress, implicitDefault, dispatchName,
+           mergeNames, stopWords)
  defineAndCall(clCfg)
