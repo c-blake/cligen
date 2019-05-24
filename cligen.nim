@@ -48,7 +48,7 @@ type    #Utility types/code for generated parser/dispatchers for parseOnly mode
   ClStatus* = enum clBadKey,                        ## Unknown long key
                    clBadVal,                        ## Unparsable value
                    clNonOption,                     ## Unexpected non-option
-                   clMissing,                       ## Mandatory but missing
+                   clMissing,                       ## Required but missing
                    clParseOptErr,                   ## parseopt error
                    clOk,                            ## Option parse part ok
                    clPositional,                    ## Expected non-option
@@ -194,13 +194,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
   echoResult=false, noAutoEcho=false, positional: static string=AUTO,
   suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
-  mandatoryOverride: seq[string] = @[], stopWords: seq[string] = @[],
-  dispatchName="", mergeNames: seq[string] = @[], docs: ptr var seq[string]=nil,
-  setByParse: ptr var seq[ClParse]=nil): untyped =
+  stopWords: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
+  docs: ptr var seq[string]=nil, setByParse: ptr var seq[ClParse]=nil): untyped=
   ##Generate command-line dispatcher for proc ``pro`` named ``dispatchName``
   ##(defaulting to ``dispatchPro``) with generated help/syntax guided by
   ##``cmdName``, ``doc``, and ``cf``.  Parameters with no explicit default in
-  ##the proc become mandatory command arguments while those with default values
+  ##the proc become required command arguments while those with default values
   ##become command options. Each proc parameter type needs in-scope ``argParse``
   ##& ``argHelp`` procs.  ``cligen/argcvt`` defines them for basic types & basic
   ##collections (``int``, ``string``, ``enum``, .., ``seq[T], set[T], ..``).
@@ -227,11 +226,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##assign system.  Such names are effectively pinned to their default values.
   ##
   ##``implicitDefault`` is a list of formal parameter names allowed to default
-  ##to the Nim default value for a type, rather than becoming mandatory, when
+  ##to the Nim default value for a type, rather than becoming required, when
   ##they lack an explicit initializer.
-  ##
-  ##``mandatoryOverride`` is a list of formal parameter names which, if set by a
-  ##CLI user, override the erroring out if any mandatory settings are missing.
   ##
   ##``stopWords`` is a ``seq[string]`` of words beyond which ``-.*`` no longer
   ##signifies an option (like the common sole ``--`` command argument).
@@ -276,10 +272,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   for p in implDef:
     if not fpars.containsParam(p):
       error $proNm&" has no param matching `implicitDefault` key \"" & p & "\""
-  let mandOvr = toStrSeq(mandatoryOverride)
-  for p in mandOvr:
-   if not fpars.containsParam(p):
-     error $proNm&" has no param matching `mandatoryOverride` key \"" & p & "\""
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
     dpars[i][0] = ident($(fpars[i][0]) & "ParamDefault")   # unique suffix
     spars[i][0] = ident($(fpars[i][0]) & "ParamDispatch")  # unique suffix
@@ -302,7 +294,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let allId = ident("allParams")        # local list of all parameters
   let cbId = ident("crbt")              # CritBitTree for prefix lengthening
   let mandId = ident("mand")            # local list of mandatory parameters
-  let mandInFId = ident("mandInForce")  # mandatory-in-force flag
   let apId = ident("ap")                # ArgcvtParams
   var callIt = newNimNode(nnkCall)      # call of wrapped proc in genproc
   callIt.add(pro)
@@ -321,7 +312,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `cbId`.incl(optionNormalize("help"), "help")
       `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
       var `mandId`: seq[string]
-      var `mandInFId` = true
       var `tabId`: TextTab =
         @[ @[ "-"&shortH&", --help", "", "", "print this cligen-erated help" ],
            @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
@@ -414,10 +404,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let lopt   = optionNormalize(parNm)
       let spar   = spars[i][0]
       let dpar   = dpars[i][0]
-      var maybeMandInForce = newNimNode(nnkEmpty)
-      if `parNm` in `mandOvr`:
-        maybeMandInForce = quote do:
-          `mandInFId` = false
       let apCall = quote do:
         `apId`.key = `pId`.key
         `apId`.val = `pId`.val
@@ -437,7 +423,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             stderr.write `apId`.msg
             raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
-        `maybeMandInForce`
       if lopt in shOpt and lopt.len > 1:      # both a long and short option
         let parShOpt = $shOpt.getOrDefault(lopt)
         result.add(newNimNode(nnkOfBranch).add(
@@ -551,7 +536,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
               `nonOpt`
       {.pop.}
       parser()
-      if `mandId`.len > 0 and `mandInFId`:
+      if `mandId`.len > 0:
         if cast[pointer](`setByParseId`) != nil:
           for m in `mandId`:
             `setByParseId`[].add((m, "", "Missing " & m, clMissing))
@@ -607,13 +592,12 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUsage, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
- mandatoryOverride: seq[string] = @[], dispatchName="",
- mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
+ dispatchName="", mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
-              positional, suppress, implicitDefault, mandatoryOverride,
-              stopWords, dispatchName, mergeNames)
+              positional, suppress, implicitDefault, stopWords, dispatchName,
+              mergeNames)
   cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
 
@@ -870,7 +854,7 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
   proc callIt(): T =
     initGen(default, T, positional, suppress, "ini")
     dispatchGen(ini, cmdName, doc, help, short, usage, cf, false, false,
-                AUTO, @[], @[], @[], @[], "x", mergeNames)
+                AUTO, @[], @[], @[], "x", mergeNames)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)

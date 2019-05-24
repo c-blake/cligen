@@ -1,6 +1,23 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.30
+---------------
+  Have `dispatch2` in `cligen/oldAPI.nim` nest generation/calling inside `proc`
+  that sets a local ClCfg from its parameter.  This is to quiet verbosity:2
+  warnings about GC safety as well as to be example code for how a modern
+  invocations can silence such warnings.
+
+  Also have `dispatch2` be noisy about unsupported features.
+
+  Remove `mandatoryOverride` parameter to `dispatchGen`/`dispatch` introduced
+  in cligen-0.9.11 before we had real version support or parseOnly modes.
+  Manual `dispatchGen` and then dispatcher calling with `parseOnly` modes (as
+  shown in e.g., `test/ParseOnly.nim`) allows totally general CLI author logic
+  to inspect what a CLI user entered before actual dispatch to a wrapped proc
+  if such sophisticated inspection is desired.  [ I doubt anyone ever used the
+  already more sophisticated than likely useful `mandatoryOverride`. ]
+
 Version: 0.9.29
 ---------------
   Add feature requested in both https://github.com/c-blake/cligen/issues/2 and

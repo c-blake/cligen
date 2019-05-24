@@ -11,5 +11,4 @@ proc demo(alpha: int, bypass=false, item: string, args: seq[string]): int =
 
 when isMainModule:
   import cligen
-  dispatch(demo,
-           implicitDefault = @[ "item" ], mandatoryOverride = @[ "bypass" ])
+  dispatch(demo, implicitDefault = @[ "item" ])
