@@ -89,31 +89,30 @@ proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
            elif cmd.len > 0: ident("dispatch" & cmd)  #XXX illegal chars?
            else: ident("dispatch" & rep)
 
-proc containsParam(fpars: NimNode, key: string): bool =
-  let k = key.optionNormalize
-  for declIx in 1 ..< len(fpars):                     #default for result=false
-    let idefs = fpars[declIx]                         #Use similar logic to..
-    for i in 0 ..< len(idefs) - 3:                    #..formalParamExpand since
-      if optionNormalize($idefs[i]) == k: return true #..`suppress` is itself a
-    if optionNormalize($idefs[^3]) == k: return true  #..symbol list we check.
+proc containsParam(fpars: NimNode, key: NimNode): bool =
+  for declIx in 1 ..< len(fpars):       #default for result=false
+    let idefs = fpars[declIx]           #Use similar logic to formalParamExpand
+    for i in 0 ..< len(idefs) - 3:      #..since`suppress` is a seq we check.
+      if idefs[i] == key: return true
+    if idefs[^3] == key: return true
 
 proc formalParamExpand(fpars: NimNode, n: auto,
-                       suppress: seq[string]= @[]): NimNode =
+                       suppress: seq[NimNode]= @[]): NimNode =
   # a,b,..,c:type [maybe=val] --> a:type, b:type, ..., c:type [maybe=val]
   result = newNimNode(nnkFormalParams)
   result.add(fpars[0])                                  # just copy ret value
   for p in suppress:
     if not fpars.containsParam(p):
-      error repr(n[0]) & " has no param matching `suppress` key \"" & p & "\""
+      error repr(n[0]) & " has no param matching `suppress` key \"" & $p & "\""
   for declIx in 1 ..< len(fpars):
     let idefs = fpars[declIx]
     for i in 0 ..< len(idefs) - 3:
-      if $idefs[i] notin suppress:
+      if idefs[i] notin suppress:
         result.add(newIdentDefs(idefs[i], idefs[^2]))
-    if $idefs[^3] notin suppress:
+    if idefs[^3] notin suppress:
       result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
 
-proc formalParams(n: NimNode, suppress: seq[string]= @[]): NimNode =
+proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
   for kid in n: #Extract expanded formal parameter list from getImpl return val.
     if kid.kind == nnkFormalParams:
       return formalParamExpand(kid, n, suppress)
@@ -127,7 +126,7 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,(string,
     let k: string = (ph[1][0]).strVal.optionNormalize
     let h: string = (ph[1][1]).strVal
     result[k] = (p, h)
-    if not fpars.containsParam(k):
+    if not fpars.containsParam(ident(k)):
       error $proNm & " has no param matching `help` key \"" & p & "\""
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
@@ -136,7 +135,7 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
     let lo: string = (losh[1][0]).strVal.optionNormalize
     let sh: char = char((losh[1][1]).intVal)
     result[lo] = sh
-    if lo.len > 0 and not fpars.containsParam(lo) and
+    if lo.len > 0 and not fpars.containsParam(ident(lo)) and
          lo != "version" and lo != "help" and lo != "helpsyntax":
       error $proNm & " has no param matching `short` key \"" & lo & "\""
 
@@ -251,7 +250,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##also be useful combined with the ``parseOnly`` arg of generated dispatchers.
   let impl = pro.getImpl
   if impl == nil: error "getImpl(" & $pro & ") returned nil."
-  let fpars = formalParams(impl, toStrSeq(suppress))
+  let fpars = formalParams(impl, toIdSeq(suppress))
   var cmtDoc: string = $doc
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
@@ -270,7 +269,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
   let implDef = toIdSeq(implicitDefault)
   for p in implDef:
-    if not fpars.containsParam($p):
+    if not fpars.containsParam(p):
       error $proNm&" has no param matching `implicitDefault` key \"" & $p & "\""
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
     dpars[i][0] = ident($(fpars[i][0]) & "ParamDefault")   # unique suffix
