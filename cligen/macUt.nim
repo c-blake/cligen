@@ -27,10 +27,15 @@ proc collectComments*(buf: var string, n: NimNode, depth: int = 0) =
 
 proc toStrSeq*(strSeqInitializer: NimNode): seq[string] =
   ## Transform a literal @[ "a", .. ] into compile-time seq[string]
-  result = newSeq[string]()
   if strSeqInitializer.len > 1:
     for kid in strSeqInitializer[1]:
       result.add($kid)
+
+proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
+  ## Transform a literal @[ "a", .. ] into compile-time seq[ident]
+  if strSeqInitializer.len > 1:
+    for kid in strSeqInitializer[1]:
+      result.add(ident($kid))
 
 proc srcBaseName*(n: NimNode): NimNode =
   ## Get the base name of the source file being compiled as an nnkStrLit

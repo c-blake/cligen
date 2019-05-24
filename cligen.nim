@@ -91,11 +91,11 @@ proc dispatchId(name: string="", cmd: string="", rep: string=""): NimNode =
 
 proc containsParam(fpars: NimNode, key: string): bool =
   let k = key.optionNormalize
-  for declIx in 1 ..< len(fpars):           #default for result = false
-    let idefs = fpars[declIx]               #Must use similar logic to..
-    for i in 0 ..< len(idefs) - 3:          #..formalParamExpand because
-      if optionNormalize($idefs[i]) == k: return true        #..`suppress` is itself one of
-    if optionNormalize($idefs[^3]) == k: return true         #..the symbol lists we check.
+  for declIx in 1 ..< len(fpars):                     #default for result=false
+    let idefs = fpars[declIx]                         #Use similar logic to..
+    for i in 0 ..< len(idefs) - 3:                    #..formalParamExpand since
+      if optionNormalize($idefs[i]) == k: return true #..`suppress` is itself a
+    if optionNormalize($idefs[^3]) == k: return true  #..symbol list we check.
 
 proc formalParamExpand(fpars: NimNode, n: auto,
                        suppress: seq[string]= @[]): NimNode =
@@ -268,10 +268,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
   var mandatory = newSeq[int]()         # At the same time, build metadata on..
-  let implDef = toStrSeq(implicitDefault)
+  let implDef = toIdSeq(implicitDefault)
   for p in implDef:
-    if not fpars.containsParam(p):
-      error $proNm&" has no param matching `implicitDefault` key \"" & p & "\""
+    if not fpars.containsParam($p):
+      error $proNm&" has no param matching `implicitDefault` key \"" & $p & "\""
   for i in 1 ..< len(fpars):            #..non-defaulted/mandatory parameters.
     dpars[i][0] = ident($(fpars[i][0]) & "ParamDefault")   # unique suffix
     spars[i][0] = ident($(fpars[i][0]) & "ParamDispatch")  # unique suffix
@@ -282,7 +282,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if fpars[i][1].kind == nnkEmpty:
           error("parameter `" & $(fpars[i][0]) &
                 "` has neither a type nor a default value")
-        if $fpars[i][0] notin implDef:
+        if fpars[i][0] notin implDef:
           mandatory.add(i)
   let posNoId = ident("posNo")          # positional arg number
   let keyCountId = ident("keyCount")    # positional arg number

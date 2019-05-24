@@ -1,4 +1,4 @@
-proc demo(alpha: int, bypass=false, item: string, args: seq[string]): int =
+proc demo(alpha: int, bypass=false, iteM: string, args: seq[string]): int =
   ## demo entry point with varied, meaningless parameters.  A Nim invocation
   ## might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
   ## invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
@@ -11,4 +11,4 @@ proc demo(alpha: int, bypass=false, item: string, args: seq[string]): int =
 
 when isMainModule:
   import cligen
-  dispatch(demo, implicitDefault = @[ "item" ])
+  dispatch(demo, implicitDefault = @[ "ite_m" ])

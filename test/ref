@@ -325,7 +325,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   --help-syntax                    advanced: prepend,plurals,..
   -a=, --alpha=  int     REQUIRED  set alpha
   -b, --bypass   bool    false     set bypass
-  -i=, --item=   string  ""        set item
+  -i=, --iteM=   string  ""        set iteM
 
 ==> test/InitOb.out <==
 Usage:
