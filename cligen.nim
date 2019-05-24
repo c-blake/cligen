@@ -166,11 +166,10 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
 const AUTO = "\0"             #Just some "impossible-ish" identifier
 
 proc posIxGet(positional: string, fpars: NimNode): int =
-  # Find the proc param to map to optional positional arguments of a command.
-  if positional == "":
-    return -1
+  if positional == "":  # Find proc param slot for optional positional CL args
+    return -1           # Empty string means deactivate auto identification.
   if positional != AUTO:
-    result = findByName(positional, fpars)
+    result = findByName(ident(positional), fpars)
     if result == -1:
       error("requested positional argument catcher " & positional &
             " is not in formal parameter list")
@@ -284,7 +283,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if fpars[i][0] notin implDef:
           mandatory.add(i)
   let posNoId = ident("posNo")          # positional arg number
-  let keyCountId = ident("keyCount")    # positional arg number
+  let keyCountId = ident("keyCount")    # id for keyCount table
   let usageId = ident("usage")          # gen proc parameter
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let vsnSh = if "version" in shOpt: $shOpt["version"] else: "\0"
@@ -325,8 +324,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     let posHelp = if posIx != -1:
-                    if $fpars[posIx][0] in helps:
-                      helps[optionNormalize($fpars[posIx][0])][1]
+                    let posNm = optionNormalize($fpars[posIx][0])
+                    if posNm in helps: helps[posNm][1]
                     else:
                       let typeName = fpars[posIx][1][1].strVal
                       "[" & $(fpars[posIx][0]) & ": " & typeName & "...]"

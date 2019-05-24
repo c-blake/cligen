@@ -1,4 +1,4 @@
-proc demo(alpha=1, verb=false, args: seq[string], stuff: seq[string]): int=
+proc demo(alpha=1, verb=false, args: seq[string], stufF: seq[string]): int =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " verb:", verb, " stuff:", repr(stuff)
   for i, arg in args: echo "args[", i, "]: ", repr(arg)
@@ -6,5 +6,5 @@ proc demo(alpha=1, verb=false, args: seq[string], stuff: seq[string]): int=
 
 when isMainModule:
   import cligen
-  dispatch(demo, positional="stuff",
-           help={ "stuff" : "[ stuffies (1 or more strings) ]" })
+  dispatch(demo, positional="stu_ff",
+           help={ "st-uff" : "[ stuff (0 or more strings) ]" })

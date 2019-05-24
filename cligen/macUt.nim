@@ -3,17 +3,16 @@
 
 import macros, strutils
 
-proc findByName*(parNm: string, fpars: NimNode): int =
+proc findByName*(parId: NimNode, fpars: NimNode): int =
   ## formal param slot of named parameter
   result = -1
-  if len(parNm) == 0: return
-  let parId = ident(parNm)
+  if len($parId) == 0: return
   for i in 1 ..< len(fpars):
     if fpars[i][0] == parId:
       result = i
       break
   if result == -1:
-    warning("specified argument `" & parNm & "` not found")
+    warning("specified argument `" & $parId & "` not found")
 
 proc collectComments*(buf: var string, n: NimNode, depth: int = 0) =
   ## Extract doc comments from the return value of .getImpl
