@@ -10,6 +10,15 @@ Version: 0.9.30
 
   Also have `dispatch2` be noisy about unsupported features.
 
+  Add `dispatchCf` & `initFromCLcf`, wrapped by `dispatch` & `initFromCL`,
+  respectively.  `cf` symbol variants allow passing a `cf` parameter, e.g.
+  `cf=myCfg`.  Non-cf variants do not.  In both cases, assigments to the
+  `cfClg` global propagate fine, but the non-`cf` versions will not trigger
+  any (bogus) GcUnsafe warnings under verbosity:2.  For discussion see:
+    https://github.com/c-blake/cligen/pull/106
+  This is a breaking change *only* if you are already using the brand new (as
+  of v0.9.28) `cf` *parameter* to `dispatch` (or `initFromCL`).
+
   Remove `mandatoryOverride` parameter to `dispatchGen`/`dispatch` introduced
   in cligen-0.9.11 before we had real version support or parseOnly modes.
   Manual `dispatchGen` and then dispatcher calling with `parseOnly` modes (as
@@ -21,15 +30,6 @@ Version: 0.9.30
   Make dispatch/dispatchGen/initGen/initFromCL interfaces style insensitive
   with respect to strings corresponding to Nim identifiers (help/short table
   keys, positional, suppress, implicitDefault).
-
-  Add `dispatchCf` & `initFromCLcf`, wrapped by `dispatch` & `initFromCL`,
-  respectively.  `cf` symbol variants allow passing a `cf` parameter, e.g.
-  `cf=myCfg`.  Non-cf variants do not.  In both cases, assigments to the
-  `cfClg` global propagate fine, but the non-`cf` versions will not trigger
-  any (bogus) GcUnsafe warnings under verbosity:2.  For discussion see:
-    https://github.com/c-blake/cligen/pull/106
-  This is a breaking change *only* if you are already using the brand new (as
-  of v0.9.28) `cf` *parameter* to `dispatch` (or `initFromCL`).
 
 Version: 0.9.29
 ---------------
