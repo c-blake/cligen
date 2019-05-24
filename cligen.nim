@@ -821,7 +821,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
        cligenQuit(`SubsDispId`())
      {.pop.}  #ProveField
      {.pop.}  #GlobalVar
-    {.pop.}) #GcUnsafe
+    {.pop.}) #GCUnsafe
   when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 macro initGen*(default: typed, T: untyped, positional="",
