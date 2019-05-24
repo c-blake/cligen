@@ -18,6 +18,10 @@ Version: 0.9.30
   if such sophisticated inspection is desired.  [ I doubt anyone ever used the
   already more sophisticated than likely useful `mandatoryOverride`. ]
 
+  Make dispatch/dispatchGen/initGen/initFromCL interfaces style insensitive
+  with respect to strings corresponding to Nim identifiers (help/short table
+  keys, positional, suppress, implicitDefault).
+
 Version: 0.9.29
 ---------------
   Add feature requested in both https://github.com/c-blake/cligen/issues/2 and
