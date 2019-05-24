@@ -820,19 +820,19 @@ macro initGen*(default: typed, T: untyped, positional="",
   of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
-  let suppressed = toStrSeq(suppress)
+  let suppressed = toIdSeq(suppress)
+  let pos = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
   for kid in ti.children:         #iterate over fields
     if kid.kind != nnkIdentDefs: warning "case objects unsupported"
-    let nm = kid[0].strVal
-    if nm in suppressed: continue
-    let id = ident(nm)
+    let id = ident(kid[0].strVal)
+    if id in suppressed: continue
     let argId = ident("arg"); let obId = ident("ob")
-    params.add(if nm == positional.strVal: newIdentDefs(id, kid[1], empty)
+    params.add(if id == pos: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
     let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
-    let sid = ident("set" & nm); let sidEq = ident("set" & nm & "=")
+    let sid = ident("set" & $id); let sidEq = ident("set" & $id & "=")
     assigns.add(quote do:
       proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
       `r`.`sid` = `id`)
