@@ -25,7 +25,9 @@ when isMainModule:
   import cligen; include cligen/mergeCfgEnv
   clCfg.version = "0.0.1"
   clCfg.reqSep = true
+  {.push hint[GlobalVar]: off.}
   var noVsn = clCfg
+  {.pop.}
   noVsn.version = ""
   dispatchMulti([ "multi" ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],

@@ -587,7 +587,7 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
   quote do: cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)),
                        `echoResult`, `noAutoEcho`)
 
-template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
+template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUsage, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
  dispatchName="", mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
@@ -598,6 +598,17 @@ template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
               mergeNames)
   cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
+
+template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
+ short:typed={},usage=clUsage,echoResult=false,noAutoEcho=false,positional=AUTO,
+ suppress:seq[string] = @[], implicitDefault:seq[string] = @[], dispatchName="",
+ mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
+  ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
+  ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
+  proc cligenDoNotCollideWithGlobalVar(cf: ClCfg) =
+   dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
+          positional,suppress,implicitDefault,dispatchName,mergeNames,stopWords)
+  cligenDoNotCollideWithGlobalVar(clCfg)
 
 proc subCmdName(p: NimNode): string =
   if p.paramPresent("cmdName"):     #CLI author-specified
@@ -839,10 +850,10 @@ macro initGen*(default: typed, T: untyped, positional="",
   result = newProc(name = ident(nm), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code
 
-template initFromCL*[T](default: T, cmdName: string="", doc: string="",
+template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
     help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
     positional="", suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T=
-  ## Like ``dispatch`` but only ``quit`` when user gave bad CL, --help,
+  ## Like ``dispatchCf`` but only ``quit`` when user gave bad CL, --help,
   ## or --version.  On success, returns ``T`` populated from object|tuple
   ## ``default`` and then from the ``mergeNames``/the command-line.  Top-level
   ## fields must have types with ``argParse`` & ``argHelp`` overloads.  Params
@@ -857,6 +868,16 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
   callIt()      #inside proc is not strictly necessary, but probably safer.
+
+template initFromCL*[T](default: T, cmdName: string="", doc: string="",
+    help: typed={}, short: typed={}, usage: string=clUsage, positional="",
+    suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T =
+  ## Convenience `initFromCLcf` wrapper to silence bogus GcUnsafe warnings at
+  ## verbosity:2.  Parameters are as for `initFromCLcf` (except for no `cf`).
+  proc cligenDoNotCollideWithGlobalVar(cf: ClCfg): T =
+    initFromCLcf(default, cmdName, doc, help, short, usage, cf, positional,
+                 suppress, mergeNames)
+  cligenDoNotCollideWithGlobalVar(clCfg)
 
 proc versionFromNimble*(nimbleContents: string): string =
   ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)

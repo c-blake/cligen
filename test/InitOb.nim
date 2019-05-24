@@ -12,11 +12,13 @@ proc logic*(a: var App) =
 
 when isMainModule:    #Q: why can one not say {.outputFile: "InitOb".}?
   import cligen
+  {.push hint[GlobalVar]: off.}     #Could also put this in a proc
   var app = initFromCL(dfl, cmdName = "InitOb", doc = "do some app",
                        positional = "iters", suppress = @[ "synth" ],
                        help = { "nim":   "compiler to use",
                                 "show":  "show informative compiler info",
                                 "iters": "[iters: int (loops per slot)]" })
   #var app = initFromCL(App())  #also works if type defaults are ok
+  {.pop.} #GlobalVar
   app.logic()
   echo "app: ", app
