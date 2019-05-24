@@ -37,7 +37,7 @@ var clCfg* = ClCfg(
   reqSep:      false,
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
-                 '|', '~', '^', '$', '#', '<', '>', '?'})
+                 '|', '~', '^', '$', '#', '<', '>', '?' })
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
