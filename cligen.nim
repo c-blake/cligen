@@ -821,7 +821,7 @@ macro initGen*(default: typed, T: untyped, positional="",
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
   let suppressed = toIdSeq(suppress)
-  let pos = ident(positional.strVal)
+  let posId = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
   for kid in ti.children:         #iterate over fields
@@ -829,7 +829,7 @@ macro initGen*(default: typed, T: untyped, positional="",
     let id = ident(kid[0].strVal)
     if id in suppressed: continue
     let argId = ident("arg"); let obId = ident("ob")
-    params.add(if id == pos: newIdentDefs(id, kid[1], empty)
+    params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
     let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
     let sid = ident("set" & $id); let sidEq = ident("set" & $id & "=")
