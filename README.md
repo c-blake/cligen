@@ -145,17 +145,17 @@ the same keyword parameters as the most salient features of `dispatch`:
 type App* = object
   srcFile*: string
   show*: bool
-const dfl* = App(srcFile: "junk") #set any defaults != default for type
+const dfl* = App(srcFile: "junk") #set defaults != default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
 when isMainModule:
-    import cligen
-    var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
-    app.logic()
+  import cligen # --help, --version, parse errors cause program exit
+  var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
+  app.logic()
 ```
 Top-level types in the object/tuple just need in-scope `argParse` / `argHelp`
-definitions.
+definitions.  `initFromCL` also supports `help`, `short`, `mergeParams`, etc.
 
 Even More Controls and Details
 ==============================
