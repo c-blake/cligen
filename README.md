@@ -37,8 +37,8 @@ parameter-keyed metadata with Nim's association-list literals:
 ```nim
 dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
-That's it.  No specification language or complex arg parsing APIs.  If you
-aren't immediately sold, here is some more
+That's it.  No specification language or complex arg parsing APIs to learn.
+If you aren't immediately sold, here is some more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 
 ---
