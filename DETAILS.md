@@ -17,15 +17,15 @@ There are only a few very easy rules to learn:
 Optional positional command arguments (more on Rule 1)
 ------------------------------------------------------
 When there is no `seq[T]` parameter, `cligen` infers that only option command
-parameters or specifically positioned mandatory parameters are legal.
-The name of the seq parameter does not matter, only that it's type slot is
+parameters or specifically positioned required parameters are legal.
+The name of the `seq` parameter does not matter, only that it's type slot is
 non-empty and semantically `seq[SOMETHING]`.  When more than one such parameter
 is in the proc signature, the first receives positional command args unless
 you override that choice with the ``positional`` argument to ``dispatchGen``.
 
-When there is no positional parameter catcher and no mandatory parameters, it
-is a command syntax error to provide non-option parameters and reported as such.
-This non-option syntax error also commonly occurs when requireSeparator=true.
+When there is no positional parameter catcher and no required parameters, it is
+a command syntax error to provide non-option parameters and reported as such.
+This non-option syntax error also commonly occurs when `clCfg.reqSep==true`.
 In that case a command user may forget the [:|=] required to separate an option
 and its value.
 
