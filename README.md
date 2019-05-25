@@ -29,7 +29,8 @@ Some existing API call
 Other invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
-`cligen`-erated parsers accept *any unambiguous prefix* for long options.
+
+`cligen`-erated parsers accept **any unambiguous prefix** for long options.
 So, hitting the TAB key is unnecessary, though might pop-up useful help.
 In yet other words, long options can be as short as possible.
 
@@ -42,6 +43,9 @@ That's it.  No specification language or complex arg parsing APIs to learn.
 If you aren't immediately sold, here is some more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 
+Many CLI authors who have understood things this far can use `cligen` already.
+Enter illegal commands or `--help` to get help messages to exhibit the mappings.
+
 ---
 
 Most commands have some trailing variable length sequence of arguments like
@@ -49,18 +53,17 @@ the `paths` in the above example.  `cligen` automatically treats the first
 non-defaulted `seq[T]` proc parameter as such an optional sequence.  `cligen`
 applies the same basic string-to-native type converters/parsers used for option
 values to such parameters.  If a proc parameter has no explicit default value,
-it becomes mandatory/required input, but the syntax for input is the same as
-optional values.  So, in the below
+it becomes required input, but the syntax for input is the same as for optional
+values.  So, in the below
 ```nim
-proc foobar(myMandatory: float, mynums: seq[int], foo=1, verb=false): int =
-  ##Some API call
-  result = 1        # Of course, real code would have real logic here
-when isMainModule:  # Preserve ability to `import api` & call from Nim
-  import cligen; dispatch(foobar)
+proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
+  discard           #Of course, real code would have real logic here
+when isMainModule:  #Preserve ability to `import api`/call from Nim
+  import cligen; dispatch(fun)
 ```
-the command-line user must give `--myMandatory=something` somewhere.  Non-option
+the command-line user must give `--myRequired=something` somewhere.  Non-option
 arguments must be parsable as `int` with whitespace stripped, e.g.
-`./foobar --myMandatory=2.0 1 2 " -3"`.
+`./fun --myRequired=2.0 1 2 " -3"`.
 
 ---
 
@@ -69,36 +72,35 @@ arguments must be parsable as `int` with whitespace stripped, e.g.
 is the argument list for each sub-`dispatch`.  Tune command syntax and help
 strings in the same way as `dispatch` as in:
 ```nim
-proc foo(myMandatory: int, mynums: seq[int], foo=1, verb=false) =
+proc foo(myRequired: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
+  discard
 proc bar(yippee: int, myfloats: seq[float], verb=false) =
   ##Some other API call
+  discard
 when isMainModule:
-  import cligen; dispatchMulti([foo, help={"myMandatory": "Need it!"}], [bar])
+  import cligen
+  dispatchMulti([foo, help={"myRequired": "Need it!"}], [bar])
 ```
 With that, a CLI user can run `./cmd foo -m1` or `./cmd bar -y10 1.0 2.0`.
 `./cmd` or `./cmd --help` will emit a brief help message while `./cmd help`
 emits a more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help
 SUBCMD` emits just the message for `SUBCMD` (`foo` or `bar` in this example).
-Like long option keys or enum values, *any unambiguous prefix* is accepted.
+
+Like long option keys or enum values, **any unambiguous prefix** is accepted.
 So, in the above `./cmd f -m1` would also work.  This is patterned after,
 e.g. Mercurial, gdb, or gnuplot.  Additionally, long option keys can be spelled
 flexibly, e.g.  `--dry-run` or `--dryRun`, much like Nim's style-insensitive
 identifiers, but with extra insensitivity to so-called "kebab case".
-
----
-
-Many CLI authors who have understood things this far can use `cligen` already.
-Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
 More Controls For More Subtle Cases/More Picky CLI authors
 ==========================================================
 You can manually control the short option for any parameter via the `short`
 macro parameter:
 ```nim
-dispatch(foobar, short = { "bar" : 'r' }))
+dispatch(fun, short = { "bar" : 'r' }))
 ```
-With that (and our first `foobar` example), `"bar"` gets `'r'` while `"baz"`
+With that (and our first `fun` example), `"bar"` gets `'r'` while `"baz"`
 gets `'b'` as short options.  To suppress some long option getting *any* short
 option, specify `'\0'` as the value for its short key.  To suppress _all_
 short options, give `short` a key of `""`.
