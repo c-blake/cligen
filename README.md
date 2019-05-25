@@ -12,7 +12,7 @@ proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   result = 1        # Of course, real code would have real logic here
 import cligen; dispatch(fun) #Whoa..Just 1 line??
 ```
-Compile it to fun (e.g., `nim c fun.nim`) and then run `./fun --help`
+Compile it to `fun` (e.g., `nim c fun.nim`) and then run `./fun --help`
 to get a minimal (but not so useless!) help message:
 ```
 Usage:
