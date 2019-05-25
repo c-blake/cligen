@@ -67,9 +67,9 @@ e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 ---
 
 `dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
-`nimble`, just use in, say, a `cmd.nim` file.  Each `[]` list in `dispatchMulti`
-is the argument list for each sub-`dispatch`.  Tune command syntax and help
-strings in the same way as `dispatch` as in:
+`nimble`. Each `[]` list in `dispatchMulti` is the argument list for each
+sub-`dispatch`.  Tune command syntax and help strings in the same way as
+`dispatch` as in:
 ```nim
 proc foo(myRequired: int, mynums: seq[int], foo=1, verb=false) =
   ##Some API call
@@ -81,10 +81,10 @@ when isMainModule:
   import cligen
   dispatchMulti([foo, help={"myRequired": "Need it!"}], [bar])
 ```
-With that, a CLI user can run `./cmd foo -m1` or `./cmd bar -y10 1.0 2.0`.
-`./cmd` or `./cmd --help` print brief help messages while `./cmd help` prints a
-more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help SUBCMD`
-prints just the message for `SUBCMD` (`foo`|`bar` in this example).
+With the above in `cmd.nim`, CLI users can run `./cmd foo -m1` or
+`./cmd bar -y10 1.0 2.0`.  `./cmd` or `./cmd --help` print brief help messages
+while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
+or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
 Like long option keys or enum values, **any unambiguous prefix** is accepted.
 So, in the above `./cmd f -m1` would also work.  This is patterned after,
