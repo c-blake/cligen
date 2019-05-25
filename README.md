@@ -34,8 +34,8 @@ _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 So, hitting the TAB key is unnecessary, though might pop-up useful help.
 In yet other words, long options can be as short as possible.
 
-When you want more specific help than `set foo` and `set bar`, just add some
-parameter-keyed metadata with Nim's association-list literals:
+When you want more specific help than `set foo`, just add parameter-keyed
+metadata with Nim's association-list literals:
 ```nim
 dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
