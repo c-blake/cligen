@@ -83,9 +83,9 @@ when isMainModule:
   dispatchMulti([foo, help={"myRequired": "Need it!"}], [bar])
 ```
 With that, a CLI user can run `./cmd foo -m1` or `./cmd bar -y10 1.0 2.0`.
-`./cmd` or `./cmd --help` will emit a brief help message while `./cmd help`
-emits a more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help
-SUBCMD` emits just the message for `SUBCMD` (`foo` or `bar` in this example).
+`./cmd` or `./cmd --help` print brief help messages while `./cmd help` prints a
+more comprehensive message, and `./cmd SUBCMD --help` or `./cmd help SUBCMD`
+prints just the message for `SUBCMD` (`foo`|`bar` in this example).
 
 Like long option keys or enum values, **any unambiguous prefix** is accepted.
 So, in the above `./cmd f -m1` would also work.  This is patterned after,
