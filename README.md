@@ -169,11 +169,9 @@ restrictions on wrappable procs and extending the parser to new argument types.
 A good starting point for various advanced usages is the many examples in my
 automated test suite:
   [test/](https://github.com/c-blake/cligen/tree/master/test/).
-
 Then there is the documentation for the three main modules:
   [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
   [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
   [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html)
-
 Finally, I try to keep track of possibly breaking changes and new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
