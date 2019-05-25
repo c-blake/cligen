@@ -42,7 +42,6 @@ dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
 That's it.  No specification language or complex arg parsing APIs to learn.
 If you aren't immediately sold, here is some more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
-
 Many CLI authors who have understood things this far can use `cligen` already.
 Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
