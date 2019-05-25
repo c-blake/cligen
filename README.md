@@ -159,8 +159,7 @@ when isMainModule:
   var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
   app.logic()  #Only --help/--version/parse errors cause early exit
 ```
-Top-level types in the object/tuple just need in-scope `argParse` / `argHelp`
-definitions.  `initFromCL` also supports `help`, `short`, `mergeParams`, etc.
+`initFromCL` also supports `help`, `short`, `mergeParams`, etc.
 
 Even More Controls and Details
 ==============================
