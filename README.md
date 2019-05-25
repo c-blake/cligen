@@ -60,9 +60,9 @@ proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
 when isMainModule:  #Preserve ability to `import api`/call from Nim
   import cligen; dispatch(fun)
 ```
-the command-line user must give `--myRequired=something` somewhere.  Non-option
-arguments must be parsable as `int` with whitespace stripped, e.g.
-`./fun --myRequired=2.0 1 2 " -3"`.
+the command-line user must give `--myRequired=something` somewhere to avoid an
+error.  Non-option arguments must be parsable as `int` with whitespace stripped,
+e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 
 ---
 
