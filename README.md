@@ -7,16 +7,16 @@ default values.  A little reflection/introspection then suffices to generate a
 parser-dispatcher that translates a `seq[string]` command input into calls of a
 wrapped proc.  In Nim, adding a CLI can be as easy as adding one line of code:
 ```nim
-proc foobar(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
+proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   ##Some existing API call
   result = 1        # Of course, real code would have real logic here
-import cligen; dispatch(foobar) #Whoa..Just 1 line??
+import cligen; dispatch(fun) #Whoa..Just 1 line??
 ```
-Compile it to foobar (e.g., `nim c foobar.nim`) and then run `./foobar --help`
+Compile it to fun (e.g., `nim c fun.nim`) and then run `./fun --help`
 to get a minimal (but not so useless!) help message:
 ```
 Usage:
-  foobar [optional-params] [paths: string...]
+  fun [optional-params] [paths: string...]
 Some existing API call
   Options(opt-arg sep :|=|spc):
   -h, --help                    print this cligen-erated help
@@ -26,7 +26,7 @@ Some existing API call
   --baz=         string  "hi"   set baz
   -v, --verb     bool    false  set verb
 ```
-Other invocations (`foobar --foo=2 --bar=2.7 ...`) all work as expected.
+Other invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 `cligen`-erated parsers accept *any unambiguous prefix* for long options.
@@ -36,7 +36,7 @@ In yet other words, long options can be as short as possible.
 When you want more specific help than `set foo` and `set bar`, just add some
 parameter-keyed metadata with Nim's association-list literals:
 ```nim
-dispatch(foobar, help = { "foo" : "the beginning", "bar" : "the rate" })
+dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
 That's it.  No specification language or complex arg parsing APIs to learn.
 If you aren't immediately sold, here is some more
