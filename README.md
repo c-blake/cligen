@@ -107,19 +107,20 @@ short options, give `short` a key of `""`.
 
 ---
 
-The default exit protocol is `quit(int(result)) or (echo $result or discard;
-quit(0))`.  If `echoResult==true`, it's just `echo $result; quit(0)`, while if
-`noAutoEcho==true` it's just `quit(int(result)) or (discard; quit(0))`.  So,
+The default exit protocol is (with boolean short-circuiting) `quit(int(result))
+or (echo $result or discard; quit(0))`.  If `echoResult==true`, it's just
+`echo $result; quit(0)`, while if `noAutoEcho==true` it's `quit(int(result)) or (discard; quit(0))`.
+So,
 ```nim
-import editdistance, cligen   # gen a CLI for Nim stdlib's editDistance
+import editdistance, cligen   #gen CLI for Nim stdlib editDistance
 dispatch(editDistanceASCII, echoResult=true)
 ```
-prints the edit distance between two mandatory parameters, `a`, and `b`.
+makes a program to print edit distance between two required parameters.
 
 If these exit protocols are inadequate then you may need to call `dispatchGen()`
 and later call `try: dispatchFoo(someSeqString) except: discard` yourself.
 This is all `dispatch` itself does.  ***Return*** _types and values_ of the
-generated dispatcher matches the wrapped proc. { Other parameters to generated
+generated dispatcher match the wrapped proc. { Other parameters to generated
 dispatchers are for internal use in `dispatchMulti` and probably don't matter to
 you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
 `ParseError`.  These are hopefully self-explanatory.
@@ -131,8 +132,9 @@ environment variable then you can redefine `mergeParams()` after `import cligen`
 but before `dispatch`/`dispatchMulti`:
 ```nim
 import cligen, os, strutils
-proc mergeParams(cmdNames: seq[string], cmdLine=commandLineParams()): seq[string]=
-  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #Get $MULTI_(FOO|_BAR)
+proc mergeParams(cmdNames: seq[string],
+                 cmdLine=commandLineParams()): seq[string] =
+  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #$MULTI_(FOO|_BAR)
   if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
