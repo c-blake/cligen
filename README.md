@@ -7,9 +7,9 @@ default values.  A little reflection/introspection then suffices to generate a
 parser-dispatcher that translates a `seq[string]` command input into calls of a
 wrapped proc.  In Nim, adding a CLI can be as easy as adding one line of code:
 ```nim
-proc foobar(foo=1, bar=2.0, baz="hi", verb=false, paths: seq[string]): int =
+proc foobar(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   ##Some existing API call
-  result = 1          # Of course, real code would have real logic here
+  result = 1        # Of course, real code would have real logic here
 import cligen; dispatch(foobar) #Whoa..Just 1 line??
 ```
 Compile it to foobar (e.g., `nim c foobar.nim`) and then run `./foobar --help`
