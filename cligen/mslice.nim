@@ -27,9 +27,12 @@ proc toMSlice*(a: string): MSlice =  #I'd prefer to call this MSlice, but if I
   result.mem = a.cstring             #do here I get an already-defined error.
   result.len = a.len                 #(Works in another module, though.)
 
-proc toCstr*(p: pointer): cstring =
+proc toCstr*(p: pointer): cstring {.inline.} =
   ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
   cast[cstring](p)
+
+proc `[]`*(ms: MSlice, i: int): char {.inline.} =
+  ms.mem.toCstr[i]
 
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
@@ -72,7 +75,7 @@ iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
   ## .. code-block:: nim
   ##   import mfile; var count = 0  #Count initial '#' comment lines
   ##   for slice in mSlices(mopen("foo").toMSlice):
-  ##     if slice.len > 0 and slice.mem.toCstr[0] != '#': count.inc
+  ##     if slice.len > 0 and slice[0] != '#': count.inc
   if mslc.mem != nil:
     var ms = MSlice(mem: mslc.mem, len: 0)
     var remaining = mslc.len
@@ -83,7 +86,7 @@ iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
         yield ms
         break
       ms.len = recEnd -! ms.mem                     #sep is NOT included
-      if eat != '\0' and ms.len > 0 and ms.mem.toCstr[ms.len - 1] == eat:
+      if eat != '\0' and ms.len > 0 and ms[ms.len - 1] == eat:
         dec(ms.len)                                 #trim pre-sep char
       yield ms
       ms.mem = recEnd +! 1                          #skip sep
