@@ -66,3 +66,15 @@ proc both*[T](it: iterator(): T, s: seq[T]): iterator(): T =
   result = iterator(): T =
     for e in it(): yield e
     for e in s: yield e
+
+proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int =
+  proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+          importc: "fwrite_unlocked", header: "<stdio.h>".}
+  result = c_fwrite(buffer, 1, len, f)
+
+proc urite*(f: File, s: string) =
+  if uriteBuffer(f, cstring(s), s.len) != s.len:
+    raise newException(IOError, "cannot write string to file")
+
+proc urite*(f: File, a: varargs[string, `$`]) =
+  for x in items(a): urite(f, x)

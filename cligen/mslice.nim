@@ -53,8 +53,14 @@ proc `<`*(a,b: MSlice): bool {.inline.} =
   cmemcmp(a.mem, b.mem, min(a.len, b.len)) < 0
 
 proc write*(f: File, ms: MSlice) {.inline.} =
-  ## Write ``ms`` datat to file ``f``.
+  ## Write ``ms`` data to file ``f``.
   discard writeBuffer(f, ms.mem, ms.len)
+
+proc urite*(f: File, ms: MSlice) {.inline.} =
+  ## unlocked write ``ms`` data to file ``f``.
+  proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+          importc: "fwrite_unlocked", header: "<stdio.h>".}
+  discard c_fwrite(ms.mem, 1, ms.len, f)
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len) == 0
