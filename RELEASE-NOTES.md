@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.31
+---------------
+  Fix bug where `--v` would not auto-lengthen to `--version`.
+
 Version: 0.9.30
 ---------------
   Have `dispatch2` in `cligen/oldAPI.nim` nest generation/calling inside `proc`

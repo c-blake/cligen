@@ -318,6 +318,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let `setByParseId`: ptr seq[ClParse] = `setByParse`)
     result.add(quote do:
       if `cf`.version.len > 0:
+        `cbId`.incl(optionNormalize("version"), "version")
         `apId`.parNm = "version"; `apId`.parSh = `vsnSh`
         `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
         `tabId`.add(argHelp(false, `apId`) & "print version"))
