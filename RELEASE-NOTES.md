@@ -4,11 +4,10 @@ RELEASE NOTES
 Version: 0.9.30
 ---------------
   Have `dispatch2` in `cligen/oldAPI.nim` nest generation/calling inside `proc`
-  that sets a local ClCfg from its parameter.  This is to quiet verbosity:2
-  warnings about GC safety as well as to be example code for how a modern
-  invocations can silence such warnings.
-
-  Also have `dispatch2` be noisy about unsupported features.
+  that sets a local `ClCfg` from its parameter.  This is to quiet `verbosity:2`
+  bogus warnings about GC safety as well as to be example code for how a modern
+  invocations can silence such warnings.  Also have `dispatch2` be noisy about
+  unsupported features.
 
   Add `dispatchCf` & `initFromCLcf`, wrapped by `dispatch` & `initFromCL`,
   respectively.  `cf` symbol variants allow passing a `cf` parameter, e.g.
@@ -20,16 +19,16 @@ Version: 0.9.30
   of v0.9.28) `cf` *parameter* to `dispatch` (or `initFromCL`).
 
   Remove `mandatoryOverride` parameter to `dispatchGen`/`dispatch` introduced
-  in cligen-0.9.11 before we had real version support or parseOnly modes.
-  Manual `dispatchGen` and then dispatcher calling with `parseOnly` modes (as
-  shown in e.g., `test/ParseOnly.nim`) allows totally general CLI author logic
-  to inspect what a CLI user entered before actual dispatch to a wrapped proc
-  if such sophisticated inspection is desired.  [ I doubt anyone ever used the
-  already more sophisticated than likely useful `mandatoryOverride`. ]
+  in cligen-0.9.11 before we had real version support/`parseOnly` mode.  Manual
+  `dispatchGen` and `parseOnly` modes (as shown in e.g., `test/ParseOnly.nim`)
+  allows totally general CLI author logic to inspect what a CLI user entered
+  before actual dispatch to a wrapped proc if such sophisticated inspection is
+  desired.  [ I doubt anyone ever used the already more-sophisticated-than-
+  likely-useful `mandatoryOverride`. ]
 
-  Make dispatch/dispatchGen/initGen/initFromCL interfaces style insensitive
-  with respect to strings corresponding to Nim identifiers (help/short table
-  keys, positional, suppress, implicitDefault).
+  Make `dispatch`/`dispatchGen`/`initGen`/`initFromCL` interfaces insensitive to
+  style style with respect to strings corresponding to Nim identifiers (`help`/
+  `short` table keys, `positional`, `suppress`, `implicitDefault`).
 
 Version: 0.9.29
 ---------------
