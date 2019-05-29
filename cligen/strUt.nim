@@ -46,11 +46,10 @@ proc hashWY*(x: openArray[char]): uint64 =
   let n = x.len
   for i in countup(0, n - 32, 32):  #Block-wise loop helps speed
     h = xpro(h xor P0, wyBlock(unsafeAddr x[i]))
-  h = h xor P0
   if (n and 31) != 0:               #Copy any final partial block to temp buf
     var q: array[32, char]
     copyMem(unsafeAddr q[0], unsafeAddr x[n shr 5 shl 5], n and 31)
-    h = xpro(h, wyBlock(unsafeAddr q[0])) #WY's SmKey opt doesn't preserve HVal
+    h = xpro(h xor P0, wyBlock(unsafeAddr q[0])) #WY SmallKey opt=>diff hash val
   return xpro(h, uint64(n) xor P5)
 #NOTE 27+n/6 cycles has a BIG constant; Could explode into 31 cases like WY (or
 #use ANY staged hashes for final 2,4,8,16,31B since length%32 is deterministic)
