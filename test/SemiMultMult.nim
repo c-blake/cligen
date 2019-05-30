@@ -44,7 +44,7 @@ when isMainModule:
     var subCmdsN: seq[string]
     for s in multiSubs: subCmdsN.add(optionNormalize(s))
     if cmdLine.len == 0:
-      echo "Usage:\n  ", topLevelHelp("SemiMultMult", multiSubs, multiDocs)
+      echo topLevelHelp("", clUseMulti, "SemiMultMult", multiSubs, multiDocs)
       raise newException(HelpOnly, "")
     case subc
     of "apple": cligenQuitAux(rest, "apple", "apple", apple, false,

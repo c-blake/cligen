@@ -634,20 +634,24 @@ template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "Run with no-argument or \"help\" for more details.\n"
   quit(1)
 
-proc topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
+const clUseMulti* = """${doc}Usage:
+  $command {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "$command help" to get *comprehensive* help.$ifVersion"""
+
+proc topLevelHelp*(doc: auto, use: auto, srcBase: auto, subCmds: auto,
+                   subDocs: auto): string =
   var pairs: seq[seq[string]]
   for i in 0 ..< subCmds.len:
     pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
-  """
-$1 {SUBCMD}  [sub-command options & parameters]
-where {SUBCMD} is one of:
-$2
-$1 {-h|--help} or with no args at all prints this message.
-$1 --help-syntax gives general cligen syntax help.
-Run "$1 {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
-Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
-  addPrefix("  ", alignTable(pairs, prefixLen=2)),
-  (if clCfg.version.len > 0: "\nTop-level --version also available" else: "") ]
+  let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
+              else: ""
+  use % [ "doc", doc, "command", srcBase, "ifVersion", ifVsn,
+          "subcmds", addPrefix("  ", alignTable(pairs, prefixLen=2)) ]
 
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
@@ -672,8 +676,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ]
     {.pop.})
   for p in procBrackets:
-    if p[0].kind == nnkStrLit:
-      continue
+    if p[0].kind == nnkStrLit:  #XXX Get `cmdName`, `usage`, `doc` here to..
+      continue                  #XXX ..override `srcBase` & default template.
     let sCmdNm = p.subCmdName
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
@@ -727,7 +731,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
-      else: echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
+      else: echo topLevelHelp("", clUseMulti,`srcBase`,`subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
@@ -774,7 +778,7 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let subDocsId = ident(prefix & "SubDocs")
   if not result[^1].paramPresent("usage"):
     result[^1].add(newParam("usage", quote do:
-      "${doc}Usage:\n  " & topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)))
+      topLevelHelp("", clUseMulti, `srcBase`, `subCmdsId`, `subDocsId`)))
   when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =

@@ -33,7 +33,7 @@ when isMainModule:
     var subCmdsN: seq[string]
     for s in multiSubs: subCmdsN.add(optionNormalize(s))
     if subCmd.len == 0:
-      echo "Usage:\n  ", topLevelHelp("SemiAutoMulti", multiSubs, multiDocs)
+      echo topLevelHelp("", clUseMulti, "SemiAutoMulti", multiSubs, multiDocs)
       raise newException(HelpOnly, "")
     case subc
     of "demo": cligenQuitAux(rest, "dispatchdemo", "demo", dispatchdemo, false,
