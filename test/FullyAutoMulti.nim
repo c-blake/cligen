@@ -29,7 +29,7 @@ when isMainModule:
   var noVsn = clCfg
   {.pop.}
   noVsn.version = ""
-  dispatchMulti([ "multi" ],
+  dispatchMulti([ "multi", doc="Hey diddly ho there, neighborino\n\n" ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ punt, echoResult=true, cf=noVsn ],

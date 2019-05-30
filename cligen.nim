@@ -643,14 +643,14 @@ $command --help-syntax gives general cligen syntax help.
 Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "$command help" to get *comprehensive* help.$ifVersion"""
 
-proc topLevelHelp*(doc: auto, use: auto, srcBase: auto, subCmds: auto,
+proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
                    subDocs: auto): string =
   var pairs: seq[seq[string]]
   for i in 0 ..< subCmds.len:
     pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
   let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
               else: ""
-  use % [ "doc", doc, "command", srcBase, "ifVersion", ifVsn,
+  use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs, prefixLen=2)) ]
 
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
@@ -661,7 +661,9 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   var prefix = "multi"
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
-  let srcBase = srcBaseName(procBkts)
+  var cmd = srcBaseName(procBkts)
+  var doc = newStrLitNode("")
+  var use = quote do: clUseMulti
   let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
   let subMchsId = ident(prefix & "SubMchs")
@@ -675,16 +677,23 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     `subMchsId`.incl("help", "help")
     var `subDocsId`: seq[string] = @[ "print comprehensive or per-cmd help" ]
     {.pop.})
+  let docId=ident("doc");let useId=ident("usage");let cmdId=ident("cmdName")
   for p in procBrackets:
-    if p[0].kind == nnkStrLit:  #XXX Get `cmdName`, `usage`, `doc` here to..
-      continue                  #XXX ..override `srcBase` & default template.
+    if p[0].kind == nnkStrLit:
+      let main = procBrackets[0]
+      for e in 1 ..< main.len:
+        if main[e].kind == nnkExprEqExpr:
+          if   main[e][0] == cmdId: cmd = main[e][1]
+          elif main[e][0] == docId: doc = main[e][1]
+          elif main[e][0] == useId: use = main[e][1]
+      continue
     let sCmdNm = p.subCmdName
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
     if not c.paramPresent("usage"):
       c.add(newParam("usage", newStrLitNode(clUse)))
     if not c.paramPresent("mergeNames"):
-      c.add(newParam("mergeNames", quote do: @[ `srcBase`, `sCmdNm` ]))
+      c.add(newParam("mergeNames", quote do: @[ `cmd`, `sCmdNm` ]))
     if not c.paramPresent("docs"):
       c.add(newParam("docs", quote do: `subDocsId`.addr))
     result.add(c)
@@ -716,7 +725,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdUsage  = if p.paramPresent("usage"): p.paramVal("usage").strVal
                      else: clUse
     let mn = if p.paramPresent("mergeNames"): p.paramVal("mergeNames")
-             else: quote do: @[ `srcBase` ] #, `sCmdNm` ]
+             else: quote do: @[ `cmd` ] #, `sCmdNm` ]
     cases.add(newNimNode(nnkOfBranch).
               add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
@@ -731,16 +740,16 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
-      else: echo topLevelHelp("", clUseMulti,`srcBase`,`subCmdsId`, `subDocsId`)
+      else: echo topLevelHelp(`doc`, `use`,`cmd`,`subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
-              "    where subsubcommand syntax is:") % [ `srcBase`, `prefix` ]
+              "    where subsubcommand syntax is:") % [ `cmd`, `prefix` ]
       else:
         echo ("This is a multiple-dispatch command.  Top-level " &
               "--help/--help-syntax\nis also available.  Usage is like:\n" &
               "    $1 {SUBCMD} [subcommand-opts & args]\n" &
-              "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
+              "where subcommand syntaxes are as follows:\n") % [ `cmd` ]
       let `dashHelpId` = @[ "--help" ]
       let `helpSCmdId` = @[ "help" ]
       `helpDump`
@@ -760,12 +769,20 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let procBrackets = if procBkts.len < 2: procBkts[0] else: procBkts
   var prefix = "multi"
   let multiId = ident(prefix)
+  let docId=ident("doc");let useId=ident("usage");let cmdId=ident("cmdName")
   result = newStmtList()
   result.add(newCall("dispatchGen", multiId))
+  var doc = newStrLitNode("")
+  var use = quote do: clUseMulti
+  var cmd = srcBaseName(procBrackets)
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
     let main = procBrackets[0]
     for e in 1 ..< main.len:
+      if main[e].kind == nnkExprEqExpr:
+        if   main[e][0] == cmdId: cmd = main[e][1]
+        elif main[e][0] == docId: doc = main[e][1]
+        elif main[e][0] == useId: use = main[e][1]
       result[^1].add(main[e])
   let subCmdsId = ident(prefix & "SubCmds")
   if not result[^1].paramPresent("stopWords"):
@@ -774,11 +791,10 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
     result[^1].add(newParam("dispatchName", newStrLitNode(prefix & "Subs")))
   if not result[^1].paramPresent("suppress"):
     result[^1].add(newParam("suppress", quote do: @[ "usage", "prefix" ]))
-  let srcBase = srcBaseName(procBrackets)
   let subDocsId = ident(prefix & "SubDocs")
   if not result[^1].paramPresent("usage"):
     result[^1].add(newParam("usage", quote do:
-      topLevelHelp("", clUseMulti, `srcBase`, `subCmdsId`, `subDocsId`)))
+      topLevelHelp(`doc`, `use`, `cmd`, `subCmdsId`, `subDocsId`)))
   when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
