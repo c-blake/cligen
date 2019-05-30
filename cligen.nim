@@ -906,6 +906,15 @@ proc versionFromNimble*(nimbleContents: string): string =
       result = cols[1].strip()[1..^2]
       break
 
+proc docFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
+  result = "unparsable nimble description"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("description"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =
   ##This is a pass-through parameter merge to provide a hook for CLI authors to

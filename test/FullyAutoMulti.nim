@@ -23,13 +23,15 @@ proc nel_Ly(hooves=4, races=9, verb=false, names: seq[string]): string =
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
+  const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
+  let docLine = docFromNimble(nimbleFile) & "\n\n"
   clCfg.version = "0.0.1"
   clCfg.reqSep = true
   {.push hint[GlobalVar]: off.}
   var noVsn = clCfg
   {.pop.}
   noVsn.version = ""
-  dispatchMulti([ "multi", doc="Hey diddly ho there, neighborino\n\n" ],
+  dispatchMulti([ "multi", doc = docLine ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ punt, echoResult=true, cf=noVsn ],
