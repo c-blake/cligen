@@ -22,7 +22,7 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
   return "42"
 
 proc yikes(hooves=4, races=9, verb=false, names: seq[string]): string =
-  ## Yet another entry point; here we block autoEcho
+  ## Yet another entry point
   echo "hooves:", hooves, " races:", races, " verb:", verb
   for i, n in names: echo "args[", i, "]: ", repr(n)
   return "42"
