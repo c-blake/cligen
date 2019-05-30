@@ -218,7 +218,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   -s=, --stuff=  strings  ab,cd  append 1 val to stuff
 
 ==> test/FullyAutoMulti.out <==
-Hey diddly ho there, neighborino
+Infer & generate command-line interace/option/argument parser
 
 Usage:
   FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
