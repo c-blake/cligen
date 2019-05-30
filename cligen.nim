@@ -639,15 +639,12 @@ proc topLevelHelp*(srcBase: auto, subCmds: auto, subDocs: auto): string=
   for i in 0 ..< subCmds.len:
     pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
   """
-
-  $1 {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+$1 {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
 $2
 $1 {-h|--help} or with no args at all prints this message.
 $1 --help-syntax gives general cligen syntax help.
-Run "$1 {help CMD|CMD --help}" to see help for just CMD.
+Run "$1 {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "$1 help" to get *comprehensive* help.$3""" % [ srcBase,
   addPrefix("  ", alignTable(pairs, prefixLen=2)),
   (if clCfg.version.len > 0: "\nTop-level --version also available" else: "") ]
@@ -733,12 +730,12 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       else: echo "Usage:\n  ", topLevelHelp(`srcBase`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
-        echo ("  $1 $2 subsubcommand [subsubcommand-opts & args]\n" &
+        echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
               "    where subsubcommand syntax is:") % [ `srcBase`, `prefix` ]
       else:
         echo ("This is a multiple-dispatch command.  Top-level " &
               "--help/--help-syntax\nis also available.  Usage is like:\n" &
-              "    $1 subcommand [subcommand-opts & args]\n" &
+              "    $1 {SUBCMD} [subcommand-opts & args]\n" &
               "where subcommand syntaxes are as follows:\n") % [ `srcBase` ]
       let `dashHelpId` = @[ "--help" ]
       let `helpSCmdId` = @[ "help" ]

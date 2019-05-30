@@ -219,11 +219,8 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/FullyAutoMulti.out <==
 Usage:
-  
-  FullyAutoMulti {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+  FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
   help    print comprehensive or per-cmd help
   demo    demo entry point with varied, meaningless parameters.
   print   show entry point with varied, meaningless parameters.
@@ -232,14 +229,14 @@ where {CMD} is one of:
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
 FullyAutoMulti --help-syntax gives general cligen syntax help.
-Run "FullyAutoMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "FullyAutoMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "FullyAutoMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
 This is a multiple-dispatch command.  Top-level --help/--help-syntax
 is also available.  Usage is like:
-    FullyAutoMulti subcommand [subcommand-opts & args]
+    FullyAutoMulti {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files: string...]
@@ -422,11 +419,8 @@ Usage:
 
 ==> test/MultMultMult.out <==
 Usage:
-  
-  MultMultMult {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+  MultMultMult {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
   help   print comprehensive or per-cmd help
   apple  apple SUB-SUB commands
   whoa   Another entry point; here we echoResult
@@ -434,7 +428,7 @@ where {CMD} is one of:
 
 MultMultMult {-h|--help} or with no args at all prints this message.
 MultMultMult --help-syntax gives general cligen syntax help.
-Run "MultMultMult {help CMD|CMD --help}" to see help for just CMD.
+Run "MultMultMult {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "MultMultMult help" to get *comprehensive* help.
 Top-level --version also available
 
@@ -451,11 +445,8 @@ demo entry point with varied, meaningless parameters.
 
 ==> test/MultiMulti.out <==
 Usage:
-  
-  MultiMulti {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+  MultiMulti {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
   help   print comprehensive or per-cmd help
   whoa   Another entry point; here we echoResult
   apple  apple/apple help for sub-sub commands
@@ -463,14 +454,14 @@ where {CMD} is one of:
 
 MultiMulti {-h|--help} or with no args at all prints this message.
 MultiMulti --help-syntax gives general cligen syntax help.
-Run "MultiMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "MultiMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "MultiMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/MultiMultiTopLvl.out <==
 This is a multiple-dispatch command.  Top-level --help/--help-syntax
 is also available.  Usage is like:
-    MultiMulti subcommand [subcommand-opts & args]
+    MultiMulti {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   whoa [optional-params] [names: string...]
@@ -566,18 +557,15 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/QualifiedMulti.out <==
 Usage:
-  
-  QualifiedMulti {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+  QualifiedMulti {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
   help  print comprehensive or per-cmd help
   get   
   put   
 
 QualifiedMulti {-h|--help} or with no args at all prints this message.
 QualifiedMulti --help-syntax gives general cligen syntax help.
-Run "QualifiedMulti {help CMD|CMD --help}" to see help for just CMD.
+Run "QualifiedMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "QualifiedMulti help" to get *comprehensive* help.
 
 ==> test/QualifiedSym.out <==
@@ -702,18 +690,15 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/SubScope.out <==
 Usage:
-  
-  SubScope {CMD}  [sub-command options & parameters]
-
-where {CMD} is one of:
-
+  SubScope {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
   help  print comprehensive or per-cmd help
   get   
   put   
 
 SubScope {-h|--help} or with no args at all prints this message.
 SubScope --help-syntax gives general cligen syntax help.
-Run "SubScope {help CMD|CMD --help}" to see help for just CMD.
+Run "SubScope {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "SubScope help" to get *comprehensive* help.
 
 ==> test/Suppress.out <==
