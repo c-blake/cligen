@@ -5,6 +5,11 @@ Version: 0.9.31
 ---------------
   Fix bug where `--v` would not auto-lengthen to `--version`.
 
+  dispatchMulti(["multi"]) brackets now properly pass through `dispatchGen`
+  keyword arguments.  Additionally, `doc` & `usage` in that "multi" slot are
+  re-purposed for the top-level help of the multi-command.  See discussion
+  here for background: https://github.com/c-blake/cligen/issues/107
+
 Version: 0.9.30
 ---------------
   Have `dispatch2` in `cligen/oldAPI.nim` nest generation/calling inside `proc`
