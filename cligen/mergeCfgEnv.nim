@@ -10,7 +10,8 @@ proc mergeParams(cmdNames: seq[string],
   ## otherwise.  Then it looks for a $PROG environment variables ('_' extended
   ## for multi-commands, e.g. $PROG_SUBCMD).  Finally, it appends the passed
   ## cmdLine (which is usually command-line entered parameters or @["--help"]).
-# stderr.write "got cmdNames: ", repr(cmdNames), "\n"
+  when defined(debugMergeParams):
+    stderr.write "mergeParams got cmdNames: ", repr(cmdNames), "\n"
   var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]))
   if cfPath.len == 0: cfPath = os.getConfigDir() & cmdNames[0]
   if existsFile(cfPath):
