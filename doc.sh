@@ -1,5 +1,5 @@
-nim doc cligen
-nim doc cligen/parseopt3
-nim doc cligen/argcvt
-mv cligen/argcvt.html .
-mv cligen/parseopt3.html .
+#!/bin/sh
+for m in cligen cligen/parseopt3 cligen/argcvt; do
+  nim doc $m
+  mv $(basename $m).html docs
+done

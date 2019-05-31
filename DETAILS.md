@@ -70,7 +70,7 @@ additive without "+=" syntax.
 
 There are many adjustments available.  For more details see the module
 documentations (
- [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/parseopt3.html)
- [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/argcvt.html)
- [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/cligen.html) )
+ [parseopt3](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/docs/parseopt3.html)
+ [argcvt](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/docs/argcvt.html)
+ [cligen](http://htmlpreview.github.io/?https://github.com/c-blake/cligen/blob/master/docs/cligen.html) )
  and [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).

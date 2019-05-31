@@ -874,21 +874,21 @@ function main() {
     title="clUse = &quot;$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options&quot;"><wbr />cl<wbr />Use<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#clUsage"
     title="clUsage = &quot;Usage:\n  $command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options&quot;"><wbr />cl<wbr />Usage<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clUseMultiGeneral"
+    title="clUseMultiGeneral = &quot;&quot;&quot;$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
+Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quot;&quot;"><wbr />cl<wbr />Use<wbr />Multi<wbr />General<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clUseMulti"
+    title="clUseMulti = &quot;${doc}Usage:\n  $command {SUBCMD}  [sub-command options &amp; parameters]\nwhere {SUBCMD} is one of:\n$subcmds\n$command {-h|--help} or with no args at all prints this message.\n$command --help-syntax gives general cligen syntax help.\nRun \&quot;$command {help SUBCMD|SUBCMD --help}\&quot; to see help for just SUBCMD.\nRun \&quot;$command help\&quot; to get *comprehensive* help.${ifVersion}&quot;"><wbr />cl<wbr />Use<wbr />Multi<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clUseMultiPerlish"
+    title="clUseMultiPerlish = &quot;NAME\n  ${doc}USAGE\n  $command {SUBCMD}  [sub-command options &amp; parameters]\n\nSUBCOMMANDS\n$subcmds\n$command {-h|--help} or with no args at all prints this message.\n$command --help-syntax gives general cligen syntax help.\nRun \&quot;$command {help SUBCMD|SUBCMD --help}\&quot; to see help for just SUBCMD.\nRun \&quot;$command help\&quot; to get *comprehensive* help.${ifVersion}&quot;"><wbr />cl<wbr />Use<wbr />Multi<wbr />Perlish<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ClErrors"
     title="ClErrors = {clBadKey, clBadVal, clNonOption, clMissing}"><wbr />Cl<wbr />Errors<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ClExit"
     title="ClExit = {clHelpOnly, clVersionOnly}"><wbr />Cl<wbr />Exit<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ClNoCall"
     title="ClNoCall = {clBadKey..clMissing, clHelpOnly..clVersionOnly}"><wbr />Cl<wbr />No<wbr />Call<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#clUseMulti"
-    title="clUseMulti = &quot;&quot;&quot;${doc}Usage:
-  $command {SUBCMD}  [sub-command options &amp; parameters]
-where {SUBCMD} is one of:
-$subcmds
-$command {-h|--help} or with no args at all prints this message.
-$command --help-syntax gives general cligen syntax help.
-Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
-Run &quot;$command help&quot; to get *comprehensive* help.$ifVersion&quot;&quot;&quot;"><wbr />cl<wbr />Use<wbr />Multi<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#helpTabOption"
     title="helpTabOption = 0"><wbr />help<wbr />Tab<wbr />Option<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#helpTabType"
@@ -917,10 +917,6 @@ Run &quot;$command help&quot; to get *comprehensive* help.$ifVersion&quot;&quot;
     title="next(x: openArray[ClParse]; stati: set[ClStatus]; start = 0): int"><wbr />next<span class="attachedType">ClParse</span></a></li>
   <li><a class="reference" href="#topLevelHelp%2Cauto%2Cauto%2Cauto%2Cauto%2Cauto"
     title="topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string"><wbr />top<wbr />Level<wbr />Help<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#versionFromNimble%2Cstring"
-    title="versionFromNimble(nimbleContents: string): string"><wbr />version<wbr />From<wbr />Nimble<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#docFromNimble%2Cstring"
-    title="docFromNimble(nimbleContents: string): string"><wbr />doc<wbr />From<wbr />Nimble<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#mergeParams%2Cseq%5BT%5D%5Bstring%5D"
     title="mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]"><wbr />merge<wbr />Params<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#vsnStr%3D%2CClCfg%2Cstring"
@@ -1130,6 +1126,27 @@ Parse status for param
 
 
 </dd>
+<a id="clUseMultiGeneral"></a>
+<dt><pre><a href="cligen.html#clUseMultiGeneral"><span class="Identifier">clUseMultiGeneral</span></a> <span class="Other">=</span> <span class="StringLit">&quot;&quot;&quot;$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
+Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quot;&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="clUseMulti"></a>
+<dt><pre><a href="cligen.html#clUseMulti"><span class="Identifier">clUseMulti</span></a> <span class="Other">=</span> <span class="StringLit">&quot;${doc}Usage:\n  $command {SUBCMD}  [sub-command options &amp; parameters]\nwhere {SUBCMD} is one of:\n$subcmds\n$command {-h|--help} or with no args at all prints this message.\n$command --help-syntax gives general cligen syntax help.\nRun \&quot;$command {help SUBCMD|SUBCMD --help}\&quot; to see help for just SUBCMD.\nRun \&quot;$command help\&quot; to get *comprehensive* help.${ifVersion}&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="clUseMultiPerlish"></a>
+<dt><pre><a href="cligen.html#clUseMultiPerlish"><span class="Identifier">clUseMultiPerlish</span></a> <span class="Other">=</span> <span class="StringLit">&quot;NAME\n  ${doc}USAGE\n  $command {SUBCMD}  [sub-command options &amp; parameters]\n\nSUBCOMMANDS\n$subcmds\n$command {-h|--help} or with no args at all prints this message.\n$command --help-syntax gives general cligen syntax help.\nRun \&quot;$command {help SUBCMD|SUBCMD --help}\&quot; to see help for just SUBCMD.\nRun \&quot;$command help\&quot; to get *comprehensive* help.${ifVersion}&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="ClErrors"></a>
 <dt><pre><a href="cligen.html#ClErrors"><span class="Identifier">ClErrors</span></a> <span class="Other">=</span> <span class="Other">{</span><span class="DecNumber">clBadKey</span><span class="Other">,</span> <span class="DecNumber">clBadVal</span><span class="Other">,</span> <span class="DecNumber">clNonOption</span><span class="Other">,</span> <span class="DecNumber">clMissing</span><span class="Other">}</span></pre></dt>
 <dd>
@@ -1144,19 +1161,6 @@ Parse status for param
 </dd>
 <a id="ClNoCall"></a>
 <dt><pre><a href="cligen.html#ClNoCall"><span class="Identifier">ClNoCall</span></a> <span class="Other">=</span> <span class="Other">{</span><span class="DecNumber">clBadKey</span><span class="Other">..</span><span class="DecNumber">clMissing</span><span class="Other">,</span> <span class="DecNumber">clHelpOnly</span><span class="Other">..</span><span class="DecNumber">clVersionOnly</span><span class="Other">}</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="clUseMulti"></a>
-<dt><pre><a href="cligen.html#clUseMulti"><span class="Identifier">clUseMulti</span></a> <span class="Other">=</span> <span class="StringLit">&quot;&quot;&quot;${doc}Usage:
-  $command {SUBCMD}  [sub-command options &amp; parameters]
-where {SUBCMD} is one of:
-$subcmds
-$command {-h|--help} or with no args at all prints this message.
-$command --help-syntax gives general cligen syntax help.
-Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
-Run &quot;$command help&quot; to get *comprehensive* help.$ifVersion&quot;&quot;&quot;</span></pre></dt>
 <dd>
 
 
@@ -1232,18 +1236,6 @@ First index after startIx in <tt class="docutils literal"><span class="pre">setB
 <dt><pre><span class="Keyword">proc</span> <a href="#topLevelHelp%2Cauto%2Cauto%2Cauto%2Cauto%2Cauto"><span class="Identifier">topLevelHelp</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">use</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">cmd</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subCmds</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subDocs</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
-
-</dd>
-<a id="versionFromNimble,string"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#versionFromNimble%2Cstring"><span class="Identifier">versionFromNimble</span></a><span class="Other">(</span><span class="Identifier">nimbleContents</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-const foo = staticRead &quot;relPathToDotNimbleFile&quot;; use versionFromNimble(foo)
-
-</dd>
-<a id="docFromNimble,string"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#docFromNimble%2Cstring"><span class="Identifier">docFromNimble</span></a><span class="Other">(</span><span class="Identifier">nimbleContents</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-const foo = staticRead &quot;relPathToDotNimbleFile&quot;; use docFromNimble(foo)
 
 </dd>
 <a id="mergeParams,seq[T][string]"></a>
@@ -1430,7 +1422,7 @@ Convenience <tt class="docutils literal"><span class="pre">initFromCLcf</span></
 <div class="section" id="19">
 <h1><a class="toc-backref" href="#19">Exports</a></h1>
 <dl class="item">
-<a href="parseopt3.html#lengthen"><span class="Identifier">lengthen</span></a>, <a href="parseopt3.html#initOptParser"><span class="Identifier">initOptParser</span></a>, <a href="parseopt3.html#initOptParser"><span class="Identifier">initOptParser</span></a>, <a href="parseopt3.html#next"><span class="Identifier">next</span></a>, <a href="parseopt3.html#optionNormalize"><span class="Identifier">optionNormalize</span></a>, <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#getDescription"><span class="Identifier">getDescription</span></a>, <a href="argcvt.html#incl"><span class="Identifier">incl</span></a>, <a href="parseopt3.html#valsWithPfx"><span class="Identifier">valsWithPfx</span></a>, <a href="textUt.html#addPrefix"><span class="Identifier">addPrefix</span></a>, <a href="textUt.html#wrap"><span class="Identifier">wrap</span></a>, <a href="textUt.html#TextTab"><span class="Identifier">TextTab</span></a>, <a href="textUt.html#alignTable"><span class="Identifier">alignTable</span></a>, <a href="textUt.html#suggestions"><span class="Identifier">suggestions</span></a>, <a href="argcvt.html#helpCase"><span class="Identifier">helpCase</span></a>, <a href="sysUt.html#postInc"><span class="Identifier">postInc</span></a>, <a href="sysUt.html#delItem"><span class="Identifier">delItem</span></a>
+<a href="parseopt3.html#lengthen"><span class="Identifier">lengthen</span></a>, <a href="parseopt3.html#initOptParser"><span class="Identifier">initOptParser</span></a>, <a href="parseopt3.html#initOptParser"><span class="Identifier">initOptParser</span></a>, <a href="parseopt3.html#next"><span class="Identifier">next</span></a>, <a href="parseopt3.html#optionNormalize"><span class="Identifier">optionNormalize</span></a>, <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argParse"><span class="Identifier">argParse</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#argHelp"><span class="Identifier">argHelp</span></a>, <a href="argcvt.html#getDescription"><span class="Identifier">getDescription</span></a>, <a href="argcvt.html#incl"><span class="Identifier">incl</span></a>, <a href="parseopt3.html#valsWithPfx"><span class="Identifier">valsWithPfx</span></a>, <a href="textUt.html#addPrefix"><span class="Identifier">addPrefix</span></a>, <a href="textUt.html#wrap"><span class="Identifier">wrap</span></a>, <a href="textUt.html#TextTab"><span class="Identifier">TextTab</span></a>, <a href="textUt.html#alignTable"><span class="Identifier">alignTable</span></a>, <a href="textUt.html#suggestions"><span class="Identifier">suggestions</span></a>, <a href="argcvt.html#helpCase"><span class="Identifier">helpCase</span></a>, <a href="sysUt.html#postInc"><span class="Identifier">postInc</span></a>, <a href="sysUt.html#delItem"><span class="Identifier">delItem</span></a>, <a href="macUt.html#fromNimble"><span class="Identifier">fromNimble</span></a>, <a href="macUt.html#docFromModule"><span class="Identifier">docFromModule</span></a>, <a href="macUt.html#versionFromNimble"><span class="Identifier">versionFromNimble</span></a>
 </dl></div>
 
   </div>
@@ -1440,7 +1432,7 @@ Convenience <tt class="docutils literal"><span class="pre">initFromCLcf</span></
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-05-31 09:28:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-31 14:21:12 UTC</small>
       </div>
     </div>
   </div>
