@@ -92,6 +92,24 @@ e.g. Mercurial, gdb, or gnuplot.  Additionally, long option keys can be spelled
 flexibly, e.g.  `--dry-run` or `--dryRun`, much like Nim's style-insensitive
 identifiers, but with extra insensitivity to so-called "kebab case".
 
+Rather than dispatching to a proc and exiting, you can also initialize the
+fields of an object/tuple from the command-line with `initFromCL` which has
+the same keyword parameters as the most salient features of `dispatch`:
+```nim
+type App* = object
+  srcFile*: string
+  show*: bool
+const dfl* = App(srcFile: "junk")  #set defaults != default for type
+
+proc logic*(a: var App) = echo "app is: ", a
+
+when isMainModule:
+  import cligen
+  var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
+  app.logic()  #Only --help/--version/parse errors cause early exit
+```
+`initFromCL` also supports `help`, `short`, etc.
+
 More Controls For More Subtle Cases/More Picky CLI authors
 ==========================================================
 You can manually control the short option for any parameter via the `short`
@@ -141,24 +159,6 @@ You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 `dispatch` to merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with
 Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as shown
 above, if that works for you.
-
-Rather than dispatching to a proc and exiting, you can also initialize the
-fields of an object/tuple from the command-line with `initFromCL` which has
-the same keyword parameters as the most salient features of `dispatch`:
-```nim
-type App* = object
-  srcFile*: string
-  show*: bool
-const dfl* = App(srcFile: "junk")  #set defaults != default for type
-
-proc logic*(a: var App) = echo "app is: ", a
-
-when isMainModule:
-  import cligen
-  var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
-  app.logic()  #Only --help/--version/parse errors cause early exit
-```
-`initFromCL` also supports `help`, `short`, `mergeParams`, etc.
 
 Even More Controls and Details
 ==============================
