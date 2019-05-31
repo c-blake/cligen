@@ -781,8 +781,8 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
     for e in 1 ..< main.len:
       if main[e].kind == nnkExprEqExpr:
         if   main[e][0] == cmdId: cmd = main[e][1]
-        elif main[e][0] == docId: doc = main[e][1]
-        elif main[e][0] == useId: use = main[e][1]
+        elif main[e][0] == docId: doc = main[e][1]; continue
+        elif main[e][0] == useId: use = main[e][1]; continue
       result[^1].add(main[e])
   let subCmdsId = ident(prefix & "SubCmds")
   if not result[^1].paramPresent("stopWords"):
@@ -792,9 +792,8 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   if not result[^1].paramPresent("suppress"):
     result[^1].add(newParam("suppress", quote do: @[ "usage", "prefix" ]))
   let subDocsId = ident(prefix & "SubDocs")
-  if not result[^1].paramPresent("usage"):
-    result[^1].add(newParam("usage", quote do:
-      topLevelHelp(`doc`, `use`, `cmd`, `subCmdsId`, `subDocsId`)))
+  result[^1].add(newParam("usage", quote do:
+    topLevelHelp(`doc`, `use`, `cmd`, `subCmdsId`, `subDocsId`)))
   when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =

@@ -222,7 +222,8 @@ Infer & generate command-line interace/option/argument parser
 
 Usage:
   FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
-where {SUBCMD} is one of:
+
+SUBCMDs:
   help    print comprehensive or per-cmd help
   demo    demo entry point with varied, meaningless parameters.
   print   show entry point with varied, meaningless parameters.

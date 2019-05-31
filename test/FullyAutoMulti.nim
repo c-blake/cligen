@@ -25,13 +25,24 @@ when isMainModule:
   import cligen; include cligen/mergeCfgEnv
   const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
   let docLine = docFromNimble(nimbleFile) & "\n\n"
+
+  let topLvlUse = """${doc}Usage:
+  $command {SUBCMD}  [sub-command options & parameters]
+
+SUBCMDs:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "$command help" to get *comprehensive* help.$ifVersion"""
+
   clCfg.version = "0.0.1"
   clCfg.reqSep = true
   {.push hint[GlobalVar]: off.}
   var noVsn = clCfg
   {.pop.}
   noVsn.version = ""
-  dispatchMulti([ "multi", doc = docLine ],
+  dispatchMulti([ "multi", doc = docLine, usage = topLvlUse ],
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ punt, echoResult=true, cf=noVsn ],
