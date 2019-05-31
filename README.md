@@ -92,6 +92,8 @@ e.g. Mercurial, gdb, or gnuplot.  Additionally, long option keys can be spelled
 flexibly, e.g.  `--dry-run` or `--dryRun`, much like Nim's style-insensitive
 identifiers, but with extra insensitivity to so-called "kebab case".
 
+---
+
 Rather than dispatching to a proc and exiting, you can also initialize the
 fields of an object/tuple from the command-line with `initFromCL` which has
 the same keyword parameters as the most salient features of `dispatch`:
