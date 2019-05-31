@@ -1,3 +1,5 @@
+## Test sub-sub-command CLI instantiation.
+
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", repr(item)
@@ -30,7 +32,8 @@ when isMainModule:
                      mergeNames = @["MultiMulti", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
                      mergeNames = @["MultiMulti", "apple" ] ])
-  dispatchMulti([ whoa, echoResult=true ],
+  dispatchMulti([ "multi", usage=clUseMultiPerlish ],
+                [ whoa, echoResult=true ],
                 [ apple, stopWords = @["demo", "show"],
                          doc = "apple/apple help for sub-sub commands",
                          usage = "$doc\n",

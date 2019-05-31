@@ -447,9 +447,13 @@ demo entry point with varied, meaningless parameters.
   -v, --verb     bool  false  set verb
 
 ==> test/MultiMulti.out <==
-Usage:
+NAME
+  Test sub-sub-command CLI instantiation.
+
+USAGE
   MultiMulti {SUBCMD}  [sub-command options & parameters]
-where {SUBCMD} is one of:
+
+SUBCOMMANDS
   help   print comprehensive or per-cmd help
   whoa   Another entry point; here we echoResult
   apple  apple/apple help for sub-sub commands

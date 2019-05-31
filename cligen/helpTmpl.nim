@@ -12,3 +12,11 @@ const clUseMulti* = """${doc}Usage:
 where {SUBCMD} is one of:
 $subcmds
 """ & clUseMultiGeneral
+
+const clUseMultiPerlish* = """NAME
+  ${doc}USAGE
+  $command {SUBCMD}  [sub-command options & parameters]
+
+SUBCOMMANDS
+$subcmds
+""" & clUseMultiGeneral
