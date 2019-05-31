@@ -11,10 +11,10 @@ Version: 0.9.31
   here for background:
     https://github.com/c-blake/cligen/issues/107
 
-  Additionally, unless ["multi", doc=something] is given, the introductory "pre
-  Usage" summary is taken from the first paragraph of the doc comment of the
-  module defining the 2nd arg to `dispatchMulti()`. This can be suppressed via
-  ["multi",doc=""] or a blank line/comment at the top of the defining file.
+  The introductory "pre-Usage" summary is now taken from the first paragraph of
+  the doc comment of the module defining the 2nd arg to `dispatchMulti`.  This
+  can be suppressed by ["multi",doc=""] (or whatever value you prefer) or by a
+  blank line/comment at the top of the defining file.
 
   Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
 
