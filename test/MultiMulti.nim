@@ -33,8 +33,8 @@ when isMainModule:
                      mergeNames = @["MultiMulti", "apple" ] ],
                    [ show, cmdName="print", short = { "gamma": 'z' },
                      mergeNames = @["MultiMulti", "apple" ] ])
-  dispatchMulti([ "multi", usage = clUseMultiPerlish &
-                                   "\n\nAUTHOR\n  " & authorFromNimble(nimbl) ],
+  dispatchMulti([ "multi", usage=clUseMultiPerlish &
+                                   "\n\nAUTHOR\n  "&fromNimble("author",nimbl)],
                 [ whoa, echoResult=true ],
                 [ apple, stopWords = @["demo", "show"],
                          doc = "apple/apple help for sub-sub commands",

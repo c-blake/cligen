@@ -62,41 +62,19 @@ proc newParam*(id: string, rhs: NimNode): NimNode =
   ## Construct a keyword argument/named parameter expression for passing
   return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
-proc versionFromNimble*(nimbleContents: string): string =
+proc fromNimble*(field: string, nimbleContents: string): string =
+  ## ``const x=staticRead "relPathToNimbleFile"; use fromNimble("version",x)``
+  result = "unparsable nimble " & field
+  for line in nimbleContents.split("\n"):
+    if line.startsWith(field):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
+proc versionFromNimble*(nimbleContents: string): string {.deprecated:
+     "Deprecated since v0.9.31; use fromNimble(\"version\",..) instead."} =
   ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
-  result = "unparsable nimble version"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("version"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
-
-proc docFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
-  result = "unparsable nimble description"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("description"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
-
-proc uriFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
-  result = "unparsable nimble uri"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("uri"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
-
-proc authorFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
-  result = "unparsable nimble uri"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("author"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
+  fromNimble("version", nimbleContents)
 
 proc docFromModule*(n: NimNode): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);

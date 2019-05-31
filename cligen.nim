@@ -3,8 +3,9 @@ import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split, helpCase, postInc, delItem, versionFromNimble,
-       docFromNimble, uriFromNimble, authorFromNimble, docFromModule
+       suggestions, split, helpCase, postInc, delItem, fromNimble,docFromModule,
+       versionFromNimble #last here is temporary/deprecated
+
 include cligen/helpTmpl           #Pull in various help template strings
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)

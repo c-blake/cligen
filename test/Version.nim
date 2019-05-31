@@ -15,7 +15,7 @@ when isMainModule:
     dispatch(demo)
   elif defined(versionNimble):
     const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
-    clCfg.version = versionFromNimble(nimbleFile)
+    clCfg.version = fromNimble("version", nimbleFile)
     dispatch(demo)
   else:
     clCfg.version = "1.5"
