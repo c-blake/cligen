@@ -10,9 +10,16 @@ Version: 0.9.31
   re-purposed for the top-level help of the multi-command.  See discussion
   here for background:
     https://github.com/c-blake/cligen/issues/107
-  Additionally, unless ["multi", doc=something] is given, the introductory
-  summary of a subcommand table is taken from the first paragraph of the doc
-  comment of the module defining the 2nd argument to `dispatchMulti()`.
+
+  Additionally, unless ["multi", doc=something] is given, the introductory "pre
+  Usage" summary is taken from the first paragraph of the doc comment of the
+  module defining the 2nd arg to `dispatchMulti()`. This can be suppressed via
+  ["multi",doc=""] or a blank line/comment at the top of the defining file.
+
+  Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
+
+  Added a new file `cligen/helpTmpls.nim` to distribute a library of any
+  user-suggested `clUse`/`clMultiUse` definitions.
 
 Version: 0.9.30
 ---------------
