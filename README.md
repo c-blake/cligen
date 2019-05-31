@@ -108,7 +108,6 @@ when isMainModule:
   var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
   app.logic()  #Only --help/--version/parse errors cause early exit
 ```
-`initFromCL` also supports `help`, `short`, etc.
 
 More Controls For More Subtle Cases/More Picky CLI authors
 ==========================================================
