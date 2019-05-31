@@ -5,9 +5,7 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, split, helpCase, postInc, delItem, versionFromNimble,
        docFromNimble, docFromModule
-
-const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
-const clUsage* = "Usage:\n  " & clUse   #Use is for dispatchMulti else Usage
+include cligen/helpTmpl           #Pull in various help template strings
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
@@ -634,15 +632,6 @@ template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "  ", cb.valsWithPfx(attempt).join("\n  "), "\n"
   stderr.write "Run with no-argument or \"help\" for more details.\n"
   quit(1)
-
-const clUseMulti* = """${doc}Usage:
-  $command {SUBCMD}  [sub-command options & parameters]
-where {SUBCMD} is one of:
-$subcmds
-$command {-h|--help} or with no args at all prints this message.
-$command --help-syntax gives general cligen syntax help.
-Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
-Run "$command help" to get *comprehensive* help.$ifVersion"""
 
 proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
                    subDocs: auto): string =
