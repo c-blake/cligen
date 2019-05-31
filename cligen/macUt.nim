@@ -80,6 +80,24 @@ proc docFromNimble*(nimbleContents: string): string =
       result = cols[1].strip()[1..^2]
       break
 
+proc uriFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
+  result = "unparsable nimble uri"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("uri"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
+proc authorFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
+  result = "unparsable nimble uri"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("author"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
 proc docFromModule*(n: NimNode): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);
   ## Used to default ``["multi",doc]``.

@@ -4,7 +4,7 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, split, helpCase, postInc, delItem, versionFromNimble,
-       docFromNimble, docFromModule
+       docFromNimble, uriFromNimble, authorFromNimble, docFromModule
 include cligen/helpTmpl           #Pull in various help template strings
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)

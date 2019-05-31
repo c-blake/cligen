@@ -465,6 +465,9 @@ Run "MultiMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "MultiMulti help" to get *comprehensive* help.
 Top-level --version also available
 
+AUTHOR
+  Charles Blake
+
 ==> test/MultiMultiTopLvl.out <==
 This is a multiple-dispatch command.  Top-level --help/--help-syntax
 is also available.  Usage is like:

@@ -5,7 +5,7 @@ const clUseMultiGeneral* = """
 $command {-h|--help} or with no args at all prints this message.
 $command --help-syntax gives general cligen syntax help.
 Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
-Run "$command help" to get *comprehensive* help.$ifVersion"""
+Run "$command help" to get *comprehensive* help.${ifVersion}"""
 
 const clUseMulti* = """${doc}Usage:
   $command {SUBCMD}  [sub-command options & parameters]
