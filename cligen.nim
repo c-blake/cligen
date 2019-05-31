@@ -3,7 +3,8 @@ import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split, helpCase, postInc, delItem
+       suggestions, split, helpCase, postInc, delItem, versionFromNimble,
+       docFromNimble, docFromModule
 
 const clUse* = "$command $args\n$doc  Options(opt-arg sep :|=|spc):\n$options"
 const clUsage* = "Usage:\n  " & clUse   #Use is for dispatchMulti else Usage
@@ -662,7 +663,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
   var cmd = srcBaseName(procBkts)
-  var doc = newStrLitNode("")
+  var doc = newStrLitNode(""); var docChanged=false
   var use = quote do: clUseMulti
   let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
@@ -684,7 +685,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       for e in 1 ..< main.len:
         if main[e].kind == nnkExprEqExpr:
           if   main[e][0] == cmdId: cmd = main[e][1]
-          elif main[e][0] == docId: doc = main[e][1]
+          elif main[e][0] == docId: doc = main[e][1]; docChanged = true
           elif main[e][0] == useId: use = main[e][1]
       continue
     let sCmdNm = p.subCmdName
@@ -701,6 +702,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     result.add(newCall("incl",
                  subMchsId, newCall("optionNormalize", newStrLitNode(sCmdNm)),
                             newCall("helpCase", newStrLitNode(sCmdNm))))
+  if not docChanged:
+    doc = newStrLitNode(docFromModule(procBrackets[1][0]))
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -772,7 +775,7 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let docId=ident("doc");let useId=ident("usage");let cmdId=ident("cmdName")
   result = newStmtList()
   result.add(newCall("dispatchGen", multiId))
-  var doc = newStrLitNode("")
+  var doc = newStrLitNode(""); var docChanged=false
   var use = quote do: clUseMulti
   var cmd = srcBaseName(procBrackets)
   if procBrackets[0][0].kind == nnkStrLit:
@@ -781,9 +784,11 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
     for e in 1 ..< main.len:
       if main[e].kind == nnkExprEqExpr:
         if   main[e][0] == cmdId: cmd = main[e][1]
-        elif main[e][0] == docId: doc = main[e][1]; continue
+        elif main[e][0] == docId: doc = main[e][1]; docChanged=true; continue
         elif main[e][0] == useId: use = main[e][1]; continue
       result[^1].add(main[e])
+  if not docChanged:
+    doc = newStrLitNode(docFromModule(procBrackets[1][0]))
   let subCmdsId = ident(prefix & "SubCmds")
   if not result[^1].paramPresent("stopWords"):
     result[^1].add(newParam("stopWords", subCmdsId))
@@ -904,24 +909,6 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     initFromCLcf(default, cmdName, doc, help, short, usage, cf, positional,
                  suppress, mergeNames)
   cligenDoNotCollideWithGlobalVar(clCfg)
-
-proc versionFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
-  result = "unparsable nimble version"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("version"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
-
-proc docFromNimble*(nimbleContents: string): string =
-  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
-  result = "unparsable nimble description"
-  for line in nimbleContents.split("\n"):
-    if line.startsWith("description"):
-      let cols = line.split('=')
-      result = cols[1].strip()[1..^2]
-      break
 
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =

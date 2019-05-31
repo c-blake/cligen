@@ -1,3 +1,5 @@
+## A variety of procs related to xyz
+
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", repr(item)
@@ -23,6 +25,7 @@ proc nel_Ly(hooves=4, races=9, verb=false, names: seq[string]): string =
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
+  {.push hint[GlobalVar]: off.}
   const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
   let docLine = docFromNimble(nimbleFile) & "\n\n"
 
@@ -36,9 +39,9 @@ $command --help-syntax gives general cligen syntax help.
 Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "$command help" to get *comprehensive* help.$ifVersion"""
 
-  clCfg.version = "0.0.1"
+  clCfg.version = "0.0.1" #or maybe versionFromNimble(nimbleFile)
   clCfg.reqSep = true
-  {.push hint[GlobalVar]: off.}
+
   var noVsn = clCfg
   {.pop.}
   noVsn.version = ""

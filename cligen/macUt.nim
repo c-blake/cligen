@@ -61,3 +61,37 @@ proc paramVal*(n: NimNode, kwArg: string): NimNode =
 proc newParam*(id: string, rhs: NimNode): NimNode =
   ## Construct a keyword argument/named parameter expression for passing
   return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
+
+proc versionFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
+  result = "unparsable nimble version"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("version"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
+proc docFromNimble*(nimbleContents: string): string =
+  ## const foo = staticRead "relPathToDotNimbleFile"; use docFromNimble(foo)
+  result = "unparsable nimble description"
+  for line in nimbleContents.split("\n"):
+    if line.startsWith("description"):
+      let cols = line.split('=')
+      result = cols[1].strip()[1..^2]
+      break
+
+proc docFromModule*(n: NimNode): string =
+  ## First paragraph of doc comment for module defining ``n` (or empty string);
+  ## Used to default ``["multi",doc]``.
+  let fileParen = lineinfo(n)
+  let path = fileParen[0 .. (rfind(fileParen, "(") - 1)]
+  let data = staticRead path
+  for line in data.split("\n"):
+    let ln = line.strip()
+    if ln == "##" or not ln.startsWith("##"):
+      break
+    result = result & line[2..^1].strip() & " "
+  if result.len > 0 and result[^1] == ' ':
+    result.setLen(result.len - 1)
+  if result.len > 0:
+    result = result & "\n\n"

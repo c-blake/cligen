@@ -8,7 +8,11 @@ Version: 0.9.31
   dispatchMulti(["multi"]) brackets now properly pass through `dispatchGen`
   keyword arguments.  Additionally, `doc` & `usage` in that "multi" slot are
   re-purposed for the top-level help of the multi-command.  See discussion
-  here for background: https://github.com/c-blake/cligen/issues/107
+  here for background:
+    https://github.com/c-blake/cligen/issues/107
+  Additionally, unless ["multi", doc=something] is given, the introductory
+  summary of a subcommand table is taken from the first paragraph of the doc
+  comment of the module defining the 2nd argument to `dispatchMulti()`.
 
 Version: 0.9.30
 ---------------
