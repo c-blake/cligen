@@ -880,6 +880,15 @@ function main() {
     title="ClExit = {clHelpOnly, clVersionOnly}"><wbr />Cl<wbr />Exit<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ClNoCall"
     title="ClNoCall = {clBadKey..clMissing, clHelpOnly..clVersionOnly}"><wbr />Cl<wbr />No<wbr />Call<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clUseMulti"
+    title="clUseMulti = &quot;&quot;&quot;${doc}Usage:
+  $command {SUBCMD}  [sub-command options &amp; parameters]
+where {SUBCMD} is one of:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
+Run &quot;$command help&quot; to get *comprehensive* help.$ifVersion&quot;&quot;&quot;"><wbr />cl<wbr />Use<wbr />Multi<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#helpTabOption"
     title="helpTabOption = 0"><wbr />help<wbr />Tab<wbr />Option<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#helpTabType"
@@ -906,10 +915,12 @@ function main() {
     title="numOfStatus(x: openArray[ClParse]; stati: set[ClStatus]): int"><wbr />num<wbr />Of<wbr />Status<span class="attachedType">ClParse</span></a></li>
   <li><a class="reference" href="#next%2CopenArray%5BClParse%5D%2Cset%5BClStatus%5D%2Cint"
     title="next(x: openArray[ClParse]; stati: set[ClStatus]; start = 0): int"><wbr />next<span class="attachedType">ClParse</span></a></li>
-  <li><a class="reference" href="#topLevelHelp%2Cauto%2Cauto%2Cauto"
-    title="topLevelHelp(srcBase: auto; subCmds: auto; subDocs: auto): string"><wbr />top<wbr />Level<wbr />Help<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#topLevelHelp%2Cauto%2Cauto%2Cauto%2Cauto%2Cauto"
+    title="topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string"><wbr />top<wbr />Level<wbr />Help<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#versionFromNimble%2Cstring"
     title="versionFromNimble(nimbleContents: string): string"><wbr />version<wbr />From<wbr />Nimble<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#docFromNimble%2Cstring"
+    title="docFromNimble(nimbleContents: string): string"><wbr />doc<wbr />From<wbr />Nimble<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#mergeParams%2Cseq%5BT%5D%5Bstring%5D"
     title="mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]"><wbr />merge<wbr />Params<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#vsnStr%3D%2CClCfg%2Cstring"
@@ -1137,6 +1148,19 @@ Parse status for param
 
 
 </dd>
+<a id="clUseMulti"></a>
+<dt><pre><a href="cligen.html#clUseMulti"><span class="Identifier">clUseMulti</span></a> <span class="Other">=</span> <span class="StringLit">&quot;&quot;&quot;${doc}Usage:
+  $command {SUBCMD}  [sub-command options &amp; parameters]
+where {SUBCMD} is one of:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run &quot;$command {help SUBCMD|SUBCMD --help}&quot; to see help for just SUBCMD.
+Run &quot;$command help&quot; to get *comprehensive* help.$ifVersion&quot;&quot;&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="helpTabOption"></a>
 <dt><pre><a href="cligen.html#helpTabOption"><span class="Identifier">helpTabOption</span></a> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
 <dd>
@@ -1204,8 +1228,8 @@ Count elements in the <tt class="docutils literal"><span class="pre">setByParse 
 First index after startIx in <tt class="docutils literal"><span class="pre">setByParse seq</span></tt> w/parse status in <tt class="docutils literal"><span class="pre">stati</span></tt>.
 
 </dd>
-<a id="topLevelHelp,auto,auto,auto"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#topLevelHelp%2Cauto%2Cauto%2Cauto"><span class="Identifier">topLevelHelp</span></a><span class="Other">(</span><span class="Identifier">srcBase</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subCmds</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subDocs</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<a id="topLevelHelp,auto,auto,auto,auto,auto"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#topLevelHelp%2Cauto%2Cauto%2Cauto%2Cauto%2Cauto"><span class="Identifier">topLevelHelp</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">use</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">cmd</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subCmds</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">;</span> <span class="Identifier">subDocs</span><span class="Other">:</span> <span class="Identifier">auto</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
@@ -1214,6 +1238,12 @@ First index after startIx in <tt class="docutils literal"><span class="pre">setB
 <dt><pre><span class="Keyword">proc</span> <a href="#versionFromNimble%2Cstring"><span class="Identifier">versionFromNimble</span></a><span class="Other">(</span><span class="Identifier">nimbleContents</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 const foo = staticRead &quot;relPathToDotNimbleFile&quot;; use versionFromNimble(foo)
+
+</dd>
+<a id="docFromNimble,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#docFromNimble%2Cstring"><span class="Identifier">docFromNimble</span></a><span class="Other">(</span><span class="Identifier">nimbleContents</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+const foo = staticRead &quot;relPathToDotNimbleFile&quot;; use docFromNimble(foo)
 
 </dd>
 <a id="mergeParams,seq[T][string]"></a>
@@ -1283,7 +1313,9 @@ Generate multi-cmd dispatch. <tt class="docutils literal"><span class="pre">proc
 <a id="dispatchMulti.m,varargs[untyped]"></a>
 <dt><pre><span class="Keyword">macro</span> <a href="#dispatchMulti.m%2Cvarargs%5Buntyped%5D"><span class="Identifier">dispatchMulti</span></a><span class="Other">(</span><span class="Identifier">procBrackets</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">untyped</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
-A wrapper to generate a multi-command dispatcher, then call it, and quit.
+<p>A wrapper to generate a multi-command dispatcher, call it, and quit.  The argument is a list of bracket expressions passed to <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> for each subcommand.</p>
+<p>The VERY FIRST bracket can be the special string literal <tt class="docutils literal"><span class="pre">&quot;multi&quot;</span></tt> to adjust <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> settings for the top-level proc that dispatches to subcommands.  In particular, top-level <tt class="docutils literal"><span class="pre">usage</span></tt> is a string template interpolating <tt class="docutils literal"><span class="pre">$command $doc $subcmds $ifVersion</span></tt> (<tt class="docutils literal"><span class="pre">args</span></tt> &amp; <tt class="docutils literal"><span class="pre">options</span></tt> dropped and <tt class="docutils literal"><span class="pre">subcmd</span></tt> &amp; <tt class="docutils literal"><span class="pre">ifVersion</span></tt> added relative to an ordinary <tt class="docutils literal"><span class="pre">dispatchGen</span></tt> usage template.).</p>
+
 
 </dd>
 <a id="initGen.m,typed,untyped,string,seq[T][string],string"></a>
@@ -1408,7 +1440,7 @@ Convenience <tt class="docutils literal"><span class="pre">initFromCLcf</span></
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-05-25 11:11:18 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-31 09:28:02 UTC</small>
       </div>
     </div>
   </div>

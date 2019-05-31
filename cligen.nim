@@ -797,7 +797,16 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
-  ## A wrapper to generate a multi-command dispatcher, then call it, and quit.
+  ## A wrapper to generate a multi-command dispatcher, call it, and quit.  The
+  ## argument is a list of bracket expressions passed to ``dispatchGen`` for
+  ## each subcommand.
+  ##
+  ## The VERY FIRST bracket can be the special string literal ``"multi"`` to
+  ## adjust ``dispatchGen`` settings for the top-level proc that dispatches to
+  ## subcommands.  In particular, top-level ``usage`` is a string template
+  ## interpolating ``$command $doc $subcmds $ifVersion`` (``args`` & ``options``
+  ## dropped and ``subcmd`` & ``ifVersion`` added relative to an ordinary
+  ## ``dispatchGen`` usage template.).
   var prefix = "multi"
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal
