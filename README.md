@@ -31,8 +31,8 @@ Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
-So, hitting the TAB key is unnecessary, though might pop-up useful help.
-In yet other words, long options can be as short as possible.
+In other words, long options can be as short as possible.  In yet other words,
+hitting the TAB key to complete is unnecessary **if** the completion is unique.
 
 When you want more specific help than `set foo`, just add parameter-keyed
 metadata with Nim's association-list literals:
