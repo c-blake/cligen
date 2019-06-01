@@ -3,8 +3,8 @@ import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split, helpCase, postInc, delItem, fromNimble,docFromModule,
-       versionFromNimble #last here is temporary/deprecated
+       suggestions, split, helpCase, postInc, delItem, fromNimble,
+       summaryOfModule, docFromModuleOf, versionFromNimble #last is deprecated
 
 include cligen/helpTmpl           #Pull in various help template strings
 
@@ -644,6 +644,11 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
   use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs, prefixLen=2)) ]
 
+proc docDefault(n: NimNode): NimNode =
+  if   n.len > 1: newStrLitNode(summaryOfModule(n[1][0]))
+  elif n.len > 0: newStrLitNode(summaryOfModule(n[0][0]))
+  else: newStrLitNode("")
+
 macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   ## Generate multi-cmd dispatch. ``procBkts`` are argLists for ``dispatchGen``.
   ## Eg., ``dispatchMultiGen([foo, short={"dryRun": "n"}], [bar, doc="Um"])``.
@@ -692,8 +697,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     result.add(newCall("incl",
                  subMchsId, newCall("optionNormalize", newStrLitNode(sCmdNm)),
                             newCall("helpCase", newStrLitNode(sCmdNm))))
-  if not docChanged:
-    doc = newStrLitNode(docFromModule(procBrackets[1][0]))
+  if not docChanged: doc = docDefault(procBrackets)
   let arg0Id = ident("arg0")
   let restId = ident("rest")
   let dashHelpId = ident("dashHelp")
@@ -777,8 +781,7 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
         elif main[e][0] == docId: doc = main[e][1]; docChanged=true; continue
         elif main[e][0] == useId: use = main[e][1]; continue
       result[^1].add(main[e])
-  if not docChanged:
-    doc = newStrLitNode(docFromModule(procBrackets[1][0]))
+  if not docChanged: doc = docDefault(procBrackets)
   let subCmdsId = ident(prefix & "SubCmds")
   if not result[^1].paramPresent("stopWords"):
     result[^1].add(newParam("stopWords", subCmdsId))

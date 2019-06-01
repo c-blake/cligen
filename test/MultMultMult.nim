@@ -1,3 +1,5 @@
+## module doc
+
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", repr(item)
@@ -43,7 +45,8 @@ when isMainModule:
                               stopWords = @[ "yikes" ],
                               suppress = @[ "usage", "prefix" ],
                               mergeNames = @["MultMultMult", "apple" ] ])
-  dispatchMulti([ apple, doc = "apple SUB-SUB commands",
+  dispatchMulti(["multi", doc = docFromModuleOf(MultMultMult.demo) ],
+                [ apple, doc = "apple SUB-SUB commands",
                          stopWords = @["demo", "show", "cobbler" ],
                          suppress = @[ "usage", "prefix" ] ],
                 [ whoa, echoResult=true ],

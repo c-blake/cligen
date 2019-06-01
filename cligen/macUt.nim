@@ -1,7 +1,7 @@
 ## This is a module of utility procs that might be more broadly useful than only
 ## cligen.nim activity.
 
-import macros, strutils
+import macros, strutils, os
 
 proc findByName*(parId: NimNode, fpars: NimNode): int =
   ## formal param slot of named parameter
@@ -36,12 +36,19 @@ proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
     for kid in strSeqInitializer[1]:
       result.add(ident($kid))
 
-proc srcBaseName*(n: NimNode): NimNode =
-  ## Get the base name of the source file being compiled as an nnkStrLit
+proc srcPath*(n: NimNode): string =
   let fileParen = lineinfo(n)
-  let slash = if rfind(fileParen, "/") < 0: 0 else: rfind(fileParen, "/") + 1
-  let paren = rfind(fileParen, ".nim(") - 1
-  newStrLitNode(if paren < 0: "??" else: fileParen[slash..paren])
+  fileParen[0 .. (rfind(fileParen, "(") - 1)]
+
+proc srcBaseName*(n: NimNode, sfx=".nim"): NimNode =
+  ## Get the base name of the source file being compiled as an nnkStrLit
+  let base = lastPathPart(srcPath(n))
+  let nSfx = sfx.len + 1
+  newStrLitNode(if base.len < nSfx: "??" else: base[0..^nSfx])
+
+proc srcData*(n: NimNode): string =
+  ## The entire file contents of source defining ``n``.
+  staticRead srcPath(n)
 
 proc paramPresent*(n: NimNode, kwArg: string): bool =
   ## Check if a particular keyword argument parameter is present
@@ -76,13 +83,10 @@ proc versionFromNimble*(nimbleContents: string): string {.deprecated:
   ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
   fromNimble("version", nimbleContents)
 
-proc docFromModule*(n: NimNode): string =
+proc summaryOfModule*(sourceContents: string): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);
   ## Used to default ``["multi",doc]``.
-  let fileParen = lineinfo(n)
-  let path = fileParen[0 .. (rfind(fileParen, "(") - 1)]
-  let data = staticRead path
-  for line in data.split("\n"):
+  for line in sourceContents.split("\n"):
     let ln = line.strip()
     if ln == "##" or not ln.startsWith("##"):
       break
@@ -91,3 +95,10 @@ proc docFromModule*(n: NimNode): string =
     result.setLen(result.len - 1)
   if result.len > 0:
     result = result & "\n\n"
+
+proc summaryOfModule*(n: NimNode): string =
+  summaryOfModule(srcData(n))
+
+macro docFromModuleOf*(sym: typed{nkSym}): untyped =
+  ## Used to default ``["multi",doc=docFromModleOf(mySymbol)]``.
+  newStrLitNode(summaryOfModule(sym))
