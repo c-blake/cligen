@@ -22,7 +22,7 @@ Version: 0.9.31
   or by a blank line/comment at the top of the defining file. `docFromModuleOf`
   is also provided to override module selection procedure as in
 ```Nim
-dispatchMulti(["multi", doc=docFromModuleOf(proc3)],[proc2],[proc3],..)
+dispatchMulti(["multi", doc=docFromModuleOf(p3)], [p2], [p3], ..)
 ```
   Another desirable option might be `doc=fromNimble("description", nmblData)`.
 
