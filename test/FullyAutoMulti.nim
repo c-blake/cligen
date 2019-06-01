@@ -1,4 +1,9 @@
+#
+##
+# not used for `doc`
 ## A variety of procs related to xyz
+##
+## Some more description.
 
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.

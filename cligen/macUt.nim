@@ -86,13 +86,19 @@ proc versionFromNimble*(nimbleContents: string): string {.deprecated:
 proc summaryOfModule*(sourceContents: string): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);
   ## Used to default ``["multi",doc]``.
+  var mode = 0
   for line in sourceContents.split("\n"):
     let ln = line.strip()
-    if ln == "##" or not ln.startsWith("##"):
-      break
-    result = result & line[2..^1].strip() & " "
-  if result.len > 0 and result[^1] == ' ':
-    result.setLen(result.len - 1)
+    if mode == 0:       #scan for start of some substantive '##' doc comment
+      if ln.len < 1: continue     # skip blanks and regular '#' comments
+      if ln.startswith("#") and not ln.startswith("##"): continue
+      if ln == "##": continue     # Also skip '^white##white$' emptie doc cmts
+      mode = 1          #Something else.  Switch modes.
+    if mode == 1:
+      if ln == "##" or not ln.startsWith("##"):     # Done with initial block
+        break
+      result = result & line[2..^1].strip() & " "   # append doc cmt text
+  result = result.strip()
   if result.len > 0:
     result = result & "\n\n"
 
