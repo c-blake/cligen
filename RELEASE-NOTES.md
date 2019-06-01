@@ -24,7 +24,9 @@ Version: 0.9.31
 ```Nim
 dispatchMulti(["multi", doc=docFromModuleOf(p3)], [p2], [p3], ..)
 ```
-  Another desirable option might be `doc=fromNimble("description", nmblData)`.
+  In the above `p3` can be *any* identifier/symbol defined in the module of
+  interest, including the module name itself.  Another desirable automagic
+  option might be `doc=fromNimble("description", nmblData)`.
 
 Version: 0.9.30
 ---------------
