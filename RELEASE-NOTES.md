@@ -5,21 +5,26 @@ Version: 0.9.31
 ---------------
   Fix bug where `--v` would not auto-lengthen to `--version`.
 
+  Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
+
+  Added a new file `cligen/helpTmpls.nim` to distribute a library of any
+  user-suggested `clUse`/`clMultiUse` definitions.
+
   dispatchMulti(["multi"]) brackets now properly pass through `dispatchGen`
   keyword arguments.  Additionally, `doc` & `usage` in that "multi" slot are
   re-purposed for the top-level help of the multi-command.  See discussion
   here for background:
     https://github.com/c-blake/cligen/issues/107
 
-  The introductory "pre-Usage" summary is now taken from the first paragraph of
-  the doc comment of the module defining the 2nd arg to `dispatchMulti`.  This
-  can be suppressed by ["multi",doc=""] (or whatever value you prefer) or by a
-  blank line/comment at the top of the defining file.
-
-  Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
-
-  Added a new file `cligen/helpTmpls.nim` to distribute a library of any
-  user-suggested `clUse`/`clMultiUse` definitions.
+  Introductory "pre-Usage" summary text is now taken from the first paragraph
+  of the doc comment of the module defining the 2nd arg to `dispatchMulti`.
+  This can be suppressed by `["multi",doc=""]` (or whatever value you prefer)
+  or by a blank line/comment at the top of the defining file. `docFromModuleOf`
+  is also provided to override module selection procedure as in
+```Nim
+dispatchMulti(["multi", doc=docFromModuleOf(proc3)], [proc2],[proc3], ..)
+```
+  Another desirable option might be `doc=fromNimble("description", nmblData)`.
 
 Version: 0.9.30
 ---------------
