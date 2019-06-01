@@ -421,6 +421,8 @@ Usage:
           -v, --verb     bool   false  set verb
 
 ==> test/MultMultMult.out <==
+module doc
+
 Usage:
   MultMultMult {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
