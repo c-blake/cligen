@@ -100,5 +100,5 @@ proc summaryOfModule*(n: NimNode): string =
   summaryOfModule(srcData(n))
 
 macro docFromModuleOf*(sym: typed{nkSym}): untyped =
-  ## Used to default ``["multi",doc=docFromModleOf(mySymbol)]``.
+  ## Used to default ``["multi",doc=docFromModuleOf(mySymbol)]``.
   newStrLitNode(summaryOfModule(sym))
