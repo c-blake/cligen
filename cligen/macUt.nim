@@ -42,7 +42,7 @@ proc srcPath*(n: NimNode): string =
 
 proc srcBaseName*(n: NimNode, sfx=".nim"): NimNode =
   ## Get the base name of the source file being compiled as an nnkStrLit
-  let base = lastPathPart(srcPath(n))
+  let base = extractFileName(srcPath(n))
   let nSfx = sfx.len + 1
   newStrLitNode(if base.len < nSfx: "??" else: base[0..^nSfx])
 
