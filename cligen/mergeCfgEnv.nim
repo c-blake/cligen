@@ -6,14 +6,15 @@ proc mergeParams(cmdNames: seq[string],
   ## This is an include file to provide query & merge of alternate sources for
   ## command-line parameters according to common conventions.  First it looks
   ## for and parses a ${PROG_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/PROG
-  ## config file where PROG=cmdNames[0] uppercase in env vars, but samecase
-  ## otherwise.  Then it looks for a $PROG environment variables ('_' extended
+  ## config file where PROG=cmdNames[0] (uppercase in env vars, but samecase
+  ## otherwise).  Then it looks for a $PROG environment variables ('_' extended
   ## for multi-commands, e.g. $PROG_SUBCMD).  Finally, it appends the passed
   ## cmdLine (which is usually command-line entered parameters or @["--help"]).
   when defined(debugMergeParams):
     stderr.write "mergeParams got cmdNames: ", repr(cmdNames), "\n"
-  var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]))
-  if cfPath.len == 0: cfPath = os.getConfigDir() & cmdNames[0]
+  var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
+  if cfPath.len == 0:
+    cfPath = os.getConfigDir() & cmdNames[0]
   if existsFile(cfPath):
     var f = newFileStream(cfPath, fmRead)
     var activeSection = cmdNames.len == 1
@@ -26,9 +27,8 @@ proc mergeParams(cmdNames: seq[string],
         of cfgEof: break
         of cfgSectionStart:
           activeSection = cmdNames.len > 1 and e.section == cmdNames[1]
-        of cfgKeyValuePair:
+        of cfgKeyValuePair, cfgOption:
           if activeSection: result.add("--" & e.key & "=" & e.value)
-        of cfgOption: discard
         of cfgError: echo e.msg
       close(p)
     else:
