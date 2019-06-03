@@ -7,11 +7,11 @@ Version: 0.9.31
   `$PROG_CONFIG` but the proc logic only used $PROG.
 
   Add well-commented single- and multi-dispatch config file examples for people
-  using cligen/mergeCfgEnv.
+  using `cligen/mergeCfgEnv`.
 
   Fix bug where `--v` would not auto-lengthen to `--version`.
 
-  Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
+  Added more general `fromNimble(nd, field)`.  Deprecated `versionFromNimble`.
 
   Added a new file `cligen/helpTmpls.nim` to distribute a library of any
   user-suggested `clUse`/`clMultiUse` definitions.
@@ -25,8 +25,8 @@ Version: 0.9.31
   Introductory "pre-Usage" summary text is now taken from the first paragraph
   of the doc comment of the module calling `dispatchMulti`.  This can be changed
   by `["multi",doc=""]` (or whatever value you like) or by a blank line/comment
-  at the top of the defining file.  One desirable automagic option might be
-  `doc=fromNimble("description", nmblData)`.
+  at the top of the file.  `doc=fromNimble("description", nmblData)` is another
+  partially automagic option.
 
 Version: 0.9.30
 ---------------
