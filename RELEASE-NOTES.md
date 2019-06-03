@@ -4,7 +4,9 @@ RELEASE NOTES
 Version: 0.9.31
 ---------------
   Fix bug where cligen/mergeCfgEnv.nim doc comment (and README.md) had said
-  `$PROG_CONFIG` but the proc logic only used $PROG.
+  `$CMD_CONFIG` but the proc logic only used $CMD.  This is breaking for users
+  only if they were relying on the old broken/non-standard behavior to point to
+  some non-standard config file location.
 
   Add well-commented single- and multi-dispatch config file examples for people
   using `cligen/mergeCfgEnv`.
