@@ -26,7 +26,7 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
 when isMainModule:
   import cligen
   include cligen/mergeCfgEnv
-  const nimbl = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
+  const nd = staticRead "../cligen.nimble"  #nimble data for YOURPKG not cligen
   clCfg.version = "0.0.1"
   dispatchMultiGen([ "apple" ],
                    [ demo, help = { "verb": "on=chatty, off=quiet" },
@@ -34,7 +34,7 @@ when isMainModule:
                    [ show, cmdName="print", short = { "gamma": 'z' },
                      mergeNames = @["MultiMulti", "apple" ] ])
   dispatchMulti([ "multi", usage=clUseMultiPerlish &
-                                   "\n\nAUTHOR\n  "&fromNimble("author",nimbl)],
+                                   "\n\nAUTHOR\n  " & nd.fromNimble("author") ],
                 [ whoa, echoResult=true ],
                 [ apple, stopWords = @["demo", "show"],
                          doc = "apple/apple help for sub-sub commands",

@@ -69,7 +69,7 @@ proc newParam*(id: string, rhs: NimNode): NimNode =
   ## Construct a keyword argument/named parameter expression for passing
   return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
-proc fromNimble*(field: string, nimbleContents: string): string =
+proc fromNimble*(nimbleContents: string, field: string): string =
   ## ``const x=staticRead "relPathToNimbleFile"; use fromNimble("version",x)``
   result = "unparsable nimble " & field
   for line in nimbleContents.split("\n"):
@@ -79,9 +79,9 @@ proc fromNimble*(field: string, nimbleContents: string): string =
       break
 
 proc versionFromNimble*(nimbleContents: string): string {.deprecated:
-     "Deprecated since v0.9.31; use fromNimble(\"version\",..) instead."} =
+     "Deprecated since v0.9.31; use fromNimble(...,\"version\") instead."} =
   ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
-  fromNimble("version", nimbleContents)
+  nimbleContents.fromNimble "version"
 
 proc summaryOfModule*(sourceContents: string): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);
