@@ -298,7 +298,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let shortHlp = newStrLitNode($shortH)
   let setByParseId = ident("setByP")    # parse recording var seq
 
-  proc initVars(): NimNode =            # init vars & build help str
+  proc initVars0(): NimNode =           # init vars & build help str
     result = newStmtList()
     let tabId = ident("tab")            # local help table var
     result.add(quote do:
@@ -370,7 +370,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
         `apId`.help = addPrefix(`prefixId`, `apId`.help))
 
-  proc defOptCases(): NimNode =
+  proc optCases0(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do:
       if p.kind == cmdLongOption: lengthen(`cbId`, `pId`.key) else: `pId`.key)
     result.add(newNimNode(nnkOfBranch).add(
@@ -456,7 +456,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         stderr.write(msg)
         raise newException(ParseError, "Unknown option")))
 
-  proc defNonOpt(): NimNode =
+  proc nonOpt0(): NimNode =
     result = newStmtList()
     if posIx != -1:                           # code to parse non-option args
       result.add(newNimNode(nnkCaseStmt).add(quote do: postInc(`posNoId`)))
@@ -496,11 +496,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                        $`pId` & "\nRun with --help for full usage.\n")
           raise newException(ParseError, msg))
 
-  let iniVar=initVars(); let optCases=defOptCases(); let nonOpt=defNonOpt()
+  let initVars=initVars0(); let optCases=optCases0(); let nonOpt=nonOpt0()
   let retType=fpars[0]
-  let mrgNames = if mergeNames[1].len == 0:   #@[] => Prefix[OpenSym,Bracket]
-                   quote do: @[ `cName` ]
-                 else: mergeNames
+  let mrgNames = if mergeNames[1].len == 0: quote do: @[ `cName` ]  #default
+                 else: mergeNames                                   #provided
   let docsVar = if   docs.kind == nnkAddr: docs[0]
                 elif docs.kind == nnkCall: docs[1]
                 else: newNimNode(nnkEmpty)
@@ -512,10 +511,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `usageId`=`usage`, `prefixId`="", parseOnly=false): `retType` =
       {.push hint[XDeclaredButNotUsed]: off.}
-      `iniVar`
+      `initVars`
+      var `keyCountId` = initCountTable[string]()
       proc parser(args=`cmdLineId`) =
         var `posNoId` = 0
-        var `keyCountId` = initCountTable[string]()
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
                                   `stopWords`)
