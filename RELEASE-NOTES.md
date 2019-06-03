@@ -3,6 +3,12 @@ RELEASE NOTES
 
 Version: 0.9.31
 ---------------
+  Fix bug where cligen/mergeCfgEnv.nim doc comment (and README.md) had said
+  `$PROG_CONFIG` but the proc logic only used $PROG.
+
+  Add well-commented single- and multi-dispatch config file examples for people
+  using cligen/mergeCfgEnv.
+
   Fix bug where `--v` would not auto-lengthen to `--version`.
 
   Added more general `fromNimble(field, x)`.  `versionFromNimble` deprecated.
@@ -17,16 +23,10 @@ Version: 0.9.31
     https://github.com/c-blake/cligen/issues/107
 
   Introductory "pre-Usage" summary text is now taken from the first paragraph
-  of the doc comment of the module defining the 2nd|1st arg to `dispatchMulti`.
-  This can be suppressed by `["multi",doc=""]` (or whatever value you prefer)
-  or by a blank line/comment at the top of the defining file. `docFromModuleOf`
-  is also provided to override module selection procedure as in
-```Nim
-dispatchMulti(["multi", doc=docFromModuleOf(p3)], [p2], [p3], ..)
-```
-  In the above `p3` can be *any* identifier/symbol defined in the module of
-  interest, including the module name itself.  Another desirable automagic
-  option might be `doc=fromNimble("description", nmblData)`.
+  of the doc comment of the module calling `dispatchMulti`.  This can be changed
+  by `["multi",doc=""]` (or whatever value you like) or by a blank line/comment
+  at the top of the defining file.  One desirable automagic option might be
+  `doc=fromNimble("description", nmblData)`.
 
 Version: 0.9.30
 ---------------
