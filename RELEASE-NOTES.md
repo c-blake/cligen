@@ -19,7 +19,7 @@ Version: 0.9.31
   user-suggested `clUse`/`clMultiUse` definitions.
 
   `dispatchMulti(["multi"])` brackets now properly pass through `dispatchGen`
-  keyword arguments.  Additionally, `doc` & `usage` in that "multi" slot are
+  keyword arguments.  Additionally, `doc` & `usage` in that `"multi"` slot are
   re-purposed for the top-level help of the multi-command.  See discussion
   here for background:
     https://github.com/c-blake/cligen/issues/107
