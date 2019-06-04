@@ -915,7 +915,7 @@ macro initGen*(default: typed, T: untyped, positional="",
     params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
     let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
-    let sid = ident("set" & $id); let sidEq = ident("set" & $id & "=")
+    let sid = ident($id & "setter"); let sidEq = ident($id & "setter=")
     assigns.add(quote do:
       proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
       `r`.`sid` = `id`)
