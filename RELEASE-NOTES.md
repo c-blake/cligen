@@ -1,6 +1,19 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.32
+---------------
+  For single-dispatch, add a system so that CL users can define aliases (named
+  bundles of CL args).  Alias definitions make sense in earlier `mergeParams`s
+  sources such as config files or environment variables.  Later on in the
+  command parameters they can reference them with a different CL option.  See
+  `test/UserAliases.nim` and `test/UserAliases.cf` for an example.
+
+  Do not auto word wrap help text for a parameter if the help text contains any
+  newlines. [ Note this extends the existing heuristic of considering the main
+  doc comment "pre-formatted" if it has 2-or more "\n " substrings and that
+  pre-formatted text is less adaptable to run-time terminal width. ]
+
 Version: 0.9.31
 ---------------
   Fix bug where `cligen/mergeCfgEnv.nim` doc comment (and README.md) had said
