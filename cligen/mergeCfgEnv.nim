@@ -11,7 +11,7 @@ proc mergeParams(cmdNames: seq[string],
   ## for multi-commands, e.g. $PROG_SUBCMD).  Finally, it appends the passed
   ## cmdLine (which is usually command-line entered parameters or @["--help"]).
   when defined(debugMergeParams):
-    stderr.write "mergeParams got cmdNames: ", repr(cmdNames), "\n"
+    echo "mergeParams got cmdNames: ", repr(cmdNames)
   var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
   if cfPath.len == 0:
     cfPath = os.getConfigDir() & cmdNames[0]
@@ -28,13 +28,19 @@ proc mergeParams(cmdNames: seq[string],
         of cfgSectionStart:
           activeSection = cmdNames.len > 1 and e.section == cmdNames[1]
         of cfgKeyValuePair, cfgOption:
+          when defined(debugMergeParams):
+            echo "key: ", e.key.repr, " val: ", e.value.repr
           if activeSection: result.add("--" & e.key & "=" & e.value)
         of cfgError: echo e.msg
       close(p)
     else:
       stderr.write "cannot open: ", cfPath, "\n"
-  let e = os.getEnv(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
+  let varNm = strutils.toUpperAscii(strutils.join(cmdNames, "_"))
+  let e = os.getEnv(varNm)
   if e.len > 0:
-    result = result & parseCmdLine(e)                      #See os.parseCmdLine
+    let sp = e.parseCmdLine
+    result = result & sp                                   #See os.parseCmdLine
+    when defined(debugMergeParams):
+      echo "parsed $", varNm, " into: ", sp
   result = result & cmdLine
 {.pop.}
