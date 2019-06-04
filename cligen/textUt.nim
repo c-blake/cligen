@@ -42,7 +42,8 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   for row in tab:
     for c in cols[0 .. ^2]:
       result &= row[c] & repeat(" ", wCol[c] - row[c].len + colGap)
-    var wrapped = wrapWords(row[last], maxLineWidth = wCol[last]).split("\n")
+    var wrapped = if '\n' in row[last]: row[last].split("\n")
+                  else: wrapWords(row[last],maxLineWidth=wCol[last]).split("\n")
     result &= (if wrapped.len > 0: wrapped[0] else: "") & "\n"
     for j in 1 ..< len(wrapped):
       result &= repeat(" ", leader) & wrapped[j] & "\n"
