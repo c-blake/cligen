@@ -3,13 +3,15 @@ import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
-       suggestions, split, helpCase, postInc, delItem, fromNimble,
+       suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
        summaryOfModule, docFromModuleOf, versionFromNimble #last is deprecated
 
 include cligen/helpTmpl           #Pull in various help template strings
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
+
+  ClAlias* = tuple[long: string, short: char, helpStr: string]  ##CLuser aliases
 
   ClCfg* = object  ## Settings tending to be program- or CLI-author-global
     version*:     string
@@ -188,12 +190,17 @@ proc posIxGet(positional: string, fpars: NimNode): int =
 
 include cligen/syntaxHelp
 
+proc got(a: NimNode): bool =
+  (a.len == 2 and a[1].len == 2 and a[1][0].len == 2 and a[1][1].len == 2 and
+   a[1][0][1].len == 3 and a[1][1][1].len == 3)
+
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
   echoResult=false, noAutoEcho=false, positional: static string=AUTO,
   suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
-  stopWords: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
-  docs: ptr var seq[string]=nil, setByParse: ptr var seq[ClParse]=nil): untyped=
+  dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
+  stopWords: seq[string] = @[], docs: ptr var seq[string]=nil,
+  setByParse: ptr var seq[ClParse]=nil): untyped =
   ##Generate command-line dispatcher for proc ``pro`` named ``dispatchName``
   ##(defaulting to ``dispatchPro``) with generated help/syntax guided by
   ##``cmdName``, ``doc``, and ``cf``.  Parameters with no explicit default in
@@ -232,6 +239,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##
   ##``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``, which
   ##defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
+  ##
+  ##``alias`` is ``@[]`` | 2-seq of ``(string,char,string)`` 3-tuples specifying
+  ##(Long, Short opt keys, Help) to [Define,Reference] aliases.  This lets CL
+  ##users define aliases early in ``mergeParams`` sources (e.g. cfg files/evars)
+  ##& reference them later. Eg. if ``alias[0][0]=="alias" and alias[1][1]=='a'``
+  ##then ``--alias:k='-a -b' -ak`` expands to ``@["-a", "-b"]``.
   ##
   ##``docs`` is ``addr(some var seq[string])`` to which to append each main doc
   ##comment or its replacement doc=text.  Default of ``nil`` means do nothing.
@@ -297,6 +310,19 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   callIt.add(pro)
   let shortHlp = newStrLitNode($shortH)
   let setByParseId = ident("setByP")    # parse recording var seq
+  let es = newStrLitNode("")
+  let aliasesId = ident("aliases")      # [key]=>seq[string] meta param table
+  let aliasDefL = if alias.got: alias[1][0][1][0] else: es
+  let aliasDefN = if alias.got:optionNormalize(alias[1][0][1][0].strVal) else:""
+  let aliasDefS = if alias.got: toStrIni(alias[1][0][1][1].intVal) else: es
+  let aliasDefH = if alias.got: alias[1][0][1][2] else: es
+  let aliasRefL = if alias.got: alias[1][1][1][0] else: es
+  let aliasRefN = if alias.got:optionNormalize(alias[1][1][1][0].strVal) else:""
+  let aliasRefS = if alias.got: toStrIni(alias[1][1][1][1].intVal) else: es
+  let aliasRefH = if alias.got: alias[1][1][1][2] else: es
+  let aliases = if alias.got: quote do:
+                    var `aliasesId` = initTable[string, seq[string]]()
+                else: newNimNode(nnkEmpty)
 
   proc initVars0(): NimNode =           # init vars & build help str
     result = newStmtList()
@@ -322,6 +348,16 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parNm = "version"; `apId`.parSh = `vsnSh`
         `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
         `tabId`.add(argHelp(false, `apId`) & "print version"))
+    if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0:
+      result.add(quote do:              # add opts for user alias system
+        `cbId`.incl(optionNormalize(`aliasDefL`), `aliasDefL`)
+        `apId`.parNm = `aliasDefL`; `apId`.parSh = `aliasDefS`
+        `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
+        `tabId`.add(argHelp("", `apId`) & `aliasDefH`)
+        `cbId`.incl(optionNormalize(`aliasRefL`), `aliasRefL`)
+        `apId`.parNm = `aliasRefL`; `apId`.parSh = `aliasRefS`
+        `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
+        `tabId`.add(argHelp("", `apId`) & `aliasRefH`) )
     let argStart = if mandatory.len > 0: "[required&optional-params]" else:
                                          "[optional-params]"
     let posHelp = if posIx != -1:
@@ -397,6 +433,16 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             return                        #Do not try to keep parsing
           else:
             stdout.write(`cf`.version,"\n");raise newException(VersionOnly,"")))
+    if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0: #CL user aliases
+      result.add(newNimNode(nnkOfBranch).add(
+        newStrLitNode(aliasDefN), aliasDefS).add(
+          quote do:
+            let cols = `pId`.val.split('=', 1)   #split on 1st '=' only
+            `aliasesId`[cols[0].strip()] = parseCmdLine(cols[1].strip())))
+      result.add(newNimNode(nnkOfBranch).add(
+        newStrLitNode(aliasRefN), aliasRefS).add(
+          quote do:
+            parser(`aliasesId`[`pId`.val]) ))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]
@@ -512,6 +558,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                  `usageId`=`usage`, `prefixId`="", parseOnly=false): `retType` =
       {.push hint[XDeclaredButNotUsed]: off.}
       `initVars`
+      `aliases`
       var `keyCountId` = initCountTable[string]()
       proc parser(args=`cmdLineId`) =
         var `posNoId` = 0
@@ -590,24 +637,27 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
 template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUsage, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
- dispatchName="", mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
+ dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
+ stopWords: seq[string] = @[]): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
-              positional, suppress, implicitDefault, stopWords, dispatchName,
-              mergeNames)
+              positional, suppress, implicitDefault, dispatchName, mergeNames,
+              alias, stopWords)
   cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUsage,echoResult=false,noAutoEcho=false,positional=AUTO,
  suppress:seq[string] = @[], implicitDefault:seq[string] = @[], dispatchName="",
- mergeNames: seq[string] = @[], stopWords: seq[string] = @[]): untyped =
+ mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
+ stopWords: seq[string] = @[]): untyped =
   ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
   proc cligenDoNotCollideWithGlobalVar(cf: ClCfg) =
    dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
-          positional,suppress,implicitDefault,dispatchName,mergeNames,stopWords)
+              positional, suppress, implicitDefault, dispatchName, mergeNames,
+              alias, stopWords)
   cligenDoNotCollideWithGlobalVar(clCfg)
 
 proc subCmdName(p: NimNode): string =
@@ -875,7 +925,8 @@ macro initGen*(default: typed, T: untyped, positional="",
 
 template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
     help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
-    positional="", suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T=
+    positional="", suppress: seq[string] = @[], mergeNames: seq[string] = @[],
+    alias: seq[ClAlias] = @[]): T =
   ## Like ``dispatchCf`` but only ``quit`` when user gave bad CL, --help,
   ## or --version.  On success, returns ``T`` populated from object|tuple
   ## ``default`` and then from the ``mergeNames``/the command-line.  Top-level
@@ -885,8 +936,8 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
   ## eliminates several features and makes the `positional` default be empty.
   proc callIt(): T =
     initGen(default, T, positional, suppress, "ini")
-    dispatchGen(ini, cmdName, doc, help, short, usage, cf, false, false,
-                AUTO, @[], @[], @[], "x", mergeNames)
+    dispatchGen(ini, cmdName, doc, help, short, usage, cf, false, false, AUTO,
+                @[], @[], "x", mergeNames, alias)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
@@ -894,12 +945,13 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     help: typed={}, short: typed={}, usage: string=clUsage, positional="",
-    suppress:seq[string] = @[], mergeNames:seq[string] = @[]): T =
+    suppress:seq[string] = @[], mergeNames:seq[string] = @[],
+    alias: seq[ClAlias] = @[]): T =
   ## Convenience `initFromCLcf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are as for `initFromCLcf` (except for no `cf`).
   proc cligenDoNotCollideWithGlobalVar(cf: ClCfg): T =
     initFromCLcf(default, cmdName, doc, help, short, usage, cf, positional,
-                 suppress, mergeNames)
+                 suppress, mergeNames, alias)
   cligenDoNotCollideWithGlobalVar(clCfg)
 
 proc mergeParams*(cmdNames: seq[string],
