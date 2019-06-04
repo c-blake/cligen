@@ -671,6 +671,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
   -i=, --item=   string  ""     set item
 
 ==> test/SemiAutoMulti.out <==
+cligen.nim(555, 12) Hint: 'keyCount' is declared but not used [XDeclaredButNotUsed]
 Usage:
   multi [optional-params] [subCmd: string...]
 Run command with no parameters for a full help message.
@@ -727,9 +728,9 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 
 ==> test/TwoNondefaultedSeq.out <==
 TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(609, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(596, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(183, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(658, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(644, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(185, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -750,6 +751,22 @@ demo entry point with varied, meaningless parameters.
   -a=, --alpha=  int      1         set alpha
   -v, --verb     bool     false     set verb
   --args=        strings  REQUIRED  append 1 val to args
+
+==> test/UserAliases.out <==
+Usage:
+  UserAliases [optional-params] [args: string...]
+demo entry point with varied, meaningless parameters with an alias system. E.g.,
+USERALIASES='"-Dk=-a9 -b3.0" "-DK=-Rk -v 1 2"' ./UserAliases -RK 3 4 or
+USERALIASES_CONFIG=UserAliases.cf ./UserAliases -RK 3 4
+  Options(opt-arg sep :|=|spc):
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -D=, --Def=     string  ""     define key="val ..." alias
+  -R=, --Ref=     string  ""     reference an alias
+  -a=, --al-pha=  int     1      growth constant
+  -b=, --bet-a=   float   2.0    shrink target
+  -v, --verb      bool    false  set verb
+  -i=, --item=    string  ""     set item
 
 ==> test/UserDispIdCollide.out <==
 Usage:

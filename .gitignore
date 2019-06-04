@@ -54,3 +54,4 @@ test/MultMultMult
 test/SubScope
 test/InitOb
 test/InitTup
+test/UserAliases

@@ -1,0 +1,14 @@
+# An example parsecfg config file for test/demo program Version.  Point to it
+# via VERSION_CONFIG=Version.cf or symlink/move this file to
+#   "${XDG_CONFIG_HOME:-$HOME/.config}/Version".
+#
+# When both $VERSION_CONFIG and $XDG_CONFIG_HOME/Version files exist only the
+# first is used.
+#
+# Note that both key = val and --key=val styles are supported and keys are both
+# style and kebab insensitive, but single-dash short options do not work.
+# Unambiguous prefix rules do work, though.
+
+aL-pH= 3
+
+--i-tE-m  = "ho diddly"

@@ -1,0 +1,15 @@
+# An example config file for test/demo program FullyAutoMulti.  Point to it via
+# FULLYAUTOMULTI_CONFIG=test/FullyAutoMulti.cf or symlink/move this file to
+#   "${XDG_CONFIG_HOME:-$HOME/.config}/FullyAutoMulti".
+#
+# Note that both key = val and --key=val styles are supported and keys are both
+# style and kebab insensitive, but single-dash short options do not work.
+
+[print]
+gamma = 9
+--iota:3.0
+
+[demo]
+alpha = 5
+--b=4.0 # -b=4.0 does NOT work because parsecfg does not do short options, but
+        # the unambiguous prefix rule for [demo] options lets us use just "--b"
