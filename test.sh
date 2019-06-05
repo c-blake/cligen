@@ -13,6 +13,6 @@ wait
 ./test/MultiMulti help > test/MultiMultiTopLvl.out 2>&1
 head -n900 test/*.out | grep -v '^Hint: ' |
      sed -e 's@.*/cligen.nim(@cligen.nim(@' \
-         -e 's@.*/cligen/test@cligen/test@' > test/out
+         -e 's@.*/test/@test/@' > test/out
 rm -f test/*.out
 diff test/ref test/out
