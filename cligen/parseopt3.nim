@@ -124,8 +124,7 @@ type
     cmdLongOption,            ## a long option ``--option`` detected
     cmdShortOption,           ## a short option ``-c`` detected
     cmdError                  ## error in primary option syntax usage
-  OptParser* =
-      object of RootObj       ## this object implements the command line parser
+  OptParser* = object of RootObj  ## object to implement the command line parser
     cmd*: seq[string]         ## command line being parsed
     pos*: int                 ## current command parameter to inspect
     off*: int                 ## current offset in cmd[pos] for short key block
