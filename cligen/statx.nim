@@ -69,7 +69,7 @@ impCint("fcntl.h", AT_SYMLINK_NOFOLLOW) ## Do not follow symbolic links
 impCint("fcntl.h", AT_REMOVEDIR)        ## Remove dir instead of unlinking file
 impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
 impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
-when defined(linux):
+when defined(linux) and not defined(haveNoStatx):
   impCint("fcntl.h", AT_NO_AUTOMOUNT)   ## Suppress terminal automount traversal
   impCint("fcntl.h", AT_EMPTY_PATH)     ## Allow empty relative pathname
   impCint("fcntl.h", AT_STATX_SYNC_TYPE)
