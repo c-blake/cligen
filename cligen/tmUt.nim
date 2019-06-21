@@ -40,3 +40,36 @@ template makeGetTimeNs(name: untyped, field: untyped) =
 makeGetTimeNs(getLastAccTimeNs, st_atim)
 makeGetTimeNs(getLastModTimeNs, st_mtim)
 makeGetTimeNs(getCreationTimeNs, st_ctim)
+
+let strftimeCodes* = { 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'F',
+  #[ Unused:   ]#      'G', 'g', 'h', 'H', 'I', 'j', 'k', 'l', 'm', 'M', 'n',
+  #[ J K L N Q ]#      'O', 'p', 'P', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U',
+  #[ f i o q v ]#      'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '+',
+                       '1', '2', '3', '4', '5', '6', '7', '8', '9' }
+
+proc strftime*(fmt: string, ts: Timespec): string =
+  ##Nim wrap strftime, and translate %[1..9] => '.' & that many tv_nsec digits.
+  proc ns(fmt: string): string =
+    var inPct = false
+    for c in fmt:
+      if inPct:
+        inPct = false                 #'%' can take at most a 1-char argument
+        if c == '%': result.add("%%")
+        elif ord(c) >= ord('1') and ord(c) <= ord('9'):
+          var all9 = $ts.tv_nsec
+          all9 = "0".repeat(9 - all9.len) & all9
+          result.add(all9[0 .. (ord(c) - ord('0') - 1)])
+        else:
+          result.add('%')
+          result.add(c)
+      else:
+        if c == '%': inPct = true
+        else: result.add(c)
+  if fmt.len == 0: return $ts
+  var tsCpy = ts.tv_sec #WTF: const time_t should -> non-var param in localtime
+  var tm = localtime(tsCpy)
+  result.setLen(32) #initial guess
+  while result.len < 1024: #Avoid inf.loop for eg. "%p" fmt in some locales=>0.
+    let res = strftime(result.cstring, result.len, fmt.ns.cstring, tm[])
+    if res == 0: result.setLen(result.len * 2)  #Try again with a bigger buffer
+    else       : result.setLen(res); return
