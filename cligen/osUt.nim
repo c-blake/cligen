@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils
+import os, posix, terminal, strutils, sets, tables, strformat, ./sysUt #`:=`
 
 proc perror*(x: cstring, len: int) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
@@ -78,3 +78,111 @@ proc urite*(f: File, s: string) =
 
 proc urite*(f: File, a: varargs[string, `$`]) =
   for x in items(a): urite(f, x)
+
+proc getTime*(): Timespec =
+  ##Placeholder to avoid `times` module
+  discard clock_gettime(0.ClockId, result)
+
+proc simplifyPath*(path: string): string =
+  ##Make "././hey///ho/./there/" => "hey/ho/there/".  Result always ends with
+  ##'/' as source does (it's an easy client check & setLen to remove it).  Note
+  ##this does not do anything that requires following symbolic links.
+  result = newStringOfCap(path.len)
+  if path.startsWith("/"): result.add('/')
+  var didSomething = false
+  for component in path.split('/'):
+    if component == "" or component == ".": continue
+    result.add(component)
+    result.add('/')
+    didSomething = true
+  if didSomething:
+    if not path.endsWith("/"):
+      result.setLen(result.len - 1)
+  else:
+    result = path
+
+proc getgroups*(gids: var HashSet[Gid]) =
+  ## Get all gids active for current process
+  proc getgroups(a1: cint, a2: ptr UncheckedArray[Gid]): cint {.importc,
+    header: "<unistd.h>".}      #posix.getgroups bounds this at 0..255, but
+  let n = getgroups(0, nil)     #..much larger num.grps easily supported by
+  var myGids = newSeq[Gid](n)   #..2 calls - one to see size, 2nd to populate.
+  let m = getgroups(n, cast[ptr UncheckedArray[Gid]](addr(myGids[0])))
+  for i in 0 ..< m:             #Could check m == n, but eh.
+    gids.incl(myGids[i])
+  gids.incl(getegid())          #specs say to incl effective gid manually
+proc getgroups*(): HashSet[Gid] = getgroups(result)
+
+template defineIdentities(ids,Id,Entry,rewind,getident,en_id,en_nm) {.dirty.} =
+  proc ids*(): Table[Id, string] =
+    ##Populate Table[Id, string] with data from system account files
+    when NimVersion < "0.20.0": result = initTable[Id, string]()
+    rewind()
+    var id: ptr Entry
+    while (id := getident()) != nil:
+      if id.en_id notin result:             #first entry wins, not last
+        result[id.en_id] = $id.en_nm
+defineIdentities(users, Uid, Passwd, setpwent, getpwent, pw_uid, pw_name)
+defineIdentities(groups, Gid, Group, setgrent, getgrent, gr_gid, gr_name)
+
+proc readlink*(p: string, err=stderr): string =
+  ##Call POSIX readlink reliably: Start with a nominal size buffer & loop while
+  ##the answer may have been truncated.  (Could also pathconf(p,PC_PATH_MAX)).
+  var nBuf = 256
+  var n = nBuf
+  while n == nBuf:
+    nBuf *= 2
+    result.setLen(nBuf + 1)      #readlink(2) DOES NOT NUL-term => Reserve a spot.
+    n = readlink(p, cstring(result[0].addr), nBuf)
+  if n <= 0:
+    err.write "readlink(\"", $p, "\"): ", strerror(errno), "\n"
+  else:
+    result.setLen(n)
+
+proc `$`*(st: Stat): string =
+  ##stdlib automatic `$`(Stat) broken due to pad0 junk.
+  "(dev: "     & $st.st_dev     & ", " & "ino: "    & $st.st_ino    & ", " &
+   "nlink: "   & $st.st_nlink   & ", " & "mode: "   & $st.st_mode   & ", " &
+   "uid: "     & $st.st_uid     & ", " & "gid: "    & $st.st_gid    & ", " &
+   "rdev: "    & $st.st_rdev    & ", " & "size: "   & $st.st_size   & ", " &
+   "blksize: " & $st.st_blksize & ", " & "blocks: " & $st.st_blocks & ", " &
+   "atim: "    & $st.st_atim    & ", " & "mtim: "   & $st.st_mtim   & ", " &
+   "ctim: "    & $st.st_ctim    & ")"
+
+proc stat2dtype*(st_mode: Mode): int8 =
+  ##Convert S_ISDIR(st_mode) style dirent types to DT_DIR style.
+  if    S_ISREG(st_mode): result = DT_REG
+  elif  S_ISDIR(st_mode): result = DT_DIR
+  elif  S_ISBLK(st_mode): result = DT_BLK
+  elif  S_ISCHR(st_mode): result = DT_CHR
+  elif  S_ISLNK(st_mode): result = DT_LNK
+  elif S_ISFIFO(st_mode): result = DT_FIFO
+  elif S_ISSOCK(st_mode): result = DT_SOCK
+  else:                   result = DT_UNKNOWN
+
+proc getAllDents*(path: string, dts: var seq[int8], err=stderr, ok: var bool,
+                  did: ptr HashSet[tuple[dev,ino: int]] = nil): seq[string] =
+  ##Read WHOLE dir (ALWAYS skips ".", "..") returning dirent.d_type in ``dts``.
+  ##If ``did`` points to non-``nil`` then include this dir i-nodes in the set
+  ##and return @[] for both ``paths`` & ``dts`` if this is not the first call
+  ##for this dir. (This interface helps avoid one extra stat() syscall to get
+  ##path dev,ino when you may or may not be following symbolic links.)
+  proc dirfd(dp: ptr DIR): cint {.importc: "dirfd", header: "dirent.h".}
+  var d = opendir(path)
+  if d == nil:
+    err.write "opendir(\"", path, "\"): ", strerror(errno), "\n"
+    ok = false; return
+  defer: discard closedir(d)
+  var st: Stat                        #block infinite recursion loops
+  discard fstat(dirfd(d), st)         #fstat(open fd) cannot fail
+  if did != nil and did[].containsOrIncl((st.st_dev.int, st.st_ino.int)):
+    return
+  ok = true
+  while true:
+    var x = readdir(d)                #Use getdents directly?
+    if x == nil: break
+    if (x.d_name[0] == '.' and x.d_name[1] == '\0') or
+       (x.d_name[0] == '.' and x.d_name[1] == '.' and x.d_name[2] == '\0'):
+          continue
+    dts.add x.d_type.int8
+    result.add $cstring(addr x.d_name)
