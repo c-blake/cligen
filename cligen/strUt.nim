@@ -1,3 +1,5 @@
+import strutils
+
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
   ## I adapted to use salt, 8B digits (filled native-Endian) & accumulators
@@ -53,3 +55,20 @@ proc hashWY*(x: openArray[char]): uint64 =
   return xpro(h, uint64(n) xor P5)
 #NOTE 27+n/6 cycles has a BIG constant; Could explode into 31 cases like WY (or
 #use ANY staged hashes for final 2,4,8,16,31B since length%32 is deterministic)
+
+proc startsWithI*(s, prefix: string): bool {.noSideEffect.} =
+  ##Case insensitive variant of startsWith.
+  var i = 0
+  while true:
+    if i >= prefix.len: return true
+    if i >= s.len or s[i].toLowerAscii != prefix[i].toLowerAscii: return false
+    inc(i)
+
+proc endsWithI*(s, suffix: string): bool {.noSideEffect.} =
+  ##Case insensitive variant of endsWith.
+  var i = 0
+  var j = len(s) - len(suffix)
+  while i+j >= 0 and i+j < s.len:
+    if s[i+j].toLowerAscii != suffix[i].toLowerAscii: return false
+    inc(i)
+  if i >= suffix.len: return true
