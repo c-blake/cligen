@@ -45,6 +45,12 @@ proc humanReadable4*(bytes: uint): string =
   elif Bytes < 100 * T  : result = "100T"
   else:                   result = ff(Bytes/T, 3) & "T"
 
+when not declared(fromHex):
+  proc fromHex[T: SomeInteger](s: string): T =
+    let p = parseutils.parseHex(s, result)
+    if p != s.len or p == 0:
+      raise newException(ValueError, "invalid hex integer: " & s)
+
 let attrNames = {  #WTF: const compiles but then cannot look anything up
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
   "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9", "NONE":      "",
@@ -57,12 +63,6 @@ let attrNames = {  #WTF: const compiles but then cannot look anything up
   "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
   "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
 }.toTable
-
-when not declared(fromHex):
-  proc fromHex[T: SomeInteger](s: string): T =
-    let p = parseutils.parseHex(s, result)
-    if p != s.len or p == 0:
-      raise newException(ValueError, "invalid hex integer: " & s)
 
 proc textAttrParse*(s: string): string =
   if s.len == 0: return
