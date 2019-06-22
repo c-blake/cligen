@@ -137,6 +137,7 @@ proc cmp*(a, b: Timespec): int =
   let s = cmp(a.tv_sec.uint, b.tv_sec.uint)
   if s != 0: return s
   return cmp(a.tv_nsec, b.tv_nsec)
+proc `<=`*(a, b: Timespec): bool = cmp(a, b) <= 0
 
 proc toStatxTs*(ts: Timespec): StatxTs =
   result.tv_sec = ts.tv_sec.int64
@@ -144,8 +145,8 @@ proc toStatxTs*(ts: Timespec): StatxTs =
 
 when defined(haveNoStatx):
   proc stat2statx(dst: var Statx, src: Stat) =
-#   dst.stx_mask            = .uint32 #No analogues
-#   dst.stx_attributes      = .uint64
+    dst.stx_mask            = 0xFFFFFFFF.uint32
+#   dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
 #   dst.stx_attributes_mask = .uint64
     dst.stx_blksize         = src.st_blksize.uint32
     dst.stx_nlink           = src.st_nlink.uint32
@@ -156,12 +157,7 @@ when defined(haveNoStatx):
     dst.stx_size            = src.st_size.uint64
     dst.stx_blocks          = src.st_blocks.uint64
     dst.stx_atime           = src.st_atim.toStatxTs
-    if cmp(src.st_atim, src.st_mtim) < 0:     #emulate btime as min(a, c, m)
-      if cmp(src.st_atim, src.st_ctim) < 0: dst.stx_btime = src.st_atim.toStatxTs
-      else: dst.stx_btime = src.st_ctim.toStatxTs
-    else:
-      if cmp(src.st_mtim, src.st_ctim) < 0: dst.stx_btime = src.st_mtim.toStatxTs
-      else: dst.stx_btime = src.st_ctim.toStatxTs
+    dst.stx_btime = min(src.st_atim, min(src.st_ctim, src.st_mtim)).toStatxTs
     dst.stx_ctime           = src.st_ctim.toStatxTs
     dst.stx_mtime           = src.st_mtim.toStatxTs
     dst.stx_rdev_major      = src.st_rdev.st_major.uint32
