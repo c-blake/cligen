@@ -1,5 +1,6 @@
 from strutils import split, repeat, replace, count
 from terminal import terminalWidth
+import critbits
 when NimVersion <= "0.19.8":
   import strutils
   proc wrapWords(x: string, maxLineWidth: int): string=wordWrap(x, maxLineWidth)
@@ -85,6 +86,24 @@ proc distDamerau*[T](a, b: openArray[T], maxDist=mxC,
                                     d(i  , j+1) + idC)))
     dA(C(a[i-1])) = i
   return min(maxDist, d(C(n)+C(1), C(m)+C(1)))
+
+proc initCritBitTree*[T](): CritBitTree[T] =
+  ##A constructor sometimes helpful when replacing ``Table[string,T]`` with
+  ##``CritBitTree[T]``.
+  discard
+
+proc getAll*[T](cb: CritBitTree[T], key:string): seq[tuple[key:string, val: T]]=
+  ##A query function sometimes helpful in making ``CritBitTree[T]`` code more
+  ##like ``Table[string,T]`` code.
+  for k, v in cb.pairsWithPrefix(key):
+    result.add( (k, v) )
+
+proc keys*[T](x: seq[tuple[key: string, val: T]]): seq[string] =
+  ##An extractor of just the ``key`` part of a ``seq[(key,val)]``.
+  {.push hint[XDeclaredButNotUsed]: off.}
+  for tup in x:
+    let (k, v) = tup; result.add(k)
+  {.pop.}
 
 proc suggestions*[T](wrong: string; match, right: openArray[T],
                      enoughResults=3, unrelatedDistance=C(4)): seq[string] =
