@@ -145,7 +145,7 @@ proc toStatxTs*(ts: Timespec): StatxTs =
 
 when defined(haveNoStatx):
   proc stat2statx(dst: var Statx, src: Stat) =
-    dst.stx_mask            = 0xFFFFFFFF.uint32
+    dst.stx_mask            = STATX_BASIC_STATS
 #   dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
 #   dst.stx_attributes_mask = .uint64
     dst.stx_blksize         = src.st_blksize.uint32
