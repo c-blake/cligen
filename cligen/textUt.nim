@@ -92,6 +92,9 @@ proc initCritBitTree*[T](): CritBitTree[T] =
   ##``CritBitTree[T]``.
   discard
 
+proc keys*[T](cb: CritBitTree[T]): seq[string] =
+  for k in cb.keys: result.add k
+
 proc getAll*[T](cb: CritBitTree[T], key:string): seq[tuple[key:string, val: T]]=
   ##A query function sometimes helpful in making ``CritBitTree[T]`` code more
   ##like ``Table[string,T]`` code.
