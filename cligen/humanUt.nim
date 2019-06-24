@@ -13,9 +13,9 @@ proc cmpN*(a, b: string): int =
       i.dec                               #i<-beg of common numeric pfx, if any.
     var x, y: BiggestInt
     try:
-      discard parseBiggestInt(a, x, i)     #Should probably try/except out of
-      discard parseBiggestInt(b, y, i)     #bound errors.
-    except:
+      discard parseBiggestInt(a, x, i)
+      discard parseBiggestInt(b, y, i)
+    except ValueError:                    #out of bounds
       return cmp(a, b)
     return cmp(x, y)
 
