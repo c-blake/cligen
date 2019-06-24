@@ -162,11 +162,11 @@ proc stat2dtype*(st_mode: Mode): int8 =
 
 proc getAllDents*(path: string, dts: var seq[int8], err=stderr, ok: var bool,
                   did: ptr HashSet[tuple[dev,ino: int]] = nil): seq[string] =
-  ##Read WHOLE dir (ALWAYS skips ".", "..") returning dirent.d_type in ``dts``.
-  ##If ``did`` points to non-``nil`` then include this dir i-nodes in the set
-  ##and return @[] for both ``paths`` & ``dts`` if this is not the first call
-  ##for this dir. (This interface helps avoid one extra stat() syscall to get
-  ##path dev,ino when you may or may not be following symbolic links.)
+  ##Read WHOLE dir ``path`` (ALWAYS skips ".", "..") giving ``dirent.d_type`` in
+  ##``dts``.  If ``did`` points to non-``nil`` then ``incl`` this dir's i-node
+  ##number in ``did`` & return @[] for ``paths``&``dts`` after the first call
+  ##for this dir.  This interface simplifies FTW while avoiding an extra stat()
+  ##to get path dev,ino when you may or may not be following symbolic links.
   proc dirfd(dp: ptr DIR): cint {.importc: "dirfd", header: "dirent.h".}
   var d = opendir(path)
   if d == nil:
