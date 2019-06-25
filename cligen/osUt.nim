@@ -160,29 +160,19 @@ proc stat2dtype*(st_mode: Mode): int8 =
   elif S_ISSOCK(st_mode): result = DT_SOCK
   else:                   result = DT_UNKNOWN
 
-proc getAllDents*(path: string, dts: var seq[int8], err=stderr, ok: var bool,
-                  did: ptr HashSet[tuple[dev,ino: int]] = nil): seq[string] =
-  ##Read WHOLE dir ``path`` (ALWAYS skips ".", "..") giving ``dirent.d_type`` in
-  ##``dts``.  If ``did`` points to non-``nil`` then ``incl`` this dir's i-node
-  ##number in ``did`` & return @[] for ``paths``&``dts`` after the first call
-  ##for this dir.  This interface simplifies FTW while avoiding an extra stat()
-  ##to get path dev,ino when you may or may not be following symbolic links.
-  proc dirfd(dp: ptr DIR): cint {.importc: "dirfd", header: "dirent.h".}
-  var d = opendir(path)
-  if d == nil:
-    err.write "opendir(\"", path, "\"): ", strerror(errno), "\n"
-    ok = false; return
-  defer: discard closedir(d)
-  var st: Stat                        #block infinite recursion loops
-  discard fstat(dirfd(d), st)         #fstat(open fd) cannot fail
-  if did != nil and did[].containsOrIncl((st.st_dev.int, st.st_ino.int)):
-    return
-  ok = true
-  while true:
-    var x = readdir(d)                #Use getdents directly?
-    if x == nil: break
-    if (x.d_name[0] == '.' and x.d_name[1] == '\0') or
-       (x.d_name[0] == '.' and x.d_name[1] == '.' and x.d_name[2] == '\0'):
+proc getDents*(fd: cint, st: Stat, dts: ptr seq[int8] = nil,
+               inos: ptr seq[Ino] = nil, avgLen=24): seq[string] =
+  ##Read open dir ``fd``. If provided, also give ``d_type`` and/or ``d_ino`` in
+  ##``dts`` & ``inos`` pairing with result strings.  ALWAYS skips ".", "..".
+  proc fdopendir(fd: cint): ptr DIR {.importc: "fdopendir", header: "dirent.h".}
+  var dir = fdopendir(fd)
+  if dir == nil: return
+  defer: discard closedir(dir)
+  var d: ptr DirEnt
+  while (d := dir.readdir) != nil:
+    if (d.d_name[0] == '.' and d.d_name[1] == '\0') or
+       (d.d_name[0] == '.' and d.d_name[1] == '.' and d.d_name[2] == '\0'):
           continue
-    dts.add x.d_type.int8
-    result.add $cstring(addr x.d_name)
+    if dts != nil: dts[].add d.d_type
+    if inos != nil: inos[].add d.d_ino
+    result.add $cstring(addr d.d_name)
