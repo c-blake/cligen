@@ -137,7 +137,12 @@ proc cmp*(a, b: Timespec): int =
   let s = cmp(a.tv_sec.uint, b.tv_sec.uint)
   if s != 0: return s
   return cmp(a.tv_nsec, b.tv_nsec)
+
 proc `<=`*(a, b: Timespec): bool = cmp(a, b) <= 0
+
+proc `-`*(a, b: Timespec): int =
+  result = (a.tv_sec.int - b.tv_sec.int) * 1_000_000_000 +
+           (a.tv_nsec.int - b.tv_nsec.int)
 
 proc toStatxTs*(ts: Timespec): StatxTs =
   result.tv_sec = ts.tv_sec.int64
