@@ -904,6 +904,9 @@ macro initGen*(default: typed, T: untyped, positional="",
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
   let suppressed = toIdSeq(suppress)
+  let lastUnsuppressed = if suppress.len > 1 and suppress[1].len > 0 and
+                           ($suppress[1][0]).startsWith "ALL AFTER ":
+                             ident(($suppress[1][0])[10..^1]) else: nil
   let posId = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
@@ -919,6 +922,7 @@ macro initGen*(default: typed, T: untyped, positional="",
     assigns.add(quote do:
       proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
       `r`.`sid` = `id`)
+    if id == lastUnsuppressed: break
   let nm = if name.strVal.len > 0: name.strVal else: "init"
   result = newProc(name = ident(nm), params = params, body = assigns)
   when defined(printInit): echo repr(result)  # maybe print gen code

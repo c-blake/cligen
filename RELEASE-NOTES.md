@@ -14,6 +14,13 @@ Version: 0.9.32
   doc comment "pre-formatted" if it has 2-or more "\n " substrings and that
   pre-formatted text is less adaptable to run-time terminal width. ]
 
+  Add a way for `initFromCL` to ignore all fields after a given one.  The first
+  (but not necessarily only) member of `suppress = @[ first, ... ]` has to have
+  the special spelling `suppress = @[ "ALL AFTER myIdent" ]` where `myIdent` is
+  replaced by the final field to include in the initializer wrapped as cmdLine.
+  {I'd also have liked a rule more like private fields, but didn't see an easy
+  way to tell private from public/export-marked fields in `getTypeImpl` output.}
+
 Version: 0.9.31
 ---------------
   Fix bug where `cligen/mergeCfgEnv.nim` doc comment (and README.md) had said
