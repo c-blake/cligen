@@ -130,9 +130,9 @@ proc readlink*(p: string, err=stderr): string =
   ##the answer may have been truncated.  (Could also pathconf(p,PC_PATH_MAX)).
   var nBuf = 256
   var n = nBuf
-  while n == nBuf:
-    nBuf *= 2
-    result.setLen(nBuf + 1)      #readlink(2) DOES NOT NUL-term => Reserve a spot.
+  while n == nBuf:        #readlink(2) DOES NOT NUL-term, but Nim does, BUT it
+    nBuf *= 2             #..is inaccessible to user-code.  So, the below does
+    result.setLen(nBuf)   #..not need the nBuf + 1 it would in C code.
     n = readlink(p, cstring(result[0].addr), nBuf)
   if n <= 0:
     err.write "readlink(\"", $p, "\"): ", strerror(errno), "\n"
