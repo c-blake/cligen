@@ -128,6 +128,7 @@ defineIdentities(groups, Gid, Group, setgrent, getgrent, gr_gid, gr_name)
 proc readlink*(p: string, err=stderr): string =
   ##Call POSIX readlink reliably: Start with a nominal size buffer & loop while
   ##the answer may have been truncated.  (Could also pathconf(p,PC_PATH_MAX)).
+  result = newStringOfCap(512)
   var nBuf = 256
   var n = nBuf
   while n == nBuf:        #readlink(2) DOES NOT NUL-term, but Nim does, BUT it
