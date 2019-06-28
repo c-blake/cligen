@@ -25,10 +25,11 @@ proc cfToCL*(path: string, subCmdName=""): seq[string] =
     of cfgError: echo e.msg
   close(p)
 
-proc envToCL*(evarContents: string, varNm=""): seq[string] =
-  if evarContents.len == 0:
+proc envToCL*(evarName: string): seq[string] =
+  var e = os.getEnv(evarName)
+  if e.len == 0:
     return
-  let sp = evarContents.parseCmdLine    #See os.parseCmdLine for details
+  let sp = e.parseCmdLine               #See os.parseCmdLine for details
   result = result & sp
   when defined(debugEnvToCL):
     echo "parsed $", varNm, " into: ", sp

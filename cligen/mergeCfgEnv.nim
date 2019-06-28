@@ -17,7 +17,6 @@ proc mergeParams(cmdNames: seq[string],
     cfPath = os.getConfigDir() & cmdNames[0]
   if existsFile(cfPath):
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
-  let varNm = strutils.toUpperAscii(strutils.join(cmdNames, "_"))
-  result.add envToCL(os.getEnv(varNm), varNm)
+  result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   result = result & cmdLine
 {.pop.}
