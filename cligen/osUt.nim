@@ -113,17 +113,23 @@ proc getgroups*(gids: var HashSet[Gid]) =
   gids.incl(getegid())          #specs say to incl effective gid manually
 proc getgroups*(): HashSet[Gid] = getgroups(result)
 
-template defineIdentities(ids,Id,Entry,rewind,getident,en_id,en_nm) {.dirty.} =
+template defineIdentities(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[Id, string] =
     ##Populate Table[Id, string] with data from system account files
     when NimVersion < "0.20.0": result = initTable[Id, string]()
-    rewind()
     var id: ptr Entry
-    while (id := getident()) != nil:
-      if id.en_id notin result:             #first entry wins, not last
-        result[id.en_id] = $id.en_nm
-defineIdentities(users, Uid, Passwd, setpwent, getpwent, pw_uid, pw_name)
-defineIdentities(groups, Gid, Group, setgrent, getgrent, gr_gid, gr_name)
+    when defined(android):
+      proc getid(id: Id): ptr Entry {.importc.}
+      for i in 0 ..< 32768:
+        if (id := getid(i)) != nil:
+          result[id.en_id] = $id.en_nm
+    else:
+      rewind()
+      while (id := getident()) != nil:
+        if id.en_id notin result:             #first entry wins, not last
+          result[id.en_id] = $id.en_nm
+defineIdentities(users, Uid, Passwd, getpwuid,setpwent,getpwent,pw_uid,pw_name)
+defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 
 proc readlink*(p: string, err=stderr): string =
   ##Call POSIX readlink reliably: Start with a nominal size buffer & loop while
