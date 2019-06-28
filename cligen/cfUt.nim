@@ -1,12 +1,13 @@
 import os, parsecfg, streams
 
-proc cfToCL*(path: string, subCmdName=""): seq[string] =
+proc cfToCL*(path: string, subCmdName="", quiet=false): seq[string] =
   ## Drive Nim stdlib parsecfg to get either specific subcommand parameters if
   ## ``subCmdName`` is non-empty or else global command parameters.
   var activeSection = subCmdName.len == 0
   var f = newFileStream(path, fmRead)
   if f == nil:
-    stderr.write "cannot open: ", path, "\n"
+    if not quiet:
+      stderr.write "cannot open: ", path, "\n"
     return
   var p: CfgParser
   open(p, f, path)
