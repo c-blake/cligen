@@ -18,11 +18,6 @@ proc mergeParams(cmdNames: seq[string],
   if existsFile(cfPath):
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
   let varNm = strutils.toUpperAscii(strutils.join(cmdNames, "_"))
-  let e = os.getEnv(varNm)
-  if e.len > 0:
-    let sp = e.parseCmdLine
-    result = result & sp                                   #See os.parseCmdLine
-    when defined(debugMergeParams):
-      echo "parsed $", varNm, " into: ", sp
+  result.add envToCL(os.getEnv(varNm), varNm)
   result = result & cmdLine
 {.pop.}
