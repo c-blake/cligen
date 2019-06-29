@@ -1,5 +1,5 @@
 import os, posix, strutils, sets, tables, hashes, std/sha1, algorithm,
-  cligen, cligen/[mfile,fileUt,strUt, osUt,tmUt,sysUt] #fileEq,parseSlice hashWY
+  cligen, cligen/[mfile,fileUt,strUt, osUt,posixUt,sysUt] #fileEq,parseSlice..
 
 type Lg* = enum osErr, summ                     #A tiny logging system
 var dupsLog* = { osErr }

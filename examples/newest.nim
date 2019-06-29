@@ -1,4 +1,4 @@
-import posix, heapqueue, cligen/[osUt, tmUt, statx], cligen
+import posix, heapqueue, cligen/[osUt, posixUt, statx], cligen
 
 proc timeStamp(st: Statx, tim: char, dir: int): int =
   case tim
