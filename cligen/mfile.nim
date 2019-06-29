@@ -155,6 +155,30 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
+iterator rows*(mf: MFile, s: Splitr, row: var seq[MSlice],
+               n=0, sep='\l', eat='\r'): seq[MSlice] {.inline.} =
+  ##Like ``lines(MFile)`` but also split each line into columns with ``Splitr``.
+  if mf.mem != nil:
+    for line in mSlices(mf, sep, eat):
+      s.split(line, row, n)
+      yield row
+
+iterator rows*(mf: MFile, s: Splitr, n=0, sep='\l', eat='\r'): seq[MSlice] {.inline.} =
+  ## Exactly like ``rows(MFile, Splitr)`` but yields new Nim ``seq``s.
+  var sq = newSeqOfCap[MSlice](n)
+  for row in rows(mf, s, sq, n, sep, eat): yield sq
+
+iterator rows*(f: File, s: Splitr, row: var seq[string], n=0): seq[string] {.inline.}=
+  ## Like ``lines(File)`` but also split each line into columns with ``Splitr``.
+  for line in lines(f):
+    s.split(line, row, n)
+    yield row
+
+iterator rows*(f: File, s: Splitr, n=0): seq[string] {.inline.} =
+  ## Exactly like ``rows(File, Splitr)`` but yields new Nim ``seq``s.
+  var sq = newSeqOfCap[string](n)
+  for row in rows(f, s, sq, n): yield sq
+
 iterator mSlices*(path:string, sep='\l', eat='\r', keep=false):MSlice{.inline.}=
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
