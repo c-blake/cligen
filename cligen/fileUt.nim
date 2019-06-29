@@ -1,4 +1,5 @@
 import ./mfile, parseutils
+from strutils import nil
 
 proc fileEq*(pathA, pathB: string): bool =
   ## Compare whole file contents given paths. Returns true if and only if equal.
@@ -37,7 +38,7 @@ proc parseIx*(ixSpec: string, sz: int, x: var int): int =
 proc parseSlice*(slcSpec: string, sz: int; a, b: var int) =
   ## Apply slice specification against a size to get index range [a,b).  Syntax
   ## is `[a][%][:[b[%]]]`, like Python but w/optional '%'.  If "a"|"b" are on
-  ## [0,1] their amount is a size fraction even without '%'.  a==b => empty.
+  ## (0,1) their amount is a size fraction even without '%'.  a==b => empty.
   a = 0
   b = sz
   if slcSpec.len == 0:
@@ -51,6 +52,21 @@ proc parseSlice*(slcSpec: string, sz: int; a, b: var int) =
       discard
   else:
     b = a
+
+proc parseSlice*(s: string): tuple[a, b: int] =
+  ## Parse ``[a][:][b]``-like Python index/slice specification.
+  result[0] = 0
+  result[1] = result[1].high
+  if s.len == 0:
+    return
+  let fs = strutils.split(s, ':')
+  if fs.len == 1:
+    discard parseInt(s, result[0])
+    result[1] = result[0] + 1
+    return
+  if fs.len == 2:
+    if fs[0].len > 0: discard parseInt(fs[0], result[0])
+    if fs[1].len > 0: discard parseInt(fs[1], result[1])
 
 when isMainModule:
   var a, b: int
