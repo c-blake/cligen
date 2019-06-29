@@ -256,12 +256,6 @@ proc split*(s: Splitr, line: string, cols: var seq[string], n=0) {.inline.} =
 proc split*(s: Splitr, line: string, n=0): seq[string] {.inline.} =
   s.split(line, result, n)
 
-proc join(x: seq[MSlice], sep: string): string =
-  ##Like strutils.join but for MSlice inputs
-  for i, e in x:
-    result.add $e
-    if i + 1 < x.len: result.add sep
-
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
