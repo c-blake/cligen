@@ -48,7 +48,7 @@ iterator newest*(paths:StrGen, n=1, time="m", Deref=false, quiet=false):string =
 proc printNewest*(n=1, time="m", Deref=false, quiet=false, outEnd="\n",
                   file="", delim='\n', paths: seq[string]) =
   ## Print ``<=n`` newest paths ended by ``outEnd`` in ``time``-order {
-  ## [-][BAMCV].* for Birth, Access, Mod, Ctime, Version=max(MC); optional '-'
+  ## [-][bamcv].* for Birth, Access, Mod, Ctime, Version=max(MC); optional '-'
   ## means oldest instead of newest }.  Examined paths are UNION of ``paths`` +
   ## optional ``delim``-delimited input ``file`` (stdin if "-"|if "" & stdin is
   ## not a tty).  Eg., ``find -type f|newest -t-m`` prints the m-oldest file.
@@ -58,7 +58,7 @@ proc printNewest*(n=1, time="m", Deref=false, quiet=false, outEnd="\n",
 when isMainModule:  # Exercise this with an actually useful CLI wrapper.
   dispatch(printNewest, cmdName="newest",
            help = { "n"     : "number of 'newest' files",
-                    "time"  : "timestamp to compare ([-][AMCV].*)",
+                    "time"  : "timestamp to compare ([-][bamcv].*)",
                     "Deref" : "dereference symlinks for file times",
                     "quiet" : "suppress file access errors",
                     "outEnd": "output record terminator",
