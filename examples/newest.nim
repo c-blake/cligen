@@ -30,9 +30,8 @@ iterator timePaths(paths: StrGen; time: string; Deref,quiet: bool): TimePath =
 
 iterator newest*(paths:StrGen, n=1, time="m", Deref=false, quiet=false):string =
   ## Yield at most ``n`` newest files in ``time``-order where ``time`` can be
-  ## [-][AMCV]* for Access, Mod, Ctime, Version=max(M,C) with an optional "-"
-  ## meaning oldest rather than newest.
-  ## E.g., quietly print the oldest-by-mtime 2 DIR entries.
+  ## [-][BAMCV]* for Birth, Access, Mod, Ctime, Version=max(M,C); Optional "-"
+  ## means oldest not newest.  Eg., quietly print oldest-by-mtime 2 DIR entries:
   ##
   ## .. code-block ::
   ##   iterator gen(): string =
