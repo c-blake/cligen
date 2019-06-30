@@ -92,18 +92,18 @@ proc ns*(t: Timespec): int =
   int(t.tv_sec) * 1000_000_000 + t.tv_nsec
 
 proc fileTimeParse*(code: string): tuple[tim: char, dir: int] =
-  ## Parse [+-][amcvAMCV]* into a file time order specification.  In case
-  ## default increasing order is non-intuitive, this provides two ways to
-  ## specify reverse order: prepend with '-' or flip letter casing.
+  ##Parse [+-][amcvAMCV]* into a file time order specification.  In case default
+  ##increasing order is non-intuitive, this provides two ways to specify reverse
+  ##order: leading '-' or upper-casing.  Such reversals compose: "-A" === "a".
   if code.len < 1:
     result.dir = +1
     result.tim = 'm'
     return
   result.dir = if code[0] == '-': -1 else: +1
-  result.tim  = if code[0] in { '-', '+' }: code[1] else: code[0]
+  result.tim = if code[0] in { '-', '+' }: code[1] else: code[0]
   if result.tim == toUpperAscii(result.tim):
     result.dir = -result.dir
-    result.tim  = toLowerAscii(result.tim)
+    result.tim = toLowerAscii(result.tim)
 
 proc fileTime*(st: Stat, tim: char, dir: int): int =
   ## file time useful in sorting by [+-][amcv]time; pre-parsed code.
