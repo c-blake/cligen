@@ -76,6 +76,10 @@ proc endsWithI*(s, suffix: string): bool {.noSideEffect.} =
 
 proc `-`*(a, b: seq[string]): seq[string] =
   ## All a[]s not in b (implemented efficiently with a HashSet).
-  var sb = toHashSet(b)
+  when NimVersion < "0.20.0":
+    var sb = initSet[string](rightSize(b.len))
+    for s in b: sb.incl s
+  else:
+    var sb = toHashSet(b)
   for s in a:
     if s notin sb: result.add s
