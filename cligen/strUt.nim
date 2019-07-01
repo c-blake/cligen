@@ -1,4 +1,4 @@
-import strutils
+import strutils, sets
 
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
@@ -73,3 +73,9 @@ proc endsWithI*(s, suffix: string): bool {.noSideEffect.} =
     if s[i+j].toLowerAscii != suffix[i].toLowerAscii: return false
     inc(i)
   if i >= suffix.len: return true
+
+proc `-`*(a, b: seq[string]): seq[string] =
+  ## All a[]s not in b (implemented efficiently with a HashSet).
+  var sb = toHashSet(b)
+  for s in a:
+    if s notin sb: result.add s
