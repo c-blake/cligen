@@ -8,7 +8,8 @@ proc cfToCL*(path: string, subCmdName="", quiet=false): seq[string] =
   if f == nil:
     if not quiet:
       stderr.write "cannot open: ", path, "\n"
-    return
+      return
+    else: raise newException(IOError, "")
   var p: CfgParser
   open(p, f, path)
   while true:
