@@ -160,3 +160,9 @@ proc strftime*(fmt: string, ts: Timespec): string =
     let res = strftime(result.cstring, result.len, fmt.ns.cstring, tm[])
     if res == 0: result.setLen(result.len * 2)  #Try again with a bigger buffer
     else       : result.setLen(res); return
+
+type PathId* = tuple[dev: Dev, ino: Ino]
+proc pathId*(path: string): PathId =
+  var st: Stat
+  if stat(path, st) != -1: return (st.st_dev, st.st_ino)
+  return (0.Dev, 0.Ino)
