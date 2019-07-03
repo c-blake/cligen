@@ -166,3 +166,6 @@ proc pathId*(path: string): PathId =
   var st: Stat
   if stat(path, st) != -1: return (st.st_dev, st.st_ino)
   return (0.Dev, 0.Ino)
+
+proc `==`*(a, b: PathId): bool = a.dev == b.dev and a.ino == b.ino
+proc hash*(x: PathId): int = x.dev.int * x.ino.int
