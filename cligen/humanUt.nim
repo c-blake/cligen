@@ -115,8 +115,9 @@ proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
           attr.setLen(0)
         elif c in term:
           inPct = false
-          result.add attrOn; result.add other
-          result.add c;      result.add attrOff
+          if attrOn.len > 0: result.add attrOn
+          result.add other; result.add c
+          if attrOn.len > 0: result.add attrOff
           attrOn.setLen(0)
           other.setLen(0)
         else: other.add c
