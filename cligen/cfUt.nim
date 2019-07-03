@@ -1,6 +1,7 @@
 import os, parsecfg, streams
 
-proc cfToCL*(path: string, subCmdName="", quiet=false): seq[string] =
+proc cfToCL*(path: string, subCmdName="", quiet=false,
+             noRaise=false): seq[string] =
   ## Drive Nim stdlib parsecfg to get either specific subcommand parameters if
   ## ``subCmdName`` is non-empty or else global command parameters.
   var activeSection = subCmdName.len == 0
@@ -9,7 +10,8 @@ proc cfToCL*(path: string, subCmdName="", quiet=false): seq[string] =
     if not quiet:
       stderr.write "cannot open: ", path, "\n"
       return
-    else: raise newException(IOError, "")
+    elif not noRaise: raise newException(IOError, "")
+    else: return
   var p: CfgParser
   open(p, f, path)
   while true:
