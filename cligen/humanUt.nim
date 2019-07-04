@@ -131,9 +131,15 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
   let attrOff = if plain: "" else: textAttrOff
   try:
     if cols.len < 2: raise newException(ValueError, "")
-    let divisor = parseInt(cols[0])
+    var dts: string
+    if '/' in cols[0]:
+      let div_dec = cols[0].split('/')
+      let dec = parseInt(div_dec[1])
+      dts = formatFloat(dt.float / parseInt(div_dec[0]).float, ffDecimal, dec)
+    else:
+      dts = $(dt.float / parseInt(cols[0]).float)
     if cols.len > 2: result.add textAttrOn(cols[2..^1], plain)
-    result.add $int(dt.float / divisor.float)
+    result.add dts
     if cols[1].startsWith('<'):
       result.add cols[1][1..^1]
     else:
