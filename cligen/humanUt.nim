@@ -19,11 +19,13 @@ proc cmpN*(a, b: string): int =
       return cmp(a, b)
     return cmp(x, y)
 
-let K = float(1.uint shl 10)  #WTF: const inside gives bad AST node
-let M = float(1.uint shl 20)
-let G = float(1.uint shl 30)
-let T = float(1.uint shl 40)
-proc humanReadable4*(bytes: uint): string =
+proc humanReadable4*(bytes: uint, binary=false): string =
+  ## A low-precision always <= 4 text columns human readable size formatter.
+  ## If binary is true use power of 2 units instead of SI/decimal units.
+  let K = if binary: float(1.uint shl 10) else: 1e3
+  let M = if binary: float(1.uint shl 20) else: 1e6
+  let G = if binary: float(1.uint shl 30) else: 1e9
+  let T = if binary: float(1.uint shl 40) else: 1e12
   var Bytes = bytes.float64
   proc ff(f: float64, p: range[-1..32]=2): string {.inline.} =
     let s = formatBiggestFloat(f, precision=p)
