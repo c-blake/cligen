@@ -134,8 +134,11 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
     let divisor = parseInt(cols[0])
     if cols.len > 2: result.add textAttrOn(cols[2..^1], plain)
     result.add $int(dt.float / divisor.float)
-    result.add " "
-    result.add cols[1]
+    if cols[1].startsWith('<'):
+      result.add cols[1][1..^1]
+    else:
+      result.add " "
+      result.add cols[1]
     if cols.len > 2: result.add attrOff
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
