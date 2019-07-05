@@ -1,4 +1,4 @@
-import os, parsecfg, streams
+import os, parsecfg, streams, strutils
 
 proc cfToCL*(path: string, subCmdName="", quiet=false,
              noRaise=false): seq[string] =
@@ -20,7 +20,13 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
     of cfgEof:
       break
     of cfgSectionStart:
-      activeSection = e.section == subCmdName
+      if subCmdName.len > 0:
+        activeSection = e.section == subCmdName
+      if e.section.startsWith("include__"):
+        let sub = e.section[9..^1]
+        result.add cfToCL(if sub == sub.toUpperAscii: getEnv(sub)
+                          else: path.parentDir & "/" & sub,
+                          subCmdName, quiet, noRaise)
     of cfgKeyValuePair, cfgOption:
       when defined(debugCfToCL):
         echo "key: ", e.key.repr, " val: ", e.value.repr
