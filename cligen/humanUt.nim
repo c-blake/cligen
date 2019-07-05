@@ -31,6 +31,7 @@ proc humanReadable4*(bytes: uint, binary=false): string =
   let M = if binary: float(1.uint shl 20) else: 1e6
   let G = if binary: float(1.uint shl 30) else: 1e9
   let T = if binary: float(1.uint shl 40) else: 1e12
+  let m = if binary: 1024.0               else: 1000.0
   var Bytes = bytes.float64
   proc ff(f: float64, p: range[-1..32]=2): string {.inline.} =
     let s = formatBiggestFloat(f, precision=p)
@@ -39,15 +40,15 @@ proc humanReadable4*(bytes: uint, binary=false): string =
   elif Bytes < 99.5 * K : result = ff(Bytes/K, 2) & "K"
   elif Bytes < 100 * K  : result = "100K"
   elif Bytes < 995 * K  : result = ff(Bytes/K, 3) & "K"
-  elif Bytes < 1024 * K : result = ff(Bytes/M, 2) & "M"
+  elif Bytes <  m  * K  : result = ff(Bytes/M, 2) & "M"
   elif Bytes < 99.5 * M : result = ff(Bytes/M, 2) & "M"
   elif Bytes < 100 * M  : result = "100M"
   elif Bytes < 995 * M  : result = ff(Bytes/M, 3) & "M"
-  elif Bytes < 1024 * M : result = ff(Bytes/G, 2) & "G"
+  elif Bytes <  m  * M  : result = ff(Bytes/G, 2) & "G"
   elif Bytes < 99.5 * G : result = ff(Bytes/G, 2) & "G"
   elif Bytes < 100 * G  : result = "100G"
   elif Bytes < 995 * G  : result = ff(Bytes/G, 3) & "G"
-  elif Bytes < 1024 * G : result = ff(Bytes/T, 2) & "T"
+  elif Bytes <  m  * G  : result = ff(Bytes/T, 2) & "T"
   elif Bytes < 99.5 * T : result = ff(Bytes/T, 2) & "T"
   elif Bytes < 100 * T  : result = "100T"
   else:                   result = ff(Bytes/T, 3) & "T"
