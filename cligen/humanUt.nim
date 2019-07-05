@@ -1,5 +1,10 @@
 import math, strutils, algorithm, tables, parseutils, posix
 
+proc parseInt*(s: string, valIfNAN: int): int =
+  ##A helper function to parse ``s`` into an integer, but default to some value
+  ##when ``s`` is not an number at all.
+  if parseutils.parseInt(s, result) == 0: result = valIfNAN
+
 proc cmpN*(a, b: string): int =
   ##Cmp strs w/"to end of string" numeric substrs as nums.  Eg., "x.20" >"x.1".
   var i: int                              #Need to scan to first differing byte
