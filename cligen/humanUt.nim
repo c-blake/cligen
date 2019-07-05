@@ -71,8 +71,16 @@ let attrNames = {  #WTF: const compiles but then cannot look anything up
   "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
 }.toTable
 
+var textAttrAliases = initTable[string, string]()
+
+proc textAttrAlias*(name, value: string) =
+  textAttrAliases[name] = value
+
 proc textAttrParse*(s: string): string =
   if s.len == 0: return
+  var s = s
+  while textAttrAliases.hasKey s:
+    s = textAttrAliases[s]
   try: result = attrNames[s]
   except KeyError:
     if s.len >= 2:
