@@ -4,6 +4,16 @@ proc getTime*(): Timespec =
   ##Placeholder to avoid `times` module
   discard clock_gettime(0.ClockId, result)
 
+proc toUidSet*(strs: seq[string]): HashSet[Uid] =
+  ##Just parse some ints into typed Uids
+  result = initHashSet[Uid]()
+  for s in strs: result.incl s.parseInt.Uid
+
+proc toGidSet*(strs: seq[string]): HashSet[Gid] =
+  ##Just parse some ints into typed Gids
+  result = initHashSet[Gid]()
+  for s in strs: result.incl s.parseInt.Gid
+
 proc getgroups*(gids: var HashSet[Gid]) =
   ## Get all gids active for current process
   proc getgroups(a1: cint, a2: ptr UncheckedArray[Gid]): cint {.importc,
