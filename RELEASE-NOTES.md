@@ -7,7 +7,8 @@ Version: 0.9.32
   bundles of CL args).  Alias definitions make sense in earlier `mergeParams`s
   sources such as config files or environment variables.  Later on in the
   command parameters they can reference them with a different CL option.  See
-  `test/UserAliases.nim` and `test/UserAliases.cf` for an example.
+  `test/UserAliases.nim` and `test/UserAliases.cf` for an example.  Also add
+  `textUt.match` and use it in the new alias system.
 
   Do not auto word wrap help text for a parameter if the help text contains any
   newlines. [ Note this extends the existing heuristic of considering the main
@@ -20,6 +21,9 @@ Version: 0.9.32
   replaced by the final field to include in the initializer wrapped as cmdLine.
   {I'd also have liked a rule more like private fields, but didn't see an easy
   way to tell private from public/export-marked fields in `getTypeImpl` output.}
+
+  Add several things to cligen/ helper libraries for building command-line
+  utilities like `tab`, `humanUt`, `statx`, and `magic`.
 
 Version: 0.9.31
 ---------------
