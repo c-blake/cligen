@@ -127,6 +127,24 @@ proc suggestions*[T](wrong: string; match, right: openArray[T],
     if result.len >= enoughResults:
       break
 
+proc match*[T](cb: CritBitTree[T]; key, tag: string; msg: var string): T =
+  ## One stop lookup of a key in `cb` giving either the exact value matched or
+  ## an ambiguous|unknown error message with possible suggestions if non-empty.
+  var ks: seq[string]
+  for k in cb.keysWithPrefix(key):
+    if k == key: return cb[key]     #exact match
+    ks.add k
+  if ks.len == 1: return cb[ks[0]]  #unique match
+  if ks.len > 1:                    #ambiguous match
+    msg = ("Ambiguous " & tag & " prefix \"" & key & "\" matches:\n  " &
+           ks.join("\n  ") & "\n")
+  else:                             #no prefix match
+    var allKeys: seq[string]
+    for k in cb.keys: allKeys.add k
+    let sugg = suggestions(key, allKeys, allKeys)
+    msg = "Unknown " & tag & " \"" & key & "\"." & (if sugg.len == 0: "" else:
+          "  Maybe you meant one of:\n  " & sugg.join(" ")) & "\n"
+
 from unicode import nil
 proc printedLen*(a: string): int =
   ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
