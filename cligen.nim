@@ -4,7 +4,7 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
-       summaryOfModule, docFromModuleOf, versionFromNimble #last is deprecated
+       summaryOfModule, docFromModuleOf, match
 
 include cligen/helpTmpl           #Pull in various help template strings
 
@@ -321,7 +321,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let aliasRefS = if alias.got: toStrIni(alias[1][1][1][1].intVal) else: es
   let aliasRefH = if alias.got: alias[1][1][1][2] else: es
   let aliases = if alias.got: quote do:
-                    var `aliasesId` = initTable[string, seq[string]]()
+                    var `aliasesId`: CritBitTree[seq[string]]
                 else: newNimNode(nnkEmpty)
 
   proc initVars0(): NimNode =           # init vars & build help str
@@ -442,7 +442,17 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(aliasRefN), aliasRefS).add(
           quote do:
-            parser(`aliasesId`[`pId`.val]) ))
+            var msg: string
+            let sub = `aliasesId`.match(`pId`.val, "alias ref", msg)
+            if msg.len > 0:
+              if cast[pointer](`setByParseId`) != nil:
+                `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+              else:
+                stderr.write msg
+                let t = if msg.startsWith "Ambig": "Ambiguous" else: "Unknown"
+                raise newException(ParseError, t & " alias ref")
+            else:
+              parser(sub) ))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]

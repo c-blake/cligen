@@ -671,7 +671,7 @@ Options(opt-arg sep :|=|spc):
   -i=, --item=   string  ""     set item
 
 ==> test/SemiAutoMulti.out <==
-cligen.nim(555, 12) Hint: 'keyCount' is declared but not used [XDeclaredButNotUsed]
+cligen.nim(565, 12) Hint: 'keyCount' is declared but not used [XDeclaredButNotUsed]
 Usage:
   multi [optional-params] [subCmd: string...]
 Run command with no parameters for a full help message.
@@ -728,8 +728,8 @@ Options(opt-arg sep :|=|spc):
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(658, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(644, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(668, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(654, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(185, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
