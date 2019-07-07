@@ -6,12 +6,14 @@ proc getTime*(): Timespec =
 
 proc toUidSet*(strs: seq[string]): HashSet[Uid] =
   ##Just parse some ints into typed Uids
-  result = initHashSet[Uid]()
+  when NimVersion < "0.20.0": result = initSet[Uid]()
+  else: result = initHashSet[Uid]()
   for s in strs: result.incl s.parseInt.Uid
 
 proc toGidSet*(strs: seq[string]): HashSet[Gid] =
   ##Just parse some ints into typed Gids
-  result = initHashSet[Gid]()
+  when NimVersion < "0.20.0": result = initSet[Gid]()
+  else: result = initHashSet[Gid]()
   for s in strs: result.incl s.parseInt.Gid
 
 proc getgroups*(gids: var HashSet[Gid]) =
