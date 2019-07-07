@@ -97,10 +97,10 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
     setLen(result, j)
 
 {.push warning[ProveField]: off.}
-proc valsWithPfx*(cb: CritBitTree[string], key: string): seq[string] =
+proc valsWithPfx*[T](cb: CritBitTree[T], key: string): seq[T] =
   for v in cb.valuesWithPrefix(optionNormalize(key)): result.add(v)
 
-proc lengthen*(cb: CritBitTree[string], key: string): string =
+proc lengthen*[T](cb: CritBitTree[T], key: string): string =
   ## Use ``cb`` to find normalized long form of ``key``. Return empty string if
   ## ambiguous or unchanged string on no match.
   let n = optionNormalize(key)
