@@ -79,20 +79,22 @@ proc urite*(f: File, s: string) =
 proc urite*(f: File, a: varargs[string, `$`]) =
   for x in items(a): urite(f, x)
 
-proc simplifyPath*(path: string): string =
-  ##Make "././hey///ho/./there/" => "hey/ho/there/".  Result always ends with
-  ##'/' as source does (it's an easy client check & setLen to remove it).  Note
-  ##this does not do anything that requires following symbolic links.
+proc simplifyPath*(path: string, collapseDotDot=false): string =
+  ##``"././hey///ho/./there/"`` => ``"hey/ho/there/"``.  Result always ends with
+  ##``'/'`` as source does (it's an easy client check & setLen to remove it).
+  ##If ``collapseDotDot`` then also delete ``foo/.. pairs`` which can alter the
+  ##behavior of paths in the presence of symbolic links to directories.
   result = newStringOfCap(path.len)
   if path.startsWith($DirSep): result.add(DirSep)
-  var didSomething = false
   for component in path.split(DirSep):
-    if component == "" or component == ".": continue
+    if component == "" or component == ".": continue  #nix empty & identity
+    if collapseDotDot and component == ".." and result.len > 0:
+      result.setLen(result.len - 1)                   #maybe nix foo/.. pairs
+      continue
     result.add(component)
     result.add(DirSep)
-    didSomething = true
-  if didSomething:
+  if result.len > 0:
     if not path.endsWith($DirSep):
       result.setLen(result.len - 1)
   else:
-    result = path
+    result = "." & (if path.endsWith($DirSep): $DirSep else: "")
