@@ -204,8 +204,9 @@ proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
   ## return true only if ``mx``, ``hd``, ``tl`` yields a set of unique
   ## abbreviations for strs.
   var es = initHashSet[string]()
-  for s in strs: es.incl abbrev(s, sep, mx, hd, tl)
-  es.len == strs.len
+  for s in strs:                        #done when the first duplicate is seen
+    if es.containsOrIncl(abbrev(s, sep, mx, hd, tl)): return false
+  return true
 
 proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
                           hd, tl: var int): int =
