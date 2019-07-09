@@ -210,16 +210,19 @@ proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
                           hd, tl: var int): int =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
-  var mLen, hd2, tl2: int
+  var mLen, h2, t2: int
   for s in strs: mLen = max(mLen, s.len)
   let sLen = sep.printedLen
-  if mLen <= sLen + 1: return sLen + 1
+  if mLen <= sLen + 1:
+    parseAbbrevSetHdTl(sLen + 1, sLen, hd, tl)
+    return sLen + 1
   var lo = sLen + 1                     #Binary search on [sLen+1, mLen] for
   var hi = mLen                         #..least result s.t. strs.uniqueAbs.
   while hi > lo:
     let m = (lo + hi) div 2
-    hd2 = hd; tl2 = tl; parseAbbrevSetHdTl(m, sLen, hd2, tl2)
-    if strs.uniqueAbs(sep, m, hd2, tl2): hi = m   #m => unique: bracket lower
+    h2 = hd; t2 = tl                    #Assign to temporaries, not return hd,tl
+    parseAbbrevSetHdTl(m, sLen, h2, t2)
+    if strs.uniqueAbs(sep, m, h2, t2): hi = m     #m => unique: bracket lower
     else: lo = m + 1                              #not unique: bracket higher
   parseAbbrevSetHdTl(lo, sLen, hd, tl)  #fix up derived values
   result = lo                           #Now lo == hi
