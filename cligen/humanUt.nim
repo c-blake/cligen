@@ -176,18 +176,23 @@ proc abbrev*(str, sep: string; mx, hd, tl: int): string {.inline.} =
     str
 
 proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
-  ## Parse comma-separated abbreviation spec ``s`` into ``mx``, ``sep``, ``hd``,
-  ## ``tl``.  Non-numeric ``mx`` =>-1. Non-numeric ``hd`` => ``(mx-sep.len)/2``.
-  ## Non-numeric ``tl`` => ``mx - hd - sep.len``.
-  if s.len == 0: return
-  let cols = s.split(',')   #Leading/trailing whitespace in sep is allowed.
+  ##Parse comma-separated abbreviation spec ``s`` into ``mx``, ``sep``, ``hd``,
+  ##``tl``.  Non-numeric ``mx`` =>-1 => caller should re-invoke with correct mx.
+  ##Non-numeric|missing ``hd`` => ``mx-sep.len-tl`` Non-numeric or missing
+  ##``tl`` => ``mx-sep.len-hd``.  Non-num|missing both => ``hd=(mx-sep.len)/2;
+  ##tl=mx-sep.len-hd`` (which gives ``tl`` 1 more for odd ``mx-sep.len``).
+  if s.len == 0:                #Caller should re-invoke w/actual max
+    mx = -1; hd = -1; tl = -1; sep = "*"; return    #empty => auto,auto,auto,*
+  let cols = s.split(',')       #Leading/trailing whitespace in sep is used.
   if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
-  if mx == 0: mx = parseInt(cols[0], -1)
   sep = if cols.len > 3: cols[3] else: "*"
+  if mx == 0: mx = parseInt(cols[0], -1)
+  if mx == -1:                  #Caller should re-invoke w/actual max
+    hd = -1; tl = -1; return
   let sLen = sep.printedLen
-  if cols.len > 1: hd = parseInt(cols[1], -1)
-  if cols.len > 2: tl = parseInt(cols[2], -1)
-  if hd == -1 and tl == -1:   #Both missing or auto: balanced tl-biased slice
+  hd = if cols.len > 1: parseInt(cols[1], -1) else: -1
+  tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
+  if hd == -1 and tl == -1:     #Both missing or auto: balanced tl-biased slice
     hd = (mx - sLen) div 2
     tl = (mx - sLen - hd)
   elif hd == -1: hd = (mx - sLen - tl)  #Only missing one; set other remaining
