@@ -179,8 +179,10 @@ proc parseAbbrevSetHdTl(mx, sLen: int; hd, tl: var int) {.inline.} =
   if hd == -1 and tl == -1:     #Both missing or auto: balanced tl-biased slice
     hd = (mx - sLen) div 2
     tl = (mx - sLen - hd)
-  elif hd == -1: hd = (mx - sLen - tl)  #Only missing one; set other remaining
-  elif tl == -1: tl = (mx - sLen - hd)
+  elif hd == -1: hd = max(0, mx - sLen - tl)  #Only missing one; set other to
+  elif tl == -1: tl = max(0, mx - sLen - hd)  #..remaining or zero if none left
+  hd = min(hd, mx - sLen)
+  tl = min(tl, mx - sLen)
 
 proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   ##Parse comma-separated abbreviation spec ``s`` into ``mx``, ``sep``, ``hd``,
