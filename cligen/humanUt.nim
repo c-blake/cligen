@@ -226,3 +226,10 @@ proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
   result = lo                           #Now lo == hi
   hd = if hdFixed: hd else: (lo - sLen) div 2   #fix up derived values
   tl = if tlFixed: tl else: (lo - hd - sLen)
+
+proc smallestMaxSTUnique*[T](tab: Table[T, string]; sep: string;
+                             hd, tl: var int): int =
+  ## Find smallest max s.t. abbrev unique over ``values`` of ``tab``.
+  var strs: seq[string]
+  for v in tab.values: strs.add v
+  strs.smallestMaxSTUnique sep, hd, tl
