@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.33
+---------------
+  Add abbrev, uniqueAbs, smallestMaxSTUnique to humanUt
+
 Version: 0.9.32
 ---------------
   For single-dispatch, add a system so that CL users can define aliases (named
