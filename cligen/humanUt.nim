@@ -1,4 +1,7 @@
-import math, strutils, algorithm, tables, parseutils, posix
+import math, strutils, algorithm, sets, tables, parseutils, posix
+when not declared(initHashSet):
+  proc initHashSet*[T](): HashSet[T] = initSet[T]()
+  proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)
 
 proc parseInt*(s: string, valIfNAN: int): int =
   ##A helper function to parse ``s`` into an integer, but default to some value
@@ -164,3 +167,34 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
     if cols.len > 2: result.add attrOff
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
+
+proc abbrev*(str, sep: string; mx, hd, tl: int): string {.inline.} =
+  if mx > 0 and str.len > mx:
+    str[0 ..< hd] & sep & str[^tl .. ^1]
+  else:
+    str
+
+proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
+  var es = initHashSet[string]()
+  for s in strs: es.incl abbrev(s, sep, mx, hd, tl)
+  es.len == strs.len
+
+proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
+                          hd, tl: var int): int =
+  let sLen = sep.len
+  var mLen = 0
+  for s in strs: mLen = max(mLen, s.len)
+  let hdFixed = hd >= 0
+  let tlFixed = tl >= 0
+  if mLen <= sLen + 1: return sLen + 1
+  var lo = sLen + 1                     #Binary search on [sLen+1, mLen] for
+  var hi = mLen                         #..least result s.t. strs.uniqueAbs.
+  while hi > lo:
+    let m = (lo + hi) div 2
+    hd = if hdFixed: hd else: (m - sLen) div 2
+    tl = if tlFixed: tl else: (m - hd - sLen)
+    if strs.uniqueAbs(sep, m, hd, tl): hi = m   #m => unique: bracket lower
+    else: lo = m + 1                            #not unique: bracket higher
+  result = lo                           #Now lo == hi
+  hd = if hdFixed: hd else: (lo - sLen) div 2   #fix up derived values
+  tl = if tlFixed: tl else: (lo - hd - sLen)
