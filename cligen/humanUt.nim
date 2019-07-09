@@ -175,6 +175,13 @@ proc abbrev*(str, sep: string; mx, hd, tl: int): string {.inline.} =
   else:
     str
 
+proc parseAbbrevSetHdTl(mx, sLen: int; hd, tl: var int) {.inline.} =
+  if hd == -1 and tl == -1:     #Both missing or auto: balanced tl-biased slice
+    hd = (mx - sLen) div 2
+    tl = (mx - sLen - hd)
+  elif hd == -1: hd = (mx - sLen - tl)  #Only missing one; set other remaining
+  elif tl == -1: tl = (mx - sLen - hd)
+
 proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   ##Parse comma-separated abbreviation spec ``s`` into ``mx``, ``sep``, ``hd``,
   ##``tl``.  Non-numeric ``mx`` =>-1 => caller should re-invoke with correct mx.
@@ -191,11 +198,7 @@ proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   let sLen = sep.printedLen
   hd = if cols.len > 1: parseInt(cols[1], -1) else: -1
   tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
-  if hd == -1 and tl == -1:     #Both missing or auto: balanced tl-biased slice
-    hd = (mx - sLen) div 2
-    tl = (mx - sLen - hd)
-  elif hd == -1: hd = (mx - sLen - tl)  #Only missing one; set other remaining
-  elif tl == -1: tl = (mx - sLen - hd)
+  parseAbbrevSetHdTl(mx, sep.len, hd, tl)
 
 proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
   ## return true only if ``mx``, ``hd``, ``tl`` yields a set of unique
@@ -208,23 +211,19 @@ proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
                           hd, tl: var int): int =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
-  let sLen = sep.len
-  var mLen = 0
+  var mLen, hd2, tl2: int
   for s in strs: mLen = max(mLen, s.len)
-  let hdFixed = hd >= 0
-  let tlFixed = tl >= 0
+  let sLen = sep.len
   if mLen <= sLen + 1: return sLen + 1
   var lo = sLen + 1                     #Binary search on [sLen+1, mLen] for
   var hi = mLen                         #..least result s.t. strs.uniqueAbs.
   while hi > lo:
     let m = (lo + hi) div 2
-    hd = if hdFixed: hd else: (m - sLen) div 2
-    tl = if tlFixed: tl else: (m - hd - sLen)
-    if strs.uniqueAbs(sep, m, hd, tl): hi = m   #m => unique: bracket lower
-    else: lo = m + 1                            #not unique: bracket higher
+    hd2 = hd; tl2 = tl; parseAbbrevSetHdTl(m, sLen, hd2, tl2)
+    if strs.uniqueAbs(sep, m, hd2, tl2): hi = m   #m => unique: bracket lower
+    else: lo = m + 1                              #not unique: bracket higher
+  parseAbbrevSetHdTl(lo, sLen, hd, tl)  #fix up derived values
   result = lo                           #Now lo == hi
-  hd = if hdFixed: hd else: (lo - sLen) div 2   #fix up derived values
-  tl = if tlFixed: tl else: (lo - hd - sLen)
 
 proc smallestMaxSTUnique*[T](tab: Table[T, string]; sep: string;
                              hd, tl: var int): int =
