@@ -1,4 +1,4 @@
-import math, strutils, algorithm, sets, tables, parseutils, posix
+import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
 when not declared(initHashSet):
   proc initHashSet*[T](): HashSet[T] = initSet[T]()
   proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)
@@ -169,18 +169,36 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
 
 proc abbrev*(str, sep: string; mx, hd, tl: int): string {.inline.} =
+  ## Abbreviate str as str[0..<hd], sep, str[^tl..^1] only if str.len > mx.
   if mx > 0 and str.len > mx:
     str[0 ..< hd] & sep & str[^tl .. ^1]
   else:
     str
 
+proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
+  ## Parse comma-separated abbreviation spec ``s`` into ``mx``, ``sep``, ``hd``,
+  ## ``tl``.  Non-numeric ``mx`` =>-1. Non-numeric ``hd`` => ``(mx-sep.len)/2``.
+  ## Non-numeric ``tl`` => ``mx - hd - sep.len``.
+  if s.len == 0: return
+  let cols = s.split(',')   #Leading/trailing whitespace in sep is allowed.
+  if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
+  mx = parseInt(cols[0], -1)
+  sep = if cols.len > 3: cols[3]           else: "*"
+  let sLen = sep.printedLen
+  hd  = if cols.len > 1: parseInt(cols[1], -1) else: (mx - sLen) div 2
+  tl  = if cols.len > 2: parseInt(cols[2], -1) else: (mx - hd - sLen)
+
 proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
+  ## return true only if ``mx``, ``hd``, ``tl`` yields a set of unique
+  ## abbreviations for strs.
   var es = initHashSet[string]()
   for s in strs: es.incl abbrev(s, sep, mx, hd, tl)
   es.len == strs.len
 
 proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
                           hd, tl: var int): int =
+  ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
+  ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
   let sLen = sep.len
   var mLen = 0
   for s in strs: mLen = max(mLen, s.len)
