@@ -182,11 +182,16 @@ proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   if s.len == 0: return
   let cols = s.split(',')   #Leading/trailing whitespace in sep is allowed.
   if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
-  mx = parseInt(cols[0], -1)
-  sep = if cols.len > 3: cols[3]           else: "*"
+  if mx == 0: mx = parseInt(cols[0], -1)
+  sep = if cols.len > 3: cols[3] else: "*"
   let sLen = sep.printedLen
-  hd  = if cols.len > 1: parseInt(cols[1], -1) else: (mx - sLen) div 2
-  tl  = if cols.len > 2: parseInt(cols[2], -1) else: (mx - hd - sLen)
+  if cols.len > 1: hd = parseInt(cols[1], -1)
+  if cols.len > 2: tl = parseInt(cols[2], -1)
+  if hd == -1 and tl == -1:   #Both missing or auto: balanced tl-biased slice
+    hd = (mx - sLen) div 2
+    tl = (mx - sLen - hd)
+  elif hd == -1: hd = (mx - sLen - tl)  #Only missing one; set other remaining
+  elif tl == -1: tl = (mx - sLen - hd)
 
 proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
   ## return true only if ``mx``, ``hd``, ``tl`` yields a set of unique
