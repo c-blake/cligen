@@ -181,8 +181,7 @@ proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   ##Non-numeric|missing ``hd`` => ``mx-sep.len-tl`` Non-numeric or missing
   ##``tl`` => ``mx-sep.len-hd``.  Non-num|missing both => ``hd=(mx-sep.len)/2;
   ##tl=mx-sep.len-hd`` (which gives ``tl`` 1 more for odd ``mx-sep.len``).
-  if s.len == 0:                #Caller should re-invoke w/actual max
-    mx = -1; hd = -1; tl = -1; sep = "*"; return    #empty => auto,auto,auto,*
+  if s.len == 0: return
   let cols = s.split(',')       #Leading/trailing whitespace in sep is used.
   if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
   sep = if cols.len > 3: cols[3] else: "*"
