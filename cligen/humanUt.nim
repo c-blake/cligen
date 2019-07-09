@@ -193,12 +193,10 @@ proc parseAbbrev*(s: string; mx: var int; sep: var string; hd, tl: var int) =
   if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
   sep = if cols.len > 3: cols[3] else: "*"
   if mx == 0: mx = parseInt(cols[0], -1)
-  if mx == -1:                  #Caller should re-invoke w/actual max
-    hd = -1; tl = -1; return
-  let sLen = sep.printedLen
   hd = if cols.len > 1: parseInt(cols[1], -1) else: -1
   tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
-  parseAbbrevSetHdTl(mx, sep.len, hd, tl)
+  if mx == -1: return           #Caller should re-invoke w/actual max
+  parseAbbrevSetHdTl(mx, sep.printedLen, hd, tl)
 
 proc uniqueAbs*(strs: openArray[string]; sep: string; mx, hd, tl: int): bool =
   ## return true only if ``mx``, ``hd``, ``tl`` yields a set of unique
@@ -214,7 +212,7 @@ proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
   var mLen, hd2, tl2: int
   for s in strs: mLen = max(mLen, s.len)
-  let sLen = sep.len
+  let sLen = sep.printedLen
   if mLen <= sLen + 1: return sLen + 1
   var lo = sLen + 1                     #Binary search on [sLen+1, mLen] for
   var hi = mLen                         #..least result s.t. strs.uniqueAbs.
