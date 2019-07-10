@@ -223,18 +223,18 @@ proc smallestMaxSTUnique(strs: openArray[string]; mLen, sLen: int;
   result = (lo, hd, tl)                 #Now lo == hi
 
 proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
-                          hd, tl: var int, optimLevel=0): int =
+                          hd, tl: var int, optim=false): int =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.  If
-  ## ``fullOptim`` is true, ignore any specified ``hd,tl`` and find ``hd,tl``
-  ## that finds the minimum-minimum-maximum.
+  ## ``optim`` is true, ignore any specified ``hd,tl`` and find ``hd,tl`` that
+  ## finds the minimum-minimum-maximum.
   var mLen: int
   for s in strs: mLen = max(mLen, s.len)
   let sLen = sep.printedLen
   if mLen <= sLen + 1:
     parseAbbrevSetHdTl(sLen + 1, sLen, hd, tl)
     return sLen + 1
-  if optimLevel > 0:    #XXX Impl O2 putting sep in diff places in diff strings
+  if optim:
     var res: seq[tuple[m, h, t: int]]
     for h in 0..mLen:
       var h2 = h; var t2 = -1
@@ -247,8 +247,8 @@ proc smallestMaxSTUnique*(strs: openArray[string]; sep: string;
     result = strs.smallestMaxSTUnique(mLen, sLen, sep, hd, tl).m
 
 proc smallestMaxSTUnique*[T](tab: Table[T, string]; sep: string;
-                             hd, tl: var int, optimLevel=0): int =
+                             hd, tl: var int, optim=false): int =
   ## Find smallest max s.t. abbrev unique over ``values`` of ``tab``.
   var strs: seq[string]
   for v in tab.values: strs.add v
-  strs.smallestMaxSTUnique sep, hd, tl, optimLevel
+  strs.smallestMaxSTUnique sep, hd, tl, optim
