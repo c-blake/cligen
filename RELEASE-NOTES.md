@@ -3,7 +3,7 @@ RELEASE NOTES
 
 Version: 0.9.33
 ---------------
-  Add abbrev, parseAbbrev, uniqueAbs, smallestMaxSTUnique to humanUt
+  Add abbrev, parseAbbrev, uniqueAbs, smallestMaxSTUnique to new cligen/abbrev.
 
 Version: 0.9.32
 ---------------
