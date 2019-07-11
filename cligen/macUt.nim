@@ -41,12 +41,12 @@ proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
       result.add(ident($kid))
 
 proc srcPath*(n: NimNode): string =
-  let fileParen = lineinfo(n)
+  let fileParen = lineInfo(n)
   fileParen[0 .. (rfind(fileParen, "(") - 1)]
 
 proc srcBaseName*(n: NimNode, sfx=".nim"): NimNode =
   ## Get the base name of the source file being compiled as an nnkStrLit
-  let base = extractFileName(srcPath(n))
+  let base = extractFilename(srcPath(n))
   let nSfx = sfx.len + 1
   newStrLitNode(if base.len < nSfx: "??" else: base[0..^nSfx])
 
@@ -95,7 +95,7 @@ proc summaryOfModule*(sourceContents: string): string =
     let ln = line.strip()
     if mode == 0:       #scan for start of some substantive '##' doc comment
       if ln.len < 1: continue     # skip blanks and regular '#' comments
-      if ln.startswith("#") and not ln.startswith("##"): continue
+      if ln.startsWith("#") and not ln.startsWith("##"): continue
       if ln == "##": continue     # Also skip '^white##white$' emptie doc cmts
       mode = 1          #Something else.  Switch modes.
     if mode == 1:

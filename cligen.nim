@@ -446,7 +446,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             let sub = `aliasesId`.match(`pId`.val, "alias ref", msg)
             if msg.len > 0:
               if cast[pointer](`setByParseId`) != nil:
-                `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+                `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
               else:
                 stderr.write msg
                 let t = if msg.startsWith "Ambig": "Ambiguous" else: "Unknown"
@@ -489,7 +489,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let msg=("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[`pId`.key,
               ks.join("\n  ")]) & "\nRun with --help for more details.\n"
       if cast[pointer](`setByParseId`) != nil:
-        `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+        `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
       else:
         stderr.write(msg)
         raise newException(ParseError, "Unknown option")
@@ -507,7 +507,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let msg = ("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
                  mb & "Run with --help for full usage.\n")
       if cast[pointer](`setByParseId`) != nil:
-        `setByParseId`[].add((`piD`.key, `pId`.val, msg, clBadKey))
+        `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
       else:
         stderr.write(msg)
         raise newException(ParseError, "Unknown option")))
