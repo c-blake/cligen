@@ -53,6 +53,7 @@ proc update*(a: var Abbrev) {.inline.} =
 proc abbrev*(a: Abbrev, str: string): string {.inline.} =
   ## Abbreviate ``str`` as ``str[0..<hd], sep, str[^tl..^1]`` only if
   ## ``str.len > mx``.
+  if a.abbOf.len > 0: return a.abbOf[str]
   if a.m > 0 and str.len > a.m:
     str[0 ..< a.h] & a.sep & str[^a.t .. ^1]
   else:
@@ -93,6 +94,70 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
+proc ixDiff(a, b: string): int {.inline.} =
+  for j in 0 ..< min(a.len, b.len):
+    result = j
+    if a[j] != b[j]: return
+  result.inc
+
+template defUniqueEdges(xfm: auto) =
+  let n = x.len
+  if n == 0: return @[ ]
+  if n == 1: return @[ x[0][0..0] ]
+  result.setLen(n)
+  var a = newSeq[tuple[s: string, i: int]](n)
+  for i, s in x: a[i] = (s.xfm, i)
+  a.sort
+  var j = ixDiff(a[0].s, a[1].s)
+  result[a[0].i] = a[0].s[0..min(j, a[0].s.len-1)].xfm
+  var last = a[1].s[0..min(j, a[0].s.len-1)]
+  for i in 1 ..< n-1:
+    j = ixDiff(a[i].s, a[i+1].s)
+    let next = a[i].s[0..min(j, a[i].s.len-1)]
+    result[a[i].i] = if last.len > next.len: last.xfm else: next.xfm
+    last = a[i+1].s[0..min(j, a[i+1].s.len-1)]
+  j = ixDiff(a[n-2].s, a[n-1].s)
+  result[a[n-1].i] = a[n-1].s[0..min(j, a[n-1].s.len-1)].xfm
+
+proc uniquePrefixes*(x: openArray[string]): seq[string] =
+  ## Return unique prefixes in ``x`` assuming non-empty-string&unique ``x[i]``.
+  proc xfm(s: string): string {.inline.} = s
+  defUniqueEdges(xfm)
+
+proc uniqueSuffixes*(x: openArray[string]): seq[string] =
+  ## Return unique suffixes in ``x`` assuming non-empty-string&unique ``x[i]``.
+  proc xfm(s: string): string = result = s; result.reverse
+  defUniqueEdges(xfm)
+
+proc width(strs: openArray[string]): float =
+  if strs.len == 0: return 0
+  var total = 0.0         #XXX placeholder.  It should become a "score" where
+  for s in strs:          #high serial auto-correlation down-weights things
+    total += s.len.float  #to get the most table cols (or maybe even run layout
+  total / strs.len.float  #on the whole set and call total width score).
+
+proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
+  ## Return narrowest unique abbrevation set for ``strs`` given some number of
+  ## wildcards (``sep``, probably ``*``), where both location and number of
+  ## wildcards can vary from string to string.
+  result.setLen strs.len        #First do a few special modes that are simpler
+  if nWild == -2:               #unique prefixes
+    for i, s in strs.uniquePrefixes: result[i] = s & sep
+  elif nWild == -3:             #unique suffixes
+    for i, s in strs.uniqueSuffixes: result[i] = sep & s
+  elif nWild == -4:             #whichever is globally narrower
+    let pfx = strs.uniquePrefixes
+    let sfx = strs.uniqueSuffixes
+    if pfx.width < sfx.width:
+      for i, s in strs.uniquePrefixes: result[i] = s & sep
+    else:
+      for i, s in strs.uniqueSuffixes: result[i] = sep & s
+  elif nWild == -5:             #whichever is locally narrower
+    let pfx = strs.uniquePrefixes   #XXX This presently sacrifices uniqueness
+    let sfx = strs.uniqueSuffixes   #guarantees.  We may be able to restore that
+    for i in 0 ..< strs.len:        #via quick post-processing, though.
+      result[i] = if pfx[i].len < sfx[i].len: pfx[i] & sep else: sep & sfx[i]
+
 proc realize*(a: var Abbrev, strs: openArray[string]) =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
@@ -102,7 +167,10 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
   if mLen <= a.sLen + 1:
     a.mx = a.sLen + 1; a.update
     return
-  if a.optim:
+  if a.mx < -1:
+    for i, abb in uniqueAbbrevs(strs, a.mx, a.sep):
+      a.abbOf[strs[i]] = abb
+  elif a.optim:
     var res: seq[tuple[m, h, t: int]]
     for h in 0..mLen:
       var a2 = a; a2.hd = h; a2.tl = -1
@@ -121,11 +189,6 @@ proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
   for v in tab.values: strs.add v
   a.realize strs
 
-proc uniqueAbbrev*(strs: openArray[string]; sep: string; nWild=1): seq[string] =
-  ## Return narrowest unique abbrevation set for ``strs`` given some number of
-  ## wildcards (``sep``, probably ``*``), where both location and number of
-  ## wildcards can vary from string to string.
-  discard
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
     var a = parseAbbrev(abbr)
@@ -134,7 +197,7 @@ when isMainModule:
       var sq: seq[string]
       for s in strs: sq.add a.abbrev s
       sq.sort(proc(a, b: string): int = cmp(a.len, b.len))
-      for s in sq: echo a.abbrev s
+      for s in sq: echo s
     else:
       for s in strs: echo a.abbrev s
   import cligen; dispatch abb
