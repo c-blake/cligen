@@ -1,34 +1,31 @@
-##This module is about construction of shell-`*` wildcard abbreviations for a
-##set of strings.  The simplest variant is when the user gives us a specific
-##maximum string length and at least one component of the head,tail slice.  In
+##This module is about construction of shell-`*` wildcard-like abbreviations for
+##a set of strings.  The simplest variant is when the user gives us a specific
+##maximum string length and at least one component of the head,tail slices.  In
 ##that case, `abbrev` just wraps Nim string slicing and the set of abbreviations
 ##may or may not uniquely cover the input string set.
 ##
 ##When the user leaves certain aspects automatic/undefined, various algorithms
-##can be deployed with various constraints to find optimized answers.  The most
-##important constraint in my mind is uniqueness.  Can I select a string, paste
+##can be deployed to find optimized answers within various constraints.  The
+##most important constraint is likely uniqueness.  Can I select a string, paste
 ##it into a shell REPL, and expand it to a single item when CWD=directory of the
-##file name.  The same concept still applies to non-filename strings, but there
-##is no help from a shell.  Eg., the 10-40 usernames on a lightly configured
-##single-user Unix system may roughly be "in a directory in your brain".
+##file name?  The same concept still applies to non-filename strings, but there
+##is less help from a shell to expand them.  Eg., 10-40 usernames on a lightly
+##configured single-user Unix system uses "a directory in your brain".
 ##
-##The simplest automatic setting is just a fixed wildcard spot protocol with
-##binary search quickly finding a smallest max limit which makes abbreviations
-##unique.  We can still let the user specify a head or tail in such situations.
-##Visually this results in columns of abbreviations where the wildcard `*`s line
-##up vertically which is quite easy to read, at least for me.  We can also not
-##let the user fix head,tail, but find the location that minimizes the width of
-##the string set.  This code does that by just trying all possible locations.
-##This starts to be slow for a computer but remains fast for a human (eg. 400 ms
-##on a directory of 12,000 entries).
+##The simplest automatic setting is just a fixed wildcard spot protocol such as
+##a specific head or mid-point with binary search quickly finding a smallest max
+##limit which makes abbreviations unique.  Visually this results in columns of
+##abbreviations where the wildcard `*`s line up vertically which seems easier to
+##read.  We can also ignore user head,tail specs, instead finding the location
+##that minimizes the width of the string set.  This code does that by just
+##trying all possible locations.  This starts to be slow for a computer but
+##remains fast for a human (eg. 400 ms on a directory of 12,000 entries).
 ##
 ##The next level of optimization/data compression is to allow the location of
-##the wildcard to vary from string to string.  After that, allowing >1 '*' is
-##the only way to continue to shorten strings.  Each optimization level obscures
-##more of the strings in output, and probably gets slower to compute.  At higher
-##varying wildcard location/number levels, the API must be to return the entire
-##set of abbreviations since they share no alignments.  Efficient algorithms for
-##this case are a work in progress.
+##the wildcard to vary from string to string.  After that, allowing >1 '*' can
+##continue to shorten strings.  Each optimization level removes more context
+##making strings harder to read and probably gets slower to compute.  Efficient
+##algorithms for this case are a work in progress.
 
 import strutils, algorithm, sets, tables, ./humanUt, ./textUt
 
