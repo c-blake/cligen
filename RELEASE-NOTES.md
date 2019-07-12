@@ -1,8 +1,14 @@
 RELEASE NOTES
 =============
 
-Version: 0.9.33
+Version: 0.9.35
 ---------------
+  Simplify usage of abbrev with Abbrev type.  Generalize to have locally varying
+  abbreviations (just unique prefix, suffix, or globally/locally shortest of
+  either right now).
+
+Version: 0.9.33,34
+------------------
   Add abbrev, parseAbbrev, uniqueAbs, smallestMaxSTUnique to new cligen/abbrev.
 
 Version: 0.9.32
