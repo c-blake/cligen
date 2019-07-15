@@ -7,10 +7,11 @@
 ##When the user leaves certain aspects automatic/undefined, various algorithms
 ##can be deployed to find optimized answers within various constraints.  The
 ##most important constraint is likely uniqueness.  Can I select a string, paste
-##it into a shell REPL, and expand it to a single item when CWD=directory of the
-##file name?  The same concept still applies to non-filename strings, but there
-##is less help from a shell to expand them.  Eg., 10-40 usernames on a lightly
-##configured single-user Unix system uses "a directory in your brain".
+##it into a shell REPL, and expect it to expand to exactly 1 item?  The same
+##concept applies to non-filename strings, but there is less help from a shell
+##to expand them.  Eg., 10-40 user names on a lightly configured single-user
+##Unix system uses "a directory in your brain" (or you can write a small
+##expander script to spot-check anything non-obvious in context).
 ##
 ##The simplest automatic setting is just a fixed wildcard spot protocol such as
 ##a specific head or mid-point with binary search quickly finding a smallest max
@@ -200,4 +201,4 @@ when isMainModule:
       for s in sq: echo s
     else:
       for s in strs: echo a.abbrev s
-  import cligen; dispatch abb
+  import ../cligen; dispatch abb
