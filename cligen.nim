@@ -870,7 +870,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     prefix = procBrackets[0][0].strVal
   let subCmdsId = ident(prefix & "SubCmds")
   let subMchsId = ident(prefix & "SubMchs")
-  let SubsDispId = ident(prefix & "Subs")
+  let subsDispId = ident(prefix & "Subs")
   result = newStmtList()
   result.add(quote do: {.push warning[GCUnsafe]: off.})
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
@@ -891,11 +891,11 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      elif ps.len > 0 and ps0.len == 0:
        ambigSubcommand(`subMchsId`, ps[0])
      elif ps.len == 2 and ps0 == "help":
-       if ps1 in `subMchsId`: cligenQuit(`SubsDispId`(@[ ps1, "--help" ]))
+       if ps1 in `subMchsId`: cligenQuit(`subsDispId`(@[ ps1, "--help" ]))
        elif ps1.len == 0: ambigSubcommand(`subMchsId`, ps[1])
        else: unknownSubcommand(ps[1], `subCmdsId`)
      else:
-       cligenQuit(`SubsDispId`())
+       cligenQuit(`subsDispId`())
      {.pop.}  #ProveField
      {.pop.}  #GlobalVar
     {.pop.}) #GCUnsafe
