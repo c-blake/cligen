@@ -307,3 +307,57 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
   for i, s in revd:
     result[i] = t.uniquePfxPat(s)
     result[i].reverse
+
+proc matchR[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false)
+proc matchStar[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false)=
+  var n = n
+  if moved:
+    if pos == pat.len - 1 and n.ch != NUL:
+      echo "matchS1: ", key
+    if n.kid[1] == nil: return
+    n = n.kid[1]
+  matchR(n, pat, key, pos+1, false)
+  key.add n.ch
+  if pos == pat.len - 1 and n.ch != NUL:
+    echo "matchS2: ", key
+  matchStar(n, pat, key, pos, true)
+  matchR(n, pat, key, pos+1, true)
+  key.setLen(key.len - 1)
+  if n.kid[0] != nil: matchStar(n.kid[0], pat, key, pos, false)
+  if n.kid[2] != nil: matchStar(n.kid[2], pat, key, pos, false)
+
+proc matchR[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false) =
+  var n = n
+  var key = key
+  var pos = pos
+  var moved = moved
+  while true:
+    if pos >= pat.len: return
+    let c = pat[pos]
+    if c == '*':
+      matchStar(n, pat, key, pos, moved)
+      return
+    if moved:
+      if n.kid[1] == nil: return
+      n = n.kid[1]
+      moved = false
+    while true:
+      if c < n.ch:
+        if n.kid[0] == nil: return
+        n = n.kid[0]
+      elif c == n.ch:
+        key.add n.ch
+        if pos == pat.len - 1:
+          if n.ch != NUL: echo "matchR: ", key
+          return
+        else:
+          pos.inc
+          moved = true
+          break
+      else: # c > n.ch
+        if n.kid[2] == nil: return
+        n = n.kid[2]
+
+proc match*[T](t: Tern[T], pat: string) =
+  var key = ""
+  matchR(t.root, pat, key)
