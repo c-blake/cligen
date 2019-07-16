@@ -28,7 +28,7 @@
 ##making strings harder to read and probably gets slower to compute.  Efficient
 ##algorithms for this case are a work in progress.
 
-import strutils, algorithm, sets, tables, ./humanUt, ./textUt
+import strutils, algorithm, sets, tables, ./tern, ./humanUt, ./textUt
 
 type Abbrev* = object
   sep: string
@@ -95,41 +95,6 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-proc ixDiff(a, b: string): int {.inline.} =
-  for j in 0 ..< min(a.len, b.len):
-    result = j
-    if a[j] != b[j]: return
-  result.inc
-
-template defUniqueEdges(xfm: auto) =
-  let n = x.len
-  if n == 0: return @[ ]
-  if n == 1: return @[ x[0][0..0] ]
-  result.setLen(n)
-  var a = newSeq[tuple[s: string, i: int]](n)
-  for i, s in x: a[i] = (s.xfm, i)
-  a.sort
-  var j = ixDiff(a[0].s, a[1].s)
-  result[a[0].i] = a[0].s[0..min(j, a[0].s.len-1)].xfm
-  var last = a[1].s[0..min(j, a[0].s.len-1)]
-  for i in 1 ..< n-1:
-    j = ixDiff(a[i].s, a[i+1].s)
-    let next = a[i].s[0..min(j, a[i].s.len-1)]
-    result[a[i].i] = if last.len > next.len: last.xfm else: next.xfm
-    last = a[i+1].s[0..min(j, a[i+1].s.len-1)]
-  j = ixDiff(a[n-2].s, a[n-1].s)
-  result[a[n-1].i] = a[n-1].s[0..min(j, a[n-1].s.len-1)].xfm
-
-proc uniquePrefixes*(x: openArray[string]): seq[string] =
-  ## Return unique prefixes in ``x`` assuming non-empty-string&unique ``x[i]``.
-  proc xfm(s: string): string {.inline.} = s
-  defUniqueEdges(xfm)
-
-proc uniqueSuffixes*(x: openArray[string]): seq[string] =
-  ## Return unique suffixes in ``x`` assuming non-empty-string&unique ``x[i]``.
-  proc xfm(s: string): string = result = s; result.reverse
-  defUniqueEdges(xfm)
-
 proc width(strs: openArray[string]): float =
   if strs.len == 0: return 0
   var total = 0.0         #XXX placeholder.  It should become a "score" where
@@ -141,23 +106,22 @@ proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
-  result.setLen strs.len        #First do a few special modes that are simpler
-  if nWild == -2:               #unique prefixes
-    for i, s in strs.uniquePrefixes: result[i] = s & sep
-  elif nWild == -3:             #unique suffixes
-    for i, s in strs.uniqueSuffixes: result[i] = sep & s
-  elif nWild == -4:             #whichever is globally narrower
-    let pfx = strs.uniquePrefixes
-    let sfx = strs.uniqueSuffixes
-    if pfx.width < sfx.width:
-      for i, s in strs.uniquePrefixes: result[i] = s & sep
-    else:
-      for i, s in strs.uniqueSuffixes: result[i] = sep & s
-  elif nWild == -5:             #whichever is locally narrower
-    let pfx = strs.uniquePrefixes   #XXX This presently sacrifices uniqueness
-    let sfx = strs.uniqueSuffixes   #guarantees.  We may be able to restore that
-    for i in 0 ..< strs.len:        #via quick post-processing, though.
-      result[i] = if pfx[i].len < sfx[i].len: pfx[i] & sep else: sep & sfx[i]
+  if   nWild == -2: result = strs.uniquePfxPats(sep)  #Simplest patterns
+  elif nWild == -3: result = strs.uniqueSfxPats(sep)
+  elif nWild == -4:                     #whichever is globally narrower
+    let pfx = strs.uniquePfxPats(sep)
+    let sfx = strs.uniqueSfxPats(sep)
+    result = if pfx.width < sfx.width: pfx else: sfx
+  elif nWild == -5:                     #whichever is locally narrower
+    result.setLen strs.len
+    let pfx = strs.uniquePfxPats(sep)   #XXX May sacrifice uniqueness guarantee,
+    let sfx = strs.uniqueSfxPats(sep)   #..but I cannot find counter example.
+    for i in 0 ..< strs.len:
+      result[i] = if pfx[i].len < sfx[i].len: pfx[i] else: sfx[i]
+# elif nWild == -6:                     #best locally varying 1-* pattern
+# elif nWild == -7:                     #best locally varying 2-* pattern
+# elif nWild == -8:                     #best locally varying 3-* pattern
+# elif nWild == -9:                     #best locally varying 4-* pattern
 
 proc realize*(a: var Abbrev, strs: openArray[string]) =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely

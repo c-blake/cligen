@@ -7,6 +7,11 @@ Version: 0.9.35
   abbreviations (just unique prefix, suffix, or globally/locally shortest of
   either right now).
 
+  Add Ternary Search Tree cligen/tern.nim and use in cligen/abbrev.nim, fixing
+  bug in abbrevation modes -2..-5 in the presence of non-unique prefix strings.
+  Name the routines [PS]fxPat(s) to be clear it's a more well-defined answer
+  than just unique prefix strings.
+
 Version: 0.9.33,34
 ------------------
   Add abbrev, parseAbbrev, uniqueAbs, smallestMaxSTUnique to new cligen/abbrev.
