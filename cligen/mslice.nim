@@ -72,11 +72,11 @@ proc hash*(ms: MSlice): Hash {.inline.} =
   result = hashData(ms.mem, ms.len)
 
 iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
-  ## Iterate over [optionally ``eat`` suffixed] ``sep``-delimited slices in
+  ## Iterate over [optionally ``eat``-suffixed] ``sep``-delimited slices in
   ## ``mslc``.  Delimiters are NOT part of returned slices.  Pass eat='\\0' to
   ## be strictly `sep`-delimited.  A final, unterminated record is returned
   ## like any other.  You can swap ``sep`` & ``eat`` to ignore any optional
-  ## prefix except '\\0'.  This is similar to "lines parsing".  E.g.:
+  ## prefix except '\\0'.  This is similar to "lines parsing".  E.g. usage:
   ##
   ## .. code-block:: nim
   ##   import mfile; var count = 0  #Count initial '#' comment lines
