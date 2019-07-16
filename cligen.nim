@@ -570,6 +570,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `initVars`
       `aliases`
       var `keyCountId` = initCountTable[string]()
+      `keyCountId`.inc ""; `keyCountId`.inc "", -1  #silence decl-not-used
       proc parser(args=`cmdLineId`) =
         var `posNoId` = 0
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
