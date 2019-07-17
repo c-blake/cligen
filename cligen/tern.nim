@@ -7,10 +7,9 @@
 ##``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
 ##which will be trapped by the compiler if you use kwargs).  ``CritBitTree``
 ##itself is API-compatible with the union of both ``HashSet`` and ``Table``.
-import algorithm, sets # reverse
-proc postInc(i: var int): int {.inline.} = result = i; i.inc
+import algorithm, ./sysUt # reverse, postInc
 
-const NUL = '\0'
+const NUL* = '\0'
 type
   NodeOb*[T] {.acyclic.} = object
     ch*: char
@@ -290,67 +289,3 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
   for i, s in revd:
     result[i] = t.uniquePfxPat(s)
     result[i].reverse
-
-proc matchR[T](a: var HashSet[string], n: Node[T]; pat: string,
-               key: var string, limit=2, anyN='*', i=0, moved=false)
-proc matchStar[T](a: var HashSet[string], n: Node[T]; pat: string,
-                  key: var string, limit=2, anyN='*', i=0, moved=false) =
-  var n = n
-  if moved:
-    if i == pat.len and n.ch != NUL:
-      a.incl key
-      if a.len >= limit: raise newException(KeyError, "done")
-    if n.kid[1] == nil: return
-    n = n.kid[1]
-  a.matchR(n, pat, key, limit, anyN, i+1, false)
-  key.add n.ch
-  if i == pat.len - 1 and n.ch != NUL:
-    a.incl key
-    if a.len >= limit: raise newException(KeyError, "done")
-  a.matchStar(n, pat, key, limit, anyN, i, true)
-  a.matchR(n, pat, key, limit, anyN, i+1, true)
-  key.setLen(key.len - 1)
-  if n.kid[0] != nil: a.matchStar(n.kid[0], pat, key, limit, anyN, i, false)
-  if n.kid[2] != nil: a.matchStar(n.kid[2], pat, key, limit, anyN, i, false)
-
-proc matchR[T](a: var HashSet[string], n: Node[T]; pat: string,
-               key: var string, limit=2, anyN='*', i=0, moved=false) =
-  var n = n
-  var key = key
-  var i = i
-  var moved = moved
-  while true:
-    if i >= pat.len: return
-    let c = pat[i]
-    if c == anyN:
-      a.matchStar(n, pat, key, limit, anyN, i, moved)
-      return
-    if moved:
-      if n.kid[1] == nil: return
-      n = n.kid[1]
-      moved = false
-    while true:
-      if c < n.ch:
-        if n.kid[0] == nil: return
-        n = n.kid[0]
-      elif c == n.ch:
-        key.add n.ch
-        if i == pat.len - 1:
-          if n.ch != NUL:
-            a.incl key
-            if a.len >= limit: raise newException(KeyError, "done")
-          return
-        else:
-          i.inc
-          moved = true
-          break
-      else: # c > n.ch
-        if n.kid[2] == nil: return
-        n = n.kid[2]
-
-proc match*[T](t: Tern[T], pat: string, limit=2, anyN='*'): seq[string] =
-  var key = ""
-  var answer = initHashSet[string]()
-  try: answer.matchR(t.root, pat, key, limit)
-  except KeyError: discard
-  for s in answer.items: result.add s
