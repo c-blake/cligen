@@ -308,34 +308,34 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
     result[i] = t.uniquePfxPat(s)
     result[i].reverse
 
-proc matchR[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false)
-proc matchStar[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false)=
+proc matchR[T](n: Node[T]; pat: string, key: var string, i=0, moved=false)
+proc matchStar[T](n: Node[T]; pat: string, key: var string, i=0, moved=false) =
   var n = n
   if moved:
-    if pos == pat.len - 1 and n.ch != NUL:
+    if i == pat.len and n.ch != NUL:
       echo "matchS1: ", key
     if n.kid[1] == nil: return
     n = n.kid[1]
-  matchR(n, pat, key, pos+1, false)
+  matchR(n, pat, key, i+1, false)
   key.add n.ch
-  if pos == pat.len - 1 and n.ch != NUL:
+  if i == pat.len - 1 and n.ch != NUL:
     echo "matchS2: ", key
-  matchStar(n, pat, key, pos, true)
-  matchR(n, pat, key, pos+1, true)
+  matchStar(n, pat, key, i, true)
+  matchR(n, pat, key, i+1, true)
   key.setLen(key.len - 1)
-  if n.kid[0] != nil: matchStar(n.kid[0], pat, key, pos, false)
-  if n.kid[2] != nil: matchStar(n.kid[2], pat, key, pos, false)
+  if n.kid[0] != nil: matchStar(n.kid[0], pat, key, i, false)
+  if n.kid[2] != nil: matchStar(n.kid[2], pat, key, i, false)
 
-proc matchR[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false) =
+proc matchR[T](n: Node[T]; pat: string, key: var string, i=0, moved=false) =
   var n = n
   var key = key
-  var pos = pos
+  var i = i
   var moved = moved
   while true:
-    if pos >= pat.len: return
-    let c = pat[pos]
+    if i >= pat.len: return
+    let c = pat[i]
     if c == '*':
-      matchStar(n, pat, key, pos, moved)
+      matchStar(n, pat, key, i, moved)
       return
     if moved:
       if n.kid[1] == nil: return
@@ -347,11 +347,11 @@ proc matchR[T](n: Node[T]; pat: string, key: var string, pos=0, moved=false) =
         n = n.kid[0]
       elif c == n.ch:
         key.add n.ch
-        if pos == pat.len - 1:
+        if i == pat.len - 1:
           if n.ch != NUL: echo "matchR: ", key
           return
         else:
-          pos.inc
+          i.inc
           moved = true
           break
       else: # c > n.ch
