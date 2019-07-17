@@ -78,23 +78,6 @@ proc rawInsert*[T](t: var Tern[T], key: string): Node[T] =
     depth.inc
 #XXX Implement excl/delete/remove someday
 
-proc partialMatch[T](p: Node[T], s: string, i: int, wild='?'): int =
-  if p == nil: return
-  let c = if i < s.len: s[i] else: NUL
-  let d = cmp(c, p.ch)
-  if c == wild or d < 0:
-    result += partialMatch(p.kid[0], s, i, wild)
-  if c == wild or d == 0:
-    if p.ch != NUL and i < s.len:
-      result += partialMatch(p.kid[1], s, i+1, wild)
-  if i == s.len and p.ch == NUL:
-    result += 1
-  if c == wild or d > 0:
-    result += partialMatch(p.kid[2], s, i, wild)
-
-proc partialMatch*[T](t: Tern[T], s: string, wild='?'): int =
-  t.root.partialMatch(s, 0, wild)
-
 #[from strutils import nil
 proc print*[T](p: Node[T], depth=0) = #2,1,0 gives std emoji-orientation
   if p == nil: return                 #..i.e. ":-)" head-tilt not "(-:".
