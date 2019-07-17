@@ -322,7 +322,7 @@ proc matchR[T](a: var HashSet[string], n: Node[T]; pat: string,
   while true:
     if i >= pat.len: return
     let c = pat[i]
-    if c == '*':
+    if c == anyN:
       a.matchStar(n, pat, key, limit, anyN, i, moved)
       return
     if moved:
