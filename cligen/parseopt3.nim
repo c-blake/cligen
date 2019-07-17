@@ -166,7 +166,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## never interpreted as options.
   result.cmd = cmdline
   result.shortNoVal = shortNoVal
-  result.longNoVal = longNoVal
+  for s in longNoVal:                         #XXX Take a `normalizer` param
+    result.longNoVal.add optionNormalize(s)   #..instead of hard-coding?
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
@@ -242,7 +243,7 @@ proc doLong(p: var OptParser) =
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past "--"
-  if p.key in p.longNoVal:
+  if optionNormalize(p.key) in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
     p.message = "Expecting option key-val separator :|= after `" & p.key & "`"
