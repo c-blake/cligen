@@ -93,10 +93,10 @@ proc echoKeys*[T](p: Node[T], pfx="", key="") =
 iterator leaves[T](r: Node[T], depth:int, pfx=""): tuple[k:string, n:Node[T]] =
   type                                               #Nim iterators should grow
     Which = enum st0, st1, st2, stR                  #..recursion capability so
-    State = tuple[k: string, st: Which, n: Node[T]]  #..this headache can be as
+    State = tuple[st: Which, k: string, n: Node[T]]  #..this headache can be as
   if r != nil:                                       #..easy as echoKeys above.
     var stack = newSeqOfCap[State](depth)
-    stack.add (k: pfx, st: st0, n: r)
+    stack.add (st: st0, k: pfx, n: r)
     while stack.len > 0:
       let state = stack[^1].addr
       if state.n == nil: break
@@ -104,17 +104,17 @@ iterator leaves[T](r: Node[T], depth:int, pfx=""): tuple[k:string, n:Node[T]] =
       of st0:
         state.st = st1
         if state.n.kid[0] != nil:
-          stack.add (k: state.k, st: st0, n: state.n.kid[0])
+          stack.add (st: st0, k: state.k, n: state.n.kid[0])
       of st1:
         state.st = st2
         if state.n.ch == NUL:
           yield (k: state.k, n: state.n)
         elif state.n.kid[1] != nil:
-          stack.add (k: state.k & $state.n.ch, st: st0, n: state.n.kid[1])
+          stack.add (st: st0, k: state.k & $state.n.ch, n: state.n.kid[1])
       of st2:
         state.st = stR
         if state.n.kid[2] != nil:
-          stack.add (k: state.k, st: st0, n: state.n.kid[2])
+          stack.add (st: st0, k: state.k, n: state.n.kid[2])
       of stR: discard stack.pop
 
 # From here until `$` is really the same for many kinds of search tree.
