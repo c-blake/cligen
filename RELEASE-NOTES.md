@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.38
+---------------
+    Fix a little bug blocking abbrev(mx>0).
+
 Version: 0.9.37
 ---------------
   Add cligen/trie.nim.  Use match routine in abbrev.nim to change compression
