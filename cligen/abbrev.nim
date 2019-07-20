@@ -28,7 +28,7 @@
 ##making strings harder to read and probably gets slower to compute.  Efficient
 ##algorithms for this case are a work in progress.
 
-import strutils, algorithm, sets, tables, ./tern, ./humanUt, ./textUt
+import strutils, algorithm, sets, tables, ./tern, ./humanUt, ./textUt, ./trie
 
 type Abbrev* = object
   sep: string
@@ -95,33 +95,52 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-proc width(strs: openArray[string]): float =
-  if strs.len == 0: return 0
-  var total = 0.0         #XXX placeholder.  It should become a "score" where
-  for s in strs:          #high serial auto-correlation down-weights things
-    total += s.len.float  #to get the most table cols (or maybe even run layout
-  total / strs.len.float  #on the whole set and call total width score).
-
 proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
-  if   nWild == -2: result = strs.uniquePfxPats(sep)  #Simplest patterns
-  elif nWild == -3: result = strs.uniqueSfxPats(sep)
-  elif nWild == -4:                     #whichever is globally narrower
-    let pfx = strs.uniquePfxPats(sep)
-    let sfx = strs.uniqueSfxPats(sep)
-    result = if pfx.width < sfx.width: pfx else: sfx
-  elif nWild == -5:                     #whichever is locally narrower
-    result.setLen strs.len
-    let pfx = strs.uniquePfxPats(sep)   #XXX May sacrifice uniqueness guarantee,
-    let sfx = strs.uniqueSfxPats(sep)   #..but I cannot find counter example.
-    for i in 0 ..< strs.len:
-      result[i] = if pfx[i].len < sfx[i].len: pfx[i] else: sfx[i]
-# elif nWild == -6:                     #best locally varying 1-* pattern
-# elif nWild == -7:                     #best locally varying 2-* pattern
-# elif nWild == -8:                     #best locally varying 3-* pattern
-# elif nWild == -9:                     #best locally varying 4-* pattern
+  var t: Trie[void]                       #A trie with all strings (<= -4)
+  if   nWild == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
+  elif nWild == -3: result = strs.uniqueSfxPats(sep); return
+  let sLen = sep.len                      #Code below may assume "*" in spots
+  if strs.len == 1:                       #best locally varying n-* pattern = *
+    return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
+  for s in strs: t.incl s                 #Populate trie for <= -4 levels
+  result.setLen strs.len
+  let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
+  let sfx = strs.uniqueSfxPats(sep)
+  var avgSfx = 0; var avgPfx = 0
+  for i in 0 ..< strs.len:
+    avgSfx.inc sfx[i].len; avgPfx.inc pfx[i].len
+    result[i] = if sfx[i].len < pfx[i].len: sfx[i] else: pfx[i]
+  for r in result:
+    if t.match(r, 2).len > 1:             #Collision=>revert to narrower on avg
+      result = if avgSfx < avgPfx: sfx else: pfx
+      break
+  if nWild == -4: return                  #Only best pfx|sfx requested; Done
+  for i, s in strs:                       #Try to improve with shortest any-spot
+    if result[i].len - sLen <= 1: continue    #Too short to abbreviate more
+    block outermost:                          #Simple but slow algo: Start
+      for tLen in sLen + 1 ..< result[i].len: #..from shortest possible pats,
+        for nSfx in 0 ..< tLen - sLen:        #..try all splits, stop when
+          let nPfx = tLen - sLen - nSfx       #..first unique is found.
+          let pat = s[0 ..< nPfx] & "*" & s[^nSfx .. ^1]
+          if t.match(pat, 2).len == 1 and pat.len < result[i].len:
+            result[i] = pat; break outermost
+  if nWild == -5: return                  #Only best 1-* requested; Done
+  for i, s in strs:                       #Try to improve with a second *
+    if result[i].len - 2*sLen <= 1: continue  #Too short for more *s to help
+    block outermost:                          #Like above but pfx*middle*sfx
+      for tLen in 2*sLen+1 ..< result[i].len: #NOTE: "" middle is unhelpful
+        for nSfx in 0 ..< tLen - 2*sLen:
+          let sfx = s[^nSfx .. ^1]
+          for nPfx in 0 ..< tLen - nSfx - 2*sLen: #nPfx&nSfx lens fix their data
+            let pfx = s[0 ..< nPfx]               #..but mid can be ANY SUBSTR.
+            for nMid in 1 .. tLen - 2*sLen - nSfx - nPfx:
+              for off in 0 .. s.len - nPfx - nSfx - nMid:
+                let pat = pfx & "*" & s[nPfx+off ..< nPfx+off+nMid] & "*" & sfx
+                if t.match(pat, 2).len == 1 and pat.len < result[i].len:
+                  result[i] = pat; break outermost
 
 proc realize*(a: var Abbrev, strs: openArray[string]) =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
