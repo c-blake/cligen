@@ -130,7 +130,7 @@ type
     off*: int                 ## current offset in cmd[pos] for short key block
     optsDone*: bool           ## "--" has been seen
     shortNoVal*: set[char]    ## 1-letter options not requiring optarg
-    longNoVal*: seq[string]   ## long options not requiring optarg
+    longNoVal*: CritBitTree[string] ## long options not requiring optarg
     stopWords*: CritBitTree[string] ## special literal parameters acting like "--"
     requireSep*: bool         ## require separator between option key & val
     sepChars*: set[char]      ## all the chars that can be valid separators
@@ -166,8 +166,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## never interpreted as options.
   result.cmd = cmdline
   result.shortNoVal = shortNoVal
-  for s in longNoVal:                         #XXX Take a `normalizer` param
-    result.longNoVal.add optionNormalize(s)   #..instead of hard-coding?
+  for s in longNoVal:   #Take normalizer param vs. hard-coding optionNormalize?
+    if s.len > 0: result.longNoVal.incl(optionNormalize(s), s)
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
@@ -243,7 +243,8 @@ proc doLong(p: var OptParser) =
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past "--"
-  if optionNormalize(p.key) in p.longNoVal:
+  let k = p.longNoVal.lengthen(optionNormalize(p.key))
+  if k in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
     p.message = "Expecting option key-val separator :|= after `" & p.key & "`"
