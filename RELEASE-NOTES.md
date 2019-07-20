@@ -1,22 +1,28 @@
 RELEASE NOTES
 =============
 
-Version: 0.9.35
+Version: 0.9.37
 ---------------
-  Simplify usage of abbrev with Abbrev type.  Generalize to have locally varying
-  abbreviations (just unique prefix, suffix, or globally/locally shortest of
-  either right now).
 
-  Add Ternary Search Tree and trie in (tern|trie).nim.  Use in abbrev.nim,
-  fixing bug in abbrevation modes -2,-3 in the presence of non-unique prefix
-  strings.  Name the routines [PS]fx**Pat**(s) to be clear it's a more well-
-  defined answer than just unique prefix strings.  Use trie match routine to
-  change compression levels. Now the full map is:
+  Add cligen/trie.nim.  Use match routine in abbrev.nim to change compression
+  levels. Now the full map is:
     -2 shortest prefix
     -3 shortest suffix
     -4 shortest of either locally (or, upon any collision, shortest global avg)
     -5 shortest any-spot-1-star location
     -6 shortest 2-star pattern if shorter than 1-star
+
+Version: 0.9.35
+---------------
+
+  Simplify usage of abbrev with Abbrev type. Generalize to have locally varying
+  abbreviations (just unique prefix, suffix, or globally/locally shortest of
+  either right now).
+
+  Add Ternary Search Tree cligen/tern.nim and use in cligen/abbrev.nim, fixing
+  bug in abbrevation modes -2..-5 in the presence of non-unique prefix strings.
+  Name the routines [PS]fx**Pat**(s) to be clear it's a more well-defined answer
+  than just unique prefix strings.
 
 Version: 0.9.33,34
 ------------------
