@@ -66,7 +66,7 @@ proc parseAbbrev*(s: string): Abbrev =
   ##call ``update``.  Non-numeric|missing ``hd`` => ``mx-sep.len-tl``
   ##Non-numeric or missing ``tl`` => ``mx-sep.len-hd``.  Non-num|missing both =>
   ##``hd=(mx-sep.len)/2; tl=mx-sep.len-hd`` (which gives ``tl`` 1 more for odd
-  ##``mx-sep.len``).  ``mx <=0`` => various locally optimized ``uniqueAbbrevs``.
+  ##``mx-sep.len``).  ``mx < 0`` => various locally optimized ``uniqueAbbrevs``.
   if s.len == 0: result.sep = "*"; result.sLen = 1; return
   let cols = s.split(',')       #Leading/trailing whitespace in sep is used.
   if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
@@ -163,7 +163,7 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
     res.sort
     a.hd = res[0].h; a.tl = res[0].t; a.mx = res[0].m
     a.update
-  else:
+  elif a.mx == -1:
     a.minMaxSTUnique(strs, mLen)
 
 proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
