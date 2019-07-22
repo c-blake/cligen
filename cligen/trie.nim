@@ -303,15 +303,15 @@ iterator mpairsWithPrefix*[T](t: var Trie[T], prefix: string,
   var i = 0
   for tup in rawPfx(t, prefix, i, longest).leaves(t.depth, prefix, i):
     yield (tup.k, tup.n.val)
-#[These work but collide w/tern.unique[PS]fxPats which are << resource intensive
-proc uniquePfxPats*(x: openArray[string], sep="*"): seq[string] =
+#These uses overloading rathe than plural Pats to disambiguate vs `tern` names
+proc uniquePfxPat*(x: openArray[string], sep="*"): seq[string] =
   ## Return unique prefixes in ``x`` assuming non-empty-string&unique ``x[i]``.
   result.setLen x.len
   var t: Trie[void]
   for i, s in x: t.incl s
   for i, s in x: result[i] = t.uniquePfxPat(s)
 
-proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
+proc uniqueSfxPat*(x: openArray[string], sep="*"): seq[string] =
   ## Return unique suffixes in ``x`` assuming non-empty-string&unique ``x[i]``.
   result.setLen x.len
   var revd = newSeq[string](x.len)
@@ -320,4 +320,4 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
     revd[i] = s; revd[i].reverse; t.incl revd[i]
   for i, s in revd:
     result[i] = t.uniquePfxPat(s)
-    result[i].reverse ]#
+    result[i].reverse
