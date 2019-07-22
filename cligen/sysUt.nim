@@ -3,6 +3,18 @@ proc `:=`*[T](x: var T, y: T): T =
   x = y
   x
 
+proc findUO*(s: string, c: char): int {.noSideEffect.} =
+  proc memchr(s: pointer, c: char, n: csize): pointer {.importc:"memchr",
+                                                        header:"<string.h>".}
+  let p = memchr(s.cstring.pointer, c, s.len)
+  if p == nil: -1 else: (cast[uint](p) - cast[uint](s.cstring.pointer)).int
+
+proc delete*(x: var string, i: Natural) {.noSideEffect.} =
+  ## Just like ``delete(var seq[T], i)`` but for ``string``.
+  let xl = x.len
+  for j in i.int .. xl-2: shallowCopy(x[j], x[j+1])
+  setLen(x, xl-1)
+
 iterator maybePar*(parallel: bool, a, b: int): int =
   ## if flag is true yield `` `||`(a,b) `` else ``countup(a,b)``.
   if parallel:
