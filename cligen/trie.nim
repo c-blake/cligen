@@ -5,24 +5,19 @@
 ##This is unsorted, burns RAM & is slow. You really only want  it for ``match``.
 ##Indeed, if someone got ``cnt`` field, ``uniquePfxPat`` and ``match`` working
 ##on ``CritBitTree`` and into the stdlib I would be ecstatic to switch.
-import sets, tables, algorithm
+import sets, ./sysUt, algorithm   #HashSet, findUO|findO, :=, reverse
 type
   NodeOb[T] {.acyclic.} = object
-    ch: char
-    term: bool
-    cnt: uint32
+    term*: bool
+    cnt*: uint32
     when T isnot void:
-      val: T
-    kid: Table[char, ref NodeOb[T]]
-  Node[T] = ref NodeOb[T]
+      val*: T
+    kidc*: string
+    kidp*: seq[ref NodeOb[T]]
+  Node*[T] = ref NodeOb[T]
   Trie*[T] = object
-    root: Node[T]
-    depth: int          # Depth of Tree
-
-proc newNode[T](t: Trie[T], ch='\0'): Node[T] =
-  result.new
-  result.ch = ch
-  result.kid = initTable[char, Node[T]](1)
+    root*: Node[T]
+    depth*: int         # Depth of Tree
 
 proc rawPfx[T](t: Trie[T], key: string, i: var int, longest=false): Node[T] =
   var n = t.root
@@ -30,10 +25,11 @@ proc rawPfx[T](t: Trie[T], key: string, i: var int, longest=false): Node[T] =
     return nil
   var p = n
   for j, ch in key:
-    try:
+    let h = n.kidc.findUO ch
+    if h >= 0:
       p = n
-      n = n.kid[ch]
-    except:
+      n = n.kidp[h]
+    else:
       n = if longest: p else: nil
       break
     i = j + 1
@@ -49,16 +45,17 @@ proc rawInsert[T](t: var Trie[T], key: string): Node[T] =
   var cntps = newSeqOfCap[ptr uint32](t.depth + key.len)
   var depth = 1
   if t.root == nil:
-    t.root = t.newNode()
+    t.root = Node[T].new
   var n = t.root
   cntps.add n.cnt.addr        #root node effectively an empty string pfx to all
   var p: Node[T]
   for ch in key:
-    try:
-      p = n.kid[ch]
-    except:
-      p = t.newNode(ch)
-      n.kid[ch] = p
+    let h = n.kidc.findUO ch  #XXX To preserve order add findO returning -iSpot
+    if h >= 0:
+      p = n.kidp[h]
+    else:
+      n.kidc.add ch           #XXX .add ==> .insert X -h if in-order with findO
+      n.kidp.add (p := Node[T].new)
     depth.inc
     n = p
     cntps.add n.cnt.addr      #just save cnt to update for missing keys
@@ -71,20 +68,23 @@ proc rawInsert[T](t: var Trie[T], key: string): Node[T] =
 proc missingOrExcl*[T](t: var Trie[T], key: string): bool =
   ##``t.excl(key)`` if present in ``t`` and return true else just return false.
   var stack = newSeqOfCap[Node[T]](t.depth)
+  var stackH = newSeqOfCap[int](t.depth)
   var n = t.root
   if n == nil:
     return false
   stack.add n
   for ch in key:
-    try: n = n.kid[ch]; stack.add n
-    except: return false
-  if not stack[^1].term:      #
+    let h = n.kidc.findUO ch
+    if h >= 0: n = n.kidp[h]; stack.add n; stackH.add h
+    else: return false
+  if not stack[^1].term:      #may have only foundk key as a prefix
     return false
   stack[^1].term = false
   for i in countdown(stack.len - 1, 1):
     stack[i].cnt.dec
     if stack[i].cnt == 0:
-      stack[i-1].kid.del key[i-1]
+      stack[i-1].kidc.delete stackH[i-1]
+      stack[i-1].kidp.delete stackH[i-1]
   stack[0].cnt.dec
   if stack[0].cnt == 0:
     t.root = nil
@@ -101,11 +101,12 @@ proc uniquePfxPat*[T](t: Trie[T], key: string, sep="*"): string =
   if n == nil or key.len == 0:
     return ""
   for i, ch in key:
-    try:
-      n = n.kid[ch]
+    let h = n.kidc.find ch
+    if h >= 0:
+      n = n.kidp[h]
       if n.cnt == 1:
         return if i + 1 + sep.len < key.len: key[0..i] & sep else: key
-    except:
+    else:
       break
 
 proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
@@ -115,23 +116,24 @@ proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
       a.incl key
       if a.len >= limit: raise newException(IOError, "done")
     return
+  var h: int
   if pat[i] == a1:
-    for p in n.kid.values:
-      var key1 = key & p.ch
+    for h, p in n.kidp:
+      var key1 = key & n.kidc[h]
       a.match(p, pat, i + 1, key1, a1, aN, limit)
   elif pat[i] == aN:
     var key1 = key
     a.match(n, pat, i + 1, key1, a1, aN, limit)
-    if n.kid.len > 0:
-      for p in n.kid.values:
-        var key2 = key & p.ch
+    if n.kidp.len > 0:
+      for h, p in n.kidp:
+        var key2 = key & n.kidc[h]
         a.match(p, pat, i, key2, a1, aN, limit)
     elif n.term and i + 1 == pat.len:
       a.incl key
       if a.len >= limit: raise newException(IOError, "done")
-  elif pat[i] in n.kid:
-    let p = n.kid[pat[i]]
-    key.add p.ch
+  elif (h := n.kidc.findUO(pat[i])) >= 0:
+    let p = n.kidp[h]
+    key.add n.kidc[h]
     a.match(p, pat, i + 1, key, a1, aN, limit)
 
 proc match*[T](t: Trie[T], pat="", limit=0, a1='?', aN='*'): seq[string] =
@@ -147,10 +149,10 @@ proc collect*[T](n: Node[T], key: var string, d=0, pfx="", i=0): seq[tuple[k: st
     return
   if n.term:
     result.add (k: (if i > 0: pfx[0..<i] & key else: key), n: n)
-  for ch in n.kid.keys:
+  for h, ch in n.kidc:
     key.setLen d + 1
     key[d] = ch
-    result.add collect(n.kid[ch], key, d + 1, pfx, i)
+    result.add collect(n.kidp[h], key, d + 1, pfx, i)
 
 proc leaves[T](r: Node[T], depth=99, pfx="", i=0, d=0):
        seq[tuple[k: string, n: Node[T]]] =
