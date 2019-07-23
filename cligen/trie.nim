@@ -1,10 +1,8 @@
 ##This module implements a Trie, a container for a set|mapping of strings in the
 ##digital search tree family.  It is drop-in compatible-ish with ``CritBitTree``
 ##which itself compatible-ish with both ``HashSet`` & ``Table``.  It was easier
-##for me to extend this for ``match`` & ``uniquePfxPat`` than ``CritBitTree``.
-##This is unsorted, burns RAM & is slow. You really only want  it for ``match``.
-##Indeed, if someone got ``cnt`` field, ``uniquePfxPat`` and ``match`` working
-##on ``CritBitTree`` and into the stdlib I would be ecstatic to switch.
+##for me to extend this with ``match`` & ``nearLev`` than ``CritBitTree``.
+
 import sets, ./sysUt, algorithm   #HashSet, findUO|findO, :=, reverse
 type
   NodeOb[T] {.acyclic.} = object
