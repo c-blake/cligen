@@ -4,6 +4,17 @@ proc getTime*(): Timespec =
   ##Placeholder to avoid `times` module
   discard clock_gettime(0.ClockId, result)
 
+proc cmp*(a, b: Timespec): int =
+  let s = cmp(a.tv_sec.uint, b.tv_sec.uint)
+  if s != 0: return s
+  return cmp(a.tv_nsec, b.tv_nsec)
+
+proc `<=`*(a, b: Timespec): bool = cmp(a, b) <= 0
+
+proc `-`*(a, b: Timespec): int =
+  result = (a.tv_sec.int - b.tv_sec.int) * 1_000_000_000 +
+           (a.tv_nsec.int - b.tv_nsec.int)
+
 proc toUidSet*(strs: seq[string]): HashSet[Uid] =
   ##Just parse some ints into typed Uids
   when NimVersion < "0.20.0": result = initSet[Uid]()

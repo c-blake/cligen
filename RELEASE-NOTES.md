@@ -5,6 +5,8 @@ Version: 0.9.38
 ---------------
     Fix a little bug blocking abbrev(mx>0).
 
+    Move `cmp`, `<=`, `-`(a, b: Timespec) from `statx` to `posixUt`.
+
 Version: 0.9.37
 ---------------
   Add cligen/trie.nim.  Use match routine in abbrev.nim to change compression
