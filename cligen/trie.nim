@@ -144,6 +144,31 @@ proc match*[T](t: Trie[T], pat="", limit=0, a1='?', aN='*'): seq[string] =
   except IOError: discard
   for x in s.items: result.add x  #WTF - items necessary sometimes?
 
+proc nearLevR[T](a: var seq[tuple[d: int, k: string]], n: Node[T], ch: char,
+           k: var string, key: string, row0: seq[int], d=0, dmax=2, limit=6) =
+  if a.len >= limit: return
+  var row = newSeq[int](key.len + 1)
+  row[0] = row0[0] + 1                          #col[0]==""
+  for j in 1 ..< row.len:                       #Build row
+    row[j] = [ row[j-1] + 1, row0[j] + 1, row0[j-1] + (key[j-1] != ch).int ].min
+  if row[^1] <= dmax and n.term:                #Last entry is dist
+    a.add (row[^1], k[0..<d])
+  if row.min <= dmax:                           #Some entry in row cheaper
+    for h, ch in n.kidc:                        #..=> need to search kids.
+      k[d] = ch
+      nearLevR(a, n.kidp[h], ch, k, key, row, d + 1, dmax, limit)
+
+proc nearLev*[T](t: Trie[T], key: string, dmax=1,
+                 limit=6): seq[tuple[d: int, k: string]] =
+  ## Return ``seq[(dist, key)]`` for all trie keys with Levenshtein dist from
+  ## ``key`` <= `dmax`.
+  var k = newString(t.depth)
+  var row = newSeq[int](key.len + 1)            #Populate first row
+  for j in 0 .. key.len: row[j] = j
+  for h, ch in t.root.kidc:                     #Search kids
+    k[0] = ch
+    result.nearLevR(t.root.kidp[h], ch, k, key, row, 1, dmax, limit)
+
 proc collect*[T](n: Node[T], key: var string, d=0, pfx="", i=0): seq[tuple[k: string, n: Node[T]]] =
   if n == nil:
     return
