@@ -118,6 +118,8 @@ proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
       result = if avgSfx < avgPfx: sfx else: pfx
       break
   if nWild == -4: return                  #Only best pfx|sfx requested; Done
+#XXX -5,-6 can get slow.  May be able to speed up with a 2nd reversed-string
+#trie for *foo or a greedy algorithm starting with longest common substrings.
   for i, s in strs:                       #Try to improve with shortest any-spot
     if result[i].len - sLen <= 1: continue    #Too short to abbreviate more
     block outermost:                          #Simple but slow algo: Start
