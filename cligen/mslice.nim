@@ -50,7 +50,8 @@ proc `==`*(x, y: MSlice): bool {.inline.} =
 
 proc `<`*(a,b: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for inequality.
-  cmemcmp(a.mem, b.mem, min(a.len, b.len)) < 0
+  let c = cmemcmp(a.mem, b.mem, min(a.len, b.len))
+  if c == 0: a.len < b.len else: c < 0
 
 proc write*(f: File, ms: MSlice) {.inline.} =
   ## Write ``ms`` data to file ``f``.
