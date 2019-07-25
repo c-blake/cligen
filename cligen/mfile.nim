@@ -12,8 +12,8 @@ type
     st*   : Stat    ## File metadata at time of open
     prot* : cint    ## Map Protection
     flags*: cint    ## Map Flags (-1 => not open)
+    mem*  : pointer ## First addr to use
     len*  : int     ## Length of file (in bytes) or to unmap
-    mem*  : pointer ## First addr to use in [buf0, buf0 + len)
 
 proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
             a=0.Off, b = Off(-1), allowRemap=false, noShrink=false): MFile =
