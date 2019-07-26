@@ -1,8 +1,8 @@
 import posix, posixUt
 
-const haveStatx = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
+const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
 {.passC: "-D_GNU_SOURCE".}
-when haveStatx:
+when not haveStatx:
   type
     StatxTs* {.final, pure.} = object
       tv_sec*: int64
@@ -138,7 +138,7 @@ proc toStatxTs*(ts: Timespec): StatxTs =
   result.tv_sec = ts.tv_sec.int64
   result.tv_nsec = ts.tv_nsec.int32
 
-when haveStatx:
+when not haveStatx:
   proc stat2statx(dst: var Statx, src: Stat) =
     dst.stx_mask            = 0xFFFFFFFF.uint32
 #   dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
@@ -183,27 +183,27 @@ proc st_vtim*(st: Statx): Timespec =
 
 proc stat*(path: cstring, stx: var Statx): cint {.inline.} =
   when haveStatx:
+    result = statx(path, stx)
+  else:
     var st: Stat
     result = stat(path, st)
     stat2statx(stx, st)
-  else:
-    result = statx(path, stx)
 
 proc lstat*(path: cstring, stx: var Statx): cint {.inline.} =
   when haveStatx:
+    result = lstatx(path, stx)
+  else:
     var st: Stat
     result = lstat(path, st)
     stat2statx(stx, st)
-  else:
-    result = lstatx(path, stx)
 
 proc fstat*(fd: cint, stx: var Statx): cint {.inline.} =
   when haveStatx:
+    result = fstatx(fd, stx)
+  else:
     var st: Stat
     result = fstat(fd, st)
     stat2statx(stx, st)
-  else:
-    result = fstatx(fd, stx)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
   proc name*(stx: Statx): int =
