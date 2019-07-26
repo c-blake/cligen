@@ -11,7 +11,8 @@ const
         r = f
         break
     r
-  haveMagic* = so.len > 0
+  cligenMagic {.booldefine.} = true
+  haveMagic* = so.len > 0 and cligenMagic
 
 when haveMagic:
   {. passl: so .}
