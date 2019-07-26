@@ -2,8 +2,11 @@ const
   so = static:
     var r = ""
     for f in [ "/usr/lib64/libmagic.so.1",
+               "/usr/lib64/libmagic.so",
                "/usr/lib/libmagic.so.1",
-               "/usr/lib/x86_64-linux-gnu/libmagic.so.1" ]:
+               "/usr/lib/libmagic.so",
+               "/usr/lib/x86_64-linux-gnu/libmagic.so.1",
+               "/usr/lib/x86_64-linux-gnu/libmagic.so" ]:
       if gorgeEx("test -e " & f)[1] == 0:
         r = f
         break
