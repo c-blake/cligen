@@ -1,27 +1,9 @@
-const
-  so = static:
-    var r = ""
-    for f in [ "/usr/lib64/libmagic.so.1",
-               "/usr/lib64/libmagic.so",
-               "/usr/lib/libmagic.so.1",
-               "/usr/lib/libmagic.so",
-               "/usr/lib/x86_64-linux-gnu/libmagic.so.1",
-               "/usr/lib/x86_64-linux-gnu/libmagic.so" ]:
-      if gorgeEx("test -e " & f)[1] == 0:
-        r = f
-        break
-    r
-  hdr = static:
-    var r = ""
-    for f in [ "/usr/include/magic.h", "/usr/local/include/magic.h" ] :
-      if gorgeEx("test -e " & f)[1] == 0:
-        r = f
-        break
-    r
-  haveMagic* = so.len > 0 and hdr.len > 0
+const cligenMagic {.booldefine.} = true
 
-when haveMagic:
-  {. passl: so .}
+when cligenMagic:
+  const haveMagic* = true
+  {.pragma: libmagic, dynlib: "libmagic.so(.1|)"}
+
   const
     MAGIC_NONE*              = 0x00000000
     MAGIC_DEBUG*             = 0x00000001
@@ -64,35 +46,33 @@ when haveMagic:
 
   type magic_t* = pointer # ptr magic_set
 
-  proc magic_open*(a2: cint): magic_t {.importc:"magic_open", header:"magic.h".}
-  proc magic_close*(a2: magic_t) {.importc: "magic_close", header: "magic.h".}
+  proc magic_open*(a2: cint): magic_t {.importc:"magic_open", libmagic.}
+  proc magic_close*(a2: magic_t) {.importc: "magic_close", libmagic.}
   proc magic_getpath*(a2: cstring; a3: cint): cstring {.
-      importc: "magic_getpath", header: "magic.h".}
+      importc: "magic_getpath", libmagic.}
   proc magic_file*(a2: magic_t; a3: cstring): cstring {.importc: "magic_file",
-      header: "magic.h".}
+      libmagic.}
   proc magic_descriptor*(a2: magic_t; a3: cint): cstring {.
-      importc: "magic_descriptor", header: "magic.h".}
+      importc: "magic_descriptor", libmagic.}
   proc magic_buffer*(a2: magic_t; a3: pointer; a4: csize): cstring {.
-      importc: "magic_buffer", header: "magic.h".}
-  proc magic_error*(a2: magic_t): cstring {.importc: "magic_error",
-      header: "magic.h".}
+      importc: "magic_buffer", libmagic.}
+  proc magic_error*(a2: magic_t): cstring {.importc: "magic_error", libmagic.}
   proc magic_getflags*(a2: magic_t): cint {.importc: "magic_getflags",
-      header: "magic.h".}
+      libmagic.}
   proc magic_setflags*(a2: magic_t; a3: cint): cint {.importc: "magic_setflags",
-      header: "magic.h".}
-  proc magic_version*(): cint {.importc: "magic_version", header: "magic.h".}
+      libmagic.}
+  proc magic_version*(): cint {.importc: "magic_version", libmagic.}
   proc magic_load*(a2: magic_t; a3: cstring): cint {.importc: "magic_load",
-      header: "magic.h".}
+      libmagic.}
   proc magic_load_buffers*(a2: magic_t; a3: ptr pointer; a4: ptr csize;
-      a5: csize): cint {.  importc: "magic_load_buffers", header: "magic.h".}
+      a5: csize): cint {.  importc: "magic_load_buffers", libmagic.}
   proc magic_compile*(a2: magic_t; a3: cstring): cint {.
-      importc: "magic_compile", header: "magic.h".}
+      importc: "magic_compile", libmagic.}
   proc magic_check*(a2: magic_t; a3: cstring): cint {.importc: "magic_check",
-      header: "magic.h".}
+      libmagic.}
   proc magic_list*(a2: magic_t; a3: cstring): cint {.importc: "magic_list",
-      header: "magic.h".}
-  proc magic_errno*(a2: magic_t): cint {.importc: "magic_errno",
-      header: "magic.h".}
+      libmagic.}
+  proc magic_errno*(a2: magic_t): cint {.importc: "magic_errno", libmagic.}
 
   const
     MAGIC_PARAM_INDIR_MAX* = 0
@@ -103,6 +83,8 @@ when haveMagic:
     MAGIC_PARAM_REGEX_MAX* = 5
     MAGIC_PARAM_BYTES_MAX* = 6
   proc magic_setparam*(a2: magic_t; a3: cint; a4: pointer): cint {.
-      importc: "magic_setparam", header: "magic.h".}
+      importc: "magic_setparam", libmagic.}
   proc magic_getparam*(a2: magic_t; a3: cint; a4: pointer): cint {.
-      importc: "magic_getparam", header: "magic.h".}
+      importc: "magic_getparam", libmagic.}
+else:
+  const haveMagic* = false
