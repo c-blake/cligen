@@ -1,14 +1,10 @@
-const cmd = [ "[ -e /usr/lib64/libmagic.so.1 ]",
-              "[ -e /usr/lib/libmagic.so.1 ]"  ,
-              "[ -e /usr/lib/x86_64-linux-gnu/libmagic.so.1 ]" ]
-const plc  =  [    "/usr/lib64/libmagic.so.1"  ,
-                   "/usr/lib/libmagic.so.1"    ,
-                   "/usr/lib/x86_64-linux-gnu/libmagic.so.1"  ]
-when (gorgeEx cmd[0])[1] == 0:
+const plc = [ "/usr/lib64/libmagic.so.1", "/usr/lib/libmagic.so.1",
+              "/usr/lib/x86_64-linux-gnu/libmagic.so.1"  ]
+when (gorgeEx "[ -e " & plc[0] & " ]")[1] == 0:
   {. passl: plc[0] .}; const haveMagic* = true
-elif (gorgeEx cmd[1])[1] == 0:
+elif (gorgeEx "[ -e " & plc[1] & " ]")[1] == 0:
   {. passl: plc[1] .}; const haveMagic* = true
-elif (gorgeEx cmd[2])[1] == 0:
+elif (gorgeEx "[ -e " & plc[2] & " ]")[1] == 0:
   {. passl: plc[2] .}; const haveMagic* = true
 else:
   const haveMagic* = false
