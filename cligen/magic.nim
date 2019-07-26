@@ -11,7 +11,14 @@ const
         r = f
         break
     r
-  haveMagic* = so.len > 0
+  hdr = static:
+    var r = ""
+    for f in [ "/usr/include/magic.h", "/usr/local/include/magic.h" ] :
+      if gorgeEx("test -e " & f)[1] == 0:
+        r = f
+        break
+    r
+  haveMagic* = so.len > 0 and hdr.len > 0
 
 when haveMagic:
   {. passl: so .}
