@@ -1,15 +1,17 @@
-const plc = [ "/usr/lib64/libmagic.so.1", "/usr/lib/libmagic.so.1",
-              "/usr/lib/x86_64-linux-gnu/libmagic.so.1"  ]
-when (gorgeEx "test -e " & plc[0])[1] == 0:
-  {. passl: plc[0] .}; const haveMagic* = true
-elif (gorgeEx "test -e " & plc[1])[1] == 0:
-  {. passl: plc[1] .}; const haveMagic* = true
-elif (gorgeEx "test -e " & plc[2])[1] == 0:
-  {. passl: plc[2] .}; const haveMagic* = true
-else:
-  const haveMagic* = false
+const
+  so = static:
+    var r = ""
+    for f in [ "/usr/lib64/libmagic.so.1",
+               "/usr/lib/libmagic.so.1",
+               "/usr/lib/x86_64-linux-gnu/libmagic.so.1" ]:
+      if gorgeEx("test -e " & f)[1] == 0:
+        r = f
+        break
+    r
+  haveMagic* = so.len > 0
 
 when haveMagic:
+  {. passl: so .}
   const
     MAGIC_NONE*              = 0x00000000
     MAGIC_DEBUG*             = 0x00000001
