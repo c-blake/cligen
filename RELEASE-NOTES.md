@@ -7,8 +7,8 @@ Version: 0.9.38
 
     Move `cmp`, `<=`, `-`(a, b: Timespec) from `statx` to `posixUt`.
 
-    cligen/[statx, magic] made somewhat autoconfiguring. (magic could use more
-    paths and maybe an additional test for magic.h in include paths.)
+    cligen/[statx, magic] made somewhat autoconfiguring. (magic could probably
+    use more paths.  PRs welcome.)
 
 Version: 0.9.37
 ---------------
