@@ -192,3 +192,25 @@ proc pathId*(path: string): PathId =
 
 proc `==`*(a, b: PathId): bool = a.dev == b.dev and a.ino == b.ino
 proc hash*(x: PathId): int = x.dev.int * x.ino.int
+
+proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
+  ## Read whole file of unknown (& fstat-non-informative) size using re-usable
+  ## IO buffer provided.  If ``st`` is non-nil then fill it in via ``fstat``.
+  let fd = open(path, O_RDONLY)
+  if fd == -1: return                 #likely vanished between getdents & open
+  defer: discard close(fd)
+  if st != nil:
+    if fstat(fd, st[]) == -1: return  #early return virtually impossible
+  buf.setLen(0)
+  var off = 0
+  while true:
+    buf.setLen(buf.len + perRead)
+    let nRead = read(fd, buf[off].addr, perRead)
+    if nRead == -1:
+      if errno == EAGAIN or errno == EINTR:
+        continue
+      return
+    elif nRead < perRead:
+      buf.setLen(off + nRead)
+      break
+    off += nRead
