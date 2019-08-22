@@ -157,3 +157,25 @@ proc printedLen*(a: string): int =
       if c == '\e': inEscSeq = true
       else: s.add c
   result = unicode.runeLen s
+
+proc termAlign*(s: string, count: Natural, padding = ' '): string =
+  ## Just like ``strutils.align`` but assess width via ``printedLen``.
+  let pads = count - s.printedLen
+  if pads > 0:
+    result = newString(s.len + pads)
+    for i in 0 .. pads-1: result[i] = padding
+    for i in pads .. s.len+pads-1: result[i] = s[i - pads]
+  else:
+    result = s
+
+proc termAlignLeft*(s: string, count: Natural, padding = ' '): string =
+  ## Just like ``strutils.alignLeft`` but assess width via ``printedLen``.
+  let pads = count - s.printedLen
+  if pads > 0:
+    result = newString(s.len + pads)
+    if s.len > 0:
+      result[0 .. s.len-1] = s
+    for i in s.len ..< s.len + pads:
+      result[i] = padding
+  else:
+    result = s
