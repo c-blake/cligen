@@ -301,6 +301,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let vsnSh = if "version" in shOpt: $shOpt["version"] else: "\0"
   let prefixId = ident("prefix")        # local help prefix param
+  let prsOnlyId = ident("parseOnly")    # local help prefix param
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
   let cbId = ident("crbt")              # CritBitTree for prefix lengthening
@@ -565,7 +566,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   result = quote do:                                    #Overall Structure
     if cast[pointer](`docs`) != nil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
-                 `usageId`=`usage`, `prefixId`="", parseOnly=false): `retType` =
+                 `usageId`=`usage`,`prefixId`="", `prsOnlyId`=false): `retType`=
       {.push hint[XDeclaredButNotUsed]: off.}
       `initVars`
       `aliases`
@@ -581,7 +582,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           if `pId`.kind == cmdError:
             if cast[pointer](`setByParseId`) != nil:
               `setByParseId`[].add(("", "", `pId`.message, clParseOptErr))
-            if not parseOnly:
+            if not `prsOnlyId`:
               stderr.write(`pId`.message, "\n")
             break
           case `pId`.kind
@@ -600,7 +601,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           for m in `mandId`: stderr.write "  ", m, "\n"
           stderr.write "Run command with --help for more details.\n"
           raise newException(ParseError, "Missing one/some mandatory args")
-      if parseOnly or (cast[pointer](`setByParseId`) != nil and
+      if `prsOnlyId` or (cast[pointer](`setByParseId`) != nil and
           `setByParseId`[].numOfStatus(ClNoCall) > 0):
         return
       `callIt`
