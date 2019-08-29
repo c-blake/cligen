@@ -1,10 +1,10 @@
 import os, parsecfg, streams, strutils
 
 proc cfToCL*(path: string, subCmdName="", quiet=false,
-             noRaise=false): seq[string] =
+             noRaise=false, activeSec=false): seq[string] =
   ## Drive Nim stdlib parsecfg to get either specific subcommand parameters if
   ## ``subCmdName`` is non-empty or else global command parameters.
-  var activeSection = subCmdName.len == 0
+  var activeSection = subCmdName.len == 0 or activeSec
   var f = newFileStream(path, fmRead)
   if f == nil:
     if not quiet:
@@ -20,14 +20,14 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
     of cfgEof:
       break
     of cfgSectionStart:
-      if subCmdName.len > 0:
-        activeSection = e.section == subCmdName
       if e.section.startsWith("include__"):
         let sub = e.section[9..^1]
         let subp = if sub == sub.toUpperAscii: getEnv(sub) else: sub
         result.add cfToCL(if subp.startswith("/"): subp
                           else: path.parentDir & "/" & subp,
-                          subCmdName, quiet, noRaise)
+                          subCmdName, quiet, noRaise, activeSection)
+      elif subCmdName.len > 0:
+        activeSection = e.section == subCmdName
     of cfgKeyValuePair, cfgOption:
       when defined(debugCfToCL):
         echo "key: ", e.key.repr, " val: ", e.value.repr
