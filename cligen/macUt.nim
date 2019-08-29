@@ -112,3 +112,10 @@ proc summaryOfModule*(n: NimNode): string =
 macro docFromModuleOf*(sym: typed{nkSym}): untyped =
   ## Used to default ``["multi",doc=docFromModuleOf(mySymbol)]``.
   newStrLitNode(summaryOfModule(sym))
+
+macro docFromProc*(sym: typed{nkSym}): untyped =
+  let impl = sym.getImpl
+  if impl == nil: error "getImpl(" & $sym & ") returned nil."
+  var cmtDoc = ""
+  collectComments(cmtDoc, impl)
+  newStrLitNode(strip(cmtDoc))

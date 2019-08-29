@@ -4,7 +4,7 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
-       summaryOfModule, docFromModuleOf, match
+       summaryOfModule, docFromModuleOf, docFromProc, match
 
 include cligen/helpTmpl           #Pull in various help template strings
 
