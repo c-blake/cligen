@@ -694,11 +694,16 @@ template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "Run with no-argument or \"help\" for more details.\n"
   quit(1)
 
+proc firstParagraph(doc: string): string =
+  for line in doc.split('\n'):
+    if line.len == 0: return
+    result = result & line
+
 proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
                    subDocs: auto): string =
   var pairs: seq[seq[string]]
   for i in 0 ..< subCmds.len:
-    pairs.add(@[subCmds[i], subDocs[i].replace("\n", " ")])
+    pairs.add(@[subCmds[i], subDocs[i].firstParagraph])
   let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
               else: ""
   use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
