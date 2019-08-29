@@ -24,8 +24,9 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
         activeSection = e.section == subCmdName
       if e.section.startsWith("include__"):
         let sub = e.section[9..^1]
-        result.add cfToCL(if sub == sub.toUpperAscii: getEnv(sub)
-                          else: path.parentDir & "/" & sub,
+        let subp = if sub == sub.toUpperAscii: getEnv(sub) else: sub
+        result.add cfToCL(if subp.startswith("/"): subp
+                          else: path.parentDir & "/" & subp,
                           subCmdName, quiet, noRaise)
     of cfgKeyValuePair, cfgOption:
       when defined(debugCfToCL):
