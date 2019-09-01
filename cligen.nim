@@ -695,9 +695,11 @@ template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   quit(1)
 
 proc firstParagraph(doc: string): string =
+  var first = true
   for line in doc.split('\n'):
     if line.len == 0: return
-    result = result & line
+    result = result & (if first: "" else: " ") & line
+    first = false
 
 proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
                    subDocs: auto): string =
