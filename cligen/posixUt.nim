@@ -57,7 +57,7 @@ template defineIdentities(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirt
 defineIdentities(users, Uid, Passwd, getpwuid,setpwent,getpwent,pw_uid,pw_name)
 defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 
-proc readlink*(p: string, err=stderr): string =
+proc readlink*(path: string, err=stderr): string =
   ##Call POSIX readlink reliably: Start with a nominal size buffer & loop while
   ##the answer may have been truncated.  (Could also pathconf(p,PC_PATH_MAX)).
   result = newStringOfCap(512)
@@ -66,9 +66,9 @@ proc readlink*(p: string, err=stderr): string =
   while n == nBuf:        #readlink(2) DOES NOT NUL-term, but Nim does, BUT it
     nBuf *= 2             #..is inaccessible to user-code.  So, the below does
     result.setLen(nBuf)   #..not need the nBuf + 1 it would in C code.
-    n = readlink(p, cstring(result[0].addr), nBuf)
+    n = readlink(path, cstring(result[0].addr), nBuf)
   if n <= 0:
-    err.write "readlink(\"", $p, "\"): ", strerror(errno), "\n"
+    err.write "readlink(\"", $path, "\"): ", strerror(errno), "\n"
   else:
     result.setLen(n)
 
