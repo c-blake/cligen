@@ -69,6 +69,7 @@ proc readlink*(path: string, err=stderr): string =
     n = readlink(path, cstring(result[0].addr), nBuf)
   if n <= 0:
     err.write "readlink(\"", $path, "\"): ", strerror(errno), "\n"
+    result.setLen(0)
   else:
     result.setLen(n)
 
