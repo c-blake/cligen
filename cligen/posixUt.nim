@@ -235,6 +235,7 @@ proc nice*(pid: Pid, niceIncr: cint): int =
   setpriority(0.cint, pid.uint32, max(-20, min(mx, niceIncr)).cint).int
 
 proc st_inode*(path: string, err=stderr): Ino =
+  ## Return just the ``Stat.st_inode`` field for a path.
   var st: Stat
   if stat(path, st) == -1:
     err.write "stat(\"", $path, "\"): ", strerror(errno), "\n"
