@@ -214,3 +214,28 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
       buf.setLen(off + nRead)
       break
     off += nRead
+
+proc nanosleep*(delay: var Timespec) =
+  ## Carefully sleep by amount ``delay``.
+  var remain: Timespec
+  var ret = 0.cint
+  while (ret := nanosleep(delay, remain)) != 0 and errno == EINTR:
+    swap delay, remain                  #Since EFAULT may indicate EXTREME vmem
+  if ret != 0:                          #..pressure, use syscall directly below.
+    discard write(2.cint, "EFAULT/EINVAL from nanosleep\n".cstring, 29.csize)
+
+proc nice*(pid: Pid, niceIncr: cint): int =
+  ## Increment nice value/scheduling priority bias of a process/thread.
+  proc setpriority(which: cint, who: uint32, prio: cint): cint {.
+    importc: "setpriority", header: "<unistd.h>" .}
+  when defined(linux):
+    let mx = 19
+  else:
+    let mx = 20
+  setpriority(0.cint, pid.uint32, max(-20, min(mx, niceIncr)).cint).int
+
+proc st_inode*(path: string, err=stderr): Ino =
+  var st: Stat
+  if stat(path, st) == -1:
+    err.write "stat(\"", $path, "\"): ", strerror(errno), "\n"
+  st.st_ino
