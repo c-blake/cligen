@@ -655,7 +655,7 @@ template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, dispatchName, mergeNames,
               alias, stopWords)
-  cligenQuitAux(os.commandLineParams(), dispatchName, cmdName, pro, echoResult,
+  cligenQuitAux(mergeParams(mergeNames), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
@@ -881,14 +881,10 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
   result.add(newCall("dispatchMultiDG", copyNimTree(procBrackets)))
   result.add(quote do:
-    #`ps` is NOT mergeParams because we want typo suggestions for subcmd (with
-    #options) based only on a CL user's actual *command line* entry.  Other srcs
-    #are on their own.  This could be trouble if anyone wants commandLineParams
-    #to NOT be the suffix of mergeParams, but we could also add a define switch.
     block:
      {.push hint[GlobalVar]: off.}
      {.push warning[ProveField]: off.}
-     let ps = cast[seq[string]](commandLineParams())
+     let ps = cast[seq[string]](mergeParams(@["multi"]))
      let ps0 = if ps.len >= 1: `subMchsId`.lengthen ps[0] else: ""
      let ps1 = if ps.len >= 2: `subMchsId`.lengthen ps[1] else: ""
      if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
