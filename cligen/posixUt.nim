@@ -11,6 +11,8 @@ proc cmp*(a, b: Timespec): int =
 
 proc `<=`*(a, b: Timespec): bool = cmp(a, b) <= 0
 
+proc `<`*(a, b: Timespec): bool = cmp(a, b) < 0
+
 proc `-`*(a, b: Timespec): int =
   result = (a.tv_sec.int - b.tv_sec.int) * 1_000_000_000 +
            (a.tv_nsec.int - b.tv_nsec.int)
@@ -216,8 +218,9 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
       break
     off += nRead
 
-proc nanosleep*(delay: var Timespec) =
+proc nanosleep*(delay: Timespec) =
   ## Carefully sleep by amount ``delay``.
+  var delay = delay
   var remain: Timespec
   var ret = 0.cint
   while (ret := nanosleep(delay, remain)) != 0 and errno == EINTR:
