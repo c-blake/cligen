@@ -220,6 +220,8 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
 
 proc nanosleep*(delay: Timespec) =
   ## Carefully sleep by amount ``delay``.
+  if delay.tv_sec == 0.Time and delay.tv_nsec == 0.clong:
+    return
   var delay = delay
   var remain: Timespec
   var ret = 0.cint
