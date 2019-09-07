@@ -11,7 +11,8 @@ include cligen/helpTmpl           #Pull in various help template strings
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
 
-  ClAlias* = tuple[long: string, short: char, helpStr: string]  ##CLuser aliases
+  ClAlias* = tuple[long: string, short: char, helpStr: string,
+                   dfl: seq[seq[string]]]         ## User CL aliases
 
   ClCfg* = object  ## Settings tending to be program- or CLI-author-global
     version*:     string
@@ -192,7 +193,7 @@ include cligen/syntaxHelp
 
 proc got(a: NimNode): bool =
   (a.len == 2 and a[1].len == 2 and a[1][0].len == 2 and a[1][1].len == 2 and
-   a[1][0][1].len == 3 and a[1][1][1].len == 3)
+   a[1][0][1].len == 4 and a[1][1][1].len == 4)
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
@@ -313,16 +314,29 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let setByParseId = ident("setByP")    # parse recording var seq
   let es = newStrLitNode("")
   let aliasesId = ident("aliases")      # [key]=>seq[string] meta param table
+  let aliasSnId = ident("aliasSeen")    # flag saying *any* alias was used
+  let dflSub    = ident("dflSub")       # default alias if *no* alias was used
+  let provideId = ident("provideDflAlias") # only use default alias @top level
   let aliasDefL = if alias.got: alias[1][0][1][0] else: es
   let aliasDefN = if alias.got:optionNormalize(alias[1][0][1][0].strVal) else:""
   let aliasDefS = if alias.got: toStrIni(alias[1][0][1][1].intVal) else: es
   let aliasDefH = if alias.got: alias[1][0][1][2] else: es
+  let aliasDefD = if alias.got: alias[1][0][1][3] else: es
   let aliasRefL = if alias.got: alias[1][1][1][0] else: es
   let aliasRefN = if alias.got:optionNormalize(alias[1][1][1][0].strVal) else:""
   let aliasRefS = if alias.got: toStrIni(alias[1][1][1][1].intVal) else: es
   let aliasRefH = if alias.got: alias[1][1][1][2] else: es
+  let aliasRefD = if alias.got: alias[1][1][1][3] else: es
   let aliases = if alias.got: quote do:
+                    var `aliasSnId` = false
                     var `aliasesId`: CritBitTree[seq[string]]
+                    for d in `aliasDefD`:
+                      if d.len > 1: `aliasesId`[d[0]] = d[1 .. ^1]
+                    var `dflSub`: seq[string] = if `aliasRefD`.len>0: `aliasRefD`[0] else: @[]
+                else: newNimNode(nnkEmpty)
+  let aliasesCallDfl = if alias.got: quote do:
+                    if `provideId` and not `aliasSnId` and `dflSub`.len > 0:
+                      parser(`dflSub`, `provideId`=false)
                 else: newNimNode(nnkEmpty)
 
   proc initVars0(): NimNode =           # init vars & build help str
@@ -431,7 +445,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         quote do:
           if cast[pointer](`setByParseId`) != nil:
             `setByParseId`[].add(("version", "", `cf`.version, clVersionOnly))
-            return                        #Do not try to keep parsing
+            return                            #Do not try to keep parsing
           else:
             stdout.write(`cf`.version,"\n");raise newException(VersionOnly,"")))
     if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0: #CL user aliases
@@ -443,6 +457,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(aliasRefN), aliasRefS).add(
           quote do:
+            `aliasSnId` = true        #true for even unsuccessful attempted ref
             var msg: string
             let sub = `aliasesId`.match(`pId`.val, "alias ref", msg)
             if msg.len > 0:
@@ -571,7 +586,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `initVars`
       `aliases`
       var `keyCountId` {.used.} = initCountTable[string]()
-      proc parser(args=`cmdLineId`) =
+      proc parser(args=`cmdLineId`, `provideId`=true) =
         var `posNoId` = 0
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
@@ -590,6 +605,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
               `optCases`
             else:
               `nonOpt`
+        `aliasesCallDfl`
       {.pop.}
       parser()
       if `mandId`.len > 0:
