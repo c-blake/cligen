@@ -7,8 +7,9 @@ proc demo(al_pha=1, be_ta=2.0, verb=false, item="", args: seq[string]) =
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
+  const ess: seq[string] = @[]
   dispatch(demo, cmdName = "UserAliases",
            help = { "al-pha" : "growth constant",
                     "bet-a"  : "shrink target" },
-           alias = @[ ("Def", 'D', "define key=\"val ...\" alias"),
-                      ("Ref", 'R', "reference an alias") ] )
+           alias = @[ ("Def", 'D', "define key=\"val ...\" alias", @[ess]),
+                      ("Ref", 'R', "reference an alias", @[ess]) ] )
