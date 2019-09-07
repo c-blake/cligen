@@ -1,11 +1,11 @@
-import os, posix, sets, tables, strutils, ./sysUt
+import os, posix, sets, tables, strutils, ./sysUt, ./argcvt, parseUtils
 
 proc getTime*(): Timespec =
   ##Placeholder to avoid `times` module
   discard clock_gettime(0.ClockId, result)
 
 proc cmp*(a, b: Timespec): int =
-  let s = cmp(a.tv_sec.uint, b.tv_sec.uint)
+  let s = cmp(a.tv_sec.int, b.tv_sec.int)
   if s != 0: return s
   return cmp(a.tv_nsec, b.tv_nsec)
 
@@ -16,6 +16,43 @@ proc `<`*(a, b: Timespec): bool = cmp(a, b) < 0
 proc `-`*(a, b: Timespec): int =
   result = (a.tv_sec.int - b.tv_sec.int) * 1_000_000_000 +
            (a.tv_nsec.int - b.tv_nsec.int)
+
+proc `$`*(x: Timespec): string =
+  let d = $x.tv_nsec.int
+  result = $x.tv_sec.int & "." & repeat('0', 9 - d.len) & d
+  while result[^1] == '0': result.setLen result.len - 1
+  if result.endsWith('.'): result.add '0'
+
+proc argParse*(dst: var Timespec, dfl: Timespec, a: var ArgcvtParams): bool =
+  proc isDecimal(s: string): bool =
+    for c in s:
+      if (c < '0' or c > '9') and c != '.': return false
+    return true
+  var val = strip(a.val)
+  var sign = 1
+  if val.len > 1 and val[0] in { '-', '+' }:
+    if val[0] == '-': sign = -1
+    val = val[1..^1]
+  if len(val) == 0 or not val.isDecimal:
+    a.msg="Bad value: \"$1\" for option \"$2\"; expecting non-scinote $3\n$4" %
+          [ a.val, a.key, "Timespec", a.help ]
+    return false
+  var parsed, point: BiggestInt
+  if val.startsWith('.'): val = "0" & val
+  if '.' notin val: val.add '.'
+  while val[^1] == '0': val.setLen val.len - 1
+  point = parseBiggestInt(val, parsed)
+  dst.tv_sec = Time(parsed * sign)
+  val = val[point + 1 .. (point + min(9, val.len - point - 1))]
+  let digits = val.len - point + 1
+  if digits > 0:
+    discard parseBiggestInt(val, parsed)
+    dst.tv_nsec = parsed.int
+    for c in 0 ..< 9 - digits: dst.tv_nsec *= 10
+  return true
+
+proc argHelp*(dfl: Timespec, a: var ArgcvtParams): seq[string] =
+  result = @[ a.argKeys, "Timespec", $dfl ]
 
 proc toUidSet*(strs: seq[string]): HashSet[Uid] =
   ##Just parse some ints into typed Uids
