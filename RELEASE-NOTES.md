@@ -3,12 +3,36 @@ RELEASE NOTES
 
 Version: 0.9.38
 ---------------
-    Fix a little bug blocking abbrev(mx>0).
+  Fix a little bug blocking abbrev(mx>0).
 
-    Move `cmp`, `<=`, `-`(a, b: Timespec) from `statx` to `posixUt`.
+  Move `cmp`, `<=`, `-`(a, b: Timespec) from `statx` to `posixUt`.
+  Add argParse/argHelp support for Timespec.
 
-    cligen/[statx, magic] made somewhat autoconfiguring. (magic could probably
-    use more paths.  PRs welcome.)
+  cligen/[statx, magic] made somewhat autoconfiguring. (magic could probably
+  use more paths.  PRs welcome.)
+
+  ClAlias tuples have grown a 4th slot for default CL-author provided alias
+  definitions and a provided default reference.  CL-author must pass a
+  seq[seq[string]] empty list even if these new features are not used (to
+  match the ClAlias type).  See test/UserAliases.nim
+
+  Some new convenience API calls: `macUt.docFromProc`, textUt.termAlign\*,
+  mfile.inCore posixUt.readFile st_inode nice nanosleep.
+
+  `prsOnlyId` fix for newer Nim quote do: behavior
+
+  .config/prog/config dir looked for before .config/prog file
+
+  cfToCL includes are cfg-file relative paths if they don't start with /
+
+  includes apply to the current subcommand section (config files for multi-cmds)
+
+  only first paragraph of subcmd descrips are used in summary table
+
+  readlink 1st arg renamed to path
+
+  mergeParams no longer fails w/empty seq cmdNames arg and mergeParams is more
+  consistenly always used instead of commandLineParams
 
 Version: 0.9.37
 ---------------
