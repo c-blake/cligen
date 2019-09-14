@@ -934,6 +934,7 @@ macro initGen*(default: typed, T: untyped, positional="",
   case ti.typeKind:
   of ntyTuple: discard            #For tuples IdentDefs are top level
   of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
+# of ntyRef: ti = ti[0].getTypeImpl[2]
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
   let suppressed = toIdSeq(suppress)
