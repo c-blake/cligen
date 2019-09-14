@@ -48,7 +48,7 @@ proc argParse*(dst: var Timespec, dfl: Timespec, a: var ArgcvtParams): bool =
   if digits > 0:
     discard parseBiggestInt(val, parsed)
     dst.tv_nsec = parsed.int
-    for c in 0 ..< 9 - digits: dst.tv_nsec *= 10
+    for c in 0 ..< 9 - digits: dst.tv_nsec = dst.tv_nsec * 10
   return true
 
 proc argHelp*(dfl: Timespec, a: var ArgcvtParams): seq[string] =
