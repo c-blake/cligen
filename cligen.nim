@@ -336,6 +336,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                 else: newNimNode(nnkEmpty)
   let aliasesCallDfl = if alias.got: quote do:
                     if `provideId` and not `aliasSnId` and `dflSub`.len > 0:
+  #XXX Doing this feature right needs 2 OptParser passes. {Default alias should
+  #be processed first not last to not clobber earlier cfg/CL actual settings,
+  #but cannot know it is needed without first checking the whole CL.}
                       parser(`dflSub`, `provideId`=false)
                 else: newNimNode(nnkEmpty)
 
