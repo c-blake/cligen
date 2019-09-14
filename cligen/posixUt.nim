@@ -269,8 +269,8 @@ proc nanosleep*(delay: Timespec) =
 
 proc nice*(pid: Pid, niceIncr: cint): int =
   ## Increment nice value/scheduling priority bias of a process/thread.
-  proc setpriority(which: cint, who: uint32, prio: cint): cint {.
-    importc: "setpriority", header: "<unistd.h>" .}
+  proc setpriority(which: cint, who: cuint, prio: cint): cint {.
+    importc: "setpriority", header: "<sys/resource.h>" .}
   when defined(linux):
     let mx = 19
   else:
