@@ -162,7 +162,7 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
     if sh notin used and parNm notin result: # still available
       result[parNm] = sh
       used.incl(sh)
-  let tmp = result        #One might just put sh != '\0' above, but this lets
+  var tmp = result        #One might just put sh != '\0' above, but this lets
   for k, v in tmp:        #CLI authors also block -h via short={"help": '\0'}.
     if v == '\0': result.del(k)
 
