@@ -337,6 +337,26 @@ Options(opt-arg sep :|=|spc):
   -n=, --nim=    string  "nimcc"  compiler to use
   -s, --show     bool    false    show informative compiler info
 
+==> test/InitObPtr.out <==
+Usage:
+  InitOb [optional-params] [iters: int (loops per slot)]
+do some app
+Options(opt-arg sep :|=|spc):
+  -h, --help                      print this cligen-erated help
+  --help-syntax                   advanced: prepend,plurals,..
+  -n=, --nim=    string  "nimcc"  compiler to use
+  -s, --show     bool    false    show informative compiler info
+
+==> test/InitObRef.out <==
+Usage:
+  InitOb [optional-params] [iters: int (loops per slot)]
+do some app
+Options(opt-arg sep :|=|spc):
+  -h, --help                      print this cligen-erated help
+  --help-syntax                   advanced: prepend,plurals,..
+  -n=, --nim=    string  "nimcc"  compiler to use
+  -s, --show     bool    false    show informative compiler info
+
 ==> test/InitTup.out <==
 Usage:
   InitOb [optional-params] 

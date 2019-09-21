@@ -931,10 +931,12 @@ macro initGen*(default: typed, T: untyped, positional="",
   ##except if ``fieldN==positional fieldN: typeN`` is used instead which in turn
   ##makes ``dispatchGen`` bind that ``seq`` to catch positional CL args.
   var ti = default.getTypeImpl
+  var indirect = 0
   case ti.typeKind:
   of ntyTuple: discard            #For tuples IdentDefs are top level
   of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
-# of ntyRef: ti = ti[0].getTypeImpl[2]
+  of ntyRef: ti = ti[0].getTypeImpl[2]; indirect = 1
+  of ntyPtr: ti = ti[0].getTypeImpl[2]; indirect = 2
   else: error "default value is not a tuple or object"
   let empty = newNimNode(nnkEmpty)
   let suppressed = toIdSeq(suppress)
@@ -944,18 +946,23 @@ macro initGen*(default: typed, T: untyped, positional="",
   let posId = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
   var assigns = newStmtList()     #List of assignments 
+  if   indirect == 1: assigns.add(quote do: result.new)
+  elif indirect == 2: assigns.add(quote do: result=cast[`T`](`T`.sizeof.alloc))
   for kid in ti.children:         #iterate over fields
     if kid.kind != nnkIdentDefs: warning "case objects unsupported"
     let id = ident(kid[0].strVal)
     if id in suppressed: continue
-    let argId = ident("arg"); let obId = ident("ob")
     params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
-    let r = ident("result") #Someday: assigns.add(quote do: result.`id` = `id`)
-    let sid = ident($id & "setter"); let sidEq = ident($id & "setter=")
-    assigns.add(quote do:
-      proc `sidEq`(`obId`: var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
-      `r`.`sid` = `id`)
+    when NimVersion <= "0.20.0":  #XXX delete this branch someday
+      let argId = ident("arg"); let obId = ident("ob")
+      let r = ident("result")
+      let sid = ident($id & "setter"); let sidEq = ident($id & "setter=")
+      assigns.add(quote do:
+        proc `sidEq`(`obId`:var `T`, `argId` = `default`.`id`) = ob.`id`=`argId`
+        `r`.`sid` = `id`)
+    else:
+      assigns.add(quote do: result.`id` = `id`)
     if id == lastUnsuppressed: break
   let nm = if name.strVal.len > 0: name.strVal else: "init"
   result = newProc(name = ident(nm), params = params, body = assigns)
