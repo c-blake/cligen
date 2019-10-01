@@ -6,7 +6,7 @@ proc `:=`*[T](x: var T, y: T): T =
 proc findUO*(s: string, c: char): int {.noSideEffect.} =
   proc memchr(s: pointer, c: char, n: csize): pointer {.importc:"memchr",
                                                         header:"<string.h>".}
-  let p = memchr(s.cstring.pointer, c, s.len)
+  let p = memchr(s.cstring.pointer, c, s.len.csize)
   if p == nil: -1 else: (cast[uint](p) - cast[uint](s.cstring.pointer)).int
 
 proc delete*(x: var string, i: Natural) {.noSideEffect.} =
