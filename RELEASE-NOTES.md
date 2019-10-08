@@ -7,6 +7,8 @@ Version: 0.9.39
   `test/InitObPtr.nim` and https://github.com/c-blake/cligen/issues/118
   discussion.
 
+  Fixed up several places that needed adjustment due to csize -> uint.
+
 Version: 0.9.38
 ---------------
   Fix a little bug blocking abbrev(mx>0).
