@@ -12,9 +12,11 @@ proc cmemrchr*(s: pointer, c: char, n: csize): pointer {.
 proc cmemcmp*(a, b: pointer, n: csize): cint {. #Exported by system/ansi_c??
   importc: "memcmp", header: "<string.h>", noSideEffect.}
 proc `-!`*(p, q: pointer): int {.inline.} =
-  cast[int](p) -% cast[int](q)
+  (cast[int](p) -% cast[int](q)).int
 proc `+!`*(p: pointer, i: int): pointer {.inline.} =
   cast[pointer](cast[int](p) +% i)
+proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
+  cast[pointer](cast[uint64](p) + i)
 
 type MSlice* = object
   ## Represent a memory slice, such as a delimited record in an ``MFile``.
@@ -50,7 +52,7 @@ proc `==`*(x, y: MSlice): bool {.inline.} =
 
 proc `<`*(a,b: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for inequality.
-  let c = cmemcmp(a.mem, b.mem, min(a.len, b.len))
+  let c = cmemcmp(a.mem, b.mem, min(a.len, b.len).csize)
   if c == 0: a.len < b.len else: c < 0
 
 proc write*(f: File, ms: MSlice) {.inline.} =
@@ -61,10 +63,10 @@ proc urite*(f: File, ms: MSlice) {.inline.} =
   ## unlocked write ``ms`` data to file ``f``.
   proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
           importc: "fwrite_unlocked", header: "<stdio.h>".}
-  discard c_fwrite(ms.mem, 1, ms.len, f)
+  discard c_fwrite(ms.mem, 1, ms.len.csize, f)
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
-  a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len) == 0
+  a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
 proc `==`*(ms: MSlice, b: string): bool {.inline.} = b == ms
 
 import hashes # hashData
@@ -87,7 +89,7 @@ iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
     var ms = MSlice(mem: mslc.mem, len: 0)
     var remaining = mslc.len
     while remaining > 0:
-      let recEnd = cmemchr(ms.mem, sep, remaining)
+      let recEnd = cmemchr(ms.mem, sep, remaining.csize)
       if recEnd == nil:                             #Unterminated final slice
         ms.len = remaining                          #Weird case..consult eat?
         yield ms
@@ -132,7 +134,7 @@ template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
   while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], sep):
     b = b +! 1
     if b == eob: fs.setLen(0); return
-  var e = nextSep(b, sep, eob -! b)
+  var e = nextSep(b, sep, (eob -! b).csize)
   while e != nil:
     if n < 1:                               #Unbounded msplit
       if result == fs.len - 1:              #Expand capacity
@@ -148,7 +150,7 @@ template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
     if eob -! b <= 0:
       b = eob
       break
-    e = nextSep(b, sep, eob -! b)
+    e = nextSep(b, sep, (eob -! b).csize)
   if not repeat or eob -! b > 0:
     fs[result].mem = b
     fs[result].len = eob -! b
@@ -191,7 +193,7 @@ template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
   while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], sep):
     b = b +! 1
     if b == eob: fs.setLen(0); return
-  var e = nextSep(b, sep, eob -! b)
+  var e = nextSep(b, sep, (eob -! b).csize)
   while e != nil:
     if n < 1:                               #Unbounded splitr
       if result == fs.len - 1:              #Expand capacity
@@ -206,7 +208,7 @@ template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
     if eob -! b <= 0:
       b = eob
       break
-    e = nextSep(b, sep, eob -! b)
+    e = nextSep(b, sep, (eob -! b).csize)
   if not repeat or eob -! b > 0:
     fs[result] = slc[(b -! b0) ..< (eob -! b0)]
     result += 1

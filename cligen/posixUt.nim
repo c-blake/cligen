@@ -265,7 +265,7 @@ proc nanosleep*(delay: Timespec) =
   while (ret := nanosleep(delay, remain)) != 0 and errno == EINTR:
     swap delay, remain                  #Since EFAULT may indicate EXTREME vmem
   if ret != 0:                          #..pressure, use syscall directly below.
-    discard write(2.cint, "EFAULT/EINVAL from nanosleep\n".cstring, 29.csize)
+    discard write(2.cint, "EFAULT/EINVAL from nanosleep\n".cstring, 29)
 
 proc nice*(pid: Pid, niceIncr: cint): int =
   ## Increment nice value/scheduling priority bias of a process/thread.

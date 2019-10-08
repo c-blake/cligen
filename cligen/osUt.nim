@@ -70,7 +70,7 @@ proc both*[T](it: iterator(): T, s: seq[T]): iterator(): T =
 proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int =
   proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
           importc: "fwrite_unlocked", header: "<stdio.h>".}
-  result = c_fwrite(buffer, 1, len, f)
+  result = c_fwrite(buffer, 1, len.csize, f)
 
 proc urite*(f: File, s: string) =
   if uriteBuffer(f, cstring(s), s.len) != s.len:

@@ -125,13 +125,13 @@ proc inCore*(mf: MFile): tuple[resident, total: int] =
          importc: "mincore", header: "<sys/mman.h>" .}
   result.total = (mf.len + pagesize - 1) div pagesize #limit buffer to 64K?
   var resident = newString(result.total)
-  if mincore(mf.mem, mf.len, resident.cstring) != -1: #nsleep 10000 on EAGAIN?
+  if mincore(mf.mem, mf.len.csize, resident.cstring) != -1: #nsleep on EAGAIN?
     for page in resident:
       if (page.int8 and 1) != 0: result.resident.inc
 
-proc `<`*(a,b: MFile): bool = cMemCmp(a.mem, b.mem, min(a.len, b.len)) < 0
+proc `<`*(a,b: MFile): bool = cMemCmp(a.mem, b.mem, min(a.len, b.len).csize) < 0
 
-proc `==`*(a,b: MFile): bool = a.len==b.len and cMemCmp(a.mem,b.mem,a.len)==0
+proc `==`*(a,b: MFile): bool = a.len==b.len and cMemCmp(a.mem,b.mem,a.len.csize)==0
 
 proc `==`*(a: MFile, p: pointer): bool = a.mem==p
 
