@@ -1,4 +1,4 @@
-import os, sets, cligen, cligen/[mfile, mslice] #mSlices MSlice Splitr
+import sets, cligen, cligen/[mfile, mslice] #mSlices MSlice Splitr
 
 proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
           blanksOk=false, cut=false, origin=1, colNums: seq[int]) =
