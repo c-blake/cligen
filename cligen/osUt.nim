@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils, sets, tables, strformat, ./sysUt #`:=`
+import os, terminal, strutils #, sets, tables, strformat, ./sysUt #`:=`
 
 proc perror*(x: cstring, len: int) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.

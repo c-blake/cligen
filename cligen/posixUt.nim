@@ -1,4 +1,4 @@
-import os, posix, sets, tables, strutils, ./sysUt, ./argcvt, parseUtils
+import posix, sets, tables, strutils, ./sysUt, ./argcvt, parseUtils
 
 proc getTime*(): Timespec =
   ##Placeholder to avoid `times` module
