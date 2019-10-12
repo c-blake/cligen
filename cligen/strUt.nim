@@ -83,3 +83,24 @@ proc `-`*(a, b: seq[string]): seq[string] =
     var sb = toHashSet(b)
   for s in a:
     if s notin sb: result.add s
+
+proc split*[T](st: seq[T], delim: T): seq[seq[T]] =
+  ## Return seq of sub-seqs split by ``delim``.  Delim itself is not included.
+  ## E.g. ``@["a", "--", "b", "c"].split "--" == @[@["a"], @["b", "c"]]``.
+  var sub: seq[string]
+  for e in st:
+    if e == delim:
+      result.add sub
+      sub.setLen 0
+    else:
+      sub.add e
+  result.add sub
+
+proc joins*[T](sst: seq[seq[T]], delim: T): seq[T] =
+  ## Return joined seq of sub-seqs splittable by ``delim``.
+  ## E.g. ``@[@["a"], @["b", "c"]].joins("--") == @["a", "--", "b", "c"].``
+  let last = sst.len - 1
+  for i, st in sst:
+    result = result & st
+    if i != last:
+      result.add delim
