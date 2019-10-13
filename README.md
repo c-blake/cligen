@@ -1,11 +1,13 @@
 cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 ======================================================================
 This approach to CLIs was inspired by [Andrey Mikhaylenko's nice Python module
-'argh'](https://pythonhosted.org/argh/).  The basic idea is that proc signatures
-encode/declare almost everything needed to generate a CLI - names, types, and
-default values.  A little reflection/introspection then suffices to generate a
-parser-dispatcher that translates a `seq[string]` command input into calls of a
-wrapped proc.  In Nim, adding a CLI can be as easy as adding one line of code:
+'argh'](https://pythonhosted.org/argh/) (which in turn was preceded by
+[Plac](https://github.com/micheles/plac) ).
+The basic idea is that native language proc signatures already encode/declare
+almost everything needed to generate a CLI - names, types, and default values.
+A little reflection/introspection then suffices to generate a parser-dispatcher
+that translates a `seq[string]` command input into calls to a wrapped proc.
+In Nim, adding a CLI can be as easy as adding one line of code:
 ```nim
 proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   ##Some existing API call
