@@ -290,7 +290,7 @@ Options(opt-arg sep :|=|spc):
   -h, --help                                print this cligen-erated help
   --help-syntax                             advanced: prepend,plurals,..
   -i=, --i1=     hashset(int8)    {}        include 1 val in i1
-  -I=, --I1=     hashset(int8)    2,3       include 1 val in I1
+  -I=, --I1=     hashset(int8)    3,2       include 1 val in I1
   --i2=          hashset(int16)   {}        include 1 val in i2
   --I2=          hashset(int16)   4,5       include 1 val in I2
   -u=, --u1=     hashset(uint8)   {}        include 1 val in u1
