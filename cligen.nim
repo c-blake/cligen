@@ -24,6 +24,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
     sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
+    hTabSuppress*: string        ## Magic val for per-param help to suppress
 
   HelpOnly*    = object of Exception
   VersionOnly* = object of Exception
@@ -40,7 +41,8 @@ var clCfg* = ClCfg(
   reqSep:      false,
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
-                 '|', '~', '^', '$', '#', '<', '>', '?' })
+                 '|', '~', '^', '$', '#', '<', '>', '?' },
+  hTabSuppress: "SUPPRESS")
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
@@ -405,7 +407,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
          `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = `isReq`
          `apId`.parRend = if `hky`.len>0: `hky` else:helpCase(`parNm`,clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
-         `tabId`.add(argHelp(`defVal`, `apId`) & descr)
+         if descr != `cf`.hTabSuppress:
+           `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.val4req
          `cbId`.incl(optionNormalize(`parNm`), `apId`.parRend)
          `allId`.add(helpCase(`parNm`, clLongOpt)))
