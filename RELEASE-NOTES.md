@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.40
+---------------
+  `help["param"] == "SUPPRESS"` now removes param from the generated help
+  table.  In the unlikely event you had that (case sensitive) string as a
+  parameter help string, the string "SUPPRESS" can be adjusted via
+  `clCfg.hTabSuppress`.
+
 Version: 0.9.39
 ---------------
   initFromCL` now works on ref|ptr object types.  See `test/InitObRef.nim` and
