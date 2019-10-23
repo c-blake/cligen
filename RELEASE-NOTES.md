@@ -8,6 +8,14 @@ Version: 0.9.40
   parameter help string, the string "SUPPRESS" can be adjusted via
   `clCfg.hTabSuppress`.
 
+  Work around `csize` definition thrashing in Nim-actual by defining our own
+  non-exported `csize` in modules that need it to the uint version.  Code seems
+  to test out ok in all Nim versions >= 0.19.2.  About the only downside is
+  that a private & different `csize` could cause some confusion to casual
+  on-lookers/readers rapidly switching between in-cligen/out-of-cligen modules.
+  Anyway, you probably do not want to use cligen v0.9.39 for anything, but
+  nimble lets you say <=0.9.38 or >=0.9.40 (or #head, etc.).
+
 Version: 0.9.39
 ---------------
   initFromCL` now works on ref|ptr object types.  See `test/InitObRef.nim` and

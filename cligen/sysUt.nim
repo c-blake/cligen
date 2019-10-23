@@ -1,3 +1,4 @@
+type csize = uint
 proc `:=`*[T](x: var T, y: T): T =
   ## A assignment expression like convenience operator
   x = y

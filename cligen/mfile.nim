@@ -14,6 +14,7 @@ type
     flags*: cint    ## Map Flags (-1 => not open)
     mem*  : pointer ## First addr to use
     len*  : int     ## Length of file (in bytes) or to unmap
+  csize = uint
 
 proc getpagesize(): cint {. importc: "getpagesize", header: "<unistd.h>" .}
 let pagesize = getpagesize()

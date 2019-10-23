@@ -1,3 +1,4 @@
+type csize = uint
 const
   so = static:
     var r = ""

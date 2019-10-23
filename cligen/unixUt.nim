@@ -1,4 +1,5 @@
 import posix
+type csize = uint
 
 var lastBadDev = 0.Dev
 when defined(linux):
