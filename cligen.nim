@@ -567,7 +567,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
-        let msg = "Unexpected non-option " & $`pId`
+        let msg = "Unexpected non-option " & $`pId`.key
         if cast[pointer](`setByParseId`) != nil:
           `setByParseId`[].add((`apId`.key, `pId`.val, msg, clNonOption))
         else:
