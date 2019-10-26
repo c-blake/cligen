@@ -57,3 +57,4 @@ test/InitObPtr
 test/InitObRef
 test/InitTup
 test/UserAliases
+test/SetByParse

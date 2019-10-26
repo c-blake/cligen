@@ -720,6 +720,15 @@ Options(opt-arg sep :|=|spc):
   -v, --verb     bool    false  set verb
   -i=, --item=   string  ""     set item
 
+==> test/SetByParse.out <==
+Usage:
+  foo [optional-params] [rest: int...]
+Options(opt-arg sep :|=|spc):
+  -h, --help                 print this cligen-erated help
+  --help-syntax              advanced: prepend,plurals,..
+  -a=, --alpha=  float  1.0  set alpha
+  -b=, --beta=   int    2    set beta
+
 ==> test/SubScope.out <==
 Usage:
   SubScope {SUBCMD}  [sub-command options & parameters]
@@ -747,8 +756,8 @@ Options(opt-arg sep :|=|spc):
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(692, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(678, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(688, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(674, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(188, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
