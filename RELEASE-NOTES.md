@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.41
+---------------
+  Fixed some bugs for `setByParse` users.
+
 Version: 0.9.40
 ---------------
   `help["param"] == "SUPPRESS"` now removes param from the generated help
