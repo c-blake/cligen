@@ -567,8 +567,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if cast[pointer](`setByParseId`) != nil:
           `setByParseId`[].add((`apId`.key, `pId`.val, msg, clNonOption))
         if not `prsOnlyId`:
-          stderr.write(`cName`&" does not expect non-option arguments.  Got\n" &
-                       $`pId` & "\nRun with --help for full usage.\n")
+          stderr.write(`cName`&" does not expect non-option arguments at \"" &
+                       $`pId`.key & "\".\nRun with --help for full usage.\n")
           raise newException(ParseError, msg))
 
   let initVars=initVars0(); let optCases=optCases0(); let nonOpt=nonOpt0()
