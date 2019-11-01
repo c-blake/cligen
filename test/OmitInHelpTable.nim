@@ -8,9 +8,10 @@ proc demo(al_pha=1, be_ta=2.0, verb=false, jk=9, item="", args: seq[string]) =
 
 when isMainModule:
   import cligen
+  clCfg.hTabSuppress = "cligen-NOHELP"  #default is "CLIGEN-NOHELP"
   dispatch(demo,
            help = { "al-pha" : "growth constant",
                     "be-ta"  : "shrink target",
-                    "jk"     : "CLIGEN-NOHELP" },
+                    "jk"     : "cligen-NOHELP" },
            short = { "a-lpha" : 'z',
                      "b-eta" : '\0' })
