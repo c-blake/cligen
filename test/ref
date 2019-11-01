@@ -547,6 +547,20 @@ Options(opt-arg sep :|=|spc):
   --aaah         bool    false  set aaah
   --aloha=       string  ""     set aloha
 
+==> test/OmitInHelpTable.out <==
+Usage:
+  demo [optional-params] [args: string...]
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
+Options(opt-arg sep :|=|spc):
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -z=, --al-pha=  int     1      growth constant
+  --be-ta=        float   2.0    shrink target
+  -v, --verb      bool    false  set verb
+  -i=, --item=    string  ""     set item
+
 ==> test/OneCharParams.out <==
 Usage:
   demo [optional-params] [b: string...]
