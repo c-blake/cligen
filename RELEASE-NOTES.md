@@ -5,6 +5,9 @@ Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.
 
+  Change the default `hTabSuppress` to `"CLIGEN-NOHELP"` to be more specific
+  about what it does and kind of namespace it to be cligen-specific, too.
+
 Version: 0.9.40
 ---------------
   `help["param"] == "SUPPRESS"` now removes param from the generated help
