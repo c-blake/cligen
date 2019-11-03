@@ -138,8 +138,8 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   let valNorm = optionNormalize(a.val)      #Normalized strings
   var allNorm: seq[string]
   var allCanon: seq[string]                 #Canonical/helpCased string
-  type enumCanon[T] = tuple[e: T; canon: string]
-  var crbt: CritBitTree[enumCanon[T]]
+  type EnumCanon[T] = tuple[e: T; canon: string]
+  var crbt: CritBitTree[EnumCanon[T]]
   if valNorm.len > 0:
     for e in low(T)..high(T):
       allCanon.add(helpCase($e, clEnumVal))

@@ -23,7 +23,7 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
       if e.section.startsWith("include__"):
         let sub = e.section[9..^1]
         let subp = if sub == sub.toUpperAscii: getEnv(sub) else: sub
-        result.add cfToCL(if subp.startswith("/"): subp
+        result.add cfToCL(if subp.startsWith("/"): subp
                           else: path.parentDir & "/" & subp,
                           subCmdName, quiet, noRaise, activeSection)
       elif subCmdName.len > 0:
