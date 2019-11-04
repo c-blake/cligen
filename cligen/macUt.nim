@@ -119,3 +119,7 @@ macro docFromProc*(sym: typed{nkSym}): untyped =
   var cmtDoc = ""
   collectComments(cmtDoc, impl)
   newStrLitNode(strip(cmtDoc))
+
+proc maybeDestrop*(id: NimNode): NimNode =
+  ## Used to remove stropping backticks \`\`, if present, from an ident node
+  if id.kind == nnkAccQuoted: id[0] else: id

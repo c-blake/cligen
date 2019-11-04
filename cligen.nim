@@ -98,8 +98,8 @@ proc containsParam(fpars: NimNode, key: NimNode): bool =
   for declIx in 1 ..< len(fpars):       #default for result=false
     let idefs = fpars[declIx]           #Use similar logic to formalParamExpand
     for i in 0 ..< len(idefs) - 3:      #..since`suppress` is a seq we check.
-      if idefs[i] == key: return true
-    if idefs[^3] == key: return true
+      if maybeDestrop(idefs[i]) == key: return true
+    if maybeDestrop(idefs[^3]) == key: return true
 
 proc formalParamExpand(fpars: NimNode, n: auto,
                        suppress: seq[NimNode]= @[]): NimNode =
