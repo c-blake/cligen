@@ -743,6 +743,17 @@ Options(opt-arg sep :|=|spc):
   -a=, --alpha=  float  1.0  set alpha
   -b=, --beta=   int    2    set beta
 
+==> test/StroppedParams.out <==
+Usage:
+  repro [optional-params] 
+Options(opt-arg sep :|=|spc):
+  -h, --help                          print this cligen-erated help
+  --help-syntax                       advanced: prepend,plurals,..
+  -s=, --secondsSpread=  int   300    length of time window covered by one file
+  -0, --0                bool  false  NUL-delimit the file in --outputFile
+                                      instead of newline-delimiting
+  -b, --b                bool  false  single letter parameters don't suffer
+
 ==> test/SubScope.out <==
 Usage:
   SubScope {SUBCMD}  [sub-command options & parameters]

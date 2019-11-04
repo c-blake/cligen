@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.42
+---------------
+  Allow stropped aka \`backquoted\` params to have a `help` entry.  Add new
+  test program for such.  Probably the first of only quite a few places we will
+  need `maybeDestrop`.
+
 Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.
