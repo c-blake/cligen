@@ -7,6 +7,8 @@ Version: 0.9.42
   test program for such.  Probably the first of only quite a few places we will
   need `maybeDestrop`.
 
+  Add `cligen.initDispatchGen`.  See doc comment/commit comment for details.
+
 Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.

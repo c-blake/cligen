@@ -214,7 +214,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##
   ##``help`` is a ``{(paramNm, str)}`` of per-param help, eg. ``{"quiet": "be
   ##quiet"}``.  Often, only these help strings are needed for a decent CLI.
-  ##``str==clCfg.hTabSuppress`` (default==``"SUPPRESS"``) trims help table row.
+  ##``str==clCfg.hTabSuppress`` (default== ``"SUPPRESS"``) trims help table row.
   ##
   ##``short`` is a ``{(paramNm, char)}`` of per-param single-char option keys.
   ##
@@ -998,6 +998,49 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     initFromCLcf(default, cmdName, doc, help, short, usage, cf, positional,
                  suppress, mergeNames, alias)
   cligenDoNotCollideWithGlobalVar(clCfg)
+
+macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
+                       suppress: seq[string] = @[]; body: untyped): untyped =
+  ##Create a proc with signature from ``default`` that calls ``initGen`` and
+  ##initializes ``var obName`` by calling to the generated initializer.  It puts
+  ##``body`` inside an appropriate ``try``/``except`` so that you can just say:
+  ##
+  ## .. code-block:: nim
+  ##initDispatchGen(cmdProc, cfg, cfgDfl):
+  ##  cfg.callAPI(); quit(min(255, cfg.nError))
+  ##dispatch(cmdProc)
+  var ti = default.getTypeImpl
+  case ti.typeKind:
+  of ntyTuple: discard            #For tuples IdentDefs are top level
+  of ntyObject: ti = ti[2]        #For objects, descend to the nnkRecList
+  of ntyRef, ntyPtr: ti = ti[0].getTypeImpl[2]
+  else: error "default value is not a tuple or object or ref|ptr to such"
+  let suppressed = toIdSeq(suppress)
+  let lastUnsuppressed = if suppress.len > 1 and suppress[1].len > 0 and
+                           ($suppress[1][0]).startsWith "ALL AFTER ":
+                             ident(($suppress[1][0])[10..^1]) else: nil
+  let posId = ident(positional.strVal)
+  let empty = newNimNode(nnkEmpty)
+  var params = @[newEmptyNode()]  #initializers
+  var call = newNimNode(nnkCall)  #call site
+  call.add(ident("initter"))
+  for kid in ti.children:         #iterate over fields
+    if kid.kind != nnkIdentDefs: warning "case objects unsupported"
+    let id = ident(kid[0].strVal)
+    if id in suppressed: continue
+    params.add(if id == posId: newIdentDefs(id, kid[1], empty)
+               else: newIdentDefs(id, empty, quote do: `default`.`id`))
+    call.add(quote do: `id`)
+    if id == lastUnsuppressed: break
+  let body = quote do:
+    initGen(`default`, type(`default`), `positional`, `suppress`, "initter")
+    try:
+      var `obName` = `call`    #a, b, ..
+      `body`
+    except HelpOnly, VersionOnly: quit(0)
+    except ParseError: quit(1)
+  result = newProc(name = dispName, params = params, body = body)
+  when defined(printIDGen): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =
