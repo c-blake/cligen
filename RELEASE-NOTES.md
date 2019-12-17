@@ -9,6 +9,9 @@ Version: 0.9.42
 
   Add `cligen.initDispatchGen`.  See doc comment/commit comment for details.
 
+  `textUt.getAll(cb: CritBitTree[T], key: string)` now returns a seq of len==1
+  when the key is in the table (even if that key prefixes other keys).
+
 Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.
