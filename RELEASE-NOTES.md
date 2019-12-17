@@ -12,6 +12,8 @@ Version: 0.9.42
   `textUt.getAll(cb: CritBitTree[T], key: string)` now returns a seq of len==1
   when the key is in the table (even if that key prefixes other keys).
 
+  Add `cligen/osUt.loadSym` proc combining loadLib and symAddr operations.
+
 Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.

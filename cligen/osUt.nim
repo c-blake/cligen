@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils #, sets, tables, strformat, ./sysUt #`:=`
+import os, terminal, strutils, dynlib #, sets, tables, strformat, ./sysUt #`:=`
 type csize = uint
 
 proc perror*(x: cstring, len: int) =
@@ -99,3 +99,18 @@ proc simplifyPath*(path: string, collapseDotDot=false): string =
       result.setLen(result.len - 1)
   else:
     result = "." & (if path.endsWith($DirSep): $DirSep else: "")
+
+proc loadSym*(x: string): pointer =
+  ## split ``x`` on ``':'`` into library:symbol parts, ``dynlib.loadLib`` the
+  ## library and then ``dynlib.symAddr`` the symbol.  Returns the pointer or nil
+  ## if either operation fails.
+  let cols = x.split(':')
+  if cols.len != 2:
+    stderr.write("\"" & x & "\" not of form <lib.so>:<func>\n"); return
+  let lib = loadLib(cols[0])
+  if lib == nil:
+    stderr.write("could not loadLib \"" & cols[0] & "\"\n"); return
+  let sym = symAddr(lib, cols[1])
+  if sym == nil:
+    stderr.write("could not find \"" & cols[1] & "\"\n")
+  sym
