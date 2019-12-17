@@ -97,7 +97,10 @@ proc keys*[T](cb: CritBitTree[T]): seq[string] =
 
 proc getAll*[T](cb: CritBitTree[T], key:string): seq[tuple[key:string, val: T]]=
   ##A query function sometimes helpful in making ``CritBitTree[T]`` code more
-  ##like ``Table[string,T]`` code.
+  ##like ``Table[string,T]`` code. ``result.len > 1`` only on ambiguous matches.
+  if key in cb:
+    result.add( (key, cb[key]) )
+    return
   for k, v in cb.pairsWithPrefix(key):
     result.add( (k, v) )
 
