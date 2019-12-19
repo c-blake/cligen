@@ -175,6 +175,16 @@ proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
   for v in tab.values: strs.add v
   a.realize strs
 
+proc expandFit*(a: var Abbrev; strs: var seq[string];
+                ab0, ab1, wids, colWs: var seq[int]; w,j,m,nr,nc: int; gap=1) =
+  ## Expand any wildcards in ``strs[m*i + j][ab0[i] ..< ab1[i]]``, updating
+  ## ``colWs[m*(i div nr) + j]`` until either all wildcards are gone or
+  ## ``colWs.sum + gap*(nc-1) == w``.  Does not alter overall table structure.
+  ## Space is used as follows.  First add a char from source data to the left of
+  ## the 1st wildcard in each col, round-robin across cols.  Then add a char to
+  ## the left of any 2nd wildcard or to the right of the 1st, and so on.
+  discard
+
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
     var a = parseAbbrev(abbr)
