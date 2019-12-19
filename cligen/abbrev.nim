@@ -28,7 +28,8 @@
 ##making strings harder to read and probably gets slower to compute.  Efficient
 ##algorithms for this case are a work in progress.
 
-import strutils, algorithm, sets, tables, ./tern, ./humanUt, ./textUt, ./trie
+import strutils, algorithm, sets, tables, math,
+       ./tern, ./humanUt, ./textUt, ./trie
 
 type Abbrev* = object
   sep: string
@@ -176,14 +177,63 @@ proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
   a.realize strs
 
 proc expandFit*(a: var Abbrev; strs: var seq[string];
-                ab0, ab1, wids, colWs: var seq[int]; w,j,m,nr,nc: int; gap=1) =
-  ## Expand any wildcards in ``strs[m*i + j][ab0[i] ..< ab1[i]]``, updating
-  ## ``colWs[m*(i div nr) + j]`` until either all wildcards are gone or
-  ## ``colWs.sum + gap*(nc-1) == w``.  Does not alter overall table structure.
-  ## Space is used as follows.  First add a char from source data to the left of
-  ## the 1st wildcard in each col, round-robin across cols.  Then add a char to
-  ## the left of any 2nd wildcard or to the right of the 1st, and so on.
-  discard
+                ab0, ab1, wids, colWs: var seq[int]; w,jP,m,nr,nc: int, gap=1) =
+  ## Expand any ``a.sep`` in ``strs[m*i + jP][ab0[i] ..< ab1[i]]``, updating
+  ## ``colWs[m*(i div nr) + jP]`` until all seps gone or ``colWs.sum==w``.
+  ## (I.e. ``colWs`` include ``gap``.)  Overall table structure is preserved.
+  ## Early ``a.sep`` instances are fully expanded before later instances change.
+  proc sepExt(loc: var int; sep, abb, src: string): int =   #extent of sep
+    loc = abb.find(sep)
+    if loc < 0: return 0
+    let nx = abb.find(sep, loc + 1)
+    if nx < 0: return src.len - abb.len + sep.len
+    return src[loc..^1].find abb[loc + 1 ..< nx]
+
+  var invDict: Table[string, string]
+  for k,v in a.abbOf: invDict[v] = k
+  var src = newSeq[string](ab0.len)
+  var loc = newSeq[int](ab0.len)
+  var ext = newSeq[int](ab0.len)
+  for j in 0 ..< nc div m:
+    for i in 0 ..< nr:
+      let si  = nr*j + i
+      let abb = strs[m*si + jP][ab0[si] ..< ab1[si]]
+      src[si] = invDict[abb]
+      ext[si] = sepExt(loc[si], a.sep, abb, src[si])
+  var parity = 0
+  var anySep = true
+  echo "old colWs: ", colWs #XXX These initial values seem off by 1..several
+  while anySep:
+    anySep = false
+    for j in 0 ..< nc div m:
+      let adjust = if nc div m > 0 and j < nc div m - 1: -gap else: 0
+      var expanded = false
+      for i in 0 ..< nr:
+        let si  = nr*j + i              #index for wids, ab[01]
+        let ti  = m*si + jP             #index for strs[] of abbrev part
+        if loc[si] < 0: continue        #No sep; skip to next pat
+        anySep = true; expanded = true
+        let pat = strs[ti][ab0[si]..<ab1[si]]
+        var new: string
+        if ext[si] == a.sep.len + 1:    #separator saves no space in widened
+          let eos = min(loc[si] + ext[si], src[si].len - 1)  #;stderr.write "nuking since ext[si] == ", ext[si], " loc==", loc[si], "\n"
+          new = pat[0..loc[si]-1] & src[si][loc[si] .. eos] &
+                  pat[eos..^1]
+          ext[si] = sepExt(loc[si], a.sep, new, src[si])
+        else:
+          new = pat[0..loc[si]-1] & src[si][loc[si]] & a.sep &
+                  pat[loc[si]+1..^1]  #;stderr.write "expanding at ", loc[si], " ext=", ext[si], "\n"
+          loc[si].inc; ext[si].dec
+        let sfx = if ab1[si] < src[si].len: strs[ti][ab1[si]..^1] else: ""
+        strs[ti] = strs[ti][0 ..< ab0[si]] & new & sfx
+        a.abbOf[src[si]] = new;stderr.write "expanded \"", pat, "\" to \"", new, "\"\n"
+        wids[si].inc                    #Adjust rendered width
+        ab1[si].inc                     #Adjust Abbreviation Bracket/Slice
+      if expanded:
+        colWs[m*j + jP].inc
+        if colWs.sum == w: return
+    parity = (parity + 1) mod 2         #Flip parity for next pass over table
+  echo "new colWs: ", colWs #XXX but deltas are right; padding off by >>1
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
