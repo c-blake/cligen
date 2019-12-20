@@ -115,7 +115,7 @@ proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
     avgSfx.inc sfx[i].len; avgPfx.inc pfx[i].len
     result[i] = if sfx[i].len < pfx[i].len: sfx[i] else: pfx[i]
   for r in result:
-    if t.match(r, 2, aN=sep).len > 1:     #Collision=>revert to narrower on avg
+    if t.match(r, 2, aN=sep[0]).len > 1:     #Collision=>revert to narrower on avg
       result = if avgSfx < avgPfx: sfx else: pfx
       break
   if nWild == -4: return                  #Only best pfx|sfx requested; Done
@@ -128,7 +128,7 @@ proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
         for nSfx in 0 ..< tLen - sLen:        #..try all splits, stop when
           let nPfx = tLen - sLen - nSfx       #..first unique is found.
           let pat = s[0 ..< nPfx] & sep & s[^nSfx .. ^1]
-          if t.match(pat, 2, aN=sep).len == 1 and pat.len < result[i].len:
+          if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
             result[i] = pat; break outermost
   if nWild == -5: return                  #Only best 1-* requested; Done
   for i, s in strs:                       #Try to improve with a second *
@@ -142,7 +142,7 @@ proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
             for nMid in 1 .. tLen - 2*sLen - nSfx - nPfx:
               for off in 0 .. s.len - nPfx - nSfx - nMid:
                 let pat = pfx & sep & s[nPfx+off ..< nPfx+off+nMid] & sep & sfx
-                if t.match(pat, 2, aN=sep).len == 1 and pat.len < result[i].len:
+                if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
                   result[i] = pat; break outermost
 
 proc realize*(a: var Abbrev, strs: openArray[string]) =
