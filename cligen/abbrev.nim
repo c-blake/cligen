@@ -216,16 +216,16 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         let pat = strs[ti][ab0[si] ..< ab1[si]]
         var new: string
         if ext[si] == a.sep.len + 1:    #separator saves no space in widened
-          let eos = min(loc[si] + ext[si], src[si].len - 1)  #;stderr.write "nuking since ext[si] == ", ext[si], " loc==", loc[si], "\n"
+          let eos = min(loc[si] + ext[si], src[si].len - 1)
           new = pat[0..loc[si]-1] & src[si][loc[si] .. eos] &
                   pat[eos..^1]
           ext[si] = sepExt(loc[si], a.sep, new, src[si])
         else:
           new = pat[0..loc[si]-1] & src[si][loc[si]] & a.sep &
-                  pat[loc[si]+1..^1]  #;stderr.write "expanding at ", loc[si], " ext=", ext[si], "\n"
+                  pat[loc[si]+1..^1]
           loc[si].inc; ext[si].dec
         strs[ti] = strs[ti][0 ..< ab0[si]] & new & strs[ti][ab1[si]..^1]
-        a.abbOf[src[si]] = new  #;stderr.write "expanded \"", pat, "\" to \"", new, "\"\n"
+        a.abbOf[src[si]] = new
         wids[si] = wids[si].sgn*(wids[si].abs+1)  #Fix rendered width
         ab1[si].inc                               #Fix Abbrev Bracket/Slice
       if expanded:
