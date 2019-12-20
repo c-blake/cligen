@@ -177,10 +177,10 @@ proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
   a.realize strs
 
 proc expandFit*(a: var Abbrev; strs: var seq[string];
-                ab0, ab1, wids, colWs: var seq[int]; w,jP,m,nr,nc: int, gap=1) =
+                ab0, ab1, wids, colWs: var seq[int]; w,jP,m,nr,nc: int) =
   ## Expand any ``a.sep`` in ``strs[m*i + jP][ab0[i] ..< ab1[i]]``, updating
   ## ``colWs[m*(i div nr) + jP]`` until all seps gone or ``colWs.sum==w``.
-  ## (I.e. ``colWs`` include ``gap``.)  Overall table structure is preserved.
+  ## I.e. ``colWs`` include gap to right.  Overall table structure is preserved.
   ## Early ``a.sep`` instances are fully expanded before later instances change.
   proc sepExt(loc: var int; sep, abb, src: string): int =   #extent of sep
     loc = abb.find(sep)
@@ -197,23 +197,23 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
   for j in 0 ..< nc div m:
     for i in 0 ..< nr:
       let si  = nr*j + i
+      if si >= wids.len: break
       let abb = strs[m*si + jP][ab0[si] ..< ab1[si]]
       src[si] = invDict[abb]
       ext[si] = sepExt(loc[si], a.sep, abb, src[si])
   var parity = 0
   var anySep = true
-  echo "old colWs: ", colWs #XXX These initial values seem off by 1..several
   while anySep:
     anySep = false
     for j in 0 ..< nc div m:
-      let adjust = if nc div m > 0 and j < nc div m - 1: -gap else: 0
       var expanded = false
       for i in 0 ..< nr:
         let si  = nr*j + i              #index for wids, ab[01]
+        if si >= wids.len: break
         let ti  = m*si + jP             #index for strs[] of abbrev part
         if loc[si] < 0: continue        #No sep; skip to next pat
         anySep = true; expanded = true
-        let pat = strs[ti][ab0[si]..<ab1[si]]
+        let pat = strs[ti][ab0[si] ..< ab1[si]]
         var new: string
         if ext[si] == a.sep.len + 1:    #separator saves no space in widened
           let eos = min(loc[si] + ext[si], src[si].len - 1)  #;stderr.write "nuking since ext[si] == ", ext[si], " loc==", loc[si], "\n"
@@ -224,16 +224,14 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
           new = pat[0..loc[si]-1] & src[si][loc[si]] & a.sep &
                   pat[loc[si]+1..^1]  #;stderr.write "expanding at ", loc[si], " ext=", ext[si], "\n"
           loc[si].inc; ext[si].dec
-        let sfx = if ab1[si] < src[si].len: strs[ti][ab1[si]..^1] else: ""
-        strs[ti] = strs[ti][0 ..< ab0[si]] & new & sfx
-        a.abbOf[src[si]] = new;stderr.write "expanded \"", pat, "\" to \"", new, "\"\n"
-        wids[si].inc                    #Adjust rendered width
-        ab1[si].inc                     #Adjust Abbreviation Bracket/Slice
+        strs[ti] = strs[ti][0 ..< ab0[si]] & new & strs[ti][ab1[si]..^1]
+        a.abbOf[src[si]] = new  #;stderr.write "expanded \"", pat, "\" to \"", new, "\"\n"
+        wids[si] = wids[si].sgn*(wids[si].abs+1)  #Fix rendered width
+        ab1[si].inc                               #Fix Abbrev Bracket/Slice
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w: return
     parity = (parity + 1) mod 2         #Flip parity for next pass over table
-  echo "new colWs: ", colWs #XXX but deltas are right; padding off by >>1
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
