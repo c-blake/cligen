@@ -233,9 +233,8 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
     for j in 0 ..< nc div m:
       var expanded = false
       for i in 0 ..< nr:
-        let si  = nr*j + i              #Index for wids, ab[01]
+        let si  = nr*j + i; let ti = m*si + jP  #Index for wids[] & strs[]
         if si >= wids.len: break
-        let ti  = m*si + jP             #Index for strs[] of abbrev part
         if loc[si] < 0: continue        #No sep; skip to next pat
         anySep = true
         expanded = true
