@@ -25,8 +25,8 @@
 ##The next level of optimization/data compression is to allow the location of
 ##the wildcard to vary from string to string.  After that, allowing >1 '*' can
 ##continue to shorten strings.  Each optimization level removes more context
-##making strings harder to read and probably gets slower to compute.  Efficient
-##algorithms for this case are a work in progress.
+##making strings harder to read & gets slower to compute.  Efficient algorithms
+##for this case are a work in progress. This algo research area seems neglected.
 
 import strutils, algorithm, sets, tables, math,
        ./tern, ./humanUt, ./textUt, ./trie
@@ -243,6 +243,8 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w: return
+#BUG: fully expands /dev; Rightmost col 1 row & earlier cols > 1 row not enough.
+#BUG: jP>0|m>1 causes terminal alignment/padding/etc to be all messed up.
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
