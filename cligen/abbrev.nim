@@ -216,7 +216,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
   for j in 0 ..< nc div m:
     let adjust = if j < nc div m - 1: -1 else: 0  #XXX `-gap`
     for i in 0 ..< nr:
-      let si  = nr*j + i; let ti = m*si + jP  #index for wids[] & strs[]
+      let si  = nr*j + i; let ti = m*si + jP  #Index for wids[] & strs[]
       if si >= wids.len: break
       var pat = strs[ti][ab0[si] ..< ab1[si]]
       src[si] = invDict[pat]
@@ -226,21 +226,21 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         let xtra = colWs[m*j+jP] - wids[si].abs + adjust
         if xtra == 0: break
         let expBy = min(xtra, ext[si] - a.sep.len)
-        expandBy expBy
+        expandBy expBy                  #Updates pat,strs[ti],wids[si],ab1[si]
   var anySep = true
   while anySep:
     anySep = false
     for j in 0 ..< nc div m:
       var expanded = false
       for i in 0 ..< nr:
-        let si  = nr*j + i              #index for wids, ab[01]
+        let si  = nr*j + i              #Index for wids, ab[01]
         if si >= wids.len: break
-        let ti  = m*si + jP             #index for strs[] of abbrev part
+        let ti  = m*si + jP             #Index for strs[] of abbrev part
         if loc[si] < 0: continue        #No sep; skip to next pat
         anySep = true
         expanded = true
         var pat = strs[ti][ab0[si] ..< ab1[si]]
-        expandBy 1
+        expandBy 1                      #Updates pat,strs[ti],wids[si],ab1[si]
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w: return
