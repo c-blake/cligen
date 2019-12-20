@@ -277,7 +277,7 @@ proc uniquePfxPats*(x: openArray[string], sep="*"): seq[string] =
   result.setLen x.len
   var t: Tern[void]
   for i, s in x: t.incl s
-  for i, s in x: result[i] = t.uniquePfxPat(s)
+  for i, s in x: result[i] = t.uniquePfxPat(s, sep)
 
 proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
   ## Return unique suffixes in ``x`` assuming non-empty-string&unique ``x[i]``.
@@ -287,5 +287,6 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
   for i, s in x:
     revd[i] = s; revd[i].reverse; t.incl revd[i]
   for i, s in revd:
-    result[i] = t.uniquePfxPat(s)
+    result[i] = t.uniquePfxPat(s, "")
     result[i].reverse
+    result[i] = sep & result[i]
