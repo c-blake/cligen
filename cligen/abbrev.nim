@@ -176,32 +176,57 @@ proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
   for v in tab.values: strs.add v
   a.realize strs
 
+proc sepExt(loc: var int; sep, abb, src: string): int =   #extent of sep
+  loc = abb.find(sep)
+  if loc < 0: return 0
+  let nx = abb.find(sep, loc + 1)
+  if nx < 0: return src.len - abb.len + sep.len
+  return src[loc..^1].find abb[loc + 1 ..< nx]
+
+proc sepExp(pat, src, sep: string; expBy: int; ext, loc: var int): string =
+  if ext <= sep.len + expBy:      #1st sep saves no space in widened
+    result = if loc + ext < src.len - 1:
+               pat[0 .. loc-1] & src[loc .. loc + ext] & pat[loc+sep.len+1..^1]
+             else:
+               pat[0 .. loc-1] & src[loc .. ^1]
+    ext = sepExt(loc, sep, result, src)
+  else:
+    result = pat[0 .. loc-1] & src[loc .. loc+expBy-1] & sep & pat[loc+1..^1]
+    loc.inc expBy
+    ext.dec expBy
+
 proc expandFit*(a: var Abbrev; strs: var seq[string];
                 ab0, ab1, wids, colWs: var seq[int]; w,jP,m,nr,nc: int) =
   ## Expand any ``a.sep`` in ``strs[m*i + jP][ab0[i] ..< ab1[i]]``, updating
   ## ``colWs[m*(i div nr) + jP]`` until all seps gone or ``colWs.sum==w``.
   ## I.e. ``colWs`` include gap to right.  Overall table structure is preserved.
   ## Early ``a.sep`` instances are fully expanded before later instances change.
-  proc sepExt(loc: var int; sep, abb, src: string): int =   #extent of sep
-    loc = abb.find(sep)
-    if loc < 0: return 0
-    let nx = abb.find(sep, loc + 1)
-    if nx < 0: return src.len - abb.len + sep.len
-    return src[loc..^1].find abb[loc + 1 ..< nx]
+  template expandBy(amt: int) {.dirty.} =
+    pat = sepExp(pat, src[si], a.sep, amt, ext[si], loc[si])
+    strs[ti] = strs[ti][0 ..< ab0[si]] & pat & strs[ti][ab1[si]..^1]
+    a.abbOf[src[si]] = pat
+    wids[si] = wids[si].sgn * (wids[si].abs + amt)  #Fix rendered width
+    ab1[si].inc amt                                 #Fix Abbrev Bracket/Slice
 
-  var invDict: Table[string, string]
-  for k,v in a.abbOf: invDict[v] = k
   var src = newSeq[string](ab0.len)
   var loc = newSeq[int](ab0.len)
   var ext = newSeq[int](ab0.len)
+  var invDict: Table[string, string]
+  for k,v in a.abbOf: invDict[v] = k
   for j in 0 ..< nc div m:
+    let adjust = if j < nc div m - 1: -1 else: 0  #XXX `-gap`
     for i in 0 ..< nr:
-      let si  = nr*j + i
+      let si  = nr*j + i; let ti = m*si + jP  #index for wids[] & strs[]
       if si >= wids.len: break
-      let abb = strs[m*si + jP][ab0[si] ..< ab1[si]]
-      src[si] = invDict[abb]
-      ext[si] = sepExt(loc[si], a.sep, abb, src[si])
-  var parity = 0
+      var pat = strs[ti][ab0[si] ..< ab1[si]]
+      src[si] = invDict[pat]
+      ext[si] = sepExt(loc[si], a.sep, pat, src[si])
+      while true:             #colW may be large enough to expand multiple seps
+        if loc[si] < 0: break
+        let xtra = colWs[m*j+jP] - wids[si].abs + adjust
+        if xtra == 0: break
+        let expBy = min(xtra, ext[si] - a.sep.len)
+        expandBy expBy
   var anySep = true
   while anySep:
     anySep = false
@@ -212,26 +237,13 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         if si >= wids.len: break
         let ti  = m*si + jP             #index for strs[] of abbrev part
         if loc[si] < 0: continue        #No sep; skip to next pat
-        anySep = true; expanded = true
-        let pat = strs[ti][ab0[si] ..< ab1[si]]
-        var new: string
-        if ext[si] == a.sep.len + 1:    #separator saves no space in widened
-          let eos = min(loc[si] + ext[si], src[si].len - 1)
-          new = pat[0..loc[si]-1] & src[si][loc[si] .. eos] &
-                  pat[eos..^1]
-          ext[si] = sepExt(loc[si], a.sep, new, src[si])
-        else:
-          new = pat[0..loc[si]-1] & src[si][loc[si]] & a.sep &
-                  pat[loc[si]+1..^1]
-          loc[si].inc; ext[si].dec
-        strs[ti] = strs[ti][0 ..< ab0[si]] & new & strs[ti][ab1[si]..^1]
-        a.abbOf[src[si]] = new
-        wids[si] = wids[si].sgn*(wids[si].abs+1)  #Fix rendered width
-        ab1[si].inc                               #Fix Abbrev Bracket/Slice
+        anySep = true
+        expanded = true
+        var pat = strs[ti][ab0[si] ..< ab1[si]]
+        expandBy 1
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w: return
-    parity = (parity + 1) mod 2         #Flip parity for next pass over table
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
