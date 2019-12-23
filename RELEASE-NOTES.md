@@ -14,6 +14,9 @@ Version: 0.9.42
 
   Add `cligen/osUt.loadSym` proc combining loadLib and symAddr operations.
 
+  Add `cligen/abbrev.expandFit` to re-expand glob patterns as much as can be
+  done without impacting a terminal column structure.  (Used by `lc`.)
+
 Version: 0.9.41
 ---------------
   Fixed some bugs for `setByParse` users.
