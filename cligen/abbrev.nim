@@ -228,7 +228,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         let expBy = min(xtra, ext[si] - a.sep.len)
         expandBy expBy                  #Updates pat,strs[ti],wids[si],ab1[si]
   var anySep = true
-  while anySep:
+  while anySep and colWs.sum < w:
     anySep = false
     for j in 0 ..< nc div m:
       var expanded = false
@@ -243,7 +243,6 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w: return
-#BUG: fully expands /dev; Rightmost col 1 row & earlier cols > 1 row not enough.
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
