@@ -205,7 +205,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
     pat = sepExp(pat, src[si], a.sep, amt, ext[si], loc[si])
     strs[ti] = strs[ti][0 ..< ab0[si]] & pat & strs[ti][ab1[si]..^1]
     a.abbOf[src[si]] = pat
-    wids[si] = wids[si].sgn * (wids[si].abs + amt)  #Fix rendered width
+    wids[m*si+jP] = wids[m*si+jP].sgn * (wids[m*si+jP].abs + amt) #Fix rend wids
     ab1[si].inc amt                                 #Fix Abbrev Bracket/Slice
 
   var src = newSeq[string](ab0.len)
@@ -217,14 +217,14 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
     let adjust = if j < nc div m - 1: -1 else: 0  #XXX `-gap`
     for i in 0 ..< nr:
       let si  = nr*j + i; let ti = m*si + jP  #Index for wids[] & strs[]
-      if si >= wids.len: break
+      if ti >= wids.len: break
       var pat = strs[ti][ab0[si] ..< ab1[si]]
       src[si] = invDict[pat]
       ext[si] = sepExt(loc[si], a.sep, pat, src[si])
       while true:             #colW may be large enough to expand multiple seps
         if loc[si] < 0: break
-        let xtra = colWs[m*j+jP] - wids[si].abs + adjust
-        if xtra == 0: break
+        let xtra = colWs[m*j+jP] - wids[m*si+jP].abs + adjust
+        if xtra <= 0: break
         let expBy = min(xtra, ext[si] - a.sep.len)
         expandBy expBy                  #Updates pat,strs[ti],wids[si],ab1[si]
   var anySep = true
@@ -234,7 +234,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
       var expanded = false
       for i in 0 ..< nr:
         let si  = nr*j + i; let ti = m*si + jP  #Index for wids[] & strs[]
-        if si >= wids.len: break
+        if ti >= wids.len: break
         if loc[si] < 0: continue        #No sep; skip to next pat
         anySep = true
         expanded = true
@@ -244,7 +244,6 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         colWs[m*j + jP].inc
         if colWs.sum == w: return
 #BUG: fully expands /dev; Rightmost col 1 row & earlier cols > 1 row not enough.
-#BUG: jP>0|m>1 causes terminal alignment/padding/etc to be all messed up.
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
