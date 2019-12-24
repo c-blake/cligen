@@ -346,3 +346,7 @@ proc uniqueSfxPat*(x: openArray[string], sep="*"): seq[string] =
   for i, s in revd:
     result[i] = t.uniquePfxPat(s)
     result[i].reverse
+
+proc toTrie*(x: openArray[string]): Trie[void] =
+  ## Compute & return a ``Trie[void]`` based on input parameter.
+  for s in x: result.incl s
