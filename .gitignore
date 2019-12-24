@@ -60,3 +60,4 @@ test/UserAliases
 test/SetByParse
 test/OmitInHelpTable
 test/StroppedParams
+cligen/abbrev
