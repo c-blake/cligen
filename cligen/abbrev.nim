@@ -77,7 +77,7 @@ proc parseAbbrev*(s: string): Abbrev =
   result.tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
   result.sep = if cols.len > 3: cols[3] else: "*"
   result.sLen = result.sep.printedLen
-  result.trans = if cols.len > 4: cols[4] else: ""
+  result.trans = if cols.len > 4: cols[4] else: "?"
   if result.mx != -1: result.update   #For -1 caller must call realize
 
 proc uniqueAbs(a: Abbrev, strs: openArray[string]): bool =
@@ -97,12 +97,13 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-proc pquote(t:Trie[void]; sep,tr: string; strs:openArray[string]): seq[string] =
+proc pquote(t: Trie[void]; sep, trans: string;
+            strs: openArray[string]): seq[string] =
   result.setLen strs.len
   for i, s in strs: result[i] = s
-  if tr.len < 2: return
-  let head = tr[0]
-  let cset = toSetChar(tr[1..^1])
+  if trans.len < 2: return
+  let head = trans[0]
+  let cset = toSetChar(trans[1..^1])
   for i in 0 ..< result.len:
     var start = 0
     while start < result[i].len:
@@ -115,7 +116,7 @@ proc pquote(t:Trie[void]; sep,tr: string; strs:openArray[string]): seq[string] =
       start = j + 1
 
 proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
-                    tr=""): seq[string] =
+                    trans=""): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
@@ -126,8 +127,8 @@ proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
   if strs.len == 1:                       #best locally varying n-* pattern = *
     return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
   var t = toTrie(strs)                    #A trie with all strings (<= -4)
-  when defined(patternQuote):
-    for i, q in t.pquote(sep, tr, strs):
+  if trans.len > 1:
+    for i, q in t.pquote(sep, trans, strs):
       a.quoted[strs[i]] = q
       if q != strs[i]: echo "\"", strs[i], "\" pattern-quotes to \"", q, "\""
   result.setLen strs.len
