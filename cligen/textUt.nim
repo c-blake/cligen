@@ -182,3 +182,7 @@ proc termAlignLeft*(s: string, count: Natural, padding = ' '): string =
       result[i] = padding
   else:
     result = s
+
+proc toSetChar*(s: string): set[char] =
+  ## Make & return character set built from a string.
+  for c in s: result.incl c
