@@ -167,3 +167,13 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
     if cols.len > 2: result.add attrOff
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
+
+proc simplifyPattern*(pat: string, a1='?', aN='*'): string =
+  ## Replace (any number of ?)* or *(any number of ?) with just *.
+  result = pat                                    #This could be more efficient
+  let pre  = a1 & aN
+  while pre in result:
+    result = result.replace(pre, $aN)
+  let post = aN & a1
+  while post in result:
+    result = result.replace(post, $aN)
