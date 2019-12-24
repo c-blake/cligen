@@ -32,10 +32,10 @@ import strutils, algorithm, sets, tables, math,
        ./tern, ./humanUt, ./textUt, ./trie
 
 type Abbrev* = object
-  sep: string
+  sep, trans: string
   mx*, hd, tl, sLen, m, h, t: int
   optim: bool
-  abbOf: Table[string, string]
+  abbOf, quoted: Table[string, string]
 
 proc isAbstract*(a: Abbrev): bool {.inline.} =
   a.mx < 0 or a.hd < 0 or a.tl < 0
@@ -70,13 +70,14 @@ proc parseAbbrev*(s: string): Abbrev =
   ##``mx-sep.len``).  ``mx < 0`` => various locally optimized ``uniqueAbbrevs``.
   if s.len == 0: result.sep = "*"; result.sLen = 1; return
   let cols = s.split(',')       #Leading/trailing whitespace in sep is used.
-  if cols.len > 4: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
+  if cols.len > 5: raise newException(ValueError, "bad abbrev spec: \""&s&"\"")
   result.optim = s.startsWith("a")
   result.mx = if cols.len > 0: parseInt(cols[0], -1) else: -1
   result.hd = if cols.len > 1: parseInt(cols[1], -1) else: -1
   result.tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
   result.sep = if cols.len > 3: cols[3] else: "*"
   result.sLen = result.sep.printedLen
+  result.trans = if cols.len > 4: cols[4] else: ""
   if result.mx != -1: result.update   #For -1 caller must call realize
 
 proc uniqueAbs(a: Abbrev, strs: openArray[string]): bool =
@@ -96,17 +97,39 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-proc uniqueAbbrevs*(strs: openArray[string], nWild=1, sep="*"): seq[string] =
+proc pquote(t:Trie[void]; sep,tr: string; strs:openArray[string]): seq[string] =
+  result.setLen strs.len
+  for i, s in strs: result[i] = s
+  if tr.len < 2: return
+  let head = tr[0]
+  let cset = toSetChar(tr[1..^1])
+  for i in 0 ..< result.len:
+    var start = 0
+    while start < result[i].len:
+      let j = result[i].find(cset, start)
+      if j < 0: break
+      var tmp = result[i]
+      tmp[j] = head
+      if t.match(tmp, 2, head, sep[0]).len == 1:
+        result[i] = tmp
+      start = j + 1
+
+proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
+                    tr=""): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
-  var t: Trie[void]                       #A trie with all strings (<= -4)
+  let sep = a.sep
   if   nWild == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
   elif nWild == -3: result = strs.uniqueSfxPats(sep); return
   let sLen = sep.len                      #Code below may assume "*" in spots
   if strs.len == 1:                       #best locally varying n-* pattern = *
     return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
-  for s in strs: t.incl s                 #Populate trie for <= -4 levels
+  var t = toTrie(strs)                    #A trie with all strings (<= -4)
+  when defined(patternQuote):
+    for i, q in t.pquote(sep, tr, strs):
+      a.quoted[strs[i]] = q
+      if q != strs[i]: echo "\"", strs[i], "\" pattern-quotes to \"", q, "\""
   result.setLen strs.len
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
@@ -155,7 +178,7 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
     a.mx = a.sLen + 1; a.update
     return
   if a.mx < -1:
-    for i, abb in uniqueAbbrevs(strs, a.mx, a.sep):
+    for i, abb in a.uniqueAbbrevs(strs, a.mx, a.trans):
       a.abbOf[strs[i]] = abb
   elif a.optim:
     var res: seq[tuple[m, h, t: int]]
