@@ -130,7 +130,7 @@ proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
   if trans.len > 1:
     for i, q in t.pquote(sep, trans, strs):
       a.quoted[strs[i]] = q
-      if q != strs[i]: echo "\"", strs[i], "\" pattern-quotes to \"", q, "\""
+      if q != strs[i]: stderr.write "\"",strs[i],"\" pattern-quotes to \"",q,"\"\n"
   result.setLen strs.len
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
