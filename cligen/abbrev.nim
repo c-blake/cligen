@@ -132,6 +132,8 @@ proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
       a.quoted[strs[i]] = q
       if q != strs[i]: stderr.write "\"",strs[i],"\" pattern-quotes to \"",q,"\"\n"
   result.setLen strs.len
+#XXX Once any-1 char wildcard can be present, current tern.unique?fxPats can
+#    fail to produce unique patterns.  This then has follow-on impact Re -[56].
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
   var avgSfx = 0; var avgPfx = 0
