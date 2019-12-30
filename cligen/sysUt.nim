@@ -41,19 +41,19 @@ macro enumerate*(x: ForLoopStmt): untyped =
   newFor.add body
   result.add newFor
 
-proc incd*[T: Ordinal | uint | uint64](x: var T, amt=1): T =
+proc incd*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to prefix ``++`` in C languages: increment then yield value
   x.inc amt; x
 
-proc decd*[T: Ordinal | uint | uint64](x: var T, amt=1): T =
+proc decd*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to prefix ``--`` in C languages: decrement then yield value
   x.dec amt; x
 
-proc postInc*[T: Ordinal | uint | uint64](x: var T, amt=1): T =
+proc postInc*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to post-fix ``++`` in C languages: yield initial val, then increment
   result = x; x.inc amt
 
-proc postDec*[T: Ordinal | uint | uint64](x: var T, amt=1): T =
+proc postDec*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to post-fix ``--`` in C languages: yield initial val, then decrement
   result = x; x.dec amt
 
