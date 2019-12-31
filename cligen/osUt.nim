@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils, dynlib #, sets, tables, strformat, ./sysUt #`:=`
+import os, terminal, strutils, dynlib, times
 type csize = uint
 
 proc perror*(x: cstring, len: int) =
@@ -114,3 +114,9 @@ proc loadSym*(x: string): pointer =
   if sym == nil:
     stderr.write("could not find \"" & cols[1] & "\"\n")
   sym
+
+template timeIt*(label:string, unit:float, places=3, sep="\n", body: untyped) =
+  let t0 = epochTime()
+  body
+  let dt = epochTime() - t0
+  stdout.write label, " ", formatFloat(dt * unit, ffDecimal, places), sep
