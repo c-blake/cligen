@@ -3,8 +3,8 @@ proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
   ## demo entry point with varied, meaningless parameters.  A Nim invocation
   ## might be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command
   ## invocation "demo --alpha=2 hi ho" (assuming executable gets named demo).
-  echo "alpha:",alpha, " verb:",verb, " junk:",repr(junk), " stuff:",repr(stuff)
-  for i, arg in args: echo "positional[", i, "]: ", repr(arg)
+  echo "alpha:",alpha, " verb:",verb, " junk:",junk, " stuff:",stuff
+  for i, arg in args: echo "positional[", i, "]: ", arg
   return 42
 
 when isMainModule:

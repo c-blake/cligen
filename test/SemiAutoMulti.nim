@@ -1,13 +1,13 @@
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]): int =
   ## demo entry point with varied, meaningless parameters.
-  echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", repr(item)
-  for i, f in files: echo "args[", i, "]: ", repr(f)
+  echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", item
+  for i, f in files: echo "args[", i, "]: ", f
   return 42
 
 proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]) =
   ## show entry point with varied, meaningless parameters.
   echo "gamma:", gamma, " iota:", iota, " verb:", verb
-  for i, p in paths: echo "args[", i, "]: ", repr(p)
+  for i, p in paths: echo "args[", i, "]: ", p
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv

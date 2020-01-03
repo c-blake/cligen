@@ -22,7 +22,7 @@ proc demo(args: seq[string],
   echo "u1: ", u1, " U1: ", U1
   echo "u2: ", u2, " U2: ", U2
   echo "e: " , e , " E: " , E
-  for i, arg in args: echo "positional[", i, "]: ", repr(arg)
+  for i, arg in args: echo "positional[", i, "]: ", arg
   return 42
 
 when isMainModule:

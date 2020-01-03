@@ -34,7 +34,7 @@ proc demo(aa: bool = false,
   echo "oo: ", oo
   echo "pp: ", pp
   echo "qq: ", qq
-  for i, arg in args: echo "positional[", i, "]: ", repr(arg)
+  for i, arg in args: echo "positional[", i, "]: ", arg
   return 42
 
 when isMainModule: import cligen; dispatch(demo, short={"help": '?'})
