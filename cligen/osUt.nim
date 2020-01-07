@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils, dynlib, times
+import os, terminal, strutils, dynlib, times, stats, math
 type csize = uint
 
 proc perror*(x: cstring, len: int) =
@@ -115,8 +115,23 @@ proc loadSym*(x: string): pointer =
     stderr.write("could not find \"" & cols[1] & "\"\n")
   sym
 
-template timeIt*(label:string, unit:float, places=3, sep="\n", body: untyped) =
-  let t0 = epochTime()
-  body
-  let dt = epochTime() - t0
-  stdout.write label, " ", formatFloat(dt * unit, ffDecimal, places), sep
+template timeIt*(output: untyped, label: string, unit=1e-6, places=3,
+                 sep="\n", reps=1, body: untyped) =
+  ## A simple benchmark harness.  ``output`` should be something like ``echo``
+  ## or ``stdout.write`` depending on desired formatting.  ``label`` comes
+  ## before time(``reps == 1``)|time statistics(``rep > 1``), while ``sep``
+  ## comes after the numbers.
+  var dt: RunningStat
+  for r in 1..reps:
+    let t0 = epochTime()
+    body
+    dt.push (epochTime() - t0)/unit
+  if reps > 1:
+    output label, " ", formatFloat(dt.min, ffDecimal, places), "..",
+           formatFloat(dt.max, ffDecimal, places), " ",
+           formatFloat(dt.mean, ffDecimal, places),
+           " +- ",    # Report standard deviation *of the above mean*
+           formatFloat(sqrt(dt.varianceS / dt.n.float), ffDecimal, places),
+           sep
+  else:
+    output label, " ", formatFloat(dt.sum, ffDecimal, places), sep
