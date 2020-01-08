@@ -11,7 +11,7 @@ proc mergeParams(cmdNames: seq[string],
   ## for multi-commands, e.g. $PROG_SUBCMD).  Finally, it appends the passed
   ## ``cmdLine`` (usually command-line-entered parameters or @["--help"]).
   when defined(debugMergeParams):
-    echo "mergeParams got cmdNames: ", repr(cmdNames)
+    echo "mergeParams got cmdNames: ", cmdNames
   if cmdNames.len > 0:
     var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
     if cfPath.len == 0:

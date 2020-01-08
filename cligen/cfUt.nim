@@ -30,7 +30,7 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
         activeSection = e.section == subCmdName
     of cfgKeyValuePair, cfgOption:
       when defined(debugCfToCL):
-        echo "key: ", e.key.repr, " val: ", e.value.repr
+        echo "key: \"", e.key, "\" val: \"", e.value, "\""
       if activeSection:
         result.add("--" & e.key & "=" & e.value)
     of cfgError: echo e.msg

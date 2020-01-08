@@ -81,7 +81,7 @@ proc rawInsert*[T](t: var Tern[T], key: string): Node[T] =
 proc print*[T](p: Node[T], depth=0) = #2,1,0 gives std emoji-orientation
   if p == nil: return                 #..i.e. ":-)" head-tilt not "(-:".
   print(p.kid[2], depth + 1)
-  echo strutils.repeat("  ", depth), cast[int](p), " ch: ", p.ch.repr, " cnt: ", p.cnt
+  echo strutils.repeat("  ", depth), cast[int](p), " ch: '", p.ch, "' cnt: ", p.cnt
   print(p.kid[1], depth + 1)
   print(p.kid[0], depth + 1)
 proc echoKeys*[T](p: Node[T], pfx="", key="") =
