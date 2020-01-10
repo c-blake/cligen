@@ -26,9 +26,16 @@ type MSlice* = object
   mem*: pointer
   len*: int
 
-proc toMSlice*(a: string): MSlice =  #I'd prefer to call this MSlice, but if I
-  result.mem = a.cstring             #do here I get an already-defined error.
-  result.len = a.len                 #(Works in another module, though.)
+proc toMSlice*(a: string, keep=false): MSlice =
+  ## Convert string to an MSlice.  If ``keep`` is true, a copy is allocated
+  ## which may be freed via ``dealloc(result.mem)``.
+  result.len = a.len
+  if keep:
+    let data = alloc0(a.len + 1)
+    copyMem(data, a[0].unsafeAddr, a.len)
+    result.mem = cast[cstring](data)
+  else:
+    result.mem = a.cstring
 
 proc toCstr*(p: pointer): cstring {.inline.} =
   ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.

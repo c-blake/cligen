@@ -204,10 +204,5 @@ iterator mSlices*(path:string, sep='\l', eat='\r', keep=false):MSlice{.inline.}=
   else:
     let f = open(path)
     for s in lines(f):
-      if keep:
-        var scpy = $s
-        GC_ref(scpy)
-        yield toMSlice(scpy)
-      else:
-        yield toMSlice(s)
+      yield toMSlice(s, keep)
     f.close()
