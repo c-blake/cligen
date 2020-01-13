@@ -26,9 +26,9 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
     hTabSuppress*: string        ## Magic val for per-param help to suppress
 
-  HelpOnly*    = object of Exception
-  VersionOnly* = object of Exception
-  ParseError*  = object of Exception
+  HelpOnly*    = object of CatchableError
+  VersionOnly* = object of CatchableError
+  ParseError*  = object of CatchableError
 
 {.push hint[GlobalVar]: off.}
 var clCfg* = ClCfg(
