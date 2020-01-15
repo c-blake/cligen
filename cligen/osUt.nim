@@ -73,15 +73,15 @@ proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
           importc: "fwrite_unlocked", header: "<stdio.h>".}
   result = c_fwrite(buffer, 1, len.csize, f)
 
-when defined(nimHasExceptionsQuery):
-  const gotoBasedExceptions* = compileOption("exceptions", "goto")
-else:
-  const gotoBasedExceptions* = false
+#when defined(nimHasExceptionsQuery):
+#  const gotoBasedExceptions* = compileOption("exceptions", "goto")
+#else:
+#  const gotoBasedExceptions* = false
 
 proc urite*(f: File, s: string) {.inline.} =
-  when gotoBasedExceptions:
-    if uriteBuffer(f, cstring(s), s.len) != s.len:
-      raise newException(IOError, "cannot write string to file")
+# when gotoBasedExceptions:
+#   if uriteBuffer(f, cstring(s), s.len) != s.len:
+#     raise newException(IOError, "cannot write string to file")
   discard uriteBuffer(f, cstring(s), s.len)
 
 proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
