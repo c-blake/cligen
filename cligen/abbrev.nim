@@ -270,10 +270,15 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         colWs[m*j + jP].inc
         if colWs.sum == w:
           if a.cset.len > 0:
-            for i, str in src:
-              let abb = a.abbOf[src[i]]
-              strs[i] = a.pquote(abb)
-              a.abbOf[src[i]] =  strs[i]
+            for j in 0 ..< nc div m:
+              for i in 0 ..< nr:
+                let si  = nr*j + i; let ti = m*si + jP
+                if ti >= wids.len: break
+                let abb = a.abbOf[src[si]]
+                let quo = a.pquote(abb)
+                if quo != abb:
+                  strs[ti] = strs[ti][0 ..< ab0[si]] & quo & strs[ti][ab1[si]..^1]
+                  a.abbOf[src[i]] =  strs[i]
           return
 
 when isMainModule:
