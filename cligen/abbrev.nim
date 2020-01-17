@@ -32,10 +32,13 @@ import strutils, algorithm, sets, tables, math,
        ./tern, ./humanUt, ./textUt, ./trie
 
 type Abbrev* = object
-  sep, trans: string
+  sep: string
+  qmark: char
+  cset: set[char]
   mx*, hd, tl, sLen, m, h, t: int
   optim: bool
-  abbOf, quoted: Table[string, string]
+  abbOf: Table[string, string]
+  trie: Trie[void]
 
 proc isAbstract*(a: Abbrev): bool {.inline.} =
   a.mx < 0 or a.hd < 0 or a.tl < 0
@@ -77,7 +80,9 @@ proc parseAbbrev*(s: string): Abbrev =
   result.tl = if cols.len > 2: parseInt(cols[2], -1) else: -1
   result.sep = if cols.len > 3: cols[3] else: "*"
   result.sLen = result.sep.printedLen
-  result.trans = if cols.len > 4: cols[4] else: "?"
+  if cols.len > 4:
+    result.qmark = if cols[4].len > 0: cols[4][0] else: '\0'
+    result.cset  = if cols[4].len > 1: toSetChar(cols[4][1..^1]) else: {}
   if result.mx != -1: result.update   #For -1 caller must call realize
 
 proc uniqueAbs(a: Abbrev, strs: openArray[string]): bool =
@@ -97,43 +102,34 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-proc pquote(t: Trie[void]; sep, trans: string;
-            strs: openArray[string]): seq[string] =
-  result.setLen strs.len
-  for i, s in strs: result[i] = s
-  if trans.len < 2: return
-  let head = trans[0]
-  let cset = toSetChar(trans[1..^1])
-  for i in 0 ..< result.len:
-    var start = 0
-    while start < result[i].len:
-      let j = result[i].find(cset, start)
-      if j < 0: break
-      var tmp = result[i]
-      tmp[j] = head
-      if t.match(tmp, 2, head, sep[0]).len == 1:
-        result[i] = tmp
-      start = j + 1
+proc pquote(a: Abbrev; abb: string): string =
+  result = abb
+  if a.cset.len < 1:
+    return
+  let star = if a.sep.len > 0: '*' else: '\0'
+  var start = 0
+  while start < result.len:
+    let j = result.find(a.cset, start)
+    if j < 0: break
+    var tmp = result
+    tmp[j] = a.qmark
+    if a.trie.match(tmp, 2, a.qmark, star).len == 1:
+      result = tmp
+    start = j + 1
 
-proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
-                    trans=""): seq[string] =
+proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
   let sep = a.sep
-  if   nWild == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
-  elif nWild == -3: result = strs.uniqueSfxPats(sep); return
+  if   a.mx == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
+  elif a.mx == -3: result = strs.uniqueSfxPats(sep); return
   let sLen = sep.len                      #Code below may assume "*" in spots
   if strs.len == 1:                       #best locally varying n-* pattern = *
     return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
-  var t = toTrie(strs)                    #A trie with all strings (<= -4)
-  if trans.len > 1:
-    for i, q in t.pquote(sep, trans, strs):
-      a.quoted[strs[i]] = q
-      if q != strs[i]: stderr.write "\"",strs[i],"\" pattern-quotes to \"",q,"\"\n"
+  a.trie = toTrie(strs)                   #A trie with all strings (<= -4)
+  let t = a.trie
   result.setLen strs.len
-#XXX Once any-1 char wildcard can be present, current tern.unique?fxPats can
-#    fail to produce unique patterns.  This then has follow-on impact Re -[56].
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
   var avgSfx = 0; var avgPfx = 0
@@ -141,10 +137,10 @@ proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
     avgSfx.inc sfx[i].len; avgPfx.inc pfx[i].len
     result[i] = if sfx[i].len < pfx[i].len: sfx[i] else: pfx[i]
   for r in result:
-    if t.match(r, 2, aN=sep[0]).len > 1:     #Collision=>revert to narrower on avg
+    if t.match(r, 2, aN=sep[0]).len > 1:   #Collision=>revert to narrower on avg
       result = if avgSfx < avgPfx: sfx else: pfx
       break
-  if nWild == -4: return                  #Only best pfx|sfx requested; Done
+  if a.mx == -4: return                    #Only best pfx|sfx requested; Done
 #XXX -5,-6 can get slow.  May be able to speed up with a 2nd reversed-string
 #trie for *foo or a greedy algorithm starting with longest common substrings.
   for i, s in strs:                       #Try to improve with shortest any-spot
@@ -156,7 +152,7 @@ proc uniqueAbbrevs*(a: var Abbrev, strs: openArray[string], nWild=1,
           let pat = s[0 ..< nPfx] & sep & s[^nSfx .. ^1]
           if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
             result[i] = pat; break outermost
-  if nWild == -5: return                  #Only best 1-* requested; Done
+  if a.mx == -5: return                   #Only best 1-* requested; Done
   for i, s in strs:                       #Try to improve with a second *
     if result[i].len - 2*sLen <= 1: continue  #Too short for more *s to help
     block outermost:                          #Like above but pfx*middle*sfx
@@ -181,8 +177,8 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
     a.mx = a.sLen + 1; a.update
     return
   if a.mx < -1:
-    for i, abb in a.uniqueAbbrevs(strs, a.mx, a.trans):
-      a.abbOf[strs[i]] = abb
+    for i, abb in a.uniqueAbbrevs(strs):
+      a.abbOf[strs[i]] = a.pquote(abb)
   elif a.optim:
     var res: seq[tuple[m, h, t: int]]
     for h in 0..mLen:
