@@ -102,10 +102,10 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-#NOTE: Pattern quoting is not always easy in combination w/pattern compression
-#because the wildcard ?/qmark is more general than any char being quoted.  I.e.,
-#a char in need of quoting may have been important to distinguish uniqueness.
-#So, this is best effort only though it mostly works for my file sets.
+#NOTE: Pattern quoting cannot be independent of pattern compression because the
+#wildcard ?/qmark is more general than any char being so quoted.  I.e., char in
+#need of ?-convsn may have been critical to distinguish compression uniqueness.
+#Hence, this is best effort only, though it mostly works for my file sets.
 proc pquote(a: Abbrev; abb: string): string =
   result = abb
   if a.cset.len < 1:
