@@ -264,7 +264,13 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
         expandBy 1                      #Updates pat,strs[ti],wids[si],ab1[si]
       if expanded:
         colWs[m*j + jP].inc
-        if colWs.sum == w: return
+        if colWs.sum == w:
+          if a.cset.len > 0:
+            for i, str in src:
+              let abb = a.abbOf[src[i]]
+              strs[i] = a.pquote(abb)
+              a.abbOf[src[i]] =  strs[i]
+          return
 
 when isMainModule:
   proc abb(abbr="", byLen=false, strs: seq[string]) =
