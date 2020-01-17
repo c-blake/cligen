@@ -15,7 +15,9 @@ Version: 0.9.42
   Add `cligen/osUt.loadSym` proc combining loadLib and symAddr operations.
 
   Add `cligen/abbrev.expandFit` to re-expand glob patterns as much as can be
-  done without impacting a terminal column structure.  (Used by `lc`.)
+  done without impacting a terminal column structure.  (Used by `lc`.)  Also
+  add pattern quoting option (5th column to `Abbrev` initializer is "?;[]..")
+  that can happen independently of `expandFit` as well as after it.
 
   `cligen/abbrev.uniqueAbbrevs` signature changes slightly.
 
