@@ -135,15 +135,16 @@ proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
     a.match(p, pat, i + 1, key, a1, aN, limit)
 
 proc simplifyPattern*(pat: string, a1='?', aN='*'): string =
-  ## Map "(>1 of ?)*" --> "?*" or "*(any number of '?')" --> just "*".
+  ## Map "(>1 of ?)*" --> "?*" or "*(>1 '?')" --> just "*?".
   result = pat                                    #This could be more efficient
   let pre  = a1 & a1 & aN
   let pre2 = a1 & aN
   while pre in result:
     result = result.replace(pre, pre2)
-  let post = aN & a1
+  let post = aN & a1 & a1
+  let post2 = a1 & aN
   while post in result:
-    result = result.replace(post, $aN)
+    result = result.replace(post, post2)
 
 proc match*[T](t: Trie[T], pat="", limit=0, a1='?', aN='*'): seq[string] =
   ## Return up to ``limit`` matches of shell [?*] glob pattern ``pat`` in ``t``.
