@@ -587,6 +587,18 @@ Options(opt-arg sep :|=|spc):
   -b=, --beta=   int  2         set beta
 
 
+==> test/PassValues.out <==
+USE:
+	myCmd [optional-params] [args: string...]
+The doc
+Options:
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -z=, --al-pha=  int     1      growth constant
+  --be-ta=        float   2.0    shrink target
+  -v, --verb      bool    false  set verb
+  -i=, --item=    string  ""     set item
+
 ==> test/PerParam.out <==
 Usage:
   demo [optional-params] [args: string...]
