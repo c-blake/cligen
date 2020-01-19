@@ -136,13 +136,23 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,(string,
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   result = initTable[string, char]()  #table giving user-specified short options
-  for losh in shorts:
-    let lo: string = (losh[1][0]).strVal.optionNormalize
-    let sh: char = char((losh[1][1]).intVal)
-    result[lo] = sh
-    if lo.len > 0 and not fpars.containsParam(ident(lo)) and
-         lo != "version" and lo != "help" and lo != "helpsyntax":
-      error $proNm & " has no param matching `short` key \"" & lo & "\""
+  if shorts.kind == nnkSym:
+    for i, tup in shorts.getImpl[1][1]:
+      if tup[0].intVal != 0:
+        let lo = tup[1].strVal.optionNormalize
+        let sh = tup[2].intVal.char
+        result[lo] = sh
+        if lo.len > 0 and not fpars.containsParam(ident(lo)) and
+            lo != "version" and lo != "help" and lo != "helpsyntax":
+          error $proNm & " has no param matching `short` key \"" & lo & "\""
+  else:
+    for losh in (if shorts.kind == nnkSym: shorts.getImpl else: shorts):
+      let lo: string = (losh[1][0]).strVal.optionNormalize
+      let sh: char = char((losh[1][1]).intVal)
+      result[lo] = sh
+      if lo.len > 0 and not fpars.containsParam(ident(lo)) and
+           lo != "version" and lo != "help" and lo != "helpsyntax":
+        error $proNm & " has no param matching `short` key \"" & lo & "\""
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
      Table[string, char] =      # Table giving short[param] avoiding collisions
