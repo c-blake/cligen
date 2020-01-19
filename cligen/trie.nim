@@ -109,6 +109,8 @@ proc uniquePfxPat*[T](t: Trie[T], key: string, sep="*"): string =
 
 proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
               a1='?', aN='*', limit=2) =
+  if n == nil:
+    return
   if i >= pat.len:
     if n.term and key.len > 0:
       a.incl key
