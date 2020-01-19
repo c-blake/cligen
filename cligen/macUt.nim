@@ -39,10 +39,14 @@ proc toStrSeq*(strSeqInitializer: NimNode): seq[string] =
       result.add($kid)
 
 proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
-  ## Transform a literal @[ "a", .. ] into compile-time seq[ident]
-  if strSeqInitializer.len > 1:
-    for kid in strSeqInitializer[1]:
-      result.add(ident($kid))
+  ## Get a compile-time ``seq[ident]`` from a symbol or literal @[ "a", .. ].
+  if strSeqInitializer.kind == nnkSym:
+    for n in strSeqInitializer.getImpl:
+      result.add(ident(n.strVal))
+  else:
+    if strSeqInitializer.len > 1:
+      for kid in strSeqInitializer[1]:
+        result.add(ident($kid))
 
 proc srcPath*(n: NimNode): string =
   let fileParen = lineInfo(n)
