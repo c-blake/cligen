@@ -25,6 +25,7 @@ proc collectComments*(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(n.strVal)
 
 proc toString*(n: NimNode): string =
+  ## Get compile-time string from a symbol or literal.
   if n.kind == nnkSym: n.getImpl.strVal else: $n
 
 proc toStrIni*(c: range[0 .. 255]): NimNode =
