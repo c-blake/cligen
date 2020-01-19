@@ -274,8 +274,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let cf = cf #sub-scope quote-do's cannot access macro args w/o shadow locals.
   let setByParse = setByParse
   let proNm = $pro                      # Name of wrapped proc
-  let cName = if len($cmdName) == 0: proNm else: $cmdName
-  let disNm = dispatchId($dispatchName, cName, proNm) # Name of dispatch wrapper
+  let cName = if cmdName.toString.len == 0: proNm else: cmdName.toString
+  let disNm = dispatchId(dispatchName.toString, cName, proNm) # Name of wrapper
   let helps = parseHelps(help, proNm, fpars)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
   let shOpt = dupBlock(fpars, posIx, parseShorts(short, proNm, fpars))
@@ -659,7 +659,7 @@ template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped): auto=
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
                      pro: untyped, echoResult: bool, noAutoEcho: bool,
                      mergeNames: seq[string] = @[]): untyped =
-  let disNm = dispatchId($dispatchName, $cmdName, repr(pro))
+  let disNm = dispatchId(dispatchName.toString, cmdName.toString, repr(pro))
   let mergeNms = toStrSeq(mergeNames) & cmdName.strVal
   quote do: cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)),
                        `echoResult`, `noAutoEcho`)
