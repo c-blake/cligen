@@ -589,15 +589,15 @@ Options(opt-arg sep :|=|spc):
 
 ==> test/PassValues.out <==
 USE:
-	myCmd [optional-params] [args: string...]
+	myCmd [optional-params] [a1: string...]
 The doc
 Options:
-  -h, --help                     print this cligen-erated help
-  --help-syntax                  advanced: prepend,plurals,..
-  -z=, --al-pha=  int     1      growth constant
-  --be-ta=        float   2.0    shrink target
-  -v, --verb      bool    false  set verb
-  -i=, --item=    string  ""     set item
+  -h, --help                    print this cligen-erated help
+  --help-syntax                 advanced: prepend,plurals,..
+  -z=, --al-pha=  int      1    growth constant
+  --be-ta=        float    2.0  shrink target
+  -i=, --item=    string   ""   set item
+  -a=, --a2=      strings  {}   append 1 val to a2
 
 ==> test/PerParam.out <==
 Usage:
