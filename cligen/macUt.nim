@@ -24,6 +24,9 @@ proc collectComments*(buf: var string, n: NimNode, depth: int = 0) =
         buf.add(" ")
         buf.add(n.strVal)
 
+proc toString*(n: NimNode): string =
+  if n.kind == nnkSym: n.getImpl.strVal else: $n
+
 proc toStrIni*(c: range[0 .. 255]): NimNode =
   ## Transform a literal 'x' into string literal initializer "x"
   newStrLitNode($chr(c))

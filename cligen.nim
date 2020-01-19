@@ -267,7 +267,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let impl = pro.getImpl
   if impl == nil: error "getImpl(" & $pro & ") returned nil."
   let fpars = formalParams(impl, toIdSeq(suppress))
-  var cmtDoc: string = if doc.kind == nnkStrLit: $doc else: doc.getImpl.strVal
+  var cmtDoc = toString(doc)
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
     cmtDoc = strip(cmtDoc)
