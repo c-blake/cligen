@@ -96,6 +96,27 @@ template defineIdentities(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirt
 defineIdentities(users, Uid, Passwd, getpwuid,setpwent,getpwent,pw_uid,pw_name)
 defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 
+template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
+  proc ids*(): Table[string, Id] =
+    ##Populate Table[Id, string] with data from system account files
+    when NimVersion < "0.20.0": result = initTable[Id, string]()
+    var id: ptr Entry
+    when defined(android):
+      proc getid(id: Id): ptr Entry {.importc.}
+      for i in 0 ..< 32768:
+        if (id := getid(i)) != nil:
+          let idStr = $id.en_nm
+          if idStr notin result:              #first entry wins, not last
+            result[idStr] = id
+    else:
+      rewind()
+      while (id := getident()) != nil:
+        let idStr = $id.en_nm
+        if idStr notin result:                #first entry wins, not last
+          result[idStr] = id.en_id
+defineIds(userIds, Uid, Passwd, getpwuid, setpwent, getpwent, pw_uid, pw_name)
+defineIds(groupIds, Gid, Group , getgrgid, setgrent, getgrent, gr_gid, gr_name)
+
 proc readlink*(path: string, err=stderr): string =
   ##Call POSIX readlink reliably: Start with a nominal size buffer & loop while
   ##the answer may have been truncated.  (Could also pathconf(p,PC_PATH_MAX)).
