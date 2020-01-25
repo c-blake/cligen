@@ -143,3 +143,12 @@ template timeIt*(output: untyped, label: string, unit=1e-6, places=3,
            sep
   else:
     output label, " ", formatFloat(dt.sum, ffDecimal, places), sep
+
+proc writeNumberToFile*(path: string, num: int) =
+  ## Best effort attempt to write a single number to a file.
+  try:
+    let f = open(path, fmWrite)
+    f.write $num, '\n'
+    f.close
+  except:
+    stderr.write "cannot open \"", path, "\" to write ", $num, '\n'
