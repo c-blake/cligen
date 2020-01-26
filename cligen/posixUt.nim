@@ -305,8 +305,48 @@ proc st_inode*(path: string, err=stderr): Ino =
     err.write "stat(\"", $path, "\"): ", strerror(errno), "\n"
   st.st_ino
 
-#These are almost universally available although not technically "POSIX"
-proc initGroups*(user: cstring, group: Gid): cint {. importc: "initgroups",
-                                                     header: "grp.h".}
+#These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
-                                                     header: "grp.h".}
+                                                     header: "grp.h" .}
+
+proc initGroups*(user: cstring, group: Gid): cint {. importc: "initgroups",
+                                                     header: "grp.h" .}
+
+proc dropPrivilegeTo*(newUser, newGroup: string, err=stderr): bool =
+  ## Change from super-user/root to a less privileged account taking care to
+  ## also change gid and re-initialize supplementary groups to what /etc/group
+  ## says.  I.e., like ``su``, but in-process. (Test this works on your system
+  ## by compiling this module with ``-d:testDropPriv``.)
+  var gid: Gid
+  var uid: Uid
+  try:
+    gid = groupIds()[newGroup]
+  except:
+    err.write "no such group: ", newGroup, '\n'
+    return false
+  try:
+    uid = userIds()[newUser]
+  except:
+    err.write "no such user: ", newUser, '\n'
+    return false
+  if setGroups(0, nil) != 0:          #Drop supplementary group privilege
+    err.write "setgroups(0,nil): ", strerror(errno), '\n'
+    return false
+  if initGroups(newGroup.cstring, gid) != 0:    #Init suppl gids per /etc/group
+    err.write "initgroups(): ", strerror(errno), '\n'
+    return false
+  if setregid(gid, gid) != 0:         #Drop group privilege
+    err.write "setregid(): ", strerror(errno), '\n'
+    return false
+  if setreuid(uid, uid) != 0:         #Finally drop user privilege
+    err.write "setreuid(): ", strerror(errno), '\n'
+    return false
+  return true
+
+when defined(testDropPriv):
+  if dropPrivilegeTo("man", "man"):
+    let arg0 = "id"
+    let argv = allocCStringArray(@[ arg0 ])
+    discard execvp(arg0.cstring, argv)
+    stderr.write "cannot exec `id`\n"
+  quit(1)
