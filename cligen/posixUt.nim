@@ -304,3 +304,9 @@ proc st_inode*(path: string, err=stderr): Ino =
   if stat(path, st) == -1:
     err.write "stat(\"", $path, "\"): ", strerror(errno), "\n"
   st.st_ino
+
+#These are almost universally available although not technically "POSIX"
+proc initGroups*(user: cstring, group: Gid): cint {. importc: "initgroups",
+                                                     header: "grp.h".}
+proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
+                                                     header: "grp.h".}
