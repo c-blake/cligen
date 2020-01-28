@@ -18,7 +18,7 @@
 
 <!-- CSS -->
 <title>cligen</title>
-<link rel="stylesheet" type="text/css" href="nimdoc.css">
+<link rel="stylesheet" type="text/css" href="nimdoc.out.css">
 
 <script type="text/javascript" src="dochack.js"></script>
 
@@ -124,11 +124,11 @@ function main() {
   opChars*: set[char]          ## ``parseopt3.initOptParser`` parameter
   hTabSuppress*: string        ## Magic val for per-param help to suppress"><wbr />Cl<wbr />Cfg<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#HelpOnly"
-    title="HelpOnly = object of Exception"><wbr />Help<wbr />Only<span class="attachedType"></span></a></li>
+    title="HelpOnly = object of CatchableError"><wbr />Help<wbr />Only<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#VersionOnly"
-    title="VersionOnly = object of Exception"><wbr />Version<wbr />Only<span class="attachedType"></span></a></li>
+    title="VersionOnly = object of CatchableError"><wbr />Version<wbr />Only<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ParseError"
-    title="ParseError = object of Exception"><wbr />Parse<wbr />Error<span class="attachedType"></span></a></li>
+    title="ParseError = object of CatchableError"><wbr />Parse<wbr />Error<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ClStatus"
     title="ClStatus = enum
   clBadKey,                   ## Unknown long key
@@ -358,21 +358,21 @@ Settings tending to be program- or CLI-author-global
 
 </dd>
 <a id="HelpOnly"></a>
-<dt><pre><a href="cligen.html#HelpOnly"><span class="Identifier">HelpOnly</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span></pre></dt>
+<dt><pre><a href="cligen.html#HelpOnly"><span class="Identifier">HelpOnly</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">CatchableError</span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="VersionOnly"></a>
-<dt><pre><a href="cligen.html#VersionOnly"><span class="Identifier">VersionOnly</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span></pre></dt>
+<dt><pre><a href="cligen.html#VersionOnly"><span class="Identifier">VersionOnly</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">CatchableError</span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="ParseError"></a>
-<dt><pre><a href="cligen.html#ParseError"><span class="Identifier">ParseError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span></pre></dt>
+<dt><pre><a href="cligen.html#ParseError"><span class="Identifier">ParseError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">CatchableError</span></pre></dt>
 <dd>
 
 
@@ -806,7 +806,7 @@ Convenience <tt class="docutils literal"><span class="pre">initFromCLcf</span></
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2019-12-13 17:32:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-01-28 14:38:22 UTC</small>
       </div>
     </div>
   </div>
