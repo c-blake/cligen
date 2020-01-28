@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.43
+---------------
+  In most contexts for most parameters you can now use a compile-time `const`
+  value instead of a literal.
+
+  Default `cligen/helpTmpl.nim:clUse` dropped overly chatty text redundant
+  upon first real line of `--help-syntax`.
+
+  Updated generated documentation and include CSS (Thanks, @kaushalmodi!)
+
 Version: 0.9.42
 ---------------
   Allow stropped aka \`backquoted\` params to have a `help` entry.  Add new
