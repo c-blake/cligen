@@ -34,7 +34,6 @@ else:
                header: "<sys/stat.h>", final, pure.} = object
       tv_sec*: int64
       tv_nsec*: int32
-      statx_timestamp_pad1: int32
 
     Statx* {.importc: "struct statx",
              header: "<sys/stat.h>", final, pure.} = object ## struct statx
