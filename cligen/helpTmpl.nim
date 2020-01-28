@@ -1,4 +1,4 @@
-const clUse* = "$command $args\n${doc}Options(opt-arg sep :|=|spc):\n$options"
+const clUse* = "$command $args\n${doc}Options:\n$options"
 const clUsage* = "Usage:\n  " & clUse   #Use is for dispatchMulti else Usage
 
 const clUseMultiGeneral* = """
