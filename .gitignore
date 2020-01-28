@@ -61,4 +61,5 @@ test/SetByParse
 test/OmitInHelpTable
 test/StroppedParams
 test/PassValues
+test/PassValuesMulti
 cligen/abbrev

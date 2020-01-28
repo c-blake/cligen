@@ -816,8 +816,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
                      else: newLit(false)
     let sCmdNoAuEc = if p.paramPresent("noAutoEcho"): p.paramVal("noAutoEcho")
                      else: newLit(false)
-    let sCmdUsage  = if p.paramPresent("usage"): p.paramVal("usage").strVal
-                     else: clUse
+    let sCmdUsage  = if p.paramPresent("usage"): p.paramVal("usage")
+                     else: ident("clUse")
     let mn = if p.paramPresent("mergeNames"): p.paramVal("mergeNames")
              else: quote do: @[ `cmd` ] #, `sCmdNm` ]
     cases.add(newNimNode(nnkOfBranch).

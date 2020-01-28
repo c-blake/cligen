@@ -599,6 +599,25 @@ Options:
   -i=, --item=    string   ""   set item
   -a=, --a2=      strings  {}   append 1 val to a2
 
+==> test/PassValuesMulti.out <==
+Infer & generate command-line interace/option/argument parser
+
+Usage:
+  PassValuesMulti {SUBCMD}  [sub-command options & parameters]
+
+SUBCMDs:
+  help    print comprehensive or per-cmd help
+  demo    demo entry point with varied, meaningless parameters.
+  print   show entry point with varied, meaningless parameters.
+  punt    Another entry point; here we echoResult
+  nel-ly  Yet another entry point; here we block autoEcho
+
+PassValuesMulti {-h|--help} or with no args at all prints this message.
+PassValuesMulti --help-syntax gives general cligen syntax help.
+Run "PassValuesMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "PassValuesMulti help" to get *comprehensive* help.
+Top-level --version also available
+
 ==> test/PerParam.out <==
 Usage:
   demo [optional-params] [args: string...]
