@@ -483,7 +483,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                 let t = if msg.startsWith "Ambig": "Ambiguous" else: "Unknown"
                 raise newException(ParseError, t & " alias ref")
             else:
-              parser(sub) ))
+              parser(sub.val) ))
     for i in 1 ..< len(fpars):                # build per-param case clauses
       if i == posIx: continue                 # skip variable len positionals
       let parNm  = $fpars[i][0]

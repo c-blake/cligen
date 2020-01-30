@@ -11,6 +11,12 @@ Version: 0.9.43
 
   Updated generated documentation and include CSS (Thanks, @kaushalmodi!)
 
+  `cligen/textUt.match` changed its return type to `tuple[key:string, val:T]`.
+  If anyone else is using this, existing call sites need only add a `.val` to
+  track the change.  (Sometimes it is nice/necessary to know the matched key.)
+  Also for `Table` similarity, added `cligen/textUt.toCritBitTree`.  For UI
+  ease add `match` overload to prints to a File if non-`nil` and also raise.
+
 Version: 0.9.42
 ---------------
   Allow stropped aka \`backquoted\` params to have a `help` entry.  Add new

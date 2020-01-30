@@ -92,13 +92,18 @@ proc initCritBitTree*[T](): CritBitTree[T] =
   ##``CritBitTree[T]``.
   discard
 
+proc toCritBitTree*[T](pairs: openArray[(string, T)]): CritBitTree[T] =
+  ##Like ``toTable`` but for ``CritBitTree[T]`` which requires string keys.
+  for key, val in items(pairs):
+    result[key] = val
+
 proc keys*[T](cb: CritBitTree[T]): seq[string] =
   for k in cb.keys: result.add k
 
 proc getAll*[T](cb: CritBitTree[T], key:string): seq[tuple[key:string, val: T]]=
   ##A query function sometimes helpful in making ``CritBitTree[T]`` code more
   ##like ``Table[string,T]`` code. ``result.len > 1`` only on ambiguous matches.
-  if key in cb:
+  if key in cb:                 #exact match
     result.add( (key, cb[key]) )
     return
   for k, v in cb.pairsWithPrefix(key):
@@ -130,23 +135,45 @@ proc suggestions*[T](wrong: string; match, right: openArray[T],
     if result.len >= enoughResults:
       break
 
-proc match*[T](cb: CritBitTree[T]; key, tag: string; msg: var string): T =
-  ## One stop lookup of a key in `cb` giving either the exact value matched or
-  ## an ambiguous|unknown error message with possible suggestions if non-empty.
+proc match*[T](cb: CritBitTree[T]; key, tag: string; msg: var string,
+               suppress=false): tuple[key: string, val: T] =
+  ## One stop lookup of a key in `cb` giving either the (key, value) matched or
+  ## an ambiguous|unknown error message with possible suggestions if non-empty,
+  ## unless ``suppress`` is true in which case msg is simply non-empty. ``tag``
+  ## is a category for the message, like 'color' or such.
   var ks: seq[string]
   for k in cb.keysWithPrefix(key):
-    if k == key: return cb[key]     #exact match
+    if k == key:
+      return (k, cb[k])                     #Exact match
     ks.add k
-  if ks.len == 1: return cb[ks[0]]  #unique match
-  if ks.len > 1:                    #ambiguous match
-    msg = ("Ambiguous " & tag & " prefix \"" & key & "\" matches:\n  " &
-           ks.join("\n  ") & "\n")
-  else:                             #no prefix match
-    var allKeys: seq[string]
-    for k in cb.keys: allKeys.add k
-    let sugg = suggestions(key, allKeys, allKeys)
-    msg = "Unknown " & tag & " \"" & key & "\"." & (if sugg.len == 0: "" else:
-          "  Maybe you meant one of:\n  " & sugg.join(" ")) & "\n"
+  if ks.len == 1:                           #Unique prefix match
+    return (ks[0], cb[ks[0]])
+  if ks.len > 1:                            #Ambiguous prefix match
+    msg = "Ambiguous "
+    if not suppress:                        #Skip string build if will not use
+      msg = (msg & tag & " prefix \"" & key & "\" matches:\n  " &
+             ks.join("\n  ") & "\n")
+  else:                                     #No match
+    msg = "Unknown "
+    if not suppress:                        #Skip calc if will not use
+      var allKeys: seq[string]
+      for k in cb.keys: allKeys.add k
+      let sugg = suggestions(key, allKeys, allKeys)
+      msg = msg & tag & " \"" & key & "\"." & (if sugg.len == 0: "" else:
+            "  Maybe you meant one of:\n  " & sugg.join(" ")) & "\n"
+
+proc match*[T](cb: CritBitTree[T]; key, tag: string; err=stderr):
+              tuple[key: string, val: T] =
+  ##Wrapper around above ``match`` that on failure writes user-friendly messages
+  ##to ``err`` (``nil`` suppresses this) and raises ``KeyError`` with a message
+  ##that starts with "Ambiguous" or "Unknown".
+  var msg: string
+  result = cb.match(key, tag, msg, err == stdin)
+  if msg.len == 0: return                   #exact/unique found; done
+  if err != nil: err.write msg
+  if msg.startsWith("Ambiguous"):
+    raise newException(KeyError, "Ambiguous " & tag & " " & key)
+  raise newException(KeyError, "Unknown " & tag & " " & key)
 
 from unicode import nil
 proc printedLen*(a: string): int =
