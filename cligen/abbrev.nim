@@ -237,15 +237,15 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
   var src = newSeq[string](ab0.len)
   var loc = newSeq[int](ab0.len)
   var ext = newSeq[int](ab0.len)
-  var invDict: Table[string, string]
-  for k,v in a.abbOf: invDict[v] = k
+  var invMap: Table[string, string]
+  for k,v in a.abbOf: invMap[v] = k
   for j in 0 ..< nc div m:
     let adjust = if j < nc div m - 1: -1 else: 0  #XXX `-gap`
     for i in 0 ..< nr:
       let si  = nr*j + i; let ti = m*si + jP  #Index for wids[] & strs[]
       if ti >= wids.len: break
       var pat = strs[ti][ab0[si] ..< ab1[si]]
-      src[si] = invDict[pat]
+      src[si] = if pat.len > 0: invMap[pat] else: ""  #XXX why ab0==ab1 => ""?
       ext[si] = sepExt(loc[si], a.sep, pat, src[si])
       while true:             #colW may be large enough to expand multiple seps
         if loc[si] < 0: break
