@@ -80,6 +80,11 @@ var textAttrAliases = initTable[string, string]()
 proc textAttrAlias*(name, value: string) =
   textAttrAliases[name] = value
 
+proc textAttrRegisterAliases*(colors: seq[string]) =
+  for spec in colors:
+    let cols = spec.split('=')
+    textAttrAlias(cols[0].strip, cols[1].strip)
+
 proc textAttrParse*(s: string): string =
   if s.len == 0: return
   var s = s
