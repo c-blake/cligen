@@ -47,7 +47,7 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   result.len = int(b0 - a)
 
 proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
-           a=0, b = -1, allowRemap=false, noShrink=false): MFile =
+            a=0, b = -1, allowRemap=false, noShrink=false): MFile =
   ## Init map for already open ``fd``.  See ``mopen(cint,Stat)`` for details.
   if fd == -1:
     return
@@ -59,7 +59,7 @@ proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
   result = mopen(fd, result.st, prot, flags, a, b, allowRemap, noShrink)
 
 proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
-           allowRemap=false, noShrink=false, perMask=0666): MFile =
+            allowRemap=false, noShrink=false, perMask=0666): MFile =
   ## Init map for ``path``.  ``See mopen(cint,Stat)`` for mapping details.
   ## This proc also creates a file, if necessary, with permission ``perMask``.
   var oflags: cint
