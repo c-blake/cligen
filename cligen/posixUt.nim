@@ -340,6 +340,102 @@ proc st_inode*(path: string, err=stderr): Ino =
     err.write "stat(\"", $path, "\"): ", strerror(errno), "\n"
   st.st_ino
 
+proc `//`(prefix, suffix: string): string =
+  # This is like stdlib os.`/` but simpler basically just for the needs of
+  # `dirEntries` and `recEntries`.
+  if prefix == "./":
+    if suffix == "": "."
+    else: suffix
+  elif prefix.endsWith('/'): prefix & suffix
+  else: prefix & '/' & suffix
+
+iterator dirEntries*(dir: string; st: ptr Stat=nil; canRec: ptr bool=nil;
+                     dt: ptr int8=nil; err=stderr; follow=false;
+                     relative=false): string =
+  ## This iterator wraps ``readdir``, optionally filling ``st[]`` if it was
+  ## necessary to read, whether an entry can be recursed upon, and the ``dirent
+  ## d_type`` in ``dt[]`` (or if unavailable ``DT_UNKNOWN``).  OS error messages
+  ## are sent to File ``err`` (which can be ``nil``).  Yielded paths are
+  ## relative to ``dir`` iff.  ``relative`` is true.
+  ##
+  ## ``follow`` is for the mode where outer, recursive iterations want to chase
+  ## symbolic links to dirs.  ``st[]`` is filled only if needed to compute
+  ## ``canRec``.  ``lstat`` is used only if ``not follow and dt[]==DT_UNKNOWN``)
+  ## else ``stat`` is used.  If ``dt[]==DT_DIR`` then only ``st_ino`` is
+  ## assigned.  Callers can detect if ``st`` was filled by ``st_nlink > 0``.
+  localAlloc(st, Stat)
+  localAlloc(dt, int8)
+  var d = opendir(dir)
+  if d == nil:
+    err.log &"opendir({dir}): {strerror(errno)}\n"
+  else:
+    defer: discard d.closedir
+    while true:                         #Main loop: read,filter,classify,yield
+      let de = readdir(d)
+      if de == nil: break
+      if (de.d_name[0]=='.' and de.d_name[1]=='\0') or (de.d_name[0]=='.' and
+          de.d_name[1]=='.' and de.d_name[2]=='\0'):
+        continue                        #Skip "." and ".."
+      var ent = $de.d_name.addr.cstring #Make a Nim string
+      var path = dir // ent             #Join path down from `dir`
+      dt[] = de.d_type
+      st[].st_nlink = 0                 #Tell caller we did no stat/lstat
+      if canRec != nil:
+        canRec[] = false
+        if   dt[] == DT_DIR:
+          canRec[] = true
+          if follow:                    #Caller must track st_dev(dir) to block
+            st[].st_ino = de.d_ino      #..cross dev+descend+symLink loops.
+        elif dt[] == DT_LNK:
+          if follow and statOk(path, st, err) and S_ISDIR(st.st_mode):
+            canRec[] = true
+        elif dt[] == DT_UNKNOWN:        #Weak FSes may have DT_UNKNOWN for all
+          if follow:
+            if statOk(path, st, err) and S_ISDIR(st.st_mode): canRec[] = true
+          else:                         #Not follow-mode: only ever need `lstat`
+            if lstatOk(path, st, err) and S_ISDIR(st.st_mode): canRec[] = true
+      yield (if relative: ent else: path)
+
+iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
+                     follow=false, maxDepth=0, err=stderr): string =
+  ## This recursively yields all paths in the FS tree up to ``maxDepth`` levels
+  ## beneath ``dir`` or without bound for ``maxDepth==0``. If ``follow`` then
+  ## recursion follows symbolic links to dirs. If ``err!=nil`` then OS error
+  ## messages are written there.  Unlike the stdlib ``walkDirRec``, in addition
+  ## to a ``maxDepth`` limit, following here avoids infinite symLink loops.
+  ## If provided pointers are non-nil then they are filled like ``dirEntries``.
+  localAlloc(st, Stat)
+  localAlloc(dt, int8)
+  type DevIno = tuple[dev: Dev, ino: Ino]             #For directory identity
+  var dev: Dev                                        #Local st_dev(sub)
+  var id: DevIno                                      #Local full identity
+  if statOk(dir, st, err) and S_ISDIR(st[].st_mode):  #Ensure target is a dir
+    var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
+    if follow:                                        #..with its dev,ino.
+      did = initHashSet[DevIno](8)                    #Did means "put in stack"
+      did.incl (dev: st[].st_dev, ino: st[].st_ino)   #..not "iterated over dir"
+    var canRecurse = false                            #->true based on `follow`
+    var paths  = @[""]                                #Init recursion stacks
+    var dirDev = @[ st.st_dev ]
+    let dir = if dir.endsWith('/'): dir else: dir & '/'
+    yield dir
+    while paths.len > 0:
+      let sub = paths.pop()                           #sub-directory or ""
+      if follow: dev = dirDev.pop()                   #Get st_dev(sub)
+      let subDepth = sub.count('/')                   #XXX depth stack instead?
+      for path in dirEntries(dir // sub, st, canRecurse.addr, dt, err, follow):
+        if canRecurse and (maxDepth == 0 or subDepth + 1 < maxDepth):
+          if follow:
+            let d = if st[].st_nlink > 0: st[].st_dev else: dev
+            id = (dev: st[].st_dev, ino: st[].st_ino)
+            if id in did:                         #Already did stack put of this
+              err.log &"pruning symLink loop at {path}\n"   #Warn & skip
+              continue
+            did.incl id                           #Register as done
+            dirDev.add d                          #Put st_dev(path about to add)
+          paths.add path                          #Add path to recursion stack
+        yield dir // path
+
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
                                                      header: "grp.h" .}
