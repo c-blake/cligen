@@ -17,6 +17,12 @@ Version: 0.9.43
   Also for `Table` similarity, added `cligen/textUt.toCritBitTree`.  For UI
   ease add `match` overload to prints to a File if non-`nil` and also raise.
 
+  `cligen/posixUt` grew an infinite-symlink-loop avoidant `recEntries` with a
+  more traditional Unix API (user just says `follow=true` or not the way many
+  Unix CLI utilities work) than `os.walkDirRec`.  At the API level, pointers
+  are also optionally accepted to let callers receive all the metadata acquired
+  and so avoid duplicate syscalls.
+
 Version: 0.9.42
 ---------------
   Allow stropped aka \`backquoted\` params to have a `help` entry.  Add new
