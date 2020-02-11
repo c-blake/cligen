@@ -313,6 +313,26 @@ proc nice*(pid: Pid, niceIncr: cint): int =
     let mx = 20
   setpriority(0.cint, pid.uint32, max(-20, min(mx, niceIncr)).cint).int
 
+proc statOk*(path: string; st: ptr Stat=nil, err=stderr): bool {.inline.} =
+  ## ``stat path`` optionally populating ``st`` if non-nil and writing any
+  ## OS error message to ``err`` if non-nil.
+  localAlloc(st, Stat)
+  st[].st_nlink = 0                     #<1 illegal for st_nlink.  We clear in
+  if stat(path, st[]) != 0'i32:         #..case error otherwise leaves stale.
+    err.log &"stat({path}): {strerror(errno)}\n"
+    return false
+  return true
+
+proc lstatOk*(path: string; st: ptr Stat=nil, err=stderr): bool {.inline.} =
+  ## ``lstat path`` optionally populating ``st`` if non-nil and writing any
+  ## OS error message to ``err`` if non-nil.
+  localAlloc(st, Stat)
+  st[].st_nlink = 0                     #<1 illegal for st_nlink.  We clear in
+  if lstat(path, st[]) != 0'i32:        #..case error otherwise leaves stale.
+    err.log &"lstat({path}): {strerror(errno)}\n"
+    return false
+  return true
+
 proc st_inode*(path: string, err=stderr): Ino =
   ## Return just the ``Stat.st_inode`` field for a path.
   var st: Stat
