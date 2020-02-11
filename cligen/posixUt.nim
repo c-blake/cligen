@@ -149,7 +149,7 @@ proc readlink*(path: string, err=stderr): string =
     result.setLen(n)
 
 proc `$`*(st: Stat): string =
-  ##stdlib automatic `$`(Stat) broken due to pad0 junk.
+  ##stdlib automatic ``$(Stat)`` broken due to pad0 junk.
   "(dev: "     & $st.st_dev     & ", " & "ino: "    & $st.st_ino    & ", " &
    "nlink: "   & $st.st_nlink   & ", " & "mode: "   & $st.st_mode   & ", " &
    "uid: "     & $st.st_uid     & ", " & "gid: "    & $st.st_gid    & ", " &
