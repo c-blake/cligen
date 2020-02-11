@@ -1,4 +1,19 @@
-import posix, sets, tables, strutils, ./sysUt, ./argcvt, parseUtils
+import posix, sets,tables, strutils,strformat, ./sysUt, ./argcvt, parseUtils
+
+proc log*(f: File, s: string) {.inline.} =
+  ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
+  if f != nil: f.write s
+
+template localAlloc*(param; typ: typedesc) {.dirty.} =
+  ## One often wants to allow auxiliary data that may or may not be discovered
+  ## as part of an operation to be returned optionally.  One convenient pattern
+  ## for this in Nim is accepting a ``ptr T`` which can be ``nil`` when the
+  ## caller does not want the auxiliary data.  Routines using this pattern
+  ## define local space but only use its addr if callers provide none, as in
+  ## ``var loc; let par = if par == nil: loc.addr else par``.  This template
+  ## abstracts that away to simply ``localAlloc(par, parTypeLessPtr)``.
+  var `param here`: typ
+  let param = if param == nil: `param here`.addr else: param
 
 proc getTime*(): Timespec =
   ##Placeholder to avoid `times` module
