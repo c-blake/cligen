@@ -404,6 +404,13 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
   ## messages are written there.  Unlike the stdlib ``walkDirRec``, in addition
   ## to a ``maxDepth`` limit, following here avoids infinite symLink loops.
   ## If provided pointers are non-nil then they are filled like ``dirEntries``.
+  ## Example:
+  ##
+  ## .. code-block:: nim
+  ##   var st: Stat; var sum = 0      #`du` 1st & 2nd level under "." only
+  ##   for path in recEntries(".", st.addr, follow=true, recurse=2):
+  ##     if st.st_nlink == 0 and not statOk(path, st): stderr.write "err\n"
+  ##     sum += st_blocks * 512
   localAlloc(st, Stat)
   localAlloc(dt, int8)
   type DevIno = tuple[dev: Dev, ino: Ino]             #For directory identity
