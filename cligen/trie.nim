@@ -1,7 +1,7 @@
 ##This module implements a Trie, a container for a set|mapping of strings in the
 ##digital search tree family.  It is drop-in compatible-ish with ``CritBitTree``
-##which itself compatible-ish with both ``HashSet`` & ``Table``.  It was easier
-##for me to extend this with ``match`` & ``nearLev`` than ``CritBitTree``.
+##itself compatible with both ``HashSet[string]`` & ``Table[string,*]``.  It was
+##easier for me to extend this with ``match``&``nearLev`` than ``CritBitTree``.
 
 import sets, ./sysUt, algorithm, strutils   #HashSet, findUO|findO, :=, reverse
 type
