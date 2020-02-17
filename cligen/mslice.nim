@@ -273,6 +273,11 @@ proc split*(s: Splitr, line: string, cols: var seq[string], n=0) {.inline.} =
 proc split*(s: Splitr, line: string, n=0): seq[string] {.inline.} =
   s.split(line, result, n)
 
+iterator items*(a: MSlice): char {.inline.} =
+  ## Iterates over each char of `a`.
+  for i in 0 ..< a.len:
+    yield a[i]
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
