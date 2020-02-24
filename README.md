@@ -74,10 +74,10 @@ sub-`dispatch`.  Tune command syntax and help strings in the same way as
 `dispatch` as in:
 ```nim
 proc foo(myRequired: int, mynums: seq[int], foo=1, verb=false) =
-  ##Some API call
+  ## Some API call
   discard
 proc bar(yippee: int, myfloats: seq[float], verb=false) =
-  ##Some other API call
+  ## Some other API call
   discard
 when isMainModule:
   import cligen
