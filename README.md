@@ -20,9 +20,9 @@ to get a minimal (but not so useless!) help message:
 Usage:
   fun [optional-params] [paths: string...]
 Some existing API call
-  Options(opt-arg sep :|=|spc):
+Options:
   -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend, multi-val,..
+  --help-syntax                 advanced: prepend,plurals,..
   -f=, --foo=    int     1      set foo
   -b=, --bar=    float   2.0    set bar
   --baz=         string  "hi"   set baz
