@@ -12,7 +12,7 @@ In Nim, adding a CLI can be as easy as adding one line of code:
 proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   ## Some existing API call
   result = 1        # Of course, real code would have real logic here
-import cligen; dispatch(fun) #Whoa..Just 1 line??
+import cligen; dispatch(fun) # Whoa..Just 1 line??
 ```
 Compile it to `fun` (e.g., `nim c fun.nim`) and then run `./fun --help`
 to get a minimal (but not so useless!) help message:
@@ -58,8 +58,8 @@ it becomes required input, but the syntax for input is the same as for optional
 values.  So, in the below
 ```nim
 proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
-  discard           #Of course, real code would have real logic here
-when isMainModule:  #Preserve ability to `import api`/call from Nim
+  discard           # Of course, real code would have real logic here
+when isMainModule:  # Preserve ability to `import api`/call from Nim
   import cligen; dispatch(fun)
 ```
 the command-line user must give `--myRequired=something` somewhere to avoid an
@@ -103,14 +103,14 @@ the same keyword parameters as the most salient features of `dispatch`:
 type App* = object
   srcFile*: string
   show*: bool
-const dfl* = App(srcFile: "junk")  #set defaults != default for type
+const dfl* = App(srcFile: "junk")  # set defaults != default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
 when isMainModule:
   import cligen
   var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
-  app.logic()  #Only --help/--version/parse errors cause early exit
+  app.logic()  # Only --help/--version/parse errors cause early exit
 ```
 
 More Controls For More Subtle Cases/More Picky CLI authors
@@ -134,7 +134,7 @@ or (echo $result or discard; quit(0))`.  If `echoResult==true`, it's just
 the wrapped proc has a return type or `$` defined on the type.
 So,
 ```nim
-import editdistance, cligen   #gen CLI for Nim stdlib editDistance
+import editdistance, cligen   # gen CLI for Nim stdlib editDistance
 dispatch(editDistanceASCII, echoResult=true)
 ```
 makes a program to print edit distance between two required parameters.
@@ -156,8 +156,8 @@ but before `dispatch`/`dispatchMulti`:
 import cligen, os, strutils
 proc mergeParams(cmdNames: seq[string],
                  cmdLine=commandLineParams()): seq[string] =
-  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))   #$MULTI_(FOO|_BAR)
-  if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine  #See os.parseCmdLine
+  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))  # $MULTI_(FOO|_BAR)
+  if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine # See os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
 You can also just `include cligen/mergeCfgEnv` between `import cligen` and
