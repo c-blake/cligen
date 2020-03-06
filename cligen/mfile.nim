@@ -140,11 +140,11 @@ proc toMSlice*(mf: MFile): MSlice =  #I'd prefer to call this MSlice, but if I
   result.mem = mf.mem                #do, import'rs of [mfile,mslice] must
   result.len = mf.len                #qualify MSlice,but only in generic param.
 
-iterator mSlices*(mf: MFile, sep='\l', eat='\r'): MSlice {.inline.} =
+iterator mSlices*(mf: MFile, sep='\l', eat='\r'): MSlice =
   for ms in mSlices(mf.toMSlice, sep, eat):
     yield ms
 
-iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'):string {.inline.}=
+iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'): string =
   ## Copy each line in ``mf`` to passed ``buf``, like ``system.lines(File)``.
   ## ``sep``, ``eat``, and delimiting logic is as for ``mslice.mSlices``, but
   ## Nim strings are returned.  Default parameters parse lines ending in either
@@ -160,7 +160,7 @@ iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'):string {.inline.}=
       ms.toString buf
       yield buf
 
-iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
+iterator lines*(mf: MFile, sep='\l', eat='\r'): string =
   ## Exactly like ``lines(MFile, var string)`` but yields new Nim strings.
   ##
   ## .. code-block:: nim
@@ -168,31 +168,31 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string {.inline.} =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
-iterator rows*(mf: MFile, s: Splitr, row: var seq[MSlice],
-               n=0, sep='\l', eat='\r'): seq[MSlice] {.inline.} =
+iterator rows*(mf: MFile, s: Splitr, row: var seq[MSlice], n=0, sep='\l',
+               eat='\r'): seq[MSlice] =
   ##Like ``lines(MFile)`` but also split each line into columns with ``Splitr``.
   if mf.mem != nil:
     for line in mSlices(mf, sep, eat):
       s.split(line, row, n)
       yield row
 
-iterator rows*(mf: MFile, s: Splitr, n=0, sep='\l', eat='\r'): seq[MSlice] {.inline.} =
+iterator rows*(mf: MFile, s: Splitr, n=0, sep='\l', eat='\r'): seq[MSlice] =
   ## Exactly like ``rows(MFile, Splitr)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[MSlice](n)
   for row in rows(mf, s, sq, n, sep, eat): yield sq
 
-iterator rows*(f: File, s: Splitr, row: var seq[string], n=0): seq[string] {.inline.}=
+iterator rows*(f: File, s: Splitr, row: var seq[string], n=0): seq[string] =
   ## Like ``lines(File)`` but also split each line into columns with ``Splitr``.
   for line in lines(f):
     s.split(line, row, n)
     yield row
 
-iterator rows*(f: File, s: Splitr, n=0): seq[string] {.inline.} =
+iterator rows*(f: File, s: Splitr, n=0): seq[string] =
   ## Exactly like ``rows(File, Splitr)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[string](n)
   for row in rows(f, s, sq, n): yield sq
 
-iterator mSlices*(path:string, sep='\l', eat='\r', keep=false):MSlice{.inline.}=
+iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
   ##means MFile or strings backing MSlice's are kept alive for life of program.
