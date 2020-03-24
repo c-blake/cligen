@@ -122,7 +122,7 @@ template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
         if (id := getid(i)) != nil:
           let idStr = $id.en_nm
           if idStr notin result:              #first entry wins, not last
-            result[idStr] = id
+            result[idStr] = id.en_id
     else:
       rewind()
       while (id := getident()) != nil:
