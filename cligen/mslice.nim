@@ -69,8 +69,12 @@ proc write*(f: File, ms: MSlice) {.inline.} =
 
 proc urite*(f: File, ms: MSlice) {.inline.} =
   ## unlocked write ``ms`` data to file ``f``.
-  proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
-          importc: "fwrite_unlocked", header: "<stdio.h>".}
+  when defined(linux) and not defined(android):
+    proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fwrite_unlocked", header: "<stdio.h>".}
+  else:
+    proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fwrite", header: "<stdio.h>".}
   discard c_fwrite(ms.mem, 1, ms.len.csize, f)
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =

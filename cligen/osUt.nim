@@ -69,8 +69,12 @@ proc both*[T](it: iterator(): T, s: seq[T]): iterator(): T =
     for e in s: yield e
 
 proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
-  proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
-          importc: "fwrite_unlocked", header: "<stdio.h>".}
+  when defined(linux) and not defined(android):
+    proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fwrite_unlocked", header: "<stdio.h>".}
+  else:
+    proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fwrite", header: "<stdio.h>".}
   result = c_fwrite(buffer, 1, len.csize, f)
 
 #when defined(nimHasExceptionsQuery):
