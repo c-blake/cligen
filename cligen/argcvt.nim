@@ -64,7 +64,7 @@ proc unescape*(s: string): string =
       result.add(s[i])
       inc(i, 1)
 
-type ElementError = object of Exception
+type ElementError* = object of ValueError
 type ArgcvtParams* = object ## \
   ## Abstraction of non-param-type arguments to `argParse` and `argHelp`.
   ## Per-use data, then per-parameter data, then per-command/global data.
