@@ -439,8 +439,8 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
             let d = if st[].st_nlink > 0: st[].st_dev else: dev
             id = (dev: st[].st_dev, ino: st[].st_ino)
             if id in did:                         #Already did stack put of this
-              err.log &"pruning symLink loop at {path}\n"   #Warn & skip
-              continue
+              err.log &"Already visited symLink at \"{path}\".  Loop?\n"
+              continue                            #Skip
             did.incl id                           #Register as done
             dirDev.add d                          #Put st_dev(path about to add)
           paths.add  path                         #Add path to recursion stack
