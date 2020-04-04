@@ -424,14 +424,16 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
     var canRecurse = false                            #->true based on `follow`
     var paths  = @[""]                                #Init recursion stacks
     var dirDev = @[ st.st_dev ]
+    var depths = @[ 0 ]
     let dir = if dir.endsWith('/'): dir else: dir & '/'
     yield dir
     while paths.len > 0:
-      let sub = paths.pop()                           #sub-directory or ""
+      let sub   = paths.pop()                         #sub-directory or ""
+      let depth = depths.pop()
       if follow: dev = dirDev.pop()                   #Get st_dev(sub)
-      let subDepth = sub.count('/')                   #XXX depth stack instead?
-      for path in dirEntries(dir // sub, st, canRecurse.addr, dt, err, follow):
-        if canRecurse and (maxDepth == 0 or subDepth + 1 < maxDepth):
+      let target = if depth == 0: dir // sub else: sub
+      for path in dirEntries(target, st, canRecurse.addr, dt, err, follow):
+        if canRecurse and (maxDepth == 0 or depth + 1 < maxDepth):
           if follow:
             let d = if st[].st_nlink > 0: st[].st_dev else: dev
             id = (dev: st[].st_dev, ino: st[].st_ino)
@@ -440,8 +442,9 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
               continue
             did.incl id                           #Register as done
             dirDev.add d                          #Put st_dev(path about to add)
-          paths.add path                          #Add path to recursion stack
-        yield dir // path
+          paths.add  path                         #Add path to recursion stack
+          depths.add depth + 1                    #Add path to recursion stack
+        yield path
 
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
