@@ -416,7 +416,8 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
   type DevIno = tuple[dev: Dev, ino: Ino]             #For directory identity
   var dev: Dev                                        #Local st_dev(sub)
   var id: DevIno                                      #Local full identity
-  if statOk(dir, st, err) and S_ISDIR(st[].st_mode):  #Ensure target is a dir
+  if statOk(dir,st,err) and S_ISDIR(st[].st_mode) or  #Ensure target is a dir
+     (follow and S_ISLNK(st[].st_mode)):
     var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
     if follow:                                        #..with its dev,ino.
       did = initHashSet[DevIno](8)                    #Did means "put in stack"
@@ -445,6 +446,8 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
           paths.add  path                         #Add path to recursion stack
           depths.add depth + 1                    #Add path to recursion stack
         yield path
+  else:                                 #Yield just the root for non-recursables
+    yield dir
 
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
