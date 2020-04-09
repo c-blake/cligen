@@ -36,9 +36,8 @@ _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 In other words, long options can be as short as possible.  In yet other words,
 hitting the TAB key to complete is unnecessary **if** the completion is unique.
 This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
-Long option keys can also be spelled flexibly, e.g.  `--dry-run` or `--dryRun`,
-like Nim's style-insensitive identifiers, but with extra insensitivity to
-so-called "kebab case".
+Long options can also be spelled flexibly, e.g.  `--dry-run` or `--dryRun`, like
+Nim's style-insensitive identifiers, but with extra "kebab case" insensitivity.
 
 When you want more specific help than `set foo`, just add parameter-keyed
 metadata with Nim's association-list literals:
