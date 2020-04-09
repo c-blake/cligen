@@ -135,7 +135,8 @@ short options, give `short` a key of `""`.
 To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
 To suppress presence only in the help message use `help = { "apiParam":
 "SUPPRESS" }`.  Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper
-default API parameters to the Nim default for a type.
+default API parameter values with no explicit initilization to the Nim default
+for a type.
 
 ---
 
