@@ -50,7 +50,7 @@ the mappings or `--help-syntax`/`--helps` to see more on that.
 In other words, long options can be as short as possible.  In yet other words,
 hitting the TAB key to complete is unnecessary **if** the completion is unique.
 This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
-Long options can also be spelled flexibly, e.g.  `--dry-run` or `--dryRun`, like
+Long options can also be spelled flexibly, e.g.  `--dry-run`|`--dryRun`, like
 Nim's style-insensitive identifiers, but with extra "kebab case" insensitivity.
 
 ---
