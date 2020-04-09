@@ -120,7 +120,7 @@ when isMainModule:
   app.logic()  # Only --help/--version/parse errors cause early exit
 ```
 
-### Short Option Override, Exit Protocol, Config File/Environment Vars
+### Common Overrides, Exit Protocol, Config File/Environment Vars
 
 You can manually control the short option for any parameter via the `short`
 macro parameter:
@@ -131,6 +131,11 @@ With that (and our first `fun` example), `"bar"` gets `'r'` while `"baz"`
 gets `'b'` as short options.  To suppress some long option getting *any* short
 option, specify `'\0'` as the value for its short key.  To suppress _all_
 short options, give `short` a key of `""`.
+
+To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
+To suppress presence only in the help message use `help = { "apiParam":
+"SUPPRESS"}`.  Pass `implicitDefault=@["apiParam"]` to let the CLI wrapper
+default API parameters to the Nim default for a type.
 
 ---
 
