@@ -93,7 +93,7 @@ while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
 or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
 Like long option keys or enum values, subcommands can also be any unambiguous
-prefix.  So, in the above `./cmd f -m1` would also work.
+prefix and are kebab-insensitive.  So, `./cmd f-o -m1` would also work above.
 
 ---
 
