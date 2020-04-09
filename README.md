@@ -144,7 +144,8 @@ So,
 import editdistance, cligen   # gen CLI for Nim stdlib editDistance
 dispatch(editDistanceASCII, echoResult=true)
 ```
-makes a program to print edit distance between two required parameters.
+makes a program to print edit distance between two required parameters while
+without `echoResult` it would be in the shell `$?` variable.
 
 If these exit protocols are inadequate then you may need to call `dispatchGen()`
 and later call `try: dispatchFoo(someSeqString) except: discard` yourself.
