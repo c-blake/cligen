@@ -37,12 +37,12 @@ metadata with Nim's association-list literals:
 ```nim
 dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
 ```
-That's it.  No specification language/complex arg parsing API to learn.
-If you aren't immediately sold, here is some more
+That's it!  No specification language/complex arg parsing API/Nim pragma tags
+to learn.  If you aren't sold already, here is more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
-Many CLI authors who have understood things this far can use `cligen` already.
-Enter illegal commands or `--help` to get help messages to exhibit the mappings
-or `--help-syntax`/`--helps` to see more on that.
+Nim CLI authors who have understood things this far can mostly use `cligen`
+already.  Enter illegal commands or `--help` to get help messages to exhibit
+the mappings or `--help-syntax`/`--helps` to see more on that.
 
 ### Token Matching, Trailing Args, Required Parameters
 
