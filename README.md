@@ -170,8 +170,7 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
 You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 `dispatch` to merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with
-Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as shown
-above, if that works for you.
+Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
 
 ### Even More Controls and Details
 
