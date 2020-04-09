@@ -35,6 +35,10 @@ _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
 hitting the TAB key to complete is unnecessary **if** the completion is unique.
+This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
+Additionally, long option keys can be spelled flexibly, e.g.  `--dry-run` or
+`--dryRun`, much like Nim's style-insensitive identifiers, but with extra
+insensitivity to so-called "kebab case".
 
 When you want more specific help than `set foo`, just add parameter-keyed
 metadata with Nim's association-list literals:
@@ -88,11 +92,8 @@ With the above in `cmd.nim`, CLI users can run `./cmd foo -m1` or
 while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
 or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
-Like long option keys or enum values, **any unambiguous prefix** is accepted.
-So, in the above `./cmd f -m1` would also work.  This is patterned after,
-e.g. Mercurial, gdb, or gnuplot.  Additionally, long option keys can be spelled
-flexibly, e.g.  `--dry-run` or `--dryRun`, much like Nim's style-insensitive
-identifiers, but with extra insensitivity to so-called "kebab case".
+Like long option keys or enum values, subcommands can also be any unambiguous
+prefix.  So, in the above `./cmd f -m1` would also work.
 
 ---
 
