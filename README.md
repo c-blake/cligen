@@ -44,7 +44,7 @@ Many CLI authors who have understood things this far can use `cligen` already.
 Enter illegal commands or `--help` to get help messages to exhibit the mappings
 or `--help-syntax`/`--helps` to see more on that.
 
-### Token Matching, Trailing Args, subcommands, dispatch to object init
+### Token Matching, Trailing Args, Required Parameters
 
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
@@ -59,9 +59,12 @@ Most commands have some trailing variable length sequence of arguments like
 the `paths` in the above example.  `cligen` automatically treats the first
 non-defaulted `seq[T]` proc parameter as such an optional sequence.  `cligen`
 applies the same basic string-to-native type converters/parsers used for option
-values to such parameters.  If a proc parameter has no explicit default value,
-it becomes required input, but the syntax for input is the same as for optional
-values.  So, in the below
+values to such parameters.
+
+---
+
+If a proc parameter has no explicit default value, it becomes required input,
+but the syntax for input is the same as for optional values.  So, in the below
 ```nim
 proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
   discard           # Of course, real code would have real logic here
@@ -72,7 +75,7 @@ the command-line user must give `--myRequired=something` somewhere to avoid an
 error.  Non-option arguments must be parsable as `int` with whitespace stripped,
 e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 
----
+### Subcommands, dispatch to object init
 
 `dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
 `nimble`. Each `[]` list in `dispatchMulti` is the argument list for each
