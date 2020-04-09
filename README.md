@@ -5,9 +5,9 @@ This approach to CLIs was inspired by [Andrey Mikhaylenko's nice Python module
 [Plac](https://github.com/micheles/plac) ).
 The basic idea is that native language proc signatures already encode/declare
 almost everything needed to generate CLIs - names, types, and default values.
-A little reflection/introspection then suffices to generate a parser-dispatcher
-translating `seq[string]` command input into calls to a wrapped proc.
-In Nim, adding a CLI can be as easy as:
+Reflection/introspection then suffices to generate a parser-dispatcher
+translating `seq[string]` command input into calls to a wrapped proc.  In Nim,
+adding a CLI can be as easy as:
 ```nim
 proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
   ## Some existing API call
