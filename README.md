@@ -51,8 +51,8 @@ If you aren't immediately sold, here is some more
 Many CLI authors who have understood things this far can use `cligen` already.
 Enter illegal commands or `--help` to get help messages to exhibit the mappings.
 
----
-
+Trailing Args, "subcommands", dispatch from object definition
+=============================================================
 Most commands have some trailing variable length sequence of arguments like
 the `paths` in the above example.  `cligen` automatically treats the first
 non-defaulted `seq[T]` proc parameter as such an optional sequence.  `cligen`
@@ -114,7 +114,7 @@ when isMainModule:
   app.logic()  # Only --help/--version/parse errors cause early exit
 ```
 
-More Controls For More Subtle Cases/More Picky CLI authors
+Short Option Override, Exit Protocol, Environment/Configs
 ==========================================================
 You can manually control the short option for any parameter via the `short`
 macro parameter:
