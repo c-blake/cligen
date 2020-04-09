@@ -1,5 +1,4 @@
-cligen: A Native API-Inferred Command-Line Interface Generator For Nim
-======================================================================
+# cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 This approach to CLIs was inspired by [Andrey Mikhaylenko's nice Python module
 'argh'](https://pythonhosted.org/argh/) (in turn preceded by
 [Plac](https://github.com/micheles/plac) ).
@@ -32,6 +31,20 @@ Other invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
 
+When you want more specific help than `set foo`, just add parameter-keyed
+metadata with Nim's association-list literals:
+```nim
+dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
+```
+That's it.  No specification language/complex arg parsing API to learn.
+If you aren't immediately sold, here is some more
+[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+Many CLI authors who have understood things this far can use `cligen` already.
+Enter illegal commands or `--help` to get help messages to exhibit the mappings
+or `--help-syntax`/`--helps` to see more on that.
+
+### Token Matching, Trailing Args, subcommands, dispatch to object init
+
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
 hitting the TAB key to complete is unnecessary **if** the completion is unique.
@@ -39,19 +52,8 @@ This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
 Long options can also be spelled flexibly, e.g.  `--dry-run` or `--dryRun`, like
 Nim's style-insensitive identifiers, but with extra "kebab case" insensitivity.
 
-When you want more specific help than `set foo`, just add parameter-keyed
-metadata with Nim's association-list literals:
-```nim
-dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
-```
-That's it.  No specification language or complex arg parsing APIs to learn.
-If you aren't immediately sold, here is some more
-[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
-Many CLI authors who have understood things this far can use `cligen` already.
-Enter illegal commands or `--help` to get help messages to exhibit the mappings.
+---
 
-Trailing Args, "subcommands", dispatch to object init
-=====================================================
 Most commands have some trailing variable length sequence of arguments like
 the `paths` in the above example.  `cligen` automatically treats the first
 non-defaulted `seq[T]` proc parameter as such an optional sequence.  `cligen`
@@ -113,8 +115,8 @@ when isMainModule:
   app.logic()  # Only --help/--version/parse errors cause early exit
 ```
 
-Short Option Override, Exit Protocol, Config File/Environment Vars
-==================================================================
+### Short Option Override, Exit Protocol, Config File/Environment Vars
+
 You can manually control the short option for any parameter via the `short`
 macro parameter:
 ```nim
@@ -165,8 +167,8 @@ You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as shown
 above, if that works for you.
 
-Even More Controls and Details
-==============================
+### Even More Controls and Details
+
 After many feature requests `cligen` grew many knobs & levers.  First there are
 more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md) on the
 restrictions on wrappable procs and extending the parser to new argument types.
