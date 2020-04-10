@@ -4,10 +4,10 @@
 const syntaxHelp = """
 BASIC CHEAT SHEET:
  * "--foo=val" is same as "--foo:val" and "--foo val".
- * Likewise with -f instead of --foo; in addition -fval|-f=val|-f:val also work.
- * Long option, enum values and subcommands are "CLI-style-insensitive", meaning
-   that the case of the first letter matters, but [_-] do not; --bar == --b_A-r.
- * Any unambiguous prefix is enough for long options, enum values & subcommands.
+ * Likewise with -f instead of --foo; in addition -fval|-f=val|-f:val also work
+ * Long option,enum values and subcommands are "CLI-style-insensitive", meaning
+   that the case of the 1st letter matters, but [_-] do not; --bar == --b_A-r.
+ * Any unambiguous prefix is enough for long options, enum values & subcommands
  * "bool" values for flags "foo", "bar" with short options 'f', 'b':
      default value false: -f | --foo sets the flag to true
      default value true: -b | --bar sets the flag to false
