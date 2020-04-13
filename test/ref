@@ -228,6 +228,7 @@ SUBCMDs:
   demo    demo entry point with varied, meaningless parameters.
   print   show entry point with varied, meaningless parameters.
   punt    Another entry point; here we echoResult
+  .       . is an alias for `punt`
   nel-ly  Yet another entry point; here we block autoEcho
 
 FullyAutoMulti {-h|--help} or with no args at all prints this message.
@@ -237,8 +238,8 @@ Run "FullyAutoMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available for
-top-level/all subcommands.  Usage is like:
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
     FullyAutoMulti {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
@@ -265,6 +266,8 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=  int    1      set zeta
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
+
+  . is an alias for `punt`
 
   nel-ly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
@@ -483,8 +486,8 @@ AUTHOR
   Charles Blake
 
 ==> test/MultiMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available for
-top-level/all subcommands.  Usage is like:
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
     MultiMulti {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
