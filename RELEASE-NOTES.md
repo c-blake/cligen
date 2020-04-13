@@ -1,6 +1,21 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.44
+---------------
+  Fix bad bug in `posixUt.recEntries` where it only worked for "." and make
+  the warning message more clear/specific about re-visitation not looping.
+
+  Have `argcvt.ElementError` inherit from `ValueError` not `Exception`.
+
+  Make `helpDump` in `dispatchMulti` skip repetitive --help/--help-syntax rows
+  with instead just a note at the top about general availability.
+
+  This is the last release pre-1.0 likely at the end of April.  Please make any
+  feature requests you think may require breaking changes now or be prepared
+  for even more than usual pushback in the interests of stability.  (Truly well
+  argued/motivated breaking changes will always remain possible.)
+
 Version: 0.9.43
 ---------------
   In most contexts for most parameters you can now use a compile-time `const`
