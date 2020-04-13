@@ -29,6 +29,7 @@ type TextTab* = seq[seq[string]]
 proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
                  cols = @[0,1]): string =
   result = ""
+  if tab.len == 0: return
   proc nCols(): int =
     result = 0
     for row in tab: result = max(result, row.len)

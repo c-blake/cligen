@@ -316,7 +316,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let cmdLineId = ident("cmdline")      # gen proc parameter
   let vsnSh = if "version" in shOpt: $shOpt["version"] else: "\0"
   let prefixId = ident("prefix")        # local help prefix param
-  let prsOnlyId = ident("parseOnly")    # local help prefix param
+  let prsOnlyId = ident("parseOnly")    # flag to only produce a parse vector
+  let skipHelp = ident("skipHelp")      # flag to control --help/--help-syntax
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
   let cbId = ident("crbt")              # CritBitTree for prefix lengthening
@@ -369,8 +370,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
       var `mandId`: seq[string]
       var `tabId`: TextTab =
-        @[ @[ "-"&shortH&", --help", "", "", "print this cligen-erated help" ],
-           @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
+        if `skipHelp`:              # Do not incl; Nice for e.g. `helpDump`
+          if shortH != "h":         # Do not skip if --help short opt is unusual
+            @[ @[ "-"&shortH&", --help","","","print this cligen-erated help" ]]
+          else: @[ ]
+        else:                       # Include help help in help table
+          @[ @[ "-"&shortH&", --help", "","", "print this cligen-erated help" ],
+             @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParse`)
@@ -595,7 +601,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   result = quote do:                                    #Overall Structure
     if cast[pointer](`docs`) != nil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
-                 `usageId`=`usage`,`prefixId`="", `prsOnlyId`=false): `retType`=
+                 `usageId`=`usage`,`prefixId`="", `prsOnlyId`=false,
+                 `skipHelp`=false): `retType`=
       {.push hint[XDeclaredButNotUsed]: off.}
       `initVars`
       `aliases`
@@ -659,12 +666,13 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(1)
 
-template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped): auto=
+template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped,
+                     skipHlp: untyped): auto=
   when compiles(type(p())):
-    try: discard p(hlp, usage=use, prefix=pfx)
+    try: discard p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp)
     except HelpOnly: discard
   else:
-    try: p(hlp, usage=use, prefix=pfx)
+    try: p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp)
     except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
@@ -828,9 +836,11 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
               else: newNimNode(nnkEmpty)
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:
-        cligenHelp(`disNmId`,`helpSCmdId`,`sCmdUsage`,`prefixId` & "  "); `spc`
+        cligenHelp(`disNmId`,`helpSCmdId`,`sCmdUsage`,`prefixId` & "  ", true)
+        `spc`
       else:
-        cligenHelp(`disNmId`, `dashHelpId`, `sCmdUsage`, `prefixId`); `spc`)
+        cligenHelp(`disNmId`, `dashHelpId`, `sCmdUsage`, `prefixId`, true)
+        `spc`)
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
@@ -840,8 +850,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
               "    where subsubcommand syntax is:") % [ `cmd`, `prefix` ]
       else:
-        echo ("This is a multiple-dispatch command.  Top-level " &
-              "--help/--help-syntax\nis also available.  Usage is like:\n" &
+        echo ("This is a multiple-dispatch command.  -h/--help/--help-syntax " &
+              "is available for\ntop-level/all subcommands.  Usage is like:\n" &
               "    $1 {SUBCMD} [subcommand-opts & args]\n" &
               "where subcommand syntaxes are as follows:\n") % [ `cmd` ]
       let `dashHelpId` = @[ "--help" ]
