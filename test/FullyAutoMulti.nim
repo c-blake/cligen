@@ -54,4 +54,5 @@ Run "$command help" to get *comprehensive* help.$ifVersion"""
                 [ demo, help = { "verb": "on=chatty, off=quiet" } ],
                 [ show, cmdName="print", short = { "gamma": 'z' } ],
                 [ punt, echoResult=true, cf=noVsn ],
+                [ punt, cmdName=".", echoResult=true, cf=noVsn ],
                 [ nel_Ly, cmdName="nel-ly", noAutoEcho=true ] )
