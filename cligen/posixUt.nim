@@ -1,4 +1,4 @@
-import posix, sets,tables, strutils,strformat, ./sysUt, ./argcvt, parseUtils
+import posix,sets,tables, strutils,strformat,parseUtils,./sysUt,./argcvt,./gcarc
 
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
@@ -377,7 +377,7 @@ iterator dirEntries*(dir: string; st: ptr Stat=nil; canRec: ptr bool=nil;
           de.d_name[1]=='.' and de.d_name[2]=='\0'):
         continue                        #Skip "." and ".."
       var ent = $de.d_name.addr.cstring #Make a Nim string
-      var path = dir // ent             #Join path down from `dir`
+      var path = dir // move(ent)       #Join path down from `dir`
       dt[] = de.d_type
       st[].st_nlink = 0                 #Tell caller we did no stat/lstat
       if canRec != nil:

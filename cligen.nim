@@ -1,11 +1,10 @@
-import os, macros, tables, cligen/[parseopt3, argcvt, textUt, sysUt, macUt],
+import os, macros, tables, cligen/[parseopt3,argcvt,textUt,sysUt,macUt,gcarc],
        strutils, critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
        summaryOfModule, docFromModuleOf, docFromProc, match
-
 include cligen/helpTmpl           #Pull in various help template strings
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
@@ -430,7 +429,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
          if descr != `cf`.hTabSuppress:
            `tabId`.add(argHelp(`defVal`, `apId`) & descr)
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.val4req
-         `cbId`.incl(optionNormalize(`parNm`), `apId`.parRend)
+         `cbId`.incl(optionNormalize(`parNm`), move(`apId`.parRend))
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
@@ -454,7 +453,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       newStrLitNode("help"), shortHlp).add(
         quote do:
           if cast[pointer](`setByParseId`) != nil:
-            `setByParseId`[].add(("help", "", `apId`.help, clHelpOnly))
+            `setByParseId`[].add(("help", "", move(`apId`.help), clHelpOnly))
           if not `prsOnlyId`:
             stdout.write(`apId`.help); raise newException(HelpOnly, "")))
     result.add(newNimNode(nnkOfBranch).add(
@@ -508,9 +507,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parCount = `keyCountId`[`parNm`]
         if cast[pointer](`setByParseId`) != nil:
           if argParse(`spar`, `dpar`, `apId`):
-            `setByParseId`[].add((`parNm`,`pId`.val, "", clOk))
+            `setByParseId`[].add((`parNm`, move(`pId`.val), "", clOk))
           else:
-            `setByParseId`[].add((`parNm`,`pId`.val,
+            `setByParseId`[].add((`parNm`, move(`pId`.val),
                                  "Cannot parse arg to " & `apId`.key, clBadVal))
         if not `prsOnlyId`:
           if not argParse(`spar`, `dpar`, `apId`):
@@ -528,7 +527,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let msg=("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[`pId`.key,
               ks.join("\n  ")]) & "\nRun with --help for more details.\n"
       if cast[pointer](`setByParseId`) != nil:
-        `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
+        `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
         stderr.write(msg)
         raise newException(ParseError, "Unknown option")
@@ -546,7 +545,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let msg = ("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
                  mb & "Run with --help for full usage.\n")
       if cast[pointer](`setByParseId`) != nil:
-        `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
+        `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
         stderr.write(msg)
         raise newException(ParseError, "Unknown option")))
@@ -572,9 +571,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         let msg = "Cannot parse " & `apId`.key
         if cast[pointer](`setByParseId`) != nil:
           if argParse(`tmpId`,`tmpId`,`apId`):
-            `setByParseId`[].add((`apId`.key, `apId`.val, "", clPositional))
+            `setByParseId`[].add((move(`apId`.key), move(`apId`.val), "",
+                                  clPositional))
           else:
-            `setByParseId`[].add((`apId`.key, `apId`.val, msg, clBadVal))
+            `setByParseId`[].add((move(`apId`.key), move(`apId`.val), msg,
+                                  clBadVal))
         if not `prsOnlyId` and not argParse(`tmpId`, `tmpId`, `apId`):
             stderr.write `apId`.msg
             raise newException(ParseError, msg)
@@ -584,7 +585,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       result.add(quote do:
         let msg = "Unexpected non-option " & $`pId`.key
         if cast[pointer](`setByParseId`) != nil:
-          `setByParseId`[].add((`apId`.key, `pId`.val, msg, clNonOption))
+          `setByParseId`[].add((move(`apId`.key), move(`pId`.val), msg,
+                                clNonOption))
         if not `prsOnlyId`:
           stderr.write(`cName`&" does not expect non-option arguments at \"" &
                        $`pId`.key & "\".\nRun with --help for full usage.\n")
@@ -619,7 +621,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           if `pId`.kind == cmdEnd: break
           if `pId`.kind == cmdError:
             if cast[pointer](`setByParseId`) != nil:
-              `setByParseId`[].add(("", "", `pId`.message, clParseOptErr))
+              `setByParseId`[].add(("", "", move(`pId`.message), clParseOptErr))
             if not `prsOnlyId`:
               stderr.write(`pId`.message, "\n")
             break

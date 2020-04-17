@@ -2,7 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-import strformat, sets, ./textUt, parseopt3, critbits, strutils
+import strformat, sets, ./textUt, ./gcarc, ./parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 when NimVersion <= "0.19.8": import typetraits #$T -> system
@@ -110,7 +110,7 @@ proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys(argSep=""), "bool", $dfl ]
   if a.parSh.len > 0:
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
-  a.longNoVal.add(a.parNm)        # So, add to *NoVal.
+  a.longNoVal.add(move(a.parNm))  # So, add to *NoVal.
 
 # cstrings
 proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
@@ -145,7 +145,7 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
       allCanon.add(helpCase($e, clEnumVal))
       let norm = optionNormalize(allCanon[^1])
       allNorm.add(norm)
-      crbt[norm] = (e, allCanon[^1])
+      crbt[norm] = (e, move(allCanon[^1]))
   var ks: seq[string]; var es: seq[T]
   for v in crbt.valuesWithPrefix(valNorm):
     ks.add(v.canon)

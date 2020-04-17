@@ -11,6 +11,11 @@ Version: 0.9.44
   Make `helpDump` in `dispatchMulti` skip repetitive --help/--help-syntax rows
   with instead just a note at the top about general availability.
 
+  I've tried to add some `move` annotations to silence most gc:arc warnings,
+  but at least a couple (cligen/cfUt.nim:16, cligen.nim:470) fail with move due
+  to immutability while warning without move.  If you find some you can silence
+  with a move successfully let me know.
+
   This is the last release pre-1.0 likely at the end of April.  Please make any
   feature requests you think may require breaking changes now or be prepared
   for even more than usual pushback in the interests of stability.  (Truly well
