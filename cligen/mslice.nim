@@ -133,7 +133,7 @@ proc charEq(x, c: char): bool {.inline.} = x == c
 proc charIn(x: char, c: set[char]): bool {.inline.} = x in c
 
 proc mempbrk*(s: pointer, accept: set[char], n: csize): pointer {.inline.} =
-  for i in 0 ..< n:   #Like cstrpbrk or cmemchr but for mem
+  for i in 0 ..< int(n):  #Like cstrpbrk or cmemchr but for mem
     if (cast[cstring](s))[i] in accept: return s +! i
 
 proc mem(s: string): pointer = cast[pointer](cstring(s))
