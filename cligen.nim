@@ -1,3 +1,4 @@
+{.push warning[UnusedImport]: off.} # This is only for gcarc
 import os, macros, tables, cligen/[parseopt3,argcvt,textUt,sysUt,macUt,gcarc],
        strutils, critbits
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
@@ -453,7 +454,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       newStrLitNode("help"), shortHlp).add(
         quote do:
           if cast[pointer](`setByParseId`) != nil:
-            `setByParseId`[].add(("help", "", move(`apId`.help), clHelpOnly))
+            `setByParseId`[].add(("help", "", `apId`.help, clHelpOnly))
           if not `prsOnlyId`:
             stdout.write(`apId`.help); raise newException(HelpOnly, "")))
     result.add(newNimNode(nnkOfBranch).add(
@@ -484,7 +485,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             let sub = `aliasesId`.match(`pId`.val, "alias ref", msg)
             if msg.len > 0:
               if cast[pointer](`setByParseId`) != nil:
-                `setByParseId`[].add((`pId`.key, `pId`.val, msg, clBadKey))
+                `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg,
+                                      clBadKey))
               if not `prsOnlyId`:
                 stderr.write msg
                 let t = if msg.startsWith "Ambig": "Ambiguous" else: "Unknown"
