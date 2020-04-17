@@ -2,6 +2,7 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
+{.push warning[UnusedImport]: off.} # This is only for gcarc
 import strformat, sets, ./textUt, ./gcarc, ./parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
@@ -230,7 +231,7 @@ argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 
 proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
   ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
-  let toks = if split: a.val[1..^1].split(a.val[0]) else: @[ a.val ]
+  let toks = if split: a.val[1..^1].split(a.val[0]) else: @[ move(a.val) ]
   let old = a.sep; a.sep = ""     #can have agg[string] & want clobbers on elts
   for i, tok in toks:
     var parsed, default: T
@@ -238,7 +239,7 @@ proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
     if not argParse(parsed, default, a):
       result.setLen(0); a.sep = old
       raise newException(ElementError, "Bad element " & $i)
-    result.add(parsed)
+    result.add(move(parsed))
   a.sep = old                     #probably don't need to restore, but eh.
 
 proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string =

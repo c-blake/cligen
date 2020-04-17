@@ -1,3 +1,4 @@
+{.push warning[UnusedImport]: off.} # This is only for gcarc
 import posix,sets,tables, strutils,strformat,parseUtils,./sysUt,./argcvt,./gcarc
 
 proc log*(f: File, s: string) {.inline.} =
