@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 0.9.45
+---------------
+  Make compatible with pre-1.0 Nim.
+
+  This is the last pre-1.0 release with 1.0 likely at the end of April.  Please
+  make any feature requests you think may require breaking changes now or be
+  prepared for even more than usual pushback in the interests of stability.
+  (Truly well argued/motivated breaking changes will always remain possible.)
+
 Version: 0.9.44
 ---------------
   Fix bad bug in `posixUt.recEntries` where it only worked for "." and make
@@ -16,11 +25,6 @@ Version: 0.9.44
   argcvt.nim:320) fail with `move` due to immutability/etc. (the very first only
   at runtime) while warning without move.  If you find any you can silence with
   a `move` successfully let me know.
-
-  This is the last release pre-1.0 likely at the end of April.  Please make any
-  feature requests you think may require breaking changes now or be prepared
-  for even more than usual pushback in the interests of stability.  (Truly well
-  argued/motivated breaking changes will always remain possible.)
 
 Version: 0.9.43
 ---------------
