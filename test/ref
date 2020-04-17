@@ -291,7 +291,7 @@ Options:
   -u=, --u1=     hashset(uint8)   {}        include 1 val in u1
   -U=, --U1=     hashset(uint8)   6,7       include 1 val in U1
   --u2=          hashset(uint16)  {}        include 1 val in u2
-  --U2=          hashset(uint16)  8,9       include 1 val in U2
+  --U2=          hashset(uint16)  9,8       include 1 val in U2
   -e=, --e=      hashset(Color)   {}        include 1 val in e
   -E=, --E=      hashset(Color)   red,blue  include 1 val in E
 
