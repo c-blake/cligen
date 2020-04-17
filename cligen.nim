@@ -124,7 +124,8 @@ proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
   error "formalParams requires a proc argument."
   return nil                #not-reached
 
-proc parseHelps(helps: NimNode, proNm: auto, fpars: auto): Table[string,(string,string)]=
+proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
+    Table[string, (string, string)] =
   template setCk(k, p, h: untyped) {.dirty.} =   #set & check result entries
     result[k] = (p, h)
     if not fpars.containsParam(ident(k)):
@@ -347,7 +348,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                     var `aliasesId`: CritBitTree[seq[string]]
                     for d in `aliasDefD`:
                       if d.len > 1: `aliasesId`[d[0]] = d[1 .. ^1]
-                    var `dflSub`: seq[string] = if `aliasRefD`.len>0: `aliasRefD`[0] else: @[]
+                    var `dflSub`: seq[string] = if `aliasRefD`.len>0:
+                                                  `aliasRefD`[0] else: @[]
                 else: newNimNode(nnkEmpty)
   let aliasesCallDfl = if alias.got: quote do:
                     if `provideId` and not `aliasSnId` and `dflSub`.len > 0:
