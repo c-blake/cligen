@@ -117,7 +117,7 @@ proc pquote(a: Abbrev; abb: string): string =
     if j < 0: break
     var tmp = result
     tmp[j] = a.qmark
-    if a.trie.match(tmp, 2, a.qmark, star).len == 1:
+    if a.trie.match(move(tmp), 2, a.qmark, star).len == 1:
       result = tmp
     start = j + 1
 

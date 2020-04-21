@@ -113,7 +113,7 @@ proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
     return
   if i >= pat.len:
     if n.term and key.len > 0:
-      a.incl key
+      a.incl move(key)
       if a.len >= limit: raise newException(IOError, "done")
     return
   var h: int
@@ -129,7 +129,7 @@ proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
         var key2 = key & n.kidc[h]
         a.match(p, pat, i, key2, a1, aN, limit)
     elif n.term and i + 1 == pat.len:
-      a.incl key
+      a.incl move(key)
       if a.len >= limit: raise newException(IOError, "done")
   elif (h := n.kidc.findUO(pat[i])) >= 0:
     let p = n.kidp[h]
