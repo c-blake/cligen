@@ -357,7 +357,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   #XXX Doing this feature right needs 2 OptParser passes. {Default alias should
   #be processed first not last to not clobber earlier cfg/CL actual settings,
   #but cannot know it is needed without first checking the whole CL.}
-                      parser(`dflSub`, `provideId`=false)
+                      parser(move(`dflSub`), `provideId`=false)
                 else: newNimNode(nnkEmpty)
 
   proc initVars0(): NimNode =           # init vars & build help str
@@ -486,8 +486,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
             let sub = `aliasesId`.match(`pId`.val, "alias ref", msg)
             if msg.len > 0:
               if cast[pointer](`setByParseId`) != nil:
-                `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg,
-                                      clBadKey))
+                `setByParseId`[].add((move(`pId`.key), move(`pId`.val),
+                                      move(msg), clBadKey))
               if not `prsOnlyId`:
                 stderr.write msg
                 let t = if msg.startsWith "Ambig": "Ambiguous" else: "Unknown"

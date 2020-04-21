@@ -306,7 +306,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
       dst.add(argAggSplit[T](a, false))
       return
     if   a.sep == "+=": dst.add(argAggSplit[T](a, false))
-    elif a.sep == "^=": dst = argAggSplit[T](a, false) & dst
+    elif a.sep == "^=": dst = argAggSplit[T](a, false) & move(dst)
     elif a.sep == "-=":                     # Delete Mode
       let parsed = argAggSplit[T](a, false)[0]
       for i, e in dst:                      # Slow algo,..
@@ -316,9 +316,9 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     elif a.sep == ",@=":                    # split-clobber-assign
       dst = argAggSplit[T](a)
     elif a.sep == ",=" or a.sep == ",+=":   # split-append
-      dst = dst & argAggSplit[T](a)
+      dst = move(dst) & argAggSplit[T](a)
     elif a.sep == ",^=":                    # split-prepend
-      dst = argAggSplit[T](a) & dst
+      dst = argAggSplit[T](a) & move(dst)
     elif a.sep == ",-=":                    # split-delete
       let parsed = argAggSplit[T](a)
       for i, e in dst:                      # Slow algo,..
