@@ -11,7 +11,7 @@ proc getMeta(paths: (iterator():string), Deref=false, mL=1):
        Table[int, seq[string]] =
   result = initTable[int, seq[string]](512)
   var st: Stat
-  var inodes = initHashSet[int](512)
+  var inodes = initHashSet[tuple[dev: Dev, ino: Ino]](512)
   for path in paths():
     if Deref:                                   #stat|lstat based on Deref
       if stat(path, st) != 0: perr "stat ", path
@@ -21,8 +21,8 @@ proc getMeta(paths: (iterator():string), Deref=false, mL=1):
       continue                                  #..S_ISREG=regular & symlinks.
     if st.st_size < mL:                         #One easy way to exclude len0.
       continue                                  #Other small mins also useful.
-    if inodes.containsOrIncl(int(st.st_ino)):   #Only keep 1st discovered path
-      continue                                  #..for any given inode.
+    if inodes.containsOrIncl((st.st_dev, st.st_ino)): #Retain only 1st path..
+      continue                                        #..for any given file.
     result.mgetOrPut(st.st_size, @[]).add(path)
 
 proc justPaths(x: openArray[tuple[m: MFile, path: string]]): seq[string] =
