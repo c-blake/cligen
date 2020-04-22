@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.0.0
+---------------
+  Silence argcvt.nim implicit copy warnings in --gc:arc mode.  Problem cases
+  (no move warns but using move fails) remain: cligen.nim:{458,472,503,562},
+  and cfUt.nim:16 (at least..maybe others).
+
+  This release number mostly means things in the core functionality have been
+  stable for a long time and I'll try harder to have changes be non-breaking.
+
 Version: 0.9.45
 ---------------
   Make compatible with pre-1.0 Nim.
