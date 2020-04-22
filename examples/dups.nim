@@ -80,6 +80,7 @@ proc digest(wkit: var WorkItem, d: Digest, slice: string) =
   of Sha1: hashAndCpy(secureHash)
   if d != size: wkit.m.close()
 
+{.passC: "-fopenmp", passL: "-fopenmp".}
 iterator dupSets*(paths: (iterator(): string), Deref=false, mL=1, slice="",
                   hash=wy, par=false, cmp=false): seq[string] =
   ## Yield paths to sets of duplicate files as seq[string].  See ``proc dups``.
