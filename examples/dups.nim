@@ -109,9 +109,9 @@ iterator dupSets*(paths: (iterator(): string), Deref=false, mL=1, slice="",
       yield hashSet
 
 when isMainModule:                        #Provide a useful CLI wrapper.
-  proc dups(file="", delim='\n', Deref=false, minLen=1, slice="", Hash=wy,
-            cmp=false, par=false, log={osErr}, brief=false, time="",
-            outDlm="\t", endOut="\n", paths: seq[string]): int =
+  proc dups(file="", delim='\n', recurse=1, chase=false, Deref=false, minLen=1,
+            slice="", Hash=wy, cmp=false, par=false, log={osErr}, brief=false,
+            time="", outDlm="\t", endOut="\n", paths: seq[string]): int =
     ## Print sets of paths with duplicate contents. Examined paths are UNION of
     ## `paths` & optional `delim`-delimited input `file` (stdin if "-"|if "" &
     ## stdin not a tty).  Eg., `find -print0|dups -d\\0`.  Exits non-0 if any
@@ -123,8 +123,9 @@ when isMainModule:                        #Provide a useful CLI wrapper.
     dupsLog = log
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
-    for s in dupSets(both(paths, fileStrings(file, delim)),   #fileStrings,both
-                     Deref, minLen, slice, Hash, par, cmp):   #..from osUt
+    for s in dupSets(recEntries(both(paths, fileStrings(file, delim)),
+                                follow=chase, maxDepth=recurse),
+                     Deref, minLen, slice, Hash, par, cmp):
       inc(nSet)
       if brief and summ notin log:
         break                         #Done once we know there is any duplicate
@@ -152,6 +153,8 @@ when isMainModule:                        #Provide a useful CLI wrapper.
   dispatch(dups, help = {
              "file"  : "optional input (\"-\"|!tty=stdin)",
              "delim" : "input file delimiter (\\0->NUL)",
+             "recurse": "recurse n-levels on dirs; 0:unlimited",
+             "chase" : "follow symlinks to dirs in recursion",
              "Deref" : "dereference symlinks",
              "minLen": "minimum file size to consider",
              "slice" : "file slice (float|%:frac; <0:tailRel)",
