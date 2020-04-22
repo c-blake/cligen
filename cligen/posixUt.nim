@@ -1,6 +1,6 @@
 when NimVersion > "0.20.2":
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import posix,sets,tables, strutils,strformat,parseUtils,./sysUt,./argcvt,./gcarc
+import posix,sets,tables, strutils,strformat,parseUtils, sysUt,argcvt,gcarc,osUt
 
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
@@ -450,6 +450,24 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
         yield path
   else:                                 #Yield just the root for non-recursables
     yield dir
+
+proc recEntries*(it: iterator(): string; st: ptr Stat=nil; dt: ptr int8=nil,
+                 follow=false, maxDepth=0, err=stderr): iterator(): string =
+  ## Return iterator yielding ``maxDepth|follow`` recursive closure of ``it``.
+  result = iterator(): string =
+    for root in it():
+      for e in recEntries(root, st, dt, follow, maxDepth, err): yield e
+
+iterator paths*(roots: seq[string], maxDepth=0, follow=false, file="",
+                delim='\n'): string =
+  ## iterator for maybe-following, maybe-recursive closure of the union of
+  ## ``roots`` and optional ``delim``-delimited input ``file`` (stdin if "-"|if
+  ## "" & stdin not a tty).  Usage is ``for p in paths(roots,...): echo p``.
+  ## This allows fully general path input if used in a command pipeline like
+  ## ``find .  -print0 | cmd -d\\0`` (where ``-d`` sets ``delim``).
+  let it = recEntries(both(roots, fileStrings(file, delim)),
+                      follow=follow, maxDepth=maxDepth)
+  for e in it(): yield e
 
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",

@@ -7,6 +7,9 @@ Version: 1.0.0
   (no move warns but using move fails) remain: cligen.nim:{458,472,503,562},
   and cfUt.nim:16 (at least..maybe others).
 
+  Added convenience wrappers `recEntries`, `paths` in `cligen/posixUt.nim` for
+  fully general path inputs commonly needed in CLI utilities.
+
   This release number mostly means things in the core functionality have been
   stable for a long time and I'll try harder to have changes be non-breaking.
 
