@@ -1,4 +1,4 @@
-import sets, cligen, cligen/[mfile, mslice] #mSlices MSlice Splitr
+import sets, cligen, cligen/[mfile, mslice, osUt] #mSlices MSlice Splitr
 
 proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
           blanksOk=false, cut=false, origin=1, colNums: seq[int]) =
@@ -17,8 +17,8 @@ proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
             for j, f in cols:
                 if (origin + j) in colSet or (origin + j - cols.len) in colSet:
                   continue
-                if ith != 0: outFile.write sepOut
-                outFile.write f
+                if ith != 0: outFile.urite sepOut
+                outFile.urite f
                 wroteSomething = true
                 inc(ith)
         else:
@@ -26,11 +26,11 @@ proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
                 let j = if i < 0: i + cols.len else: i - origin
                 if j < 0 or j >= cols.len:
                     continue
-                if ith != 0: outFile.write sepOut
-                outFile.write cols[j]
+                if ith != 0: outFile.urite sepOut
+                outFile.urite cols[j]
                 wroteSomething = true
         if wroteSomething or blanksOk:
-            outFile.write "\n"
+            outFile.urite '\n'
 
 when isMainModule:
     dispatch(cols, help = {
