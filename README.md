@@ -29,8 +29,10 @@ Options:
   -v, --verb     bool    false  set verb
 ```
 Other invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
+
 Default help tables work with automated "help to X" tools such as `complete -F
-_longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man`.
+_longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man` (e.g.
+`help2man -N ./fun|man /dev/stdin`).
 
 When you want more specific help than `set foo`, just add parameter-keyed
 metadata with Nim's association-list literals:
