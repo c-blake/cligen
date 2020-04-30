@@ -109,7 +109,7 @@ iterator dupSets*(paths: (iterator(): string), Deref=false, mL=1, slice="",
       yield hashSet
 
 when isMainModule:                        #Provide a useful CLI wrapper.
-  proc dups(file="", delim='\n', recurse=1, chase=false, Deref=false, minLen=1,
+  proc dups(file="", delim='\n', recurse=1, follow=false, Deref=false, minLen=1,
             slice="", Hash=wy, cmp=false, par=false, log={osErr}, brief=false,
             time="", outDlm="\t", endOut="\n", paths: seq[string]): int =
     ## Print sets of paths with duplicate contents. Examined paths are UNION of
@@ -124,7 +124,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
     for s in dupSets(recEntries(both(paths, fileStrings(file, delim)),
-                                follow=chase, maxDepth=recurse),
+                                follow=follow, maxDepth=recurse),
                      Deref, minLen, slice, Hash, par, cmp):
       inc(nSet)
       if brief and summ notin log:
@@ -154,7 +154,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
              "file"  : "optional input (\"-\"|!tty=stdin)",
              "delim" : "input file delimiter (\\0->NUL)",
              "recurse": "recurse n-levels on dirs; 0:unlimited",
-             "chase" : "follow symlinks to dirs in recursion",
+             "follow": "follow symlinks to dirs in recursion",
              "Deref" : "dereference symlinks",
              "minLen": "minimum file size to consider",
              "slice" : "file slice (float|%:frac; <0:tailRel)",
@@ -165,4 +165,4 @@ when isMainModule:                        #Provide a useful CLI wrapper.
              "brief" : "do NOT print sets of dups",
              "time"  : "sort each set by file time ([+-][amcv].*)",
              "outDlm": "output internal delimiter",
-             "endOut": "output record terminator" })
+             "endOut": "output record terminator" }, short = { "follow": 'F' })
