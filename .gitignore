@@ -33,6 +33,7 @@ test/HelpTabCols
 test/out
 test/Suppress
 test/FancyRepeats
+test/FancyRepeats2
 test/OneCharParams
 test/ImplicitDefault
 test/AllSeqTypes

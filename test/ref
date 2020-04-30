@@ -217,6 +217,20 @@ Options:
   -j=, --junk=   strings  rs,tu  append 1 val to junk
   -s=, --stuff=  strings  ab,cd  append 1 val to stuff
 
+==> test/FancyRepeats2.out <==
+Usage:
+  demo [optional-params] [args: string...]
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
+Options:
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -a=, --alpha=  int      1      set alpha
+  -v=, --verb=   countr   0      set verb
+  -j=, --junk=   strings  rs,tu  append 1 val to junk
+  -s=, --stuff=  strings  ab,cd  append 1 val to stuff
+
 ==> test/FullyAutoMulti.out <==
 Infer & generate command-line interace/option/argument parser
 

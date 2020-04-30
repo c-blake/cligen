@@ -13,6 +13,10 @@ Version: 1.0.0
   This release number mostly means things in the core functionality have been
   stable for a long time and I'll try harder to have changes be non-breaking.
 
+  Remove cligen/oldAPI.nim and its include.
+
+  Add test/FancyRepeats2.nim to show a second way to do it.
+
 Version: 0.9.45
 ---------------
   Make compatible with pre-1.0 Nim.

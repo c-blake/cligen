@@ -1078,5 +1078,3 @@ proc mergeParams*(cmdNames: seq[string],
   ##context, ``cmdNames[0]`` is the ``cmdName`` while in a ``dispatchMulti``
   ##context it is ``@[ <mainCommand>, <subCommand> ]``.
   cmdLine
-
-include cligen/oldAPI   #TEMPORARY SUPPORT FOR THE OLD CALLING CONVENTION
