@@ -1,21 +1,108 @@
 RELEASE NOTES
 =============
 
-Version: 1.0.0
+Version: 0.9.46
 ---------------
-  Silence argcvt.nim implicit copy warnings in --gc:arc mode.  Problem cases
-  (no move warns but using move fails) remain: cligen.nim:{458,472,503,562},
-  and cfUt.nim:16 (at least..maybe others).
+  Silence `argcvt.nim` implicit copy warnings in `--gc:arc` mode.  Problem cases
+  (no move warns but using move fails) remain at: cligen.nim:{487,501}, and
+  cfUt.nim:16 and cligen/clCfgInit.nim:14 (at least..maybe others).  The exact
+  cases will be specific to your exact version of Nim as `gc:arc` is in a rapid
+  development phase.
 
   Added convenience wrappers `recEntries`, `paths` in `cligen/posixUt.nim` for
-  fully general path inputs commonly needed in CLI utilities.
+  fully general path inputs commonly needed in CLI utilities.  See `dups.nim`.
 
-  This release number mostly means things in the core functionality have been
-  stable for a long time and I'll try harder to have changes be non-breaking.
+  Remove `cligen/oldAPI.nim` and its `include` in `cligen.nim`.  I'm not sure
+  anyone ever used this, but it is especially defunct given `clCfgInit`.
 
-  Remove cligen/oldAPI.nim and its include.
+  Add `test/FancyRepeats2.nim` to show a second way to do it.
 
-  Add test/FancyRepeats2.nim to show a second way to do it.
+  Add one "output breaking" change to simplify implementation of dropping (in
+  `dispatchMulti` context) the "Usage:\n" header more like how skipping repeats
+  of -h,--help and --help-syntax works.  If you were passing your own `usage`
+  template anywhere then you will probably want to delete the "Usage:" prefix.
+  It will work ok with it still there, but be repetitive/ugly.
+
+  --
+
+  The above is part of a large feature addition to allow opt-in presentation
+  (and some CL syntax) configuration by CL end users -- probably How It Always
+  Should Have Been (TM) since CL authors can only anticipate so much.  This
+  configuration is via the include `cligen/cfCfgInit.nim` by default which reads
+  ~/.config/cligen/config or ~/.config/cligen files.  An example such file is:
+```
+# This is a Nim parsecfg file; [include__ALL_CAPS] includes file $ALL_CAPS
+#[include__LC_THEME] # This can define aliases like: colors = "fhot5 = RED"
+optKeys    = RED        # These example colors are likely pretty ugly to you
+valType    = CYAN       # The full syntax for all these color/attr specs is..
+dflval     = GREEN      #.. implemented in `cligen/humanUt.nim:textAttrParse`
+descrip    = PURPLE     #.. `cligen/humanUt.nim:attrNames` is a good start.
+colorCmd   = bold
+colorDoc   = italic
+colorArgs  = underline
+
+hTabColGap = 1
+hTabMinLast = 12
+hTabCols   = "clOptKeys clDflVal clDescrip"
+
+# Be very careful with the next two "CL syntax modifiers" as changing
+# them can easily break config files or script-usages of programs.
+#reqSep     = on
+sepChars   = "="
+
+useHdr     = "%(underline)Usage:\n  "
+use        = "$command $args\n${doc}options:\n$options"
+
+useMulti   = """${doc}Usage:
+  $command {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "$command help" to get *comprehensive* help.${ifVersion}"""
+```
+  If you really hate providing CL end users with some/all of this flexibility
+  then you can always write your own project-specific `cligen/clCfgInit.nim`.
+  For maximum terminal compatibility `cligen` does not do any colors by default.
+  If your user base is un-picky, such as "only yourself", then you can also
+  provide colorful defaults via compile time `clCfg` hacking.
+
+  Further, if the user sets the `$NO_COLOR` environment variable to any value
+  then all escape sequences are suppressed.  This can be helpful for programs
+  that parse the output of `cmd --help`.  E.g., for the Zsh auto-complete system
+  you want to patch the `_call_program` function to export `NO_COLOR=1`.  I am
+  considering interpreting the double negative `NO_COLOR=notty` as a tty-test.
+  { Often one wants colors piped to `less -r`.  So, that alone isn't enough. }
+
+  If one color theme/scheme works for you then you can just define it all in
+  `~/.config/cligen` and be done.  If not, the idea of `$LC_THEME` helps.  E.g.,
+  I have, on one Unix desktop, terminals w/both light & dark background colors
+  ("day mode" & "night mode").  If `~/.config/cligen/config` does the commented
+  out `[include__]` above then the default `cligen/cfCfgInit` merges the file
+  `~/.config/cligen/$LC_THEME` (or an absolute path if it starts with '/').
+  This environment-sensitive level of indirection for color definition is all
+  that's needed to support related schemes.  E.g., I find false color heat map
+  schemes easy to remember.  So, defining colors = "fhot5 = RED" in a dark bkgd
+  file and colors = "fhot5 = red" in a light bkgd file allows me to use "fhot5"
+  in a pair of "conceptually" similar color schemes in two different modes, each
+  getting a nice "red" for the background in question.
+
+  Meanwhile, `ssh` (up to recent versions) *by default* propagates any `LC_*`
+  environment var.  So, if I set `LC_THEME=darkBG` in the shell environment of
+  a dark terminal, this will be inherited and even sent to remote hosts across
+  `ssh` as long as my remote `~/.config/cligen/` is set up correctly.  Recent
+  `sshd` versions specifically white list each `LC_` name.  So, server admins
+  must add `AcceptEnv LC_THEME` to `/etc/ssh/sshd_config` or if admin access is
+  unavailable you can hijack any by-default-propagated-but-elsewise-unused name,
+  e.g. `LC_PAPER`, since printing may be very unlikely.  (You can always set a
+  local `LC_THEME` based on the client `LC_PAPER` & then fix/unset `LC_PAPER`.)
+  The above is all a lot of words for ultimately a very simple mechanism.
+
+  Since this new feature addition is a large change with slight compatibility
+  ramifications, and more importantly since it seems likely to inspire follow-on
+  requests that may be hard to make compatibly, I am deferring the 1.0.0 stamp
+  until a release or two from now.
 
 Version: 0.9.45
 ---------------
