@@ -464,9 +464,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                 else:
                   (if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr) &
                   (if `cf`.use.len    > 0: `cf`.use    else: `usageId`)
-      `apId`.help = use % ["doc",     hl("colorDoc", indentDoc),
-                           "command", hl("colorCmd", `cName`),
-                           "args",    hl("colorArgs", `args`),
+      `apId`.help = use % ["doc",     hl("doc", indentDoc),
+                           "command", hl("cmd", `cName`),
+                           "args",    hl("args", `args`),
                            "options", addPrefix(`prefixId` & "  ",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
@@ -782,10 +782,10 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
     pairs.add(@[subCmds[i], subDocs[i].firstParagraph])
   let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
               else: ""
-  let on = @[ clCfg.helpAttr.getOrDefault("colorCmd", ""),
-              clCfg.helpAttr.getOrDefault("colorDoc", "") ]
-  let off = @[ (if "colorCmd" in clCfg.helpAttr: textAttrOff else: ""),
-               (if "colorDoc" in clCfg.helpAttr: textAttrOff else: "") ]
+  let on = @[ clCfg.helpAttr.getOrDefault("cmd", ""),
+              clCfg.helpAttr.getOrDefault("doc", "") ]
+  let off = @[ (if "cmd" in clCfg.helpAttr: textAttrOff else: ""),
+               (if "doc" in clCfg.helpAttr: textAttrOff else: "") ]
   use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs,2,attrOn=on,attrOff=off))]
 

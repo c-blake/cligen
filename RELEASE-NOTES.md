@@ -33,27 +33,29 @@ Version: 0.9.46
 ```
 # This is a Nim parsecfg file; [include__ALL_CAPS] includes file $ALL_CAPS
 #[include__LC_THEME] # This can define aliases like: colors = "fhot5 = RED"
-optKeys    = RED        # These example colors are likely pretty ugly to you
-valType    = CYAN       # The full syntax for all these color/attr specs is..
-dflval     = GREEN      #.. implemented in `cligen/humanUt.nim:textAttrParse`
-descrip    = PURPLE     #.. `cligen/humanUt.nim:attrNames` is a good start.
-colorCmd   = bold
-colorDoc   = italic
-colorArgs  = underline
+[color]
+optKeys = RED     # These example colors are likely very ugly to you.
+valType = CYAN    # The full syntax for all these color/attr specs is..
+dflval  = GREEN   #.. implemented in `cligen/humanUt.nim:textAttrParse`
+descrip = PURPLE  #.. `cligen/humanUt.nim:attrNames` is a good start.
+cmd     = bold      # command name in one-liners & in multi-cmd tables
+doc     = italic    # overall documentation
+args    = underline # positional args in one-liners
 
-hTabColGap = 1
-hTabMinLast = 12
-hTabCols   = "clOptKeys clDflVal clDescrip"
+[layout]
+#rowSep  = "\n"  # This is the default; gap between option table rows
+colGap  = 1      # colors make tighter format more tolerable
+#minLast = 16    # This is the default; min room for final column
+#cols    = "clOptKeys clValType clDflVal clDescrip"  # This is the default
 
-# Be very careful with the next two "CL syntax modifiers" as changing
-# them can easily break config files or script-usages of programs.
-#reqSep     = on
-sepChars   = "="
+[syntax] # Changing can EASILY break cfg files|script-usage of programs!
+#reqSep   = off  # This is the default
+#sepChars = ":=" # This is the default
 
-useHdr     = "%(underline)Usage:\n  "
-use        = "$command $args\n${doc}options:\n$options"
-
-useMulti   = """${doc}Usage:
+[templates]
+useHdr   = "%(underline)Usage:\n  "
+use      = "$command $args\n${doc}options:\n$options"
+useMulti = """${doc}Usage:
   $command {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
 $subcmds
