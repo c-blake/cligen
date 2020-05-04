@@ -1,6 +1,7 @@
 #!/bin/sh
 exec < /dev/null
 export COLUMNS=80
+export CLIGEN=/dev/null
 rm -rf $HOME/.cache/nim/*
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
