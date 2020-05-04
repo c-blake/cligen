@@ -27,7 +27,7 @@ proc addPrefix*(prefix: string, multiline=""): string =
 type TextTab* = seq[seq[string]]
 
 proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
-                 cols = @[0,1]): string =
+                 cols = @[0,1], attrOn = @["",""], attrOff = @["",""]): string =
   result = ""
   if tab.len == 0: return
   proc nCols(): int =
@@ -43,13 +43,19 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   wCol[last] = max(minLast, wTerm - leader)
   for row in tab:
     for c in cols[0 .. ^2]:
-      result &= row[c] & repeat(" ", wCol[c] - row[c].len + colGap)
+      result &= attrOn[c] & row[c] & attrOff[c] &
+                  repeat(" ", wCol[c] - row[c].len + colGap)
     var wrapped = if '\n' in row[last]: row[last].split("\n")
                   else: wrapWords(row[last],maxLineWidth=wCol[last]).split("\n")
-    result &= (if wrapped.len > 0: wrapped[0] else: "") & "\n"
-    for j in 1 ..< len(wrapped):
-      result &= repeat(" ", leader) & wrapped[j] & "\n"
-    result &= rowSep
+    result &= attrOn[cols[^1]] & (if wrapped.len>0: wrapped[0] else: "")
+    if wrapped.len == 1:
+      result &= attrOff[cols[^1]] & "\n" & rowSep
+    else:
+      result &= '\n'
+      for j in 1 ..< wrapped.len - 1:
+        result &= repeat(" ", leader) & wrapped[j] & "\n"
+      result &= repeat(" ", leader) & wrapped[^1] & attrOff[cols[^1]] & "\n" &
+                rowSep
 
 type C = int16      ##Type for edit cost values & totals
 const mxC = C.high
