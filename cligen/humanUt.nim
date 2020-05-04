@@ -1,3 +1,4 @@
+{.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
 import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
 when not declared(initHashSet):
   proc initHashSet*[T](): HashSet[T] = initSet[T]()
@@ -80,6 +81,8 @@ var textAttrAliases = initTable[string, string]()
 proc textAttrAlias*(name, value: string) =
   textAttrAliases[name] = value
 
+proc textAttrAliasClear*() = textAttrAliases.clear
+
 proc textAttrRegisterAliases*(colors: seq[string]) =
   for spec in colors:
     let cols = spec.split('=')
@@ -118,36 +121,48 @@ proc textAttrOn*(spec: seq[string], plain=false): string =
 const textAttrOff* = "\x1b[0m"
 
 proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
-                         openBkt = { '{','[' }, closeBkt = { '}',']' }): string=
-  ## ".. %X[{A1 A2}]Ya .." -> ".. AttrOn[A1 A2]%XYaAttrOff .."
+    openBkt="([{", closeBkt=")]}", keepPct=true, termInAttr=true): string =
+  ## ".. %X(A1 A2)Ya .." -> ".. ON[A1 A2]%XYaOFF .."
   var term = pctTerm; term.incl pct     #Caller need not enter pct in pctTerm
   var other, attr, attrOn: string       #..Should maybe check xBkt^pctTerm=={}.
-  var inPct, inBkt: bool
+  var inPct = false
+  var mchdBkt = false
+  var bkt: char
   let attrOff = if plain: "" else: textAttrOff
   for c in fmt:
     if inPct:
-      if inBkt:
-        if c in closeBkt:
-          inBkt = false
+      if bkt != '\0':
+        if c == bkt:
+          bkt = '\0'
           attrOn = textAttrOn(attr.split(), plain)
           attr.setLen(0)
-        else:
-          attr.add c
+          mchdBkt = true
+        else: attr.add c
       else:
-        if c in openBkt:
-          inBkt = true
+        if not mchdBkt and c in openBkt:
+          bkt = closeBkt[openBkt.find(c)]
           attr.setLen(0)
-        elif c in term:
-          inPct = false
+        elif c in term or c == pct:
           if attrOn.len > 0: result.add attrOn
-          result.add other; result.add c
+          result.add other
+          if termInAttr and c != pct: result.add c
           if attrOn.len > 0: result.add attrOff
           attrOn.setLen(0)
           other.setLen(0)
+          if not termInAttr and c != pct: result.add c
+          mchdBkt = false
+          inPct = c == pct
+          if keepPct and c == pct: other.add c
         else: other.add c
     else:
-      if c == '%': inPct = true; other.add c
+      if c == pct:
+        inPct = true
+        if keepPct: other.add c
       else: result.add(c)
+  if inPct and bkt == '\0':   # End of string is a simplified c in term branch
+    if attrOn.len > 0: result.add attrOn
+    result.add other
+    if attrOn.len > 0: result.add attrOff
 
 proc humanDuration*(dt: int, fmt: string, plain=false): string =
   ## fmt is divisor-aka-numerical-unit-in-seconds unit-text [attrs]
