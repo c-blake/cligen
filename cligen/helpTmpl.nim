@@ -1,7 +1,12 @@
-const clUse* = "$command $args\n${doc}Options:\n$options"
-const clUsage* = "Usage:\n  " & clUse   #Use is for dispatchMulti else Usage
+# If you redefine these in some `cligen/helpTmpl` ahead of cligen-actual in your
+# Nim path, it just needs to define: clUseHdr, clUse, clUseMulti
 
-const clUseMultiGeneral* = """
+const clUseHdr* = "Usage:\n  " #Not used by dispatchMulti root help dump
+
+const clUse* = "$command $args\n${doc}Options:\n$options"
+
+# This next is just a local shared with clUseMulti default and Perlish.
+const clUseMultiGeneral = """
 $command {-h|--help} or with no args at all prints this message.
 $command --help-syntax gives general cligen syntax help.
 Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.

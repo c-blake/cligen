@@ -7,7 +7,11 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
        summaryOfModule, docFromModuleOf, docFromProc, match
+
+# NOTE: `helpTmpl`, `clCfgInit`, and `syntaxHelp` can all be overridden on a per
+# client project basis with a local `cligen/` before cligen-actual in `path`.
 include cligen/helpTmpl           #Pull in various help template strings
+include cligen/syntaxHelp
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
@@ -26,6 +30,10 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
     hTabSuppress*: string        ## Magic val for per-param help to suppress
+    helpAttr*:    Table[string, string] ## Text attrs for each help area
+    useHdr*:      string         ## Override of const usage header template
+    use*:         string         ## Override of const usage template
+    useMulti*:    string         ## Override of const subcmd table template
 
   HelpOnly*    = object of CatchableError
   VersionOnly* = object of CatchableError
@@ -49,6 +57,18 @@ var clCfg* = ClCfg(
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
   ##Internal routine to convert help column enums to just ints for `alignTable`.
   for e in x: result.add(int(e))
+
+include cligen/clCfgInit  # Like helpTmpl and syntaxHelp, an include
+
+proc onCols*(c: ClCfg): seq[string] =
+  ##Internal routine to map help table color specs to strings for `alignTable`.
+  for e in ClHelpCol.low..ClHelpCol.high:
+    result.add c.helpAttr.getOrDefault($e, "")
+
+proc offCols*(c: ClCfg): seq[string] =
+  ##Internal routine to map help table color specs to strings for `alignTable`.
+  for e in ClHelpCol.low..ClHelpCol.high:
+    result.add(if $e in c.helpAttr: textAttrOff else: "")
 
 type    #Utility types/code for generated parser/dispatchers for parseOnly mode
   ClStatus* = enum clBadKey,                        ## Unknown long key
@@ -204,18 +224,16 @@ proc posIxGet(positional: string, fpars: NimNode): int =
       else:
         result = i
 
-include cligen/syntaxHelp
-
 proc got(a: NimNode): bool =
   (a.len == 2 and a[1].len == 2 and a[1][0].len == 2 and a[1][1].len == 2 and
    a[1][0][1].len == 4 and a[1][1][1].len == 4)
 
 macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
-  help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
+  help: typed={}, short: typed={}, usage: string=clUse, cf: ClCfg=clCfg,
   echoResult=false, noAutoEcho=false, positional: static string=AUTO,
   suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
   dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
-  stopWords: seq[string] = @[], docs: ptr var seq[string]=nil,
+  stopWords: seq[string] = @[], noHdr=false, docs: ptr var seq[string]=nil,
   setByParse: ptr var seq[ClParse]=nil): untyped =
   ##Generate command-line dispatcher for proc ``pro`` named ``dispatchName``
   ##(defaulting to ``dispatchPro``) with generated help/syntax guided by
@@ -320,6 +338,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let prefixId = ident("prefix")        # local help prefix param
   let prsOnlyId = ident("parseOnly")    # flag to only produce a parse vector
   let skipHelp = ident("skipHelp")      # flag to control --help/--help-syntax
+  let noHdrId = ident("noHdr")          # flag to control using `clUseHdr`
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
   let cbId = ident("crbt")              # CritBitTree for prefix lengthening
@@ -437,12 +456,22 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
       let indentDoc = addPrefix(`prefixId`, wrap(`prefixId`, `cmtDoc`))
-      `apId`.help = `usageId` % [ "doc",indentDoc, "command",`cName`,
-                                  "args",`args`, "options",
-                  addPrefix(`prefixId` & "  ",
-                            alignTable(`tabId`, 2*len(`prefixId`) + 2,
-                                       `cf`.hTabColGap, `cf`.hTabMinLast,
-                                       `cf`.hTabRowSep, toInts(`cf`.hTabCols)))]
+      proc hl(tag, val: string): string =
+        (`cf`.helpAttr.getOrDefault(tag, "") & val &
+         (if tag in `cf`.helpAttr: textAttrOff else: ""))
+      let use = if `noHdrId`:
+                  if `cf`.use.len  > 0: `cf`.use  else: `usageId`
+                else:
+                  (if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr) &
+                  (if `cf`.use.len    > 0: `cf`.use    else: `usageId`)
+      `apId`.help = use % ["doc",     hl("colorDoc", indentDoc),
+                           "command", hl("colorCmd", `cName`),
+                           "args",    hl("colorArgs", `args`),
+                           "options", addPrefix(`prefixId` & "  ",
+                              alignTable(`tabId`, 2*len(`prefixId`) + 2,
+                                         `cf`.hTabColGap, `cf`.hTabMinLast,
+                                         `cf`.hTabRowSep, toInts(`cf`.hTabCols),
+                                         `cf`.onCols, `cf`.offCols)) ]
       if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -609,7 +638,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
     if cast[pointer](`docs`) != nil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `usageId`=`usage`,`prefixId`="", `prsOnlyId`=false,
-                 `skipHelp`=false): `retType`=
+                 `skipHelp`=false, `noHdrId`=`noHdr`): `retType`=
       {.push hint[XDeclaredButNotUsed]: off.}
       `initVars`
       `aliases`
@@ -674,12 +703,12 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     except ParseError: quit(1)
 
 template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped,
-                     skipHlp: untyped): auto=
+                     skipHlp: untyped, noUHdr=false): auto =
   when compiles(type(p())):
-    try: discard p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp)
+    try: discard p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
     except HelpOnly: discard
   else:
-    try: p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp)
+    try: p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
     except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
@@ -691,20 +720,20 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
                        `echoResult`, `noAutoEcho`)
 
 template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
- short:typed={},usage=clUsage, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
+ short:typed={},usage=clUse, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
  dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
- stopWords: seq[string] = @[]): untyped =
+ stopWords: seq[string] = @[], noHdr=false): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, dispatchName, mergeNames,
-              alias, stopWords)
+              alias, stopWords, noHdr)
   cligenQuitAux(mergeParams(mergeNames), dispatchName, cmdName, pro, echoResult,
                 noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
- short:typed={},usage=clUsage,echoResult=false,noAutoEcho=false,positional=AUTO,
+ short:typed={},usage=clUse,echoResult=false,noAutoEcho=false,positional=AUTO,
  suppress:seq[string] = @[], implicitDefault:seq[string] = @[], dispatchName="",
  mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
  stopWords: seq[string] = @[]): untyped =
@@ -753,8 +782,12 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
     pairs.add(@[subCmds[i], subDocs[i].firstParagraph])
   let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
               else: ""
+  let on = @[ clCfg.helpAttr.getOrDefault("colorCmd", ""),
+              clCfg.helpAttr.getOrDefault("colorDoc", "") ]
+  let off = @[ (if "colorCmd" in clCfg.helpAttr: textAttrOff else: ""),
+               (if "colorDoc" in clCfg.helpAttr: textAttrOff else: "") ]
   use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
-          "subcmds", addPrefix("  ", alignTable(pairs, prefixLen=2)) ]
+          "subcmds", addPrefix("  ", alignTable(pairs,2,attrOn=on,attrOff=off))]
 
 proc docDefault(n: NimNode): NimNode =
   if   n.len > 1: newStrLitNode(summaryOfModule(n[1][0]))
@@ -798,8 +831,6 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     let sCmdNm = p.subCmdName
     var c = newCall("dispatchGen")
     copyChildrenTo(p, c)
-    if not c.paramPresent("usage"):
-      c.add(newParam("usage", newStrLitNode(clUse)))
     if not c.paramPresent("mergeNames"):
       c.add(newParam("mergeNames", quote do: @[ `cmd`, `sCmdNm` ]))
     if not c.paramPresent("docs"):
@@ -843,10 +874,10 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
               else: newNimNode(nnkEmpty)
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:
-        cligenHelp(`disNmId`,`helpSCmdId`,`sCmdUsage`,`prefixId` & "  ", true)
+        cligenHelp(`disNmId`,`helpSCmdId`,`sCmdUsage`,`prefixId`&"  ",true,true)
         `spc`
       else:
-        cligenHelp(`disNmId`, `dashHelpId`, `sCmdUsage`, `prefixId`, true)
+        cligenHelp(`disNmId`, `dashHelpId`, `sCmdUsage`, `prefixId`, true, true)
         `spc`)
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
@@ -868,7 +899,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       unknownSubcommand(`arg0Id`, `subCmdsId`)))
   result.add(quote do:
     `multiNmsId`.add("dispatch" & `prefix`)
-    proc `multiId`(`cmdLineId`: seq[string], `usageId`=clUse, `prefixId`="  ") =
+    proc `multiId`(`cmdLineId`: seq[string], `usageId`=clUse,`prefixId`="  ")=
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = `cmdLineId`.len
       let `arg0Id` = if n > 0: `subMchsId`.lengthen `cmdLineId`[0] else: ""
@@ -899,6 +930,8 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let subCmdsId = ident(prefix & "SubCmds")
   if not result[^1].paramPresent("stopWords"):
     result[^1].add(newParam("stopWords", subCmdsId))
+  if not result[^1].paramPresent("noHdr"):
+    result[^1].add(newParam("noHdr", newLit(true)))
   if not result[^1].paramPresent("dispatchName"):
     result[^1].add(newParam("dispatchName", newStrLitNode(prefix & "Subs")))
   if not result[^1].paramPresent("suppress"):
@@ -997,7 +1030,7 @@ macro initGen*(default: typed, T: untyped, positional="",
   when defined(printInit): echo repr(result)  # maybe print gen code
 
 template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
-    help: typed={}, short: typed={}, usage: string=clUsage, cf: ClCfg=clCfg,
+    help: typed={}, short: typed={}, usage: string=clUse, cf: ClCfg=clCfg,
     positional="", suppress: seq[string] = @[], mergeNames: seq[string] = @[],
     alias: seq[ClAlias] = @[]): T =
   ## Like ``dispatchCf`` but only ``quit`` when user gave bad CL, --help,
@@ -1017,7 +1050,7 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
   callIt()      #inside proc is not strictly necessary, but probably safer.
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
-    help: typed={}, short: typed={}, usage: string=clUsage, positional="",
+    help: typed={}, short: typed={}, usage: string=clUse, positional="",
     suppress:seq[string] = @[], mergeNames:seq[string] = @[],
     alias: seq[ClAlias] = @[]): T =
   ## Convenience `initFromCLcf` wrapper to silence bogus GcUnsafe warnings at
