@@ -8,7 +8,7 @@ when isMainModule:
 
   const cmdName         = "myCmd"     #These are all tested via --help
   const doc             = "The" & " " & "doc"
-  const usage           = "USE:\n\t$command $args\n${doc}Options:\n$options"
+  const usage           = "$command $args\n${doc}Options:\n$options"
   const help            = { "al-pha" : "growth constant",
                             "be-ta"  : "shrink target" }.toTable
   const short           = { "a-lpha" : 'z',

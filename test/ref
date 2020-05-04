@@ -593,8 +593,8 @@ Options:
 
 
 ==> test/PassValues.out <==
-USE:
-	myCmd [optional-params] [a1: string...]
+Usage:
+  myCmd [optional-params] [a1: string...]
 The doc
 Options:
   -h, --help                    print this cligen-erated help
@@ -817,9 +817,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(714, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(700, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(201, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(743, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(729, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(221, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
