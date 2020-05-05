@@ -23,7 +23,7 @@ proc getMeta(paths: (iterator():string), Deref=false, mL=1):
       continue                                  #Other small mins also useful.
     if inodes.containsOrIncl((st.st_dev, st.st_ino)): #Retain only 1st path..
       continue                                        #..for any given file.
-    result.mgetOrPut(st.st_size, @[]).add(path)
+    result.mgetOrPut(int(st.st_size), @[]).add(path)
 
 proc justPaths(x: openArray[tuple[m: MFile, path: string]]): seq[string] =
   result.setLen(x.len)                          #extract paths from tuples
