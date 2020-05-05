@@ -58,7 +58,10 @@ proc toInts*(x: seq[ClHelpCol]): seq[int] =
   ##Internal routine to convert help column enums to just ints for `alignTable`.
   for e in x: result.add(int(e))
 
-include cligen/clCfgInit  # Like helpTmpl and syntaxHelp, an include
+when defined(cgCfgToml):    # An include helpTmpl and syntaxHelp
+  include cligen/clCfgToml  # Trade parsetoml dependency for better documention
+else:
+  include cligen/clCfgInit  # Just use stdlib parsecfg
 
 proc onCols*(c: ClCfg): seq[string] =
   ##Internal routine to map help table color specs to strings for `alignTable`.

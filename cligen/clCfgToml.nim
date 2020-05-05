@@ -1,4 +1,10 @@
-# Use parsetoml to parse the config.toml files to the `ClCfg` object `c`.
+## This is an ``include`` file used by ``cligen.nim`` proper to initialize the
+## ``clCfg`` global.  Here we use only a TOML config file to do so.  You must
+## add parsetoml to your compile setup via nimble install parsetoml or elsewise.
+
+import std/[strformat,sequtils, os,strutils,tables], cligen/humanUt, parsetoml
+const cgConfigFileBaseName = "config.toml"
+
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =
   template hl(x): string = specifierHighlight(x, Whitespace, keepPct=false,
                                               termInAttr=false)
@@ -80,3 +86,11 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     else:
       stderr.write(&"{cfgFile}: unknown keyword {k1}\n")
+
+var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
+if cfNm.existsFile: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
+elif cfNm.splitPath.head == "config" and (cfNm/cgConfigFileBaseName).existsFile:
+  clCfg.apply(cfNm/cgConfigFileBaseName, existsEnv("NO_COLOR"))
+# Any given end CL user likely wants just one global system of color aliases.
+# Default to leaving initial ones defined, but clear if an env.var says to.
+if existsEnv("CLIGEN_COLORS_CLEAR"): textAttrAliasClear()
