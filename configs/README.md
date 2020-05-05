@@ -10,5 +10,5 @@ from `${XDG_CONFIG_HOME}/cligen/config`.
 
 ## TOML Configuration syntax configs
 
-Compiling your projects with `-d:clCfgToml` will automatically fetch
+Compiling your projects with `-d:cgCfgToml` will automatically fetch
 the cligen config from `${XDG_CONFIG_HOME}/cligen/config.toml`.
