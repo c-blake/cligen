@@ -58,10 +58,7 @@ proc toInts*(x: seq[ClHelpCol]): seq[int] =
   ##Internal routine to convert help column enums to just ints for `alignTable`.
   for e in x: result.add(int(e))
 
-when defined(cgCfgToml):    # An include helpTmpl and syntaxHelp
-  include cligen/clCfgToml  # Trade parsetoml dependency for better documention
-else:
-  include cligen/clCfgInit  # Just use stdlib parsecfg
+include cligen/clCfgInit
 
 proc onCols*(c: ClCfg): seq[string] =
   ##Internal routine to map help table color specs to strings for `alignTable`.
@@ -1009,7 +1006,7 @@ macro initGen*(default: typed, T: untyped, positional="",
                              ident(($suppress[1][0])[10..^1]) else: nil
   let posId = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
-  var assigns = newStmtList()     #List of assignments 
+  var assigns = newStmtList()     #List of assignments
   if   indirect == 1: assigns.add(quote do: result.new)
   elif indirect == 2: assigns.add(quote do: result=cast[`T`](`T`.sizeof.alloc))
   for kid in ti.children:         #iterate over fields
