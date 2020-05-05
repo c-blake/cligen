@@ -4,13 +4,13 @@ RELEASE NOTES
 Version: 0.9.46
 ---------------
   Silence `argcvt.nim` implicit copy warnings in `--gc:arc` mode.  Problem cases
-  (no move warns but using move fails) remain at: cligen.nim:{487,501}, and
+  (no move warns but using move fails) remain at: cligen.nim:{490,504}, and
   cfUt.nim:16 and cligen/clCfgInit.nim:14 (at least..maybe others).  The exact
   cases will be specific to your exact version of Nim as `gc:arc` is in a rapid
   development phase.
 
   Added convenience wrappers `recEntries`, `paths` in `cligen/posixUt.nim` for
-  fully general path inputs commonly needed in CLI utilities.  See `dups.nim`.
+  fully general path inputs often nice in CL utils.  See `examples/dups.nim`.
 
   Remove `cligen/oldAPI.nim` and its `include` in `cligen.nim`.  I'm not sure
   anyone ever used this, but it is especially defunct given `clCfgInit`.
@@ -64,11 +64,15 @@ $command --help-syntax gives general cligen syntax help.
 Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "$command help" to get *comprehensive* help.${ifVersion}"""
 ```
+  If you hate parsecfg and don't mind an additional parsetoml dependency,
+  @kaushalmodi has contributed an alternate config parser with an example in
+  `configs/config.toml`.  Just compile with `-d:cgCfgToml` to activate.
+
   If you really hate providing CL end users with some/all of this flexibility
   then you can always write your own project-specific `cligen/clCfgInit.nim`.
-  For maximum terminal compatibility `cligen` does not do any colors by default.
-  If your user base is un-picky, such as "only yourself", then you can also
-  provide colorful defaults via compile time `clCfg` hacking.
+  For maximum terminal compatibility `cligen` does no colors by default.  If
+  your user base is un-picky, such as "only yourself", you can also provide
+  colorful defaults via compile time `clCfg` hacking.
 
   Further, if the user sets the `$NO_COLOR` environment variable to any value
   then all escape sequences are suppressed.  This can be helpful for programs
@@ -88,7 +92,7 @@ Run "$command help" to get *comprehensive* help.${ifVersion}"""
   schemes easy to remember.  So, defining colors = "fhot5 = RED" in a dark bkgd
   file and colors = "fhot5 = red" in a light bkgd file allows me to use "fhot5"
   in a pair of "conceptually" similar color schemes in two different modes, each
-  getting a nice "red" for the background in question.
+  getting a nice "red" for each background.
 
   Meanwhile, `ssh` (up to recent versions) *by default* propagates any `LC_*`
   environment var.  So, if I set `LC_THEME=darkBG` in the shell environment of
