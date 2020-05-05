@@ -7,8 +7,8 @@ const cgConfigFileBaseName = "config"
 proc apply(c: var ClCfg, path: string, plain=false) =
   const yes = [ "t", "true" , "yes", "y", "1", "on" ]
   var activeSection = "global"
-  template hl(x): string = specifierHighlight(x, Whitespace, keepPct=false,
-                                              termInAttr=false)
+  template hl(x): string = specifierHighlight(x, Whitespace, plain,
+                                              keepPct=false, termInAttr=false)
   let relTo = path.parentDir & '/'
   var f = newFileStream(path, fmRead)
   if f == nil: return

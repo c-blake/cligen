@@ -6,8 +6,8 @@ import std/[strformat,sequtils, os,strutils,tables], cligen/humanUt, parsetoml
 const cgConfigFileBaseName = "config.toml"
 
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =
-  template hl(x): string = specifierHighlight(x, Whitespace, keepPct=false,
-                                              termInAttr=false)
+  template hl(x): string = specifierHighlight(x, Whitespace, plain,
+                                              keepPct=false, termInAttr=false)
   let
     tomlCfg = parsetoml.parseFile(cfgFile).getTable()
   for k1, v1 in tomlCfg.pairs:
