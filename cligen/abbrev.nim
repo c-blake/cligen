@@ -103,9 +103,9 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
 #NOTE: Pattern quoting cannot be independent of pattern compression because the
-#wildcard ?/qmark is more general than any char being so quoted.  I.e., char in
-#need of ?-convsn may have been critical to distinguish compression uniqueness.
-#Hence, this is best effort only, though it mostly works for my file sets.
+#wildcard ?/qmark is more general than any one char and may have been critical
+#to distinguish compression uniqueness.  So, this quoting is best effort only
+#and may not fully quote.
 proc pquote(a: Abbrev; abb: string): string =
   result = abb
   if a.cset.len < 1:
@@ -115,10 +115,10 @@ proc pquote(a: Abbrev; abb: string): string =
   while start < result.len:
     let j = result.find(a.cset, start)
     if j < 0: break
-    var tmp = result
-    tmp[j] = a.qmark
-    if a.trie.match(move(tmp), 2, a.qmark, star).len == 1:
-      result = tmp
+    let old = result[j]
+    result[j] = a.qmark
+    if a.trie.match(result, 2, a.qmark, star).len > 1:
+      result[j] = old
     start = j + 1
 
 proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
