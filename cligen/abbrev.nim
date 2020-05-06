@@ -269,7 +269,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
       if expanded:
         colWs[m*j + jP].inc
         if colWs.sum == w:
-          if a.cset.len > 0:
+          if a.cset.len > 0:            #Re-quote expansion
             for j in 0 ..< nc div m:
               for i in 0 ..< nr:
                 let si  = nr*j + i; let ti = m*si + jP
@@ -278,7 +278,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
                 let quo = a.pquote(abb)
                 if quo != abb:
                   strs[ti] = strs[ti][0 ..< ab0[si]] & quo & strs[ti][ab1[si]..^1]
-                  a.abbOf[src[i]] =  strs[i]
+                  a.abbOf[src[si]] = strs[ti]
           return
 
 when isMainModule:
