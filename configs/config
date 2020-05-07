@@ -8,7 +8,8 @@
 # variable.  You can use any desired variable name, but this idea is in the zone
 # of "localization" - local to a specific terminal emulator window.  So, LC_*
 # makes sense and, not coincidentally, ssh will propagate LC_* variables.
-#[include__LC_THEME] # include file $LC_THEME (no initial / => relative path)
+#[include__lightBG]  # Default to lightBG [fg][hue|HUE] defs, but clobber with
+#[include__LC_THEME] #..$LC_THEME file (no initial '/' => relative path)
 #Contains "alias" lines like:
 #  colors = "fgBlue = blue"     # a good fgBlue for various LC_THEME bkgds
 #  colors = "reverse = inverse" # any nice little "alias/name" you like
