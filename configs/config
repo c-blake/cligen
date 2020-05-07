@@ -1,0 +1,58 @@
+# This is a Nim parsecfg config file.  It can live at $HOME/.config/cligen or
+# at $HOME/.config/cligen/config for more complex setups with includes.
+# Commented out lines are the defaults (unless changed by CL authors).
+#
+# include files.  Ignore this paragraph on first reading (logically, it belongs
+# first in any real file).  If you have night mode/day mode/etc mode terminals
+# it is likely just one set of colors is inappropriate.  So, you can key-off a
+# variable.  You can use any desired variable name, but this idea is in the zone
+# of "localization" - local to a specific terminal emulator window.  So, LC_*
+# makes sense and, not coincidentally, ssh will propagate LC_* variables.
+#[include__LC_THEME] # include file $LC_THEME (no initial / => relative path)
+#Contains "alias" lines like:
+#  colors = "fgBlue = blue"     # a good fgBlue for various LC_THEME bkgds
+#  colors = "reverse = inverse" # any nice little "alias/name" you like
+#  colors = "fMauve = fE0B0FF   # Name some 24-bit color
+
+# NOTE: If you add color escape seqs, Zsh _gnu_generic breaks unless you export
+#       NO_COLOR=1 from `_call_program`.  Bash `complete -F _longopt myCmd` and
+#       `NO_COLOR=1 help2man myCmd` do work.  Maybe see https://nocolor.org/
+# The below examples look pretty ugly but hopefully explain usage.
+[color]   # Maybe see https://en.wikipedia.org/wiki/ANSI_escape_code
+optKeys = green   # foreground in: black red green yellow blue purple cyan white
+valType = on_CYAN # prepend on_ for background; ALL UPPERCASE is "bright bank"
+dflval  = YELLOW on_red # Can list any number of attributes
+descrip = NONE    # "NONE" => ""; "plain" => "\e[0m".
+
+command = bold red   # *OR*: faint italic underline inverse struck
+#doc     = underline #       blink = slow blink; BLINK = fast blink
+#args    = italic  # Last 3 go w/`$command`, `$doc`, `$args` in `templates.use`
+# Beyond ANSI SGR codes/modes, we also support 256-color/true color xterm/st.
+# NOTE: These many-color modes are less commonly available on terminals than
+#       the main black red..CYAN WHITE so-called 16-color xterm modes.
+# 256-color xterm attrs are [fb][0..23] for F)ORE/B)ACKgrnd grey scale & [fb]RGB
+# with [RGB] in 0..5; true colors are [fb]RRGGBB with RR, etc. in hexadecimal.
+
+[layout] # Control presentation of the help table
+#cols = "clOptKeys clValType clDflVal clDescrip"  # Presence&order of columns
+#rowSep = "\n"  # Default is ""; "\n" => double-spaced
+colGap = 1     # colors make tighter format more tolerable; 0 possible.
+#minLast = 16   # Min printed width of rightmost help column
+
+[syntax] # Changing can EASILY break cfg files|script-usage of programs!
+#reqSep   = off  # This is the default
+#sepChars = ":=" # This is the default
+
+[templates] # These are help formatting templates
+useHdr   = "Usage:\n  "
+
+use      = "$command $args\n${doc}options:\n$options"
+
+useMulti = """${doc}Usage:
+  $command {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
+$subcmds
+$command {-h|--help} or with no args at all prints this message.
+$command --help-syntax gives general cligen syntax help.
+Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "$command help" to get *comprehensive* help.${ifVersion}"""
