@@ -14,3 +14,8 @@ in `${XDG_CONFIG_HOME:-$HOME/.config}/cligen/config` and then look for
 Compiling your projects with `-d:cgCfgToml` will automatically fetch the config
 from `${XDG_CONFIG_HOME:-$HOME/.config}/cligen/config.toml` or if that does not
 exist `${XDG_CONFIG_HOME:-$HOME/.config}/cligen.toml`
+
+## $CLIGEN
+
+In addition to the above default search path for config files, a CL user can
+also set, e.g., `CLIGEN=$HOME/.cligenrc`.
