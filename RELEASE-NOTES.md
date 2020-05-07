@@ -36,7 +36,7 @@ Version: 0.9.46
   Should Have Been (TM) since CL authors can only anticipate so much.  This
   configuration is via the include `cligen/cfCfgInit.nim` by default which reads
   `~/.config/cligen/config`|`~/.config/cligen files`.  `configs/config` in the
-  disribution is an example config and the Wiki will have more details someday.
+  distribution is an example config and the Wiki will have more details someday.
 
   If you hate parsecfg and don't mind an additional parsetoml dependency,
   @kaushalmodi has contributed an alternate config parser with an example in
