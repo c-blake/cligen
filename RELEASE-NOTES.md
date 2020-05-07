@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.0.0
+--------------
+  Try to clean up documentation of new config file/colorization features.
+
+  Fix minor bugs in `cligen/abbrev.expandFit` & `examples/dups.nim` on Android.
+
 Version: 0.9.46
 ---------------
   Silence `argcvt.nim` implicit copy warnings in `--gc:arc` mode.  Problem cases
@@ -29,44 +35,13 @@ Version: 0.9.46
   (and some CL syntax) configuration by CL end users -- probably How It Always
   Should Have Been (TM) since CL authors can only anticipate so much.  This
   configuration is via the include `cligen/cfCfgInit.nim` by default which reads
-  ~/.config/cligen/config or ~/.config/cligen files.  An example such file is:
-```
-# This is a Nim parsecfg file; [include__ALL_CAPS] includes file $ALL_CAPS
-#[include__LC_THEME] # This can define aliases like: colors = "fhot5 = RED"
-[color]
-optKeys = RED     # These example colors are likely very ugly to you.
-valType = CYAN    # The full syntax for all these color/attr specs is..
-dflval  = GREEN   #.. implemented in `cligen/humanUt.nim:textAttrParse`
-descrip = PURPLE  #.. `cligen/humanUt.nim:attrNames` is a good start.
-cmd     = bold      # command name in one-liners & in multi-cmd tables
-doc     = italic    # overall documentation
-args    = underline # positional args in one-liners
+  `~/.config/cligen/config`|`~/.config/cligen files`.  `configs/config` in the
+  disribution is an example config and the Wiki will have more details someday.
 
-[layout]
-#rowSep  = "\n"  # This is the default; gap between option table rows
-colGap  = 1      # colors make tighter format more tolerable
-#minLast = 16    # This is the default; min room for final column
-#cols    = "clOptKeys clValType clDflVal clDescrip"  # This is the default
-
-[syntax] # Changing can EASILY break cfg files|script-usage of programs!
-#reqSep   = off  # This is the default
-#sepChars = ":=" # This is the default
-
-[templates]
-useHdr   = "%(underline)Usage:\n  "
-use      = "$command $args\n${doc}options:\n$options"
-useMulti = """${doc}Usage:
-  $command {SUBCMD}  [sub-command options & parameters]
-where {SUBCMD} is one of:
-$subcmds
-$command {-h|--help} or with no args at all prints this message.
-$command --help-syntax gives general cligen syntax help.
-Run "$command {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
-Run "$command help" to get *comprehensive* help.${ifVersion}"""
-```
   If you hate parsecfg and don't mind an additional parsetoml dependency,
   @kaushalmodi has contributed an alternate config parser with an example in
-  `configs/config.toml`.  Just compile with `-d:cgCfgToml` to activate.
+  `configs/config.toml`.  Just compile with `-d:cgCfgToml` to activate and
+  see `configs/config.toml`.
 
   If you really hate providing CL end users with some/all of this flexibility
   then you can always write your own project-specific `cligen/clCfgInit.nim`.
