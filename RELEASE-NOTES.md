@@ -56,29 +56,8 @@ Version: 0.9.46
   considering interpreting the double negative `NO_COLOR=notty` as a tty-test.
   { Often one wants colors piped to `less -r`.  So, that alone isn't enough. }
 
-  If one color theme/scheme works for you then you can just define it all in
-  `~/.config/cligen` and be done.  If not, the idea of `$LC_THEME` helps.  E.g.,
-  I have, on one Unix desktop, terminals w/both light & dark background colors
-  ("day mode" & "night mode").  If `~/.config/cligen/config` does the commented
-  out `[include__]` above then the default `cligen/cfCfgInit` merges the file
-  `~/.config/cligen/$LC_THEME` (or an absolute path if it starts with '/').
-  This environment-sensitive level of indirection for color definition is all
-  that's needed to support related schemes.  E.g., I find false color heat map
-  schemes easy to remember.  So, defining colors = "fhot5 = RED" in a dark bkgd
-  file and colors = "fhot5 = red" in a light bkgd file allows me to use "fhot5"
-  in a pair of "conceptually" similar color schemes in two different modes, each
-  getting a nice "red" for each background.
-
-  Meanwhile, `ssh` (up to recent versions) *by default* propagates any `LC_*`
-  environment var.  So, if I set `LC_THEME=darkBG` in the shell environment of
-  a dark terminal, this will be inherited and even sent to remote hosts across
-  `ssh` as long as my remote `~/.config/cligen/` is set up correctly.  Recent
-  `sshd` versions specifically white list each `LC_` name.  So, server admins
-  must add `AcceptEnv LC_THEME` to `/etc/ssh/sshd_config` or if admin access is
-  unavailable you can hijack any by-default-propagated-but-elsewise-unused name,
-  e.g. `LC_PAPER`, since printing may be very unlikely.  (You can always set a
-  local `LC_THEME` based on the client `LC_PAPER` & then fix/unset `LC_PAPER`.)
-  The above is all a lot of words for ultimately a very simple mechanism.
+  Environment-variable sensitive `[include__VAR]` can be used to set up night
+  mode/day mode https://github.com/c-blake/cligen/wiki/Color-themes-schemes
 
   Since this new feature addition is a large change with slight compatibility
   ramifications, and more importantly since it seems likely to inspire follow-on
