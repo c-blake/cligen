@@ -51,7 +51,8 @@ var clCfg* = ClCfg(
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?' },
-  hTabSuppress: "CLIGEN-NOHELP")
+  hTabSuppress: "CLIGEN-NOHELP",
+  helpAttr: initTable[string,string]())
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
