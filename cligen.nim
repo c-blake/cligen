@@ -464,10 +464,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          (if tag in `cf`.helpAttr: textAttrOff else: ""))
       let use = if `noHdrId`:
-                  if `cf`.use.len  > 0: `cf`.use  else: `usageId`
+                  if `cf`.use.len > 0: `cf`.use  else: `usageId`
                 else:
                   (if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr) &
-                    (if `cf`.use.len    > 0: `cf`.use    else: `usageId`)
+                    (if `cf`.use.len > 0: `cf`.use else: `usageId`)
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
                            "command", hl("cmd", `cName`),
                            "args",    hl("args", `args`),
