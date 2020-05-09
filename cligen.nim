@@ -191,7 +191,14 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
   if "" in userSpec: return                  # Empty string key==>no short opts
   for lo, sh in userSpec:
     result[lo] = sh
-    used.incl(sh)
+    used.incl sh
+  for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
+    if i == posIx: continue                  # positionals get no option char
+    let parNm = optionNormalize($fpars[i][0])
+    if parNm.len == 1:
+      if parNm notin userSpec:
+        result[parNm] = parNm[0]
+      used.incl parNm[0]
   for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
     if i == posIx: continue                  # positionals get no option char
     let parNm = optionNormalize($fpars[i][0])
