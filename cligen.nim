@@ -198,6 +198,9 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
     if parNm.len == 1:
       if parNm notin userSpec:
         result[parNm] = parNm[0]
+      if parNm[0] in used and result[parNm] != parNm[0]:
+        error "cannot use unabbreviated param name '" &
+              $parNm[0] & "' as a short option"
       used.incl parNm[0]
   for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
     if i == posIx: continue                  # positionals get no option char

@@ -8,6 +8,7 @@ when isMainModule:
   import cligen; dispatch(test)                       # works
 # import cligen; dispatch(test, short = {"s": '\0'})  # works
 # import cligen; dispatch(test, short = {"s": 'y'})   # works
+# import cligen; dispatch(test, short = {"s": 's'})   # works
 # import cligen; dispatch(test, short = {"s": 'y', "sp": 's'}) # FAILS
 #
 # The last commented out line *could* work, but this is hard to support due
