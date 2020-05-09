@@ -13,5 +13,7 @@ when isMainModule:
 # The last commented out line *could* work, but this is hard to support due
 # to combined `of` branch in case `pId`.kind of cmdLongOption, cmdShortOption:
 # in generated parsers.  Since the 's'/"s" keys collide as strings only being
-# disambiguated via the type of option being used, supporting this entails a
-# major rewrite or overhaul of the core generated parser.
+# disambiguated via the type of option being used.  Could do this with large
+# if-else block or parseopt3-namespacing short options, but maybe fully general
+# is a bad idea here?  Bool short-opts are "combining".  So full ctrl is nice,
+# but having -s mean something totally different than --s is also confusing.
