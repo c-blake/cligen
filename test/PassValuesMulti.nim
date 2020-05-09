@@ -22,7 +22,7 @@ proc nel_Ly(hooves=4, races=9, verb=false, names: seq[string]): string =
   return "42"
 
 when isMainModule:
-  import cligen; include cligen/mergeCfgEnv
+  import cligen, tables; include cligen/mergeCfgEnv
   {.push hint[GlobalVar]: off.}
 
   const hlUse = "\e[7m$command $args\e[0m\n\e[1m${doc}\e[0mOptions:\n$options"
@@ -46,8 +46,9 @@ Run "$command help" to get *comprehensive* help.$ifVersion"""
   var noVsn = clCfg
   {.pop.}
   noVsn.version = ""
+  const demohelp = { "verb": "on=chatty, off=quiet" }.toTable
   dispatchMulti([ "multi", doc = docLine, usage = topLvlUse ],
-                [ demo, usage=hlUse, help = { "verb": "on=chatty, off=quiet" }],
+                [ demo, usage=hlUse, help = demohelp ],
                 [ show, cmdName="print", usage=hlUse, short = { "gamma": 'z' }],
                 [ punt, echoResult=true, usage=hlUse, cf=noVsn ],
                 [ nel_Ly, cmdName="nel-ly", usage=hlUse, noAutoEcho=true ] )
