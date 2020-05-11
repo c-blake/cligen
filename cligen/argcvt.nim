@@ -1,4 +1,4 @@
-## ``argParse`` determines how string args are interpreted into native types.
+## ``argParse`` determines how string args are converted to native Nim types.
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
@@ -205,8 +205,8 @@ argParseHelpNum(BiggestUInt , parseBiggestUInt , uint64 )
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
 argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
 
-## ** PARSING AGGREGATES (string,set,seq,..) **
-##
+## PARSING AGGREGATES (set,seq,..)
+## ###############################
 ## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` and
 ## such (``set[T]``, ``HashSet[T]``, ..) with a full complement of operations:
 ## prepend (``^=``), subtract/delete (``-=``), as well as the usual append

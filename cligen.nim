@@ -1078,12 +1078,13 @@ macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
                        suppress: seq[string] = @[]; body: untyped): untyped =
   ##Create a proc with signature from ``default`` that calls ``initGen`` and
   ##initializes ``var obName`` by calling to the generated initializer.  It puts
-  ##``body`` inside an appropriate ``try``/``except`` so that you can just say:
+  ##``body`` inside an appropriate ``try/except`` so that you can just say:
   ##
   ## .. code-block:: nim
-  ##initDispatchGen(cmdProc, cfg, cfgDfl):
-  ##  cfg.callAPI(); quit(min(255, cfg.nError))
-  ##dispatch(cmdProc)
+  ##   initDispatchGen(cmdProc, cfg, cfgDfl):
+  ##     cfg.callAPI()
+  ##     quit(min(255, cfg.nError))
+  ##   dispatch(cmdProc)
   var ti = default.getTypeImpl
   case ti.typeKind:
   of ntyTuple: discard            #For tuples IdentDefs are top level
