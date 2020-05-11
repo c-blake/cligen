@@ -97,6 +97,7 @@ function main() {
     </select>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+<li><a class="reference" id="parsing-aggregates-set-seq-dotdot_toc" href="#parsing-aggregates-set-seq-dotdot">PARSING AGGREGATES (set,seq,..)</a></li>
 <li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
   <ul class="simple simple-toc-section">
@@ -108,9 +109,9 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#ClHelpContext"
     title="ClHelpContext = enum
-  clLongOpt,                  ## a long option identifier
-  clSubCmd,                   ## a sub-command name identifier
-  clEnumVal                   ## an enum value name identifier"><wbr />Cl<wbr />Help<wbr />Context<span class="attachedType"></span></a></li>
+  clLongOpt, clSubCmd, clEnumVal"><wbr />Cl<wbr />Help<wbr />Context<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#ElementError"
+    title="ElementError = object of ValueError"><wbr />Element<wbr />Error<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ArgcvtParams"
     title="ArgcvtParams = object
   key*: string                 ## key actually used for this option
@@ -163,76 +164,76 @@ function main() {
   <li><a class="reference" href="#high%2Ctypedesc%5BT%5D"
     title="high[T: uint | uint64](x: typedesc[T]): T"><wbr />high<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#argParse%2Cint%2Cint%2CArgcvtParams"
-    title="argParse(dst`gensym573434: var int; dfl`gensym573435: int;
-         a`gensym573436: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37430183: var int; dfl`gensym37430184: int;
+         a`gensym37430185: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cint%2CArgcvtParams"
-    title="argHelp(dfl`gensym573439: int; a`gensym573440: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37430188: int; a`gensym37430189: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cint8%2Cint8%2CArgcvtParams"
-    title="argParse(dst`gensym573549: var int8; dfl`gensym573550: int8;
-         a`gensym573551: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37445084: var int8; dfl`gensym37445085: int8;
+         a`gensym37445086: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cint8%2CArgcvtParams"
-    title="argHelp(dfl`gensym573554: int8; a`gensym573555: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37445089: int8; a`gensym37445090: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cint16%2Cint16%2CArgcvtParams"
-    title="argParse(dst`gensym573644: var int16; dfl`gensym573645: int16;
-         a`gensym573646: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37460064: var int16; dfl`gensym37460065: int16;
+         a`gensym37460066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cint16%2CArgcvtParams"
-    title="argHelp(dfl`gensym573649: int16; a`gensym573650: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37460069: int16; a`gensym37460070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cint32%2Cint32%2CArgcvtParams"
-    title="argParse(dst`gensym573739: var int32; dfl`gensym573740: int32;
-         a`gensym573741: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37475064: var int32; dfl`gensym37475065: int32;
+         a`gensym37475066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cint32%2CArgcvtParams"
-    title="argHelp(dfl`gensym573744: int32; a`gensym573745: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37475069: int32; a`gensym37475070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cint64%2Cint64%2CArgcvtParams"
-    title="argParse(dst`gensym573834: var int64; dfl`gensym573835: int64;
-         a`gensym573836: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37490064: var int64; dfl`gensym37490065: int64;
+         a`gensym37490066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cint64%2CArgcvtParams"
-    title="argHelp(dfl`gensym573839: int64; a`gensym573840: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37490069: int64; a`gensym37490070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cuint%2Cuint%2CArgcvtParams"
-    title="argParse(dst`gensym573929: var uint; dfl`gensym573930: uint;
-         a`gensym573931: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37505064: var uint; dfl`gensym37505065: uint;
+         a`gensym37505066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cuint%2CArgcvtParams"
-    title="argHelp(dfl`gensym573934: uint; a`gensym573935: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37505069: uint; a`gensym37505070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cuint8%2Cuint8%2CArgcvtParams"
-    title="argParse(dst`gensym574050: var uint8; dfl`gensym574051: uint8;
-         a`gensym574052: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37520077: var uint8; dfl`gensym37520078: uint8;
+         a`gensym37520079: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cuint8%2CArgcvtParams"
-    title="argHelp(dfl`gensym574055: uint8; a`gensym574056: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37520082: uint8; a`gensym37520083: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cuint16%2Cuint16%2CArgcvtParams"
-    title="argParse(dst`gensym574145: var uint16; dfl`gensym574146: uint16;
-         a`gensym574147: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37535064: var uint16; dfl`gensym37535065: uint16;
+         a`gensym37535066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cuint16%2CArgcvtParams"
-    title="argHelp(dfl`gensym574150: uint16; a`gensym574151: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37535069: uint16; a`gensym37535070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cuint32%2Cuint32%2CArgcvtParams"
-    title="argParse(dst`gensym574240: var uint32; dfl`gensym574241: uint32;
-         a`gensym574242: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37550064: var uint32; dfl`gensym37550065: uint32;
+         a`gensym37550066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cuint32%2CArgcvtParams"
-    title="argHelp(dfl`gensym574245: uint32; a`gensym574246: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37550069: uint32; a`gensym37550070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cuint64%2Cuint64%2CArgcvtParams"
-    title="argParse(dst`gensym574335: var uint64; dfl`gensym574336: uint64;
-         a`gensym574337: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37565064: var uint64; dfl`gensym37565065: uint64;
+         a`gensym37565066: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cuint64%2CArgcvtParams"
-    title="argHelp(dfl`gensym574340: uint64; a`gensym574341: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37565069: uint64; a`gensym37565070: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cfloat32%2Cfloat32%2CArgcvtParams"
-    title="argParse(dst`gensym574456: var float32; dfl`gensym574457: float32;
-         a`gensym574458: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37580077: var float32; dfl`gensym37580078: float32;
+         a`gensym37580079: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cfloat32%2CArgcvtParams"
-    title="argHelp(dfl`gensym574461: float32; a`gensym574462: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37580082: float32; a`gensym37580083: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cfloat%2Cfloat%2CArgcvtParams"
-    title="argParse(dst`gensym574575: var float; dfl`gensym574576: float;
-         a`gensym574577: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argParse(dst`gensym37595076: var float; dfl`gensym37595077: float;
+         a`gensym37595078: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argHelp%2Cfloat%2CArgcvtParams"
-    title="argHelp(dfl`gensym574580: float; a`gensym574581: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
+    title="argHelp(dfl`gensym37595081: float; a`gensym37595082: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argAggSplit%2CArgcvtParams"
     title="argAggSplit[T](a: var ArgcvtParams; split = true): seq[T]"><wbr />arg<wbr />Agg<wbr />Split<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#getDescription%2CT%2Cstring%2Cstring"
     title="getDescription[T](defVal: T; parNm: string; defaultHelp: string): string"><wbr />get<wbr />Description<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#plural%2Cstring"
     title="plural(word: string): string"><wbr />plural<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#argAggHelp%2Cseq%5BT%5D%5Bstring%5D%2Cstring%2Cstring%2Cstring"
+  <li><a class="reference" href="#argAggHelp%2Cseq%5Bstring%5D%2Cstring%2Cstring%2Cstring"
     title="argAggHelp(dfls: seq[string]; aggTyp: string; typ, dfl: var string)"><wbr />arg<wbr />Agg<wbr />Help<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#argParse%2Cseq%5BT%5D%5BT%5D%2Cseq%5BT%5D%5BT%5D%2CArgcvtParams"
+  <li><a class="reference" href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"
     title="argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
-  <li><a class="reference" href="#argHelp%2Cseq%5BT%5D%5BT%5D%2CArgcvtParams"
+  <li><a class="reference" href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"
     title="argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]"><wbr />arg<wbr />Help<span class="attachedType">ArgcvtParams</span></a></li>
   <li><a class="reference" href="#argParse%2Cstring%2Cstring%2CArgcvtParams"
     title="argParse(dst: var string; dfl: string; a: var ArgcvtParams): bool"><wbr />arg<wbr />Parse<span class="attachedType">ArgcvtParams</span></a></li>
@@ -268,8 +269,8 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc"><tt class="docutils literal"><span class="pre">argParse</span></tt> determines how string args are interpreted into native types. <tt class="docutils literal"><span class="pre">argHelp</span></tt> explains this interpretation to a command-line user.  Define new overloads in-scope of <tt class="docutils literal"><span class="pre">dispatch</span></tt> to override these or support more types.<p>** PARSING AGGREGATES (string,set,seq,..) **</p>
-<p>This module also defines <tt class="docutils literal"><span class="pre">argParse</span></tt>/<tt class="docutils literal"><span class="pre">argHelp</span></tt> pairs for <tt class="docutils literal"><span class="pre">seq[T]</span></tt> and such (<tt class="docutils literal"><span class="pre">set[T]</span></tt>, <tt class="docutils literal"><span class="pre">HashSet[T]</span></tt>, ..) with a full complement of operations: prepend (<tt class="docutils literal"><span class="pre">^=</span></tt>), subtract/delete (<tt class="docutils literal"><span class="pre">-=</span></tt>), as well as the usual append (<tt class="docutils literal"><span class="pre">+=</span></tt> or just <tt class="docutils literal"><span class="pre">=|nothing</span></tt> as is customary, e.g. <tt class="docutils literal"><span class="pre">cc -Ipath1 -Ipath2</span></tt>).</p>
+  <p class="module-desc"><tt class="docutils literal"><span class="pre">argParse</span></tt> determines how string args are converted to native Nim types. <tt class="docutils literal"><span class="pre">argHelp</span></tt> explains this interpretation to a command-line user.  Define new overloads in-scope of <tt class="docutils literal"><span class="pre">dispatch</span></tt> to override these or support more types.
+<h1><a class="toc-backref" id="parsing-aggregates-set-seq-dotdot" href="#parsing-aggregates-set-seq-dotdot">PARSING AGGREGATES (set,seq,..)</a></h1><p>This module also defines <tt class="docutils literal"><span class="pre">argParse</span></tt>/<tt class="docutils literal"><span class="pre">argHelp</span></tt> pairs for <tt class="docutils literal"><span class="pre">seq[T]</span></tt> and such (<tt class="docutils literal"><span class="pre">set[T]</span></tt>, <tt class="docutils literal"><span class="pre">HashSet[T]</span></tt>, ..) with a full complement of operations: prepend (<tt class="docutils literal"><span class="pre">^=</span></tt>), subtract/delete (<tt class="docutils literal"><span class="pre">-=</span></tt>), as well as the usual append (<tt class="docutils literal"><span class="pre">+=</span></tt> or just <tt class="docutils literal"><span class="pre">=|nothing</span></tt> as is customary, e.g. <tt class="docutils literal"><span class="pre">cc -Ipath1 -Ipath2</span></tt>).</p>
 <p><tt class="docutils literal"><span class="pre">string</span></tt> is treated more as a scalar variable by <tt class="docutils literal"><span class="pre">cligen</span></tt> in that an unqualified <tt class="docutils literal"><span class="pre">[:=&lt;SPACE&gt;]</span></tt> does an overwriting/clobbering assignment rather than adding to the end of the string, but <tt class="docutils literal"><span class="pre">+=</span></tt> effects the append if desired.  E.g., <tt class="docutils literal"><span class="pre">--foo=&quot;&quot;</span></tt> overwrites the value to be an empty string, <tt class="docutils literal"><span class="pre">--foo+=&quot;&quot;</span></tt> leaves it unaltered, and <tt class="docutils literal"><span class="pre">--foo^=new</span></tt> prepends <tt class="docutils literal"><span class="pre">&quot;new&quot;</span></tt>.</p>
 <p>This module also supports a <tt class="docutils literal"><span class="pre">,</span></tt>-prefixed family of enhanced Delimiter- Prefixed Separated Value operators that allow passing multiple slots to the above operators.  DPSV is like typical regex substitution syntax, e.g., <tt class="docutils literal"><span class="pre">/old/new</span></tt> or <tt class="docutils literal"><span class="pre">%search%replace</span></tt> where the first <tt class="docutils literal"><span class="pre">char</span></tt> indicates the delimiter for the rest.  Delimiting is strict. (E.g., <tt class="docutils literal"><span class="pre">--foo,^=/old/new/</span></tt> prepends 3 items <tt class="docutils literal"><span class="pre">@[&quot;old&quot;, &quot;new&quot;, &quot;&quot;]</span></tt> to some <tt class="docutils literal"><span class="pre">foo: seq[string]</span></tt>). Available only in the <tt class="docutils literal"><span class="pre">,</span></tt>-family is also <tt class="docutils literal"><span class="pre">,@</span></tt> as in <tt class="docutils literal"><span class="pre">,@=&lt;D&gt;V1&lt;D&gt;V2...</span></tt> which does a clobbering assignment of <tt class="docutils literal"><span class="pre">@[&quot;V1&quot;, &quot;V2&quot;, ...]</span></tt>.  <em>No delimiter</em> (i.e. <tt class="docutils literal"><span class="pre">&quot;--foo,@=&quot;</span></tt>) clips any aggregate to its empty version, e.g. <tt class="docutils literal"><span class="pre">@[]</span></tt>.</p>
 <p>See more examples and comments in cligen/syntaxHelp.nim</p>
@@ -277,16 +278,21 @@ function main() {
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="textUt.html">textUt</a>, <a class="reference external" href="parseopt3.html">parseopt3</a>
+<a class="reference external" href="textUt.html">textUt</a>, <a class="reference external" href="gcarc.html">gcarc</a>, <a class="reference external" href="parseopt3.html">parseopt3</a>
 </dl></div>
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="ClHelpContext"></a>
 <dt><pre><a href="argcvt.html#ClHelpContext"><span class="Identifier">ClHelpContext</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">clLongOpt</span><span class="Other">,</span>                  <span class="Comment">## a long option identifier</span>
-  <span class="Identifier">clSubCmd</span><span class="Other">,</span>                   <span class="Comment">## a sub-command name identifier</span>
-  <span class="Identifier">clEnumVal</span>                   <span class="Comment">## an enum value name identifier</span></pre></dt>
+  <span class="Identifier">clLongOpt</span><span class="Other">,</span> <span class="Identifier">clSubCmd</span><span class="Other">,</span> <span class="Identifier">clEnumVal</span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="ElementError"></a>
+<dt><pre><a href="argcvt.html#ElementError"><span class="Identifier">ElementError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">ValueError</span></pre></dt>
 <dd>
 
 
@@ -436,15 +442,16 @@ Deprecated since v0.9.24; No longer needed.  Remove call.
 
 </dd>
 <a id="argParse,int,int,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint%2Cint%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573434</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573435</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573436</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint%2Cint%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37430183</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37430184</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37430185</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,int,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573439</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a`gensym573440</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37430188</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">a`gensym37430189</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -452,15 +459,16 @@ Deprecated since v0.9.24; No longer needed.  Remove call.
 
 </dd>
 <a id="argParse,int8,int8,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint8%2Cint8%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573549</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573550</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573551</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint8%2Cint8%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37445084</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37445085</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37445086</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,int8,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint8%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573554</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a`gensym573555</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint8%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37445089</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">a`gensym37445090</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -468,63 +476,67 @@ Deprecated since v0.9.24; No longer needed.  Remove call.
 
 </dd>
 <a id="argParse,int16,int16,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint16%2Cint16%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573644</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573645</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573646</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint16%2Cint16%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37460064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37460065</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37460066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,int16,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint16%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573649</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a`gensym573650</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint16%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37460069</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">a`gensym37460070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,int32,int32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint32%2Cint32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573739</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573740</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573741</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint32%2Cint32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37475064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37475065</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37475066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,int32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573744</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a`gensym573745</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37475069</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">a`gensym37475070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,int64,int64,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint64%2Cint64%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573834</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573835</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573836</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cint64%2Cint64%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37490064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37490065</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37490066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,int64,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint64%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573839</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a`gensym573840</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cint64%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37490069</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">a`gensym37490070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,uint,uint,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint%2Cuint%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym573929</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">dfl`gensym573930</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym573931</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint%2Cuint%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37505064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37505065</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37505066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,uint,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym573934</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a`gensym573935</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37505069</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">a`gensym37505070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -532,96 +544,102 @@ Deprecated since v0.9.24; No longer needed.  Remove call.
 
 </dd>
 <a id="argParse,uint8,uint8,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint8%2Cuint8%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574050</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574051</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574052</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint8%2Cuint8%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37520077</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37520078</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37520079</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,uint8,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint8%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574055</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a`gensym574056</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint8%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37520082</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">a`gensym37520083</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,uint16,uint16,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint16%2Cuint16%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574145</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574146</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574147</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint16%2Cuint16%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37535064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37535065</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37535066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,uint16,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint16%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574150</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a`gensym574151</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint16%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37535069</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">a`gensym37535070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,uint32,uint32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint32%2Cuint32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574240</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574241</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574242</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint32%2Cuint32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37550064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37550065</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37550066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,uint32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574245</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a`gensym574246</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37550069</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">a`gensym37550070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,uint64,uint64,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint64%2Cuint64%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574335</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574336</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574337</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cuint64%2Cuint64%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37565064</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37565065</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37565066</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,uint64,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint64%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574340</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a`gensym574341</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cuint64%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37565069</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">a`gensym37565070</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,float32,float32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cfloat32%2Cfloat32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574456</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574457</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574458</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cfloat32%2Cfloat32%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37580077</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37580078</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37580079</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,float32,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cfloat32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574461</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a`gensym574462</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cfloat32%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37580082</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">a`gensym37580083</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argParse,float,float,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cfloat%2Cfloat%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym574575</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">dfl`gensym574576</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span>
-             <span class="Identifier">a`gensym574577</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cfloat%2Cfloat%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst`gensym37595076</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">dfl`gensym37595077</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span>
+             <span class="Identifier">a`gensym37595078</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argHelp,float,ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cfloat%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym574580</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a`gensym574581</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cfloat%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl`gensym37595081</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">a`gensym37595082</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -648,23 +666,23 @@ Split DPSV (e.g. &quot;,hello,world&quot;) into a parsed seq[T].
 Form English plural of word via all rules not needing a real dictionary.
 
 </dd>
-<a id="argAggHelp,seq[T][string],string,string,string"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argAggHelp%2Cseq%5BT%5D%5Bstring%5D%2Cstring%2Cstring%2Cstring"><span class="Identifier">argAggHelp</span></a><span class="Other">(</span><span class="Identifier">dfls</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">aggTyp</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">,</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<a id="argAggHelp,seq[string],string,string,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#argAggHelp%2Cseq%5Bstring%5D%2Cstring%2Cstring%2Cstring"><span class="Identifier">argAggHelp</span></a><span class="Other">(</span><span class="Identifier">dfls</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">aggTyp</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">,</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
-<a id="argParse,seq[T][T],seq[T][T],ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cseq%5BT%5D%5BT%5D%2Cseq%5BT%5D%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<a id="argParse,seq[T],seq[T],ArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 
 
 
 </dd>
-<a id="argHelp,seq[T][T],ArgcvtParams"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cseq%5BT%5D%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<a id="argHelp,seq[T],ArgcvtParams"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
@@ -750,7 +768,7 @@ excl from an openArray; How can this NOT be in the stdlib?
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-01-28 14:38:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-11 12:31:25 UTC</small>
       </div>
     </div>
   </div>
