@@ -7,6 +7,10 @@ Version: 1.0.0
 
   Fix minor bugs in `cligen/abbrev.expandFit` & `examples/dups.nim` on Android.
 
+  Address long-standing (since the beginning) bug when a parameter name is one
+  letter and collides with either automatically selected or manually specified
+  short options.  https://github.com/c-blake/cligen/issues/146
+
 Version: 0.9.46
 ---------------
   Silence `argcvt.nim` implicit copy warnings in `--gc:arc` mode.  Problem cases
