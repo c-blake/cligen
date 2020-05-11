@@ -54,7 +54,9 @@ hitting the TAB key to complete is unnecessary **if** the completion is unique.
 This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
 Long options can also be spelled flexibly, e.g.  `--dry-run`|`--dryRun`, like
 Nim's style-insensitive identifiers, but with extra "kebab-case-insensitivity".
-The exact spelling of the key in `help` controls the look of printed help.
+The exact spelling of the key in `help` controls the look of printed help while
+layout details like column spacing and help colorization are controlled [by a
+CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
 
 ---
 
