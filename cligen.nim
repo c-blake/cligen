@@ -737,26 +737,25 @@ template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
  dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
- stopWords: seq[string] = @[], noHdr=false): untyped =
+ stopWords:seq[string] = @[],noHdr=false,cmdLine=commandLineParams()): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, dispatchName, mergeNames,
               alias, stopWords, noHdr)
-  cligenQuitAux(mergeParams(mergeNames), dispatchName, cmdName, pro, echoResult,
-                noAutoEcho)
+  cligenQuitAux(cmdLine, dispatchName, cmdName, pro, echoResult, noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse,echoResult=false,noAutoEcho=false,positional=AUTO,
  suppress:seq[string] = @[], implicitDefault:seq[string] = @[], dispatchName="",
  mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
- stopWords: seq[string] = @[]): untyped =
+ stopWords: seq[string] = @[], noHdr=false): untyped =
   ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
   proc cligenDoNotCollideWithGlobalVar(cf: ClCfg) =
    dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, dispatchName, mergeNames,
-              alias, stopWords)
+              alias, stopWords, noHdr)
   cligenDoNotCollideWithGlobalVar(clCfg)
 
 proc subCmdName(p: NimNode): string =
@@ -980,7 +979,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     block:
      {.push hint[GlobalVar]: off.}
      {.push warning[ProveField]: off.}
-     let ps = cast[seq[string]](mergeParams(@["multi"]))
+     let ps = commandLineParams() # cast[seq[string]](mergeParams(@["multi"]))
      let ps0 = if ps.len >= 1: `subMchsId`.lengthen ps[0] else: ""
      let ps1 = if ps.len >= 2: `subMchsId`.lengthen ps[1] else: ""
      if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:

@@ -11,6 +11,17 @@ Version: 1.0.0
   letter and collides with either automatically selected or manually specified
   short options.  https://github.com/c-blake/cligen/issues/146
 
+  Address long-standing surprising behavior where `mergeParams` is called twice
+  for `dispatch` style and N+2 times for `dispatchMulti` style.  (Still called
+  N+1 times for `dispatchMulti` until some re-write of that to not itself use
+  dispatchGen on some generated proc.)  Update 0-level `cligen/mergeCfgEnv.nim`
+  and add new 1-level `cligen/mergeCfgEnvMulti.nim` example/library impls.
+  The only other visible impact of this is that people (which may be "no one")
+  calling `dispatchCf` directly (to use its `cf` parameter to pass a CLauthor
+  `ClCfg`) must now provide a command line themselves via `dispatchCf`'s new
+  `cmdLine` parameter.  They can call `mergeParams` there to recreate the old
+  broken behavior exactly or do something else which is probably more useful.
+
 Version: 0.9.46
 ---------------
   Silence `argcvt.nim` implicit copy warnings in `--gc:arc` mode.  Problem cases

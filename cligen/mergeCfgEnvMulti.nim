@@ -12,7 +12,7 @@ proc mergeParams(cmdNames: seq[string],
   ## ``cmdLine`` (usually command-line-entered parameters or @["--help"]).
   when defined(debugMergeParams):
     echo "mergeParams got cmdNames: ", cmdNames, " cmdLine:", cmdLine
-  if cmdNames.len < 1:
+  if cmdNames.len < 2:
     return cmdLine
   var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
   if cfPath.len == 0:
