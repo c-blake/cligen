@@ -25,7 +25,7 @@ proc nelly(hooves=4, races=9, verb=false, names: seq[string]): string =
 
 when isMainModule:
   import cligen
-  include cligen/mergeCfgEnv
+  include cligen/mergeCfgEnvMulMul
   const nd = staticRead "../cligen.nimble"  #nimble data for YOURPKG not cligen
   clCfg.version = "0.0.1"
   dispatchMultiGen([ "apple" ],
