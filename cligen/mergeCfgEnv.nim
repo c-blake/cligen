@@ -22,4 +22,5 @@ proc mergeParams(cmdNames: seq[string],
   if existsFile(cfPath):
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
   result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
+  result.add cmdLine
 {.pop.}
