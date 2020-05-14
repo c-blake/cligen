@@ -458,15 +458,15 @@ proc recEntries*(it: iterator(): string; st: ptr Stat=nil; dt: ptr int8=nil,
     for root in it():
       for e in recEntries(root, st, dt, follow, maxDepth, err): yield e
 
-iterator paths*(roots: seq[string], maxDepth=0, follow=false, file="",
-                delim='\n'): string =
+iterator paths*(roots:seq[string], maxDepth=0, follow=false, file="",delim='\n',
+                err=stderr, st: ptr Stat=nil, dt: ptr int8=nil): string =
   ## iterator for maybe-following, maybe-recursive closure of the union of
   ## ``roots`` and optional ``delim``-delimited input ``file`` (stdin if "-"|if
   ## "" & stdin not a tty).  Usage is ``for p in paths(roots,...): echo p``.
   ## This allows fully general path input if used in a command pipeline like
   ## ``find .  -print0 | cmd -d\\0`` (where ``-d`` sets ``delim``).
   let it = recEntries(both(roots, fileStrings(file, delim)),
-                      follow=follow, maxDepth=maxDepth)
+                      st, dt, follow, maxDepth, err)
   for e in it(): yield e
 
 #These two are almost universally available although not technically "POSIX"
