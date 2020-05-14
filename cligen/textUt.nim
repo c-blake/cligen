@@ -7,8 +7,9 @@ when NimVersion <= "0.19.8":
 else:
   import std/wordwrap
 
-proc wrap*(prefix: string, s: string): string =
-  let w = terminalWidth() - 2*prefix.len
+let tWidth = terminalWidth()
+proc wrap*(prefix: string, s: string, width=tWidth): string =
+  let w = width - 2*prefix.len
   if s.count("\n ") > 1:   #Leave alone if there is any indentation
     result = s
   else:
@@ -27,7 +28,8 @@ proc addPrefix*(prefix: string, multiline=""): string =
 type TextTab* = seq[seq[string]]
 
 proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
-                 cols = @[0,1], attrOn = @["",""], attrOff = @["",""]): string =
+                 cols = @[0,1], attrOn = @["",""], attrOff = @["",""],
+                 width = tWidth): string =
   result = ""
   if tab.len == 0: return
   proc nCols(): int =
@@ -37,7 +39,7 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   let last = cols[^1]
   for row in tab:
     for c in cols[0 .. ^2]: wCol[c] = max(wCol[c], row[c].len)
-  var wTerm = terminalWidth() - prefixLen
+  var wTerm = width - prefixLen
   var leader = (cols.len - 1) * colGap
   for c in cols[0 .. ^2]: leader += wCol[c]
   wCol[last] = max(minLast, wTerm - leader)
