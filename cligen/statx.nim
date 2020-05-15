@@ -159,20 +159,21 @@ when not haveStatx:
     dst.stx_dev_major       = src.st_dev.st_major.uint32
     dst.stx_dev_minor       = src.st_dev.st_minor.uint32
 
-proc st_blksize*(st: Statx): Blksize = st.stx_blksize.Blksize
-proc st_nlink*(st: Statx): Nlink     = st.stx_nlink.Nlink
-proc st_uid*(st: Statx): Uid         = st.stx_uid.Uid
-proc st_gid*(st: Statx): Gid         = st.stx_gid.Gid
-proc st_mode*(st: Statx): Mode       = st.stx_mode.Mode
-proc st_ino*(st: Statx): Ino         = st.stx_ino.Ino
-proc st_size*(st: Statx): Off        = st.stx_size.Off
-proc st_blocks*(st: Statx): Blkcnt   = st.stx_blocks.Blkcnt
-proc st_atim*(st: Statx): Timespec   = st.stx_atime.toTimespec
-proc st_ctim*(st: Statx): Timespec   = st.stx_ctime.toTimespec
-proc st_mtim*(st: Statx): Timespec   = st.stx_mtime.toTimespec
-proc st_rmaj*(st: Statx): Dev        = st.stx_rdev_major.Dev
-proc st_rmin*(st: Statx): Dev        = st.stx_rdev_minor.Dev
-proc st_dev*(st: Statx): Dev         = st.stx_dev_minor.Dev
+proc st_blksize*(st: Statx): Blksize {.inline.} = st.stx_blksize.Blksize
+proc st_nlink*(st: Statx): Nlink     {.inline.} = st.stx_nlink.Nlink
+proc st_uid*(st: Statx): Uid         {.inline.} = st.stx_uid.Uid
+proc st_gid*(st: Statx): Gid         {.inline.} = st.stx_gid.Gid
+proc st_mode*(st: Statx): Mode       {.inline.} = st.stx_mode.Mode
+proc st_ino*(st: Statx): Ino         {.inline.} = st.stx_ino.Ino
+proc st_size*(st: Statx): Off        {.inline.} = st.stx_size.Off
+proc st_blocks*(st: Statx): Blkcnt   {.inline.} = st.stx_blocks.Blkcnt
+proc st_atim*(st: Statx): Timespec   {.inline.} = st.stx_atime.toTimespec
+proc st_ctim*(st: Statx): Timespec   {.inline.} = st.stx_ctime.toTimespec
+proc st_mtim*(st: Statx): Timespec   {.inline.} = st.stx_mtime.toTimespec
+proc st_rmaj*(st: Statx): Dev        {.inline.} = st.stx_rdev_major.Dev
+proc st_rmin*(st: Statx): Dev        {.inline.} = st.stx_rdev_minor.Dev
+proc st_dev*(st: Statx): Dev         {.inline.} = st.stx_dev_minor.Dev
+proc `st_nlink=`*(st: var Statx, n: Nlink) {.inline.} = st.stx_nlink = uint32(n)
 
 proc st_btim*(st: Statx): Timespec = st.stx_btime.toTimespec
 
