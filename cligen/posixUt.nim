@@ -160,16 +160,9 @@ proc `$`*(st: Stat): string =
    "atim: "    & $st.st_atim    & ", " & "mtim: "   & $st.st_mtim   & ", " &
    "ctim: "    & $st.st_ctim    & ")"
 
-proc stat2dtype*(st_mode: Mode): int8 =
+proc stat2dtype*(st_mode: Mode): int8 {.inline.} =
   ##Convert S_ISDIR(st_mode) style dirent types to DT_DIR style.
-  if    S_ISREG(st_mode): result = DT_REG
-  elif  S_ISDIR(st_mode): result = DT_DIR
-  elif  S_ISBLK(st_mode): result = DT_BLK
-  elif  S_ISCHR(st_mode): result = DT_CHR
-  elif  S_ISLNK(st_mode): result = DT_LNK
-  elif S_ISFIFO(st_mode): result = DT_FIFO
-  elif S_ISSOCK(st_mode): result = DT_SOCK
-  else:                   result = DT_UNKNOWN
+  int8((int(st_mode) shr 12) and 15)    # See dirent.h:IFTODT(mode)
 
 proc getDents*(fd: cint, st: Stat, dts: ptr seq[int8] = nil,
                inos: ptr seq[Ino] = nil, avgLen=24): seq[string] =
