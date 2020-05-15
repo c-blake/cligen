@@ -12,11 +12,10 @@ Version: 1.0.0
   short options.  https://github.com/c-blake/cligen/issues/146
 
   Address long-standing surprising behavior where `mergeParams` is called twice
-  for `dispatch` style and N+2 times for `dispatchMulti` style.  (Still called
-  N+1 times for `dispatchMulti` until some re-write of that to not itself use
-  dispatchGen on some generated proc.)  Update 0-level `cligen/mergeCfgEnv.nim`
-  and add new 1-level `cligen/mergeCfgEnvMulti.nim` example/library impls.
-  The only other visible impact of this is that people (which may be "no one")
+  for `dispatch` style.  Still called N+2 times for `dispatchMulti` until some
+  re-write of that to not itself use dispatchGen on some generated proc.  Update
+  0-level `cligen/mergeCfgEnv.nim`; add 1-level `cligen/mergeCfgEnvMulti.nim`
+  example/library impls.  The only impact of this is that people (maybe no one)
   calling `dispatchCf` directly (to use its `cf` parameter to pass a CLauthor
   `ClCfg`) must now provide a command line themselves via `dispatchCf`'s new
   `cmdLine` parameter.  They can call `mergeParams` there to recreate the old

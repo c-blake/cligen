@@ -979,7 +979,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
     block:
      {.push hint[GlobalVar]: off.}
      {.push warning[ProveField]: off.}
-     let ps = commandLineParams() # cast[seq[string]](mergeParams(@["multi"]))
+     let ps  = cast[seq[string]](mergeParams(@["multi"]))
      let ps0 = if ps.len >= 1: `subMchsId`.lengthen ps[0] else: ""
      let ps1 = if ps.len >= 2: `subMchsId`.lengthen ps[1] else: ""
      if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
