@@ -30,7 +30,8 @@ proc perror*(x: cstring, len: int) =
 
 proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
-  result = (path == "-" or (path.len == 0 and not terminal.isatty(stdin)))
+  result = (path in {"-", "/dev/stdin"} or
+            (path.len == 0 and not terminal.isatty(stdin)))
 
 iterator getDelim*(stream: File, dlm: char='\n'): string =
   ## Efficient file line/record iterator using POSIX getdelim

@@ -202,7 +202,7 @@ iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
       yield ms
     if not keep: mf.close()
   else:
-    let f = open(path)
+    let f = if path == "/dev/stdin": stdin else: open(path)
     for s in lines(f):
       yield toMSlice(s, keep)
-    f.close()
+    if f != stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
