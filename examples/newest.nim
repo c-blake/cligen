@@ -45,20 +45,24 @@ iterator newest*(paths:StrGen, n=1, time="m", Deref=false, quiet=false):string =
     let e = hq.pop()                        # pop min elt will yield in..
     yield e.path                            #..the specified-time order.
 
-proc printNewest*(n=1, time="m", Deref=false, quiet=false, outEnd="\n",
-                  file="", delim='\n', paths: seq[string]) =
+proc printNewest*(n=1, time="m", recurse=1,chase=false,Deref=false, quiet=false,
+                  outEnd="\n", file="", delim='\n', paths: seq[string]) =
   ## Print ``<=n`` newest paths ended by ``outEnd`` in ``time``-order {
   ## [-][bamcv].* for Birth, Access, Mod, Ctime, Version=max(MC); optional '-'
   ## means oldest instead of newest }.  Examined paths are UNION of ``paths`` +
   ## optional ``delim``-delimited input ``file`` (stdin if "-"|if "" & stdin is
   ## not a tty).  Eg., ``find -type f|newest -t-m`` prints the m-oldest file.
-  for e in newest(both(paths, fileStrings(file, delim)), n, time, Deref, quiet):
+  for e in newest(recEntries(both(paths, fileStrings(file, delim)),
+                             follow=chase, maxDepth=recurse),
+                  n, time, Deref, quiet):
     stdout.write e, outEnd
 
 when isMainModule:  # Exercise this with an actually useful CLI wrapper.
   dispatch(printNewest, cmdName="newest",
            help = { "n"     : "number of 'newest' files",
                     "time"  : "timestamp to compare ([-][bamcv].*)",
+                    "recurse": "recurse n-levels on dirs; 0:unlimited",
+                    "chase" : "chase symlinks to dirs in recursion",
                     "Deref" : "dereference symlinks for file times",
                     "quiet" : "suppress file access errors",
                     "outEnd": "output record terminator",
