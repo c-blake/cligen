@@ -1,8 +1,8 @@
 RELEASE NOTES
 =============
 
-Version: 1.0.0
---------------
+Version: 0.9.47
+---------------
   Try to clean up documentation of new config file/colorization features.
 
   Fix minor bugs in `cligen/abbrev.expandFit` & `examples/dups.nim` on Android.
