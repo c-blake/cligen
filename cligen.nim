@@ -1,7 +1,7 @@
 when NimVersion > "0.20.2":
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import os, macros, tables, cligen/[parseopt3,argcvt,textUt,sysUt,macUt,gcarc],
-       strutils, critbits
+import os, macros, tables, strutils, critbits,
+       cligen/[parseopt3, argcvt, textUt, sysUt, macUt, humanUt,  gcarc]
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,

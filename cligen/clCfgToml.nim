@@ -2,7 +2,7 @@
 ## ``clCfg`` global.  Here we use only a TOML config file to do so.  You must
 ## add parsetoml to your compile setup via nimble install parsetoml or elsewise.
 
-import std/[strformat,sequtils, os,strutils,tables], cligen/humanUt, parsetoml
+import std/[strformat, sequtils], parsetoml
 const cgConfigFileBaseName = "config.toml"
 
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =

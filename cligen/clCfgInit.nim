@@ -1,7 +1,7 @@
 ## This is an ``include`` file used by ``cligen.nim`` proper to initialize the
 ## ``clCfg`` global.  Here we use only a parsecfg config file to do so.
 
-import std/[streams,parsecfg, os,strutils,tables], cligen/humanUt
+import std/[streams, parsecfg]
 const cgConfigFileBaseName = "config"
 
 proc apply(c: var ClCfg, path: string, plain=false) =
