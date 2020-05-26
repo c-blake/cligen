@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.0.0
+---------------
+  No new problems in the past few weeks => call it time to stamp 1.0.  (Truly
+  well argued/motivated breaking changes will always remain possible, but do
+  not seem super likely.)
+
 Version: 0.9.47
 ---------------
   Try to clean up documentation of new config file/colorization features.
