@@ -69,6 +69,7 @@ when isMainModule:
              "quiet"   : "suppress most OS error messages",
              "dry-run" : "only print what system calls are needed",
              "recurse" : "recursively act on any dirs in `paths`",
+             "xdev"    : "allow recursion to cross device boundaries",
              "chase"   : "follow symbolic links to dirs in recursion",
              "owner"   : "owner to set; may need root; defl=self",
              "group"   : "group owner to set; defl=primaryGid(self)",
