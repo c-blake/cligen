@@ -1,4 +1,4 @@
-when NimVersion > "0.20.2":
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
 import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
 when not declared(initHashSet):

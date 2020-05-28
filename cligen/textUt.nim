@@ -1,7 +1,7 @@
 from strutils import split, repeat, replace, count
 from terminal import terminalWidth
 import critbits
-when NimVersion <= "0.19.8":
+when (NimMajor,NimMinor,NimPatch) <= (0,19,8):
   import strutils
   proc wrapWords(x: string, maxLineWidth: int): string=wordWrap(x, maxLineWidth)
 else:

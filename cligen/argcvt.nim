@@ -2,12 +2,12 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-when NimVersion > "0.20.2":
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import strformat, sets, ./textUt, ./gcarc, ./parseopt3, critbits, strutils
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
-when NimVersion <= "0.19.8": import typetraits #$T -> system
+when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system
 
 type
   ClHelpContext* = enum clLongOpt,      ## a long option identifier
@@ -389,7 +389,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, df ]
 
 # HashSets
-when NimVersion <= "0.19.8":
+when (NimMajor,NimMinor,NimPatch) <= (0,19,8):
   proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
 
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],

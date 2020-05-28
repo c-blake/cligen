@@ -1,4 +1,4 @@
-when NimVersion > "0.20.2":
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import os, macros, tables, strutils, critbits,
        cligen/[parseopt3, argcvt, textUt, sysUt, macUt, humanUt,  gcarc]
@@ -1028,7 +1028,7 @@ macro initGen*(default: typed, T: untyped, positional="",
     if id in suppressed: continue
     params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
-    when NimVersion <= "0.20.0":  #XXX delete this branch someday
+    when (NimMajor,NimMinor,NimPatch) <= (0,20,0):  #XXX delete branch someday
       let argId = ident("arg"); let obId = ident("ob")
       let r = ident("result")
       let sid = ident($id & "setter"); let sidEq = ident($id & "setter=")

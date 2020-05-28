@@ -1,4 +1,4 @@
-when NimVersion > "0.20.2":
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import posix,sets,tables, strutils,strformat,parseUtils, sysUt,argcvt,gcarc,osUt
 
@@ -73,13 +73,13 @@ proc argHelp*(dfl: Timespec, a: var ArgcvtParams): seq[string] =
 
 proc toUidSet*(strs: seq[string]): HashSet[Uid] =
   ##Just parse some ints into typed Uids
-  when NimVersion < "0.20.0": result = initSet[Uid]()
+  when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initSet[Uid]()
   else: result = initHashSet[Uid]()
   for s in strs: result.incl s.parseInt.Uid
 
 proc toGidSet*(strs: seq[string]): HashSet[Gid] =
   ##Just parse some ints into typed Gids
-  when NimVersion < "0.20.0": result = initSet[Gid]()
+  when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initSet[Gid]()
   else: result = initHashSet[Gid]()
   for s in strs: result.incl s.parseInt.Gid
 
@@ -98,7 +98,7 @@ proc getgroups*(): HashSet[Gid] = getgroups(result)
 template defineIdentities(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[Id, string] =
     ##Populate Table[Id, string] with data from system account files
-    when NimVersion < "0.20.0": result = initTable[Id, string]()
+    when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initTable[Id, string]()
     var id: ptr Entry
     when defined(android):
       proc getid(id: Id): ptr Entry {.importc.}
@@ -116,7 +116,7 @@ defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[string, Id] =
     ##Populate Table[Id, string] with data from system account files
-    when NimVersion < "0.20.0": result = initTable[string, Id]()
+    when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initTable[string, Id]()
     var id: ptr Entry
     when defined(android):
       proc getid(id: Id): ptr Entry {.importc.}
@@ -415,7 +415,7 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
      (follow and S_ISLNK(st[].st_mode)):
     var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
     if follow:                                        #..with its dev,ino.
-      when NimVersion < "0.20.0": did = initSet[DevIno](8)
+      when (NimMajor,NimMinor,NimPatch) < "0.20.0": did = initSet[DevIno](8)
       else: did = initHashSet[DevIno](8)              #Did means "put in stack"
       did.incl (dev: st[].st_dev, ino: st[].st_ino)   #..not "iterated over dir"
     var canRecurse = false                            #->true based on `follow`
