@@ -116,7 +116,7 @@ defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[string, Id] =
     ##Populate Table[Id, string] with data from system account files
-    when NimVersion < "0.20.0": result = initTable[Id, string]()
+    when NimVersion < "0.20.0": result = initTable[string, Id]()
     var id: ptr Entry
     when defined(android):
       proc getid(id: Id): ptr Entry {.importc.}
@@ -415,7 +415,8 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
      (follow and S_ISLNK(st[].st_mode)):
     var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
     if follow:                                        #..with its dev,ino.
-      did = initHashSet[DevIno](8)                    #Did means "put in stack"
+      when NimVersion < "0.20.0": did = initSet[DevIno](8)
+      else: did = initHashSet[DevIno](8)              #Did means "put in stack"
       did.incl (dev: st[].st_dev, ino: st[].st_ino)   #..not "iterated over dir"
     var canRecurse = false                            #->true based on `follow`
     var paths  = @[""]                                #Init recursion stacks
