@@ -433,7 +433,7 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
         if canRecurse and (maxDepth == 0 or depth + 1 < maxDepth):
           if follow:
             let d = if int(st[].st_nlink) > 0: st[].st_dev else: dev
-            id = (dev: st[].st_dev, ino: st[].st_ino)
+            id = (dev: d, ino: st[].st_ino)
             if id in did:                         #Already did stack put of this
               err.log &"Already visited symLink at \"{path}\".  Loop?\n"
               continue                            #Skip
