@@ -14,6 +14,7 @@
 import os, sets, posix, cligen/[osUt, posixUt, statx]
 export perror
 
+type csize_t = culong             # To compile with older Nim's
 type DirName = array[256, cchar]  # Some helpers for names in dirents
 proc strlen(s: cstring): csize_t {.importc: "strlen", header: "<string.h>".}
 proc strlen(a: DirName): csize_t {.inline.} = a[0].unsafeAddr.cstring.strlen
