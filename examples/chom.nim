@@ -28,8 +28,8 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, xdev=false,
   ## This enforces {owner, group owner, permissions} for {dirs, non-executable
   ## other files, and user-executable files}.  This only makes chown/chmod
   ## syscalls when needed, both for speed & not to touch ctime unnecessarily.
-  ## It does not handle ACLs, network filesystem defined access, etc.  Return
-  ## status is zero only if no calls need to be made.
+  ## It does not handle ACLs, network FS defined access, etc.  Return zero if no
+  ## calls are needed.
   if paths.len == 0:     #For safety, do nothing if user specifies empty `paths`
     return 0
   let uid   = if owner.len > 0: getpwnam(owner).pw_uid else: Uid.high
@@ -46,8 +46,8 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, xdev=false,
       else:
         let m = "chom: \""&path&"\")"; perror cstring(m), m.len
     do:
-      if lst.st_nlink == 0 and stat(path, lst) != 0: #st data is required here
-        err.log &"stat({path}): {strerror(errno)}\n"
+      if dt == DT_LNK and stat(path, lst) != 0:      # want st not lst data here
+        err.log &"stat({path}): {strerror(errno)}\n" # ..(unless we do `lchown`)
       else:
         nCall += chom1(path, lst, uid, gid, dirPerm, filePerm, execPerm,
                        verb, err, dryRun)
