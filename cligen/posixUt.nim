@@ -415,7 +415,7 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
      (follow and S_ISLNK(st[].st_mode)):
     var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
     if follow:                                        #..with its dev,ino.
-      when (NimMajor,NimMinor,NimPatch) < "0.20.0": did = initSet[DevIno](8)
+      when (NimMajor,NimMinor,NimPatch) < (0,20,0): did = initSet[DevIno](8)
       else: did = initHashSet[DevIno](8)              #Did means "put in stack"
       did.incl (dev: st[].st_dev, ino: st[].st_ino)   #..not "iterated over dir"
     var canRecurse = false                            #->true based on `follow`
