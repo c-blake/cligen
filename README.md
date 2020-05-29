@@ -167,9 +167,9 @@ you. }  A dispatcher raises 3 exception types: `HelpOnly`, `VersionOnly`,
 
 ---
 
-If you want `cligen` to merge parameters from other sources like a `$CMD`
-environment variable then you can redefine `mergeParams()` after `import cligen`
-but before `dispatch`/`dispatchMulti`:
+If you want `cligen` to merge parameters from other sources, like a per-program
+config file and/or `$CMD` environment variable, then you can redefine
+`mergeParams()` after `import cligen` but before `dispatch`/`dispatchMulti`:
 ```nim
 import cligen, os, strutils
 proc mergeParams(cmdNames: seq[string],
@@ -181,6 +181,11 @@ dispatchMulti([foo, short={"verb": 'v'}], [bar])
 You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 `dispatch` to merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with
 Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
+
+`cligen` programs look for a file `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`,
+eg. [cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
+which allows end-command-line users to tweak color, layout, syntax, and usage
+help templates.
 
 ### Even More Controls and Details
 
