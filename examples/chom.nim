@@ -22,8 +22,8 @@ proc chom1*(path: string, st: Statx, uid=Uid.high, gid=Gid.high,
     if not dryRun and chmod(path, perm) != 0:
       err.log &"chmod({path}): {strerror(errno)}\n"
 
-proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, xdev=false,
-           chase=false, owner="", group="", dirPerm=0o2755.Mode,
+proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
+           xdev=false, owner="", group="", dirPerm=0o2755.Mode,
            filePerm=0o664.Mode, execPerm=0o775.Mode, paths: seq[string]): int =
   ## This enforces {owner, group owner, permissions} for {dirs, non-executable
   ## other files, and user-executable files}.  This only makes chown/chmod
@@ -69,8 +69,8 @@ when isMainModule:
              "quiet"   : "suppress most OS error messages",
              "dry-run" : "only print what system calls are needed",
              "recurse" : "recursively act on any dirs in `paths`",
-             "xdev"    : "block recursion across device boundaries",
              "chase"   : "follow symbolic links to dirs in recursion",
+             "xdev"    : "block recursion across device boundaries",
              "owner"   : "owner to set; may need root; defl=self",
              "group"   : "group owner to set; defl=primaryGid(self)",
              "dirPerm" : "permission mask for dirs",
