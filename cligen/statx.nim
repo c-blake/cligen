@@ -57,6 +57,12 @@ else:
       stx_dev_major*:       uint32   ## Major ID of dev of FS where file resides
       stx_dev_minor*:       uint32   ## Minor ID of dev of FS where file resides
 
+proc `<`*(x, y: StatxTs): bool =
+  x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec < y.tv_sec)
+
+proc `<=`*(x, y: StatxTs): bool =
+  x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec <= y.tv_sec)
+
 template impConst*(T: untyped, path: string, name: untyped): untyped {.dirty.} =
   var `loc name` {.header: path, importc: astToStr(name) .}: `T`
   let name* {.inject.} = `loc name`
