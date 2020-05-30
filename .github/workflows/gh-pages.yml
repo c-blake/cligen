@@ -18,6 +18,7 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: before
     steps:
       - uses: actions/checkout@v1
