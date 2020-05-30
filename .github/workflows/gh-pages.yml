@@ -19,8 +19,6 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     needs: before
-    env:
-      nim_version: '1.2.0'
     steps:
       - uses: actions/checkout@v1
       - name: Cache choosenim
@@ -28,7 +26,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.choosenim
-          key: ${{ runner.os }}-choosenim-${{ env.nim_version }}
+          key: ${{ runner.os }}-choosenim-devel-latest
       - name: Cache nimble
         id: cache-nimble
         uses: actions/cache@v1
@@ -37,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
       - uses: jiro4989/setup-nim-action@v1.0.2
         with:
-          nim-version: ${{ env.nim_version }}
+          nim-version: 'devel --latest'
 
       - name: Generate API documents
         run: |
