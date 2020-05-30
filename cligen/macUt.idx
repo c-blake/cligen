@@ -1,0 +1,20 @@
+findByName	cligen/macUt.html#findByName,NimNode,NimNode	macUt: findByName(parId: NimNode; fpars: NimNode): int	
+collectComments	cligen/macUt.html#collectComments,string,NimNode,int	macUt: collectComments(buf: var string; n: NimNode; depth: int = 0)	
+toString	cligen/macUt.html#toString,NimNode	macUt: toString(n: NimNode): string	
+toStrIni	cligen/macUt.html#toStrIni,range[]	macUt: toStrIni(c: range[0 .. 255]): NimNode	
+toStrSeq	cligen/macUt.html#toStrSeq,NimNode	macUt: toStrSeq(strSeqInitializer: NimNode): seq[string]	
+toIdSeq	cligen/macUt.html#toIdSeq,NimNode	macUt: toIdSeq(strSeqInitializer: NimNode): seq[NimNode]	
+srcPath	cligen/macUt.html#srcPath,NimNode	macUt: srcPath(n: NimNode): string	
+srcBaseName	cligen/macUt.html#srcBaseName,NimNode,string	macUt: srcBaseName(n: NimNode; sfx = &quot;.nim&quot;): NimNode	
+srcData	cligen/macUt.html#srcData,NimNode	macUt: srcData(n: NimNode): string	
+paramPresent	cligen/macUt.html#paramPresent,NimNode,string	macUt: paramPresent(n: NimNode; kwArg: string): bool	
+paramVal	cligen/macUt.html#paramVal,NimNode,string	macUt: paramVal(n: NimNode; kwArg: string): NimNode	
+newParam	cligen/macUt.html#newParam,string,NimNode	macUt: newParam(id: string; rhs: NimNode): NimNode	
+fromNimble	cligen/macUt.html#fromNimble,string,string	macUt: fromNimble(nimbleContents: string; field: string): string	
+versionFromNimble	cligen/macUt.html#versionFromNimble,string	macUt: versionFromNimble(nimbleContents: string): string	
+summaryOfModule	cligen/macUt.html#summaryOfModule,string	macUt: summaryOfModule(sourceContents: string): string	
+summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	macUt: summaryOfModule(n: NimNode): string	
+docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macUt: docFromModuleOf(sym: typed{nkSym}): untyped	
+docFromProc	cligen/macUt.html#docFromProc.m	macUt: docFromProc(sym: typed{nkSym}): untyped	
+maybeDestrop	cligen/macUt.html#maybeDestrop,NimNode	macUt: maybeDestrop(id: NimNode): NimNode	
+with	cligen/macUt.html#with.m,typed,untyped,untyped	macUt: with(ob: typed; fields: untyped; body: untyped): untyped	

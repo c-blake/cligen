@@ -1,0 +1,16 @@
+optionNormalize	cligen/parseopt3.html#optionNormalize,string,string	parseopt3: optionNormalize(s: string; wordSeparators = &quot;_-&quot;): string	
+valsWithPfx	cligen/parseopt3.html#valsWithPfx,CritBitTree[T],string	parseopt3: valsWithPfx[T](cb: CritBitTree[T]; key: string): seq[T]	
+lengthen	cligen/parseopt3.html#lengthen,CritBitTree[T],string	parseopt3: lengthen[T](cb: CritBitTree[T]; key: string): string	
+cmdEnd	cligen/parseopt3.html#cmdEnd	CmdLineKind.cmdEnd	
+cmdArgument	cligen/parseopt3.html#cmdArgument	CmdLineKind.cmdArgument	
+cmdLongOption	cligen/parseopt3.html#cmdLongOption	CmdLineKind.cmdLongOption	
+cmdShortOption	cligen/parseopt3.html#cmdShortOption	CmdLineKind.cmdShortOption	
+cmdError	cligen/parseopt3.html#cmdError	CmdLineKind.cmdError	
+CmdLineKind	cligen/parseopt3.html#CmdLineKind	parseopt3: CmdLineKind	
+OptParser	cligen/parseopt3.html#OptParser	parseopt3: OptParser	
+initOptParser	cligen/parseopt3.html#initOptParser,seq[string],set[char],seq[string],set[char],seq[string]	parseopt3: initOptParser(cmdline: seq[string] = commandLineParams();\n              shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];\n              requireSeparator = false; sepChars = {&apos;=&apos;, &apos;:&apos;}; opChars: set[char] = {};\n              stopWords: seq[string] = @[]): OptParser	
+initOptParser	cligen/parseopt3.html#initOptParser,string	parseopt3: initOptParser(cmdline: string): OptParser	
+next	cligen/parseopt3.html#next,OptParser	parseopt3: next(p: var OptParser)	
+GetoptResult	cligen/parseopt3.html#GetoptResult	parseopt3: GetoptResult	
+getopt	cligen/parseopt3.html#getopt.i,OptParser	parseopt3: getopt(p: var OptParser): GetoptResult	
+getopt	cligen/parseopt3.html#getopt.i,set[char],seq[string],set[char],seq[string]	parseopt3: getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};\n       longNoVal: seq[string] = @[]; requireSeparator = false; sepChars = {&apos;=&apos;, &apos;:&apos;};\n       opChars: set[char] = {}; stopWords: seq[string] = @[]): GetoptResult	

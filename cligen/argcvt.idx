@@ -1,0 +1,61 @@
+clLongOpt	cligen/argcvt.html#clLongOpt	ClHelpContext.clLongOpt	
+clSubCmd	cligen/argcvt.html#clSubCmd	ClHelpContext.clSubCmd	
+clEnumVal	cligen/argcvt.html#clEnumVal	ClHelpContext.clEnumVal	
+ClHelpContext	cligen/argcvt.html#ClHelpContext	argcvt: ClHelpContext	
+helpCase	cligen/argcvt.html#helpCase,string,ClHelpContext	argcvt: helpCase(inp: string; context: ClHelpContext = clSubCmd): string	
+nimEscape	cligen/argcvt.html#nimEscape,string,char	argcvt: nimEscape(s: string; quote = &apos;\&quot;&apos;): string	
+unescape	cligen/argcvt.html#unescape,string	argcvt: unescape(s: string): string	
+ElementError	cligen/argcvt.html#ElementError	argcvt: ElementError	
+ArgcvtParams	cligen/argcvt.html#ArgcvtParams	argcvt: ArgcvtParams	
+argKeys	cligen/argcvt.html#argKeys,ArgcvtParams,string	argcvt: argKeys(a: ArgcvtParams; argSep = &quot;=&quot;): string	
+argDf	cligen/argcvt.html#argDf,ArgcvtParams,string	argcvt: argDf(a: ArgcvtParams; dv: string): string	
+argParse	cligen/argcvt.html#argParse,bool,bool,ArgcvtParams	argcvt: argParse(dst: var bool; dfl: bool; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,bool,ArgcvtParams	argcvt: argHelp(dfl: bool; a: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,cstring,cstring,ArgcvtParams	argcvt: argParse(dst: var cstring; dfl: cstring; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,cstring,ArgcvtParams	argcvt: argHelp(dfl: cstring; a: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,char,char,ArgcvtParams	argcvt: argParse(dst: var char; dfl: char; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,char,ArgcvtParams	argcvt: argHelp(dfl: char; a: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,T,T,ArgcvtParams	argcvt: argParse[T: enum](dst: var T; dfl: T; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,T,ArgcvtParams	argcvt: argHelp[T: enum](dfl: T; a: var ArgcvtParams): seq[string]	
+low	cligen/argcvt.html#low,typedesc[T]	argcvt: low[T: uint | uint64](x: typedesc[T]): T	
+high	cligen/argcvt.html#high,typedesc[T]	argcvt: high[T: uint | uint64](x: typedesc[T]): T	
+argParseHelpNum	cligen/argcvt.html#argParseHelpNum.t,untyped,untyped,untyped	argcvt: argParseHelpNum(WideT: untyped; parse: untyped; T: untyped): untyped	
+argParse	cligen/argcvt.html#argParse,int,int,ArgcvtParams	argcvt: argParse(dst`gensym27160183: var int; dfl`gensym27160184: int;\n         a`gensym27160185: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,int,ArgcvtParams	argcvt: argHelp(dfl`gensym27160188: int; a`gensym27160189: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,int8,int8,ArgcvtParams	argcvt: argParse(dst`gensym27175084: var int8; dfl`gensym27175085: int8;\n         a`gensym27175086: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,int8,ArgcvtParams	argcvt: argHelp(dfl`gensym27175089: int8; a`gensym27175090: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,int16,int16,ArgcvtParams	argcvt: argParse(dst`gensym27190064: var int16; dfl`gensym27190065: int16;\n         a`gensym27190066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,int16,ArgcvtParams	argcvt: argHelp(dfl`gensym27190069: int16; a`gensym27190070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,int32,int32,ArgcvtParams	argcvt: argParse(dst`gensym27205064: var int32; dfl`gensym27205065: int32;\n         a`gensym27205066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,int32,ArgcvtParams	argcvt: argHelp(dfl`gensym27205069: int32; a`gensym27205070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,int64,int64,ArgcvtParams	argcvt: argParse(dst`gensym27220064: var int64; dfl`gensym27220065: int64;\n         a`gensym27220066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,int64,ArgcvtParams	argcvt: argHelp(dfl`gensym27220069: int64; a`gensym27220070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,uint,uint,ArgcvtParams	argcvt: argParse(dst`gensym27235064: var uint; dfl`gensym27235065: uint;\n         a`gensym27235066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,uint,ArgcvtParams	argcvt: argHelp(dfl`gensym27235069: uint; a`gensym27235070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,uint8,uint8,ArgcvtParams	argcvt: argParse(dst`gensym27250077: var uint8; dfl`gensym27250078: uint8;\n         a`gensym27250079: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,uint8,ArgcvtParams	argcvt: argHelp(dfl`gensym27250082: uint8; a`gensym27250083: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,uint16,uint16,ArgcvtParams	argcvt: argParse(dst`gensym27265064: var uint16; dfl`gensym27265065: uint16;\n         a`gensym27265066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,uint16,ArgcvtParams	argcvt: argHelp(dfl`gensym27265069: uint16; a`gensym27265070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,uint32,uint32,ArgcvtParams	argcvt: argParse(dst`gensym27280064: var uint32; dfl`gensym27280065: uint32;\n         a`gensym27280066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,uint32,ArgcvtParams	argcvt: argHelp(dfl`gensym27280069: uint32; a`gensym27280070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,uint64,uint64,ArgcvtParams	argcvt: argParse(dst`gensym27295064: var uint64; dfl`gensym27295065: uint64;\n         a`gensym27295066: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,uint64,ArgcvtParams	argcvt: argHelp(dfl`gensym27295069: uint64; a`gensym27295070: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,float32,float32,ArgcvtParams	argcvt: argParse(dst`gensym27310077: var float32; dfl`gensym27310078: float32;\n         a`gensym27310079: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,float32,ArgcvtParams	argcvt: argHelp(dfl`gensym27310082: float32; a`gensym27310083: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,float,float,ArgcvtParams	argcvt: argParse(dst`gensym27325076: var float; dfl`gensym27325077: float;\n         a`gensym27325078: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,float,ArgcvtParams	argcvt: argHelp(dfl`gensym27325081: float; a`gensym27325082: var ArgcvtParams): seq[string]	
+PARSING AGGREGATES (set,seq,..)	cligen/argcvt.html#parsing-aggregates-set-seq-dotdot	 PARSING AGGREGATES (set,seq,..)	
+argAggSplit	cligen/argcvt.html#argAggSplit,ArgcvtParams	argcvt: argAggSplit[T](a: var ArgcvtParams; split = true): seq[T]	
+getDescription	cligen/argcvt.html#getDescription,T,string,string	argcvt: getDescription[T](defVal: T; parNm: string; defaultHelp: string): string	
+plural	cligen/argcvt.html#plural,string	argcvt: plural(word: string): string	
+argAggHelp	cligen/argcvt.html#argAggHelp,seq[string],string,string,string	argcvt: argAggHelp(dfls: seq[string]; aggTyp: string; typ, dfl: var string)	
+argParse	cligen/argcvt.html#argParse,seq[T],seq[T],ArgcvtParams	argcvt: argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,seq[T],ArgcvtParams	argcvt: argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,string,string,ArgcvtParams	argcvt: argParse(dst: var string; dfl: string; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,string,ArgcvtParams	argcvt: argHelp(dfl: string; a: var ArgcvtParams): seq[string]	
+incl	cligen/argcvt.html#incl,set[T],openArray[T]	argcvt: incl[T](dst: var set[T]; toIncl: openArray[T])	
+excl	cligen/argcvt.html#excl,set[T],openArray[T]	argcvt: excl[T](dst: var set[T]; toExcl: openArray[T])	
+argParse	cligen/argcvt.html#argParse,set[T],set[T],ArgcvtParams	argcvt: argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,set[T],ArgcvtParams	argcvt: argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]	
+argParse	cligen/argcvt.html#argParse,HashSet[T],HashSet[T],ArgcvtParams	argcvt: argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool	
+argHelp	cligen/argcvt.html#argHelp,HashSet[T],ArgcvtParams	argcvt: argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]	

@@ -1,0 +1,11 @@
+parseInt	cligen/humanUt.html#parseInt,string,int	humanUt: parseInt(s: string; valIfNAN: int): int	
+cmpN	cligen/humanUt.html#cmpN,string,string	humanUt: cmpN(a, b: string): int	
+humanReadable4	cligen/humanUt.html#humanReadable4,uint	humanUt: humanReadable4(bytes: uint; binary = false): string	
+textAttrAlias	cligen/humanUt.html#textAttrAlias,string,string	humanUt: textAttrAlias(name, value: string)	
+textAttrAliasClear	cligen/humanUt.html#textAttrAliasClear	humanUt: textAttrAliasClear()	
+textAttrRegisterAliases	cligen/humanUt.html#textAttrRegisterAliases,seq[string]	humanUt: textAttrRegisterAliases(colors: seq[string])	
+textAttrParse	cligen/humanUt.html#textAttrParse,string	humanUt: textAttrParse(s: string): string	
+textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	humanUt: textAttrOn(spec: seq[string]; plain = false): string	
+textAttrOff	cligen/humanUt.html#textAttrOff	humanUt: textAttrOff	
+specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	humanUt: specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = &apos;%&apos;;\n                   openBkt = &quot;([{&quot;; closeBkt = &quot;)]}&quot;; keepPct = true; termInAttr = true): string	
+humanDuration	cligen/humanUt.html#humanDuration,int,string	humanUt: humanDuration(dt: int; fmt: string; plain = false): string	
