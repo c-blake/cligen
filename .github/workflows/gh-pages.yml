@@ -1,0 +1,55 @@
+name: gh-pages
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skip job"
+
+  before:
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - run: echo "not contains '[skip ci]'"
+
+  docs:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: before
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set cache-key
+        id: vars
+        run: echo ::set-output name=cache-key::$(date +%Y-%m-%d)
+
+      - name: Cache choosenim
+        id: cache-choosenim
+        uses: actions/cache@v1
+        with:
+          path: ~/.choosenim
+          key: ${{ runner.os }}-choosenim-${{ steps.vars.outputs.cache-key }}
+      - name: Cache nimble
+        id: cache-nimble
+        uses: actions/cache@v1
+        with:
+          path: ~/.nimble
+          key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
+      - uses: jiro4989/setup-nim-action@v1.0.2
+        with:
+          nim-version: 'devel --latest'
+
+      - name: Generate API documents
+        run: nim doc --project --outdir:docs cligen.nim
+
+      - name: Deploy documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+        if: github.ref == 'refs/heads/master'
+

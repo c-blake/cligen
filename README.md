@@ -197,8 +197,8 @@ automated test suite:
   [test/](https://github.com/c-blake/cligen/tree/master/test/).
 Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and generated
 documentation for the three main modules:
-  [parseopt3](http://c-blake.github.io/cligen/parseopt3.html)
-  [argcvt](http://c-blake.github.io/cligen/argcvt.html)
+  [parseopt3](http://c-blake.github.io/cligen/cligen/parseopt3.html)
+  [argcvt](http://c-blake.github.io/cligen/cligen/argcvt.html)
   [cligen](http://c-blake.github.io/cligen/cligen.html)
 Finally, I try to keep track of possibly breaking changes and new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).

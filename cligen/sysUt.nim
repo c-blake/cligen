@@ -17,7 +17,7 @@ proc delete*(x: var string, i: Natural) {.noSideEffect.} =
   setLen(x, xl-1)
 
 iterator maybePar*(parallel: bool, a, b: int): int =
-  ## if flag is true yield `` `||`(a,b) `` else ``countup(a,b)``.
+  ## if flag is true yield ``||(a,b)`` else ``countup(a,b)``.
   if parallel:
     for i in `||`(a, b): yield i
   else:
