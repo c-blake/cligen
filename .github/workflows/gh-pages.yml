@@ -1,0 +1,56 @@
+name: gh-pages
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skip job"
+
+  before:
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - run: echo "not contains '[skip ci]'"
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: before
+    env:
+      nim_version: '1.2.0'
+    steps:
+      - uses: actions/checkout@v1
+      - name: Cache choosenim
+        id: cache-choosenim
+        uses: actions/cache@v1
+        with:
+          path: ~/.choosenim
+          key: ${{ runner.os }}-choosenim-${{ env.nim_version }}
+      - name: Cache nimble
+        id: cache-nimble
+        uses: actions/cache@v1
+        with:
+          path: ~/.nimble
+          key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
+      - uses: jiro4989/setup-nim-action@v1.0.2
+        with:
+          nim-version: ${{ env.nim_version }}
+
+      - name: Generate API documents
+        run: |
+          for m in cligen cligen/parseopt3 cligen/argcvt; do
+            nim doc $m
+            mv $(basename $m).html docs
+            mv nimdoc.out.css docs
+          done
+
+      - name: Deploy documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+        if: github.ref == 'refs/heads/master'
+
