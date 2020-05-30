@@ -22,12 +22,17 @@ jobs:
     needs: before
     steps:
       - uses: actions/checkout@v1
+
+      - name: Set cache-key
+        id: vars
+        run: echo ::set-output name=cache-key::$(date +%Y-%m-%d)
+
       - name: Cache choosenim
         id: cache-choosenim
         uses: actions/cache@v1
         with:
           path: ~/.choosenim
-          key: ${{ runner.os }}-choosenim-devel-latest
+          key: ${{ runner.os }}-choosenim-${{ steps.vars.outputs.cache-key }}
       - name: Cache nimble
         id: cache-nimble
         uses: actions/cache@v1
