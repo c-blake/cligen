@@ -39,12 +39,7 @@ jobs:
           nim-version: 'devel --latest'
 
       - name: Generate API documents
-        run: |
-          for m in cligen cligen/parseopt3 cligen/argcvt; do
-            nim doc $m
-            mv $(basename $m).html docs
-            mv nimdoc.out.css docs
-          done
+        run: nim doc --project --outdir:docs cligen.nim
 
       - name: Deploy documents
         uses: peaceiris/actions-gh-pages@v3
