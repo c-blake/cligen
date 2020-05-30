@@ -299,13 +299,13 @@ Options:
   -h, --help                                print this cligen-erated help
   --help-syntax                             advanced: prepend,plurals,..
   -i=, --i1=     hashset(int8)    {}        include 1 val in i1
-  -I=, --I1=     hashset(int8)    3,2       include 1 val in I1
+  -I=, --I1=     hashset(int8)    2,3       include 1 val in I1
   --i2=          hashset(int16)   {}        include 1 val in i2
   --I2=          hashset(int16)   4,5       include 1 val in I2
   -u=, --u1=     hashset(uint8)   {}        include 1 val in u1
   -U=, --U1=     hashset(uint8)   6,7       include 1 val in U1
   --u2=          hashset(uint16)  {}        include 1 val in u2
-  --U2=          hashset(uint16)  9,8       include 1 val in U2
+  --U2=          hashset(uint16)  8,9       include 1 val in U2
   -e=, --e=      hashset(Color)   {}        include 1 val in e
   -E=, --E=      hashset(Color)   red,blue  include 1 val in E
 
