@@ -1,6 +1,23 @@
 RELEASE NOTES
 =============
 
+Version: 1.0.1
+---------------
+  Add fast file tree walk iteration `cligen/dents.nim`.  Also add
+  `examples/chom.nim` to show end-to-end usage as well as to exhibit some fancy
+  "octal integer" argparse usage.
+
+  Replace `NimVersion vs ""` tests with `(NimMajor,NimMinor,NimPatch)` tests.
+
+  Add some support inequlity routines for `cligen/statx.StatxTs`.
+
+  Repo does auto-CI runs & auto-doc gen now thanks to @jiro4989 and @kaushalmodi
+  { Testing pre-commit is better (both less waiting and, well, pre-commit). }
+
+  Fixed bug where one needed *2* indented lines in a `doc` string (comment
+  sourced or otherwise) rather than the always intended any-indent at all to
+  inhibit auto-text-coalescing & wrapping.
+
 Version: 1.0.0
 ---------------
   No new problems in the past few weeks => call it time to stamp 1.0.  (Truly
