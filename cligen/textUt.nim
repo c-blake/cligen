@@ -10,7 +10,7 @@ else:
 let tWidth = terminalWidth()
 proc wrap*(prefix: string, s: string, width=tWidth): string =
   let w = width - 2*prefix.len
-  if s.count("\n ") > 1:   #Leave alone if there is any indentation
+  if s.count("\n ") > 0:   #Leave alone if there is any indentation
     result = s
   else:
     result = wrapWords(s.replace("\n", " "), w)
