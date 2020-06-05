@@ -169,7 +169,7 @@ proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   echo "#", nF, " entries; ", nD, " okRecurs"
 
 proc wstats*(roots: seq[string]) =
-  ## This is just for timing comparison purposes; Same speed as ``dstats -s``.
+  ## Just for timing comparison purposes; Same speed as ``dstats -s``.
   var nF = 0
   for root in roots:
     for path in walkDirRec(root, { pcFile, pcLinkToFile, pcDir, pcLinkToDir }):
@@ -227,7 +227,7 @@ proc showLong*(dirNm: string, dir: seq[DEnt], wrote: var bool) {.inline.} =
   wrote = true
 
 proc lssAU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
-  ## -r0 is 1.14-1.6x faster than GNU "ls -sAUR --color=none /usr >/dev/null".
+  ## -r0 is 1.14-1.6x faster than "ls -sAUR --color=none /usr >/dev/null".
   var top: seq[DEnt]
   var wrote = false
   for root in (if roots.len > 0: roots else: @[ "." ]):
