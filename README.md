@@ -44,7 +44,9 @@ to learn.  If you aren't sold already, here is more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 Nim CLI authors who have understood things this far can mostly use `cligen`
 already.  Enter illegal commands or `--help` to get help messages to exhibit
-the mappings or `--help-syntax`/`--helps` to see more on that.
+the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
+`cligen` supports string-to-native conversion for most elementary Nim types
+(ints, floats, enums, etc.), as well as `seq`s, `set`s, `HashSet`s of them.
 
 ### Token Matching, Trailing Args, Required Parameters
 
