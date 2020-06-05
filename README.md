@@ -147,10 +147,9 @@ for a type.
 
 The default exit protocol is (with boolean short-circuiting) `quit(int(result))
 or (echo $result or discard; quit(0))`.  If `echoResult==true`, it's just
-`echo $result; quit(0)`, while if `noAutoEcho==true` it's
-`quit(int(result)) or (discard; quit(0))`.  The `or`s above are based on whether
-the wrapped proc has a return type or `$` defined on the type.
-So,
+`echo $result; quit(0)`, while if `noAutoEcho==true` it's `quit(int(result)) or
+(discard; quit(0))`.  The `or`s above are based on whether the wrapped proc has
+a return type or `$` defined on the type.  So,
 ```nim
 import editdistance, cligen   # gen CLI for Nim stdlib editDistance
 dispatch(editDistanceASCII, echoResult=true)
