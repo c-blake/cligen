@@ -182,9 +182,9 @@ You can also just `include cligen/mergeCfgEnv` between `import cligen` and
 `dispatch` to merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with
 Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
 
-`cligen` programs look for a file `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`,
-eg. [cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
-which allows end-command-line users to tweak color, layout, syntax, and usage
+`cligen` programs look for `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`, e.g.
+[~/.config/cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
+which allows command-line end users to tweak colors, layout, syntax, and usage
 help templates.
 
 ### Even More Controls and Details
