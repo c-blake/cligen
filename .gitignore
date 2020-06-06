@@ -65,3 +65,4 @@ test/StroppedParams
 test/PassValues
 test/PassValuesMulti
 cligen/abbrev
+cligen/dents
