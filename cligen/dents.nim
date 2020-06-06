@@ -88,6 +88,7 @@ template forPath*(root: string; recurse: int; lstats, follow, xdev: bool;
     if fd == -1:
       openFail; return true     # CLIENT CODE SAYS HOW TO REPORT ERRORS
     let dirp = fdopendir(fd)
+    defer: discard closedir(dirp)
     if follow or xdev:          # Need directory identity
       if st.st_nlink == 0 and fstat(fd, st) != 0:
         return true             # Impossible but for NFS gotchas
@@ -119,7 +120,6 @@ template forPath*(root: string; recurse: int; lstats, follow, xdev: bool;
         preRec  # ANY PRE-RECURSIVE SETUP
         let recFailed {.used.}= recDent(nPath + m + 1, maxDepth, dev, depth + 1)
         postRec # ONLY `path` IS NON-CLOBBERED HERE
-    discard closedir(dirp)
 
   let m = root.len
   path.setLen m
