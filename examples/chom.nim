@@ -39,13 +39,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
   var nCall = 0
   for root in paths:
     forPath(root, recurse, true, chase, xdev,
-            depth, path, nameAt, ino, dt, lst, st, recFail):
-      case errno
-      of ENOTDIR, EXDEV: discard  # Expected if stats==false/user req no xdev
-      of EMFILE, ENFILE: return   # Too many open files; bottom out recursion
-      else:
-        let m = "chom: \""&path&"\")"; perror cstring(m), m.len
-    do:
+            depth, path, nameAt, ino, dt, lst, st, recFailed):
       if dt == DT_LNK and stat(path, lst) != 0:      # want st not lst data here
         err.log &"stat({path}): {strerror(errno)}\n" # ..(unless we do `lchown`)
       else:
@@ -53,6 +47,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
                        verb, err, dryRun)
     do: discard                                     # No pre-recurse
     do: discard                                     # No post-recurse
+    do: recFailDefault("chom")                      # cannot recurse
   return min(nCall, 255)
 
 when isMainModule:

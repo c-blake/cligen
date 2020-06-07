@@ -65,9 +65,16 @@ else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
   const EXDEV = 18; const ENOTDIR = 20; const ENFILE = 23; const EMFILE = 24
 var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
 
+template recFailDefault*(context: string) =
+  case errno
+  of ENOTDIR, EXDEV: discard        # Expected if stats==false/user req no xdev
+  of EMFILE, ENFILE: discard        # Too many open files; bottom out recursion
+  else:
+    let m = context & ": \"" & path & "\""; perror cstring(m), m.len
+
 template forPath*(root: string; recurse: int; lstats, follow, xdev: bool;
                   depth, path, nameAt, ino, dt, lst, st, recFailed: untyped;
-                  openFail, always, preRec, postRec: untyped) =
+                  always, preRec, postRec, recFail: untyped) =
   ## Client code sees new ``depth``, ``path``, ``nameAt``, ``ino``, ``dt``,
   ## maybe ``lst`` in the ``always`` branch.  ``depth`` is the recursion depth,
   ## ``path`` the full path name (rooted at ``root`` which may be CWD/something
@@ -86,7 +93,7 @@ template forPath*(root: string; recurse: int; lstats, follow, xdev: bool;
   proc recDent(nPath=0, maxDepth=0, dev=0.Dev, depth=0): bool =
     let fd = open(path, O_RDONLY or O_CLOEXEC or O_DIRECTORY)
     if fd == -1:
-      openFail; return true     # CLIENT CODE SAYS HOW TO REPORT ERRORS
+      recFail; return true     # CLIENT CODE SAYS HOW TO REPORT ERRORS
     let dirp = fdopendir(fd)
     defer: discard closedir(dirp)
     if follow or xdev:          # Need directory identity
@@ -114,7 +121,7 @@ template forPath*(root: string; recurse: int; lstats, follow, xdev: bool;
       if mayRec and (lstats or d.d_type==DT_UNKNOWN) and lstat(path, lst)==0:
         d.d_type = stat2dtype(lst.st_mode)        # Get d_type from Statx
       dt = d.d_type
-      always    # CLIENT CODE USES: `depth`,`path`,`nameAt`,`ino`,`dt`,`lst`,`st`
+      always    # CLIENT CODE USES: `depth, path, nameAt, ino, dt, lst, st`
       if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt == DT_LNK)):
         if dt == DT_DIR: st = lst                 # Need not re-fstat for ident
         preRec  # ANY PRE-RECURSIVE SETUP
@@ -137,15 +144,11 @@ proc find*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false,
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root, recurse, stats, chase, xdev,
-            depth, path, nameAt, ino, dt, lst, st, recFail):
-      case errno
-      of ENOTDIR, EXDEV: discard  # Expected if stats==false/user req no xdev
-      of EMFILE, ENFILE: return   # Too many open files; bottom out recursion
-      else:
-        let m = "find: \""&path&"\""; perror cstring(m), m.len
-    do: path.add term; stdout.urite path; path.setLen path.len-1 # stdout.urite path,term
+            depth, path, nameAt, ino, dt, lst, st, recFailed):
+      path.add term; stdout.urite path; path.setLen path.len-1 # stdout.urite path,term
     do: discard                   # No pre-recurse
     do: discard                   # No post-recurse
+    do: recFailDefault("find")
 
 proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   ## Print file depth statistics
@@ -154,15 +157,11 @@ proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   var nD = 0
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root, recurse, stats, chase, xdev,
-            depth, path, nameAt, ino, dt, lst, st, recFail):
-      case errno
-      of ENOTDIR, EXDEV: discard  # Expected if stats==false/user req no xdev
-      of EMFILE, ENFILE: return   # Too many open files; bottom out recursion
-      else:
-        let m = "dstats: \""&path&"\")"; perror cstring(m), m.len
-    do: histo[min(depth, histo.len-1)].inc; nF.inc  # Deepest bin catches deeper
+            depth, path, nameAt, ino, dt, lst, st, recFailed):
+      histo[min(depth, histo.len-1)].inc; nF.inc  # Deepest bin catches deeper
     do: discard                                     # No pre-recurse
-    do: nD.inc int(not recFail)                     # Count successful recurs
+    do: nD.inc int(not recFailed)                   # Count successful recurs
+    do: recFailDefault("dstats")
   echo "#Depth Nentry"
   for i, cnt in histo:
     if cnt != 0: echo i, " ", cnt
@@ -192,16 +191,16 @@ proc ls1AU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
     var dirs: seq[seq[string]]
     dirs.add @[]
     forPath(root, recurse, stats, chase, xdev,
-            depth, path, nameAt, ino, dt, lst, st, recFail):
+            depth, path, nameAt, ino, dt, lst, st, recFailed):
+      dirs[^1].add path[nameAt..^1]           # Always add name
+    do: dirs.add @[]                          # Pre-recurse: add empty seq
+    do: showNames(path, dirs.pop, wrote)      # Post-recurse: pop last seq
+    do: 
       case errno
-      of EXDEV: discard             # Expected if stats==false/user req no xdev
-      of EMFILE, ENFILE: return     # Too many open files; bottom out recursion
+      of EXDEV, EMFILE, ENFILE: discard
       of ENOTDIR: (if depth == 0: top.add path) # Not dir at top level
       else:
         let m = "ls1AU: \""&path&"\")"; perror cstring(m), m.len
-    do: dirs[^1].add path[nameAt..^1]         # Always add name
-    do: dirs.add @[]                          # Pre-recurse: add empty seq
-    do: showNames(path, dirs.pop, wrote)      # Post-recurse: pop last seq
     #end template call
     let label = if roots.len>1: path else: "" # Skip label on <= 1 roots
     showNames(label, dirs.pop, wrote)         # Show top of recursion
@@ -234,16 +233,16 @@ proc lssAU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
     var dirs: seq[seq[DEnt]]
     dirs.add @[]
     forPath(root, recurse, stats, chase, xdev,
-            depth, path, nameAt, ino, dt, lst, st, recFail):
+            depth, path, nameAt, ino, dt, lst, st, recFailed):
+      dirs[^1].add initDEnt(path, nameAt, lst, st)      # Always add name
+    do: dirs.add @[]                              # Pre-recurse: add empty seq
+    do: showLong(path, dirs.pop, wrote)           # Post-recurse: pop last seq
+    do:
       case errno
-      of EXDEV: discard             # Expected if stats==false/user req no xdev
-      of EMFILE, ENFILE: return     # Too many open files; bottom out recursion
+      of EXDEV, EMFILE, ENFILE: discard
       of ENOTDIR: (if depth == 0: top.add initDEnt(path, 0, lst, st))
       else:
         let m = "lssAU: \""&path&"\")"; perror cstring(m), m.len
-    do: dirs[^1].add initDEnt(path, nameAt, lst, st)      # Always add name
-    do: dirs.add @[]                              # Pre-recurse: add empty seq
-    do: showLong(path, dirs.pop, wrote)           # Post-recurse: pop last seq
     #end template call
     let label = if roots.len>1 or wrote: path else: "" # Skip label sometimes
     showLong(label, dirs.pop, wrote)              # Show top of recursion
