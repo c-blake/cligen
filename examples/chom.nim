@@ -63,7 +63,7 @@ when isMainModule:
              "verbose" : "print chown and chmod calls as they happen",
              "quiet"   : "suppress most OS error messages",
              "dry-run" : "only print what system calls are needed",
-             "recurse" : "recursively act on any dirs in `paths`",
+             "recurse" : "max recursion depth for any dir in `paths`",
              "chase"   : "follow symbolic links to dirs in recursion",
              "xdev"    : "block recursion across device boundaries",
              "owner"   : "owner to set; may need root; defl=self",
