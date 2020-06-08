@@ -463,6 +463,37 @@ iterator paths*(roots:seq[string], maxDepth=0, follow=false, file="",delim='\n',
                       st, dt, follow, maxDepth, err)
   for e in it(): yield e
 
+proc openat*(dirfd: cint, path: cstring, flags: cint):
+       cint {.varargs, importc, header: "<unistd.h>", sideEffect.}
+proc fstatat*(dirfd: cint, path: cstring, stx: var Stat, flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc faccessat*(dirfd: cint; path: cstring; mode: cint; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc fchmodat*(dirfd: cint; path: cstring; mode: Mode; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc fchownat*(dirfd: cint; path: cstring; owner: Uid; group: Gid;
+               flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc futimesat*(dirfd: cint; path: cstring; times: array[2, Timeval]):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc utimensat*(dirfd: cint; path: cstring; times: array[2, Timespec];
+       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc futimens*(fd: cint; times: array[2, Timespec]):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc linkat*(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;
+       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc mkdirat*(dirfd: cint; path: cstring; mode: Mode):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc mknodat*(dirfd: cint; path: cstring; mode: Mode; dev: Dev):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc symlinkat*(target: cstring; newdirfd: cint; linkpath: cstring):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc readlinkat*(dirfd: cint; path: cstring; buf: cstring; bufsiz: csize):
+       clong {.importc, header: "<unistd.h>", sideEffect.}
+proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
+       newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
+
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
                                                      header: "grp.h" .}
