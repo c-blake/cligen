@@ -1,26 +1,27 @@
 import posix, strformat, cligen/[dents, posixUt, statx]
 
-proc chom1*(path: string, st: Statx, uid=Uid.high, gid=Gid.high,
+proc chom1*(dfd:cint,path:string,nmAt:int, st:Statx, uid=Uid.high, gid=Gid.high,
             dirPerm=0o2775.Mode, filePerm=0o664.Mode, execPerm=0o775.Mode,
             verb: File=nil, err=stderr, dryRun=false): int =
   ## This proc enforces specified {owner, group owner, permissions} for {dirs,
   ## non-dirs/non-executable files, and user-executable files}.
+  let nm  = path[nmAt..^1]
   let uid = if uid == Uid.high: st.st_uid else: uid
   let gid = if gid == Gid.high: st.st_gid else: gid
-  if st.st_uid != uid or st.st_gid != gid:      #uid/gid mismatch: chown
+  if st.st_uid != uid or st.st_gid != gid:      #uid/gid mismatch: fchownat
     result.inc
-    verb.log &"chown({uid}.{gid}, {path})\n"
-    if not dryRun and chown(path, uid, gid) != 0:
-      err.log &"chown({path}): {strerror(errno)}\n"
-      return                                    #skip chmod if chown fails
+    verb.log &"fchownat({uid}.{gid}, {path})\n"
+    if not dryRun and fchownat(dfd, nm, uid, gid, 0) != 0:
+      err.log &"fchownat({path}): {strerror(errno)}\n"
+      return                                    #skip fchmodat if fchownat fails
   let perm = if S_ISDIR(st.st_mode): dirPerm
              elif (st.st_mode and 0o100) != 0: execPerm
              else: filePerm
-  if (st.st_mode and 0o7777) != perm:           #perm mismatch: chmod
+  if (st.st_mode and 0o7777) != perm:           #perm mismatch: fchmodat
     result.inc
-    verb.log &"chmod({perm:#o}, {path})\n"
-    if not dryRun and chmod(path, perm) != 0:
-      err.log &"chmod({path}): {strerror(errno)}\n"
+    verb.log &"fchmodat({perm:#o}, {path})\n"
+    if not dryRun and fchmodat(dfd, nm, perm, 0) != 0:
+      err.log &"fchmodat({path}): {strerror(errno)}\n"
 
 proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
            xdev=false, owner="", group="", dirPerm=0o2755.Mode,
@@ -42,8 +43,8 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
       if dt == DT_LNK and stat(path, lst) != 0:      # want st not lst data here
         err.log &"stat({path}): {strerror(errno)}\n" # ..(unless we do `lchown`)
       else:
-        nCall += chom1(path, lst, uid, gid, dirPerm, filePerm, execPerm,
-                       verb, err, dryRun)
+        nCall += chom1(dfd, path, nmAt, lst, uid, gid, dirPerm, filePerm,
+                       execPerm, verb, err, dryRun)
     do: discard                                     # No pre-recurse
     do: discard                                     # No post-recurse
     do: recFailDefault("chom")                      # cannot recurse
