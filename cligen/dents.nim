@@ -182,16 +182,41 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
   else:
     recFail   # CLIENT CODE SAYS HOW TO REPORT ERRORS
 
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  always, preRec, postRec: untyped) =
+  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+    always
+  do: preRec
+  do: postRec
+  do: recFailDefault("")
+
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  always, preRec: untyped) =
+  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+    always
+  do: preRec
+  do: discard
+  do: recFailDefault("")
+
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  always: untyped) =
+  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+    always
+  do: discard
+  do: discard
+  do: recFailDefault("")
+
 proc find*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false,
            zero=false) =
   ## 2.75-4.5X faster than GNU "find /usr|.."; 1.7x faster than FreeBSD find
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
-      path.add term; stdout.urite path; path.setLen path.len-1 # stdout.urite path,term
-    do: discard                   # No pre-recurse
-    do: discard                   # No post-recurse
-    do: recFailDefault("find")
+      path.add term; stdout.urite path; path.setLen path.len-1
+      #stdout.urite path,term
 
 proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   ## Print file depth statistics
