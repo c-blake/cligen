@@ -166,19 +166,18 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
   if S_ISDIR(lst.stx_mode):
     dev = lst.st_dev
     var canRec = false
-    let dfd = AT_FDCWD
-    let fd = maybeOpenDir(dfd, path, 0, canRec)
+    let dfd = maybeOpenDir(AT_FDCWD, path, 0, canRec)
     if canRec:
       preRec  # ANY PRE-RECURSIVE SETUP
       let (nmAt0, len0) = (nmAt, path.len)
-      let dirp = fdopendir(fd)
-      recDent(fd, dirp, m)
+      let dirp = fdopendir(dfd)
+      recDent(dfd, dirp, m)
       path.setLen len0
       let nmAt = nmAt0
       postRec # ONLY `path` IS NON-CLOBBERED HERE
       discard dirp.closedir
     else:
-      if fd != -1: discard close(fd)
+      if dfd != -1: discard close(dfd)
       recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
   else:
     recFail   # CLIENT CODE SAYS HOW TO REPORT ERRORS
