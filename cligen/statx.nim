@@ -1,3 +1,8 @@
+## The idea of this module is to allow callers to pretend their system has the
+## Linux ``statx`` call & ``Statx`` type even if it does not.  Callers simply
+## program to the "superset" using ``Statx`` and ``statx`` and i just works.
+## We simulate/translate ordinary ``Stat`` results when necessary.
+
 import posix, posixUt
 
 const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
@@ -111,6 +116,11 @@ when haveStatx:
   proc statx*(dirfd: cint, path: cstring, flags: cint, mask: cint,
               stx: ptr Statx): cint {.importc: "statx", header: "<sys/stat.h>".}
 
+  proc statx*(dirfd: cint, path: cstring, stx: var Statx, flags: cint,
+              mask=statxMask): cint {.inline.} =
+    ##A statx that looks more like ``fstatat`` with an ignorable final parameter
+    statx(dirfd, path, flags, mask, stx.addr)
+
   proc statx*(path: cstring, stx: var Statx,
               flags=statxFlags, mask=statxMask): cint =
     ##A Linux statx wrapper with a call signature more like regular ``stat``.
@@ -143,27 +153,26 @@ proc toStatxTs*(ts: Timespec): StatxTs =
   result.tv_sec = ts.tv_sec.int64
   result.tv_nsec = ts.tv_nsec.int32
 
-when not haveStatx:
-  proc stat2statx(dst: var Statx, src: Stat) =
-    dst.stx_mask            = 0xFFFFFFFF.uint32
-#   dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
-#   dst.stx_attributes_mask = .uint64
-    dst.stx_blksize         = src.st_blksize.uint32
-    dst.stx_nlink           = src.st_nlink.uint32
-    dst.stx_uid             = src.st_uid.uint32
-    dst.stx_gid             = src.st_gid.uint32
-    dst.stx_mode            = src.st_mode.uint16
-    dst.stx_ino             = src.st_ino.uint64
-    dst.stx_size            = src.st_size.uint64
-    dst.stx_blocks          = src.st_blocks.uint64
-    dst.stx_atime           = src.st_atim.toStatxTs
-    dst.stx_btime = min(src.st_atim, min(src.st_ctim, src.st_mtim)).toStatxTs
-    dst.stx_ctime           = src.st_ctim.toStatxTs
-    dst.stx_mtime           = src.st_mtim.toStatxTs
-    dst.stx_rdev_major      = src.st_rdev.st_major.uint32
-    dst.stx_rdev_minor      = src.st_rdev.st_minor.uint32
-    dst.stx_dev_major       = src.st_dev.st_major.uint32
-    dst.stx_dev_minor       = src.st_dev.st_minor.uint32
+proc stat2statx(dst: var Statx, src: Stat) =
+  dst.stx_mask            = 0xFFFFFFFF.uint32
+# dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
+# dst.stx_attributes_mask = .uint64
+  dst.stx_blksize         = src.st_blksize.uint32
+  dst.stx_nlink           = src.st_nlink.uint32
+  dst.stx_uid             = src.st_uid.uint32
+  dst.stx_gid             = src.st_gid.uint32
+  dst.stx_mode            = src.st_mode.uint16
+  dst.stx_ino             = src.st_ino.uint64
+  dst.stx_size            = src.st_size.uint64
+  dst.stx_blocks          = src.st_blocks.uint64
+  dst.stx_atime           = src.st_atim.toStatxTs
+  dst.stx_btime = min(src.st_atim, min(src.st_ctim, src.st_mtim)).toStatxTs
+  dst.stx_ctime           = src.st_ctim.toStatxTs
+  dst.stx_mtime           = src.st_mtim.toStatxTs
+  dst.stx_rdev_major      = src.st_rdev.st_major.uint32
+  dst.stx_rdev_minor      = src.st_rdev.st_minor.uint32
+  dst.stx_dev_major       = src.st_dev.st_major.uint32
+  dst.stx_dev_minor       = src.st_dev.st_minor.uint32
 
 proc st_blksize*(st: Statx): Blksize {.inline.} = st.stx_blksize.Blksize
 proc st_nlink*(st: Statx): Nlink     {.inline.} = st.stx_nlink.Nlink
@@ -210,6 +219,28 @@ proc fstat*(fd: cint, stx: var Statx): cint {.inline.} =
     var st: Stat
     result = fstat(fd, st)
     stat2statx(stx, st)
+
+proc fstatat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint):
+       cint {.inline.} =
+  ## Always ``fstatat`` but take/return ``Statx`` w/simulated e.g. stx_btime.
+  var st: Stat
+  result = fstatat(dirfd, path, st, flags)
+  stat2statx(stx, st)
+
+proc statx*(dirfd: cint, path: cstring, flags: cint, stx: var Statx,
+            mask=statxMask): cint {.inline.} =
+  ## A ``statx`` that looks more like ``fstatat`` w/a final parameter ignored
+  ## when simulated.
+  when haveStatx:
+    result = statx(dirfd, path, flags, statxMask, stx.addr)
+  else:
+    fstatat(dirfd, path, stx, flags)
+
+proc statxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
+  statx(dirfd, path, stx, flags)
+
+proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
+  statx(dirfd, path, stx, flags or AT_SYMLINK_NOFOLLOW)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
   proc name*(stx: Statx): int =
