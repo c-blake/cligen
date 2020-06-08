@@ -494,6 +494,11 @@ proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
 proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
        newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
 
+var vUTIME_NOW {.importc: "UTIME_NOW", header: "sys/stat.h".}: clong
+let UTIME_NOW* = vUTIME_NOW
+var vUTIME_OMIT {.importc: "UTIME_OMIT", header: "sys/stat.h".}: clong
+let UTIME_OMIT* = vUTIME_NOW
+
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",
                                                      header: "grp.h" .}
