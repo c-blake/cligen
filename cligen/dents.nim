@@ -141,10 +141,10 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
           let (nmAt0, len0) = (nmAt, path.len)
           let dirp = fdopendir(dfd)
           recDent(dfd, dirp, nPath + m + 1, depth + 1)
-          discard dirp.closedir
           path.setLen len0
           let nmAt = nmAt0
           postRec # ONLY `path` IS NON-CLOBBERED HERE
+          discard dirp.closedir
         else:
           if dfd != -1: discard close(dfd)
           recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
@@ -173,10 +173,10 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
       let (nmAt0, len0) = (nmAt, path.len)
       let dirp = fdopendir(fd)
       recDent(fd, dirp, m)
-      discard dirp.closedir
       path.setLen len0
       let nmAt = nmAt0
       postRec # ONLY `path` IS NON-CLOBBERED HERE
+      discard dirp.closedir
     else:
       if fd != -1: discard close(fd)
       recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
