@@ -138,9 +138,12 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
         let dfd = maybeOpenDir(dfd, path, nmAt, canRec)
         if canRec:
           preRec  # ANY PRE-RECURSIVE SETUP
+          let (nmAt0, len0) = (nmAt, path.len)
           let dirp = fdopendir(dfd)
           recDent(dfd, dirp, nPath + m + 1, depth + 1)
           discard dirp.closedir
+          path.setLen len0
+          let nmAt = nmAt0
           postRec # ONLY `path` IS NON-CLOBBERED HERE
         else:
           if dfd != -1: discard close(dfd)
@@ -167,9 +170,12 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
     let fd = maybeOpenDir(dfd, path, 0, canRec)
     if canRec:
       preRec  # ANY PRE-RECURSIVE SETUP
+      let (nmAt0, len0) = (nmAt, path.len)
       let dirp = fdopendir(fd)
       recDent(fd, dirp, m)
       discard dirp.closedir
+      path.setLen len0
+      let nmAt = nmAt0
       postRec # ONLY `path` IS NON-CLOBBERED HERE
     else:
       if fd != -1: discard close(fd)
