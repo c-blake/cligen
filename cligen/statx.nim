@@ -187,7 +187,8 @@ proc st_ctim*(st: Statx): Timespec   {.inline.} = st.stx_ctime.toTimespec
 proc st_mtim*(st: Statx): Timespec   {.inline.} = st.stx_mtime.toTimespec
 proc st_rmaj*(st: Statx): Dev        {.inline.} = st.stx_rdev_major.Dev
 proc st_rmin*(st: Statx): Dev        {.inline.} = st.stx_rdev_minor.Dev
-proc st_dev*(st: Statx): Dev         {.inline.} = st.stx_dev_minor.Dev
+proc st_dev*(st: Statx): Dev         {.inline.} =
+  (st.stx_dev_major shl 32 or st.stx_dev_minor).Dev
 proc `st_nlink=`*(st: var Statx, n: Nlink) {.inline.} = st.stx_nlink = uint32(n)
 
 proc st_btim*(st: Statx): Timespec = st.stx_btime.toTimespec
