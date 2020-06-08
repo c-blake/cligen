@@ -142,7 +142,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
           let dirp = fdopendir(dfd)
           recDent(dfd, dirp, nPath + m + 1, depth + 1)
           path.setLen len0
-          let nmAt = nmAt0
+          let nmAt {.used.} = nmAt0
           postRec # ONLY `path` IS NON-CLOBBERED HERE
           discard dirp.closedir
         else:
@@ -173,7 +173,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
       let dirp = fdopendir(dfd)
       recDent(dfd, dirp, m)
       path.setLen len0
-      let nmAt = nmAt0
+      let nmAt {.used.} = nmAt0
       postRec # ONLY `path` IS NON-CLOBBERED HERE
       discard dirp.closedir
     else:
