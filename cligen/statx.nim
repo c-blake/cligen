@@ -241,13 +241,13 @@ proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.
   statx(dirfd, path, stx, flags or AT_SYMLINK_NOFOLLOW)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
-  proc name*(stx: Statx): int =
+  proc name*(stx: Statx): int64 =
     int(stx.field.tv_sec)*1_000_000_000 + stx.field.tv_nsec
 makeGetTimeNSec(getLastAccTimeNsec, stx_atime)
 makeGetTimeNSec(getLastModTimeNsec, stx_mtime)
 makeGetTimeNSec(getCreationTimeNsec, stx_ctime)
 makeGetTimeNSec(getBirthTimeNsec, stx_btime)
 
-proc getBirthTimeNsec*(path: string): int =
+proc getBirthTimeNsec*(path: string): int64 =
   var stx: Statx
-  result = if stat(path, stx) < cint(0): 0 else: getBirthTimeNsec(stx)
+  result = if stat(path, stx) < cint(0): 0'i64 else: getBirthTimeNsec(stx)
