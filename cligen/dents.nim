@@ -18,7 +18,7 @@
 ## APIs if desired.
 
 import os, sets, posix, cligen/[osUt, posixUt, statx]
-export perror
+export perror, st_dev, Dev
 
 type csize_t = culong             # To compile with older Nim's
 type DirName = array[256, cchar]  # Some helpers for names in dirents
