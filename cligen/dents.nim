@@ -125,8 +125,8 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
       if d.d_name.dotOrDotDot: continue
       ino = uint64(d.d_ino)
       let m = int(strlen(d.d_name))               # Add d_name to running path
-      path.setLen nPath + 1 + m
-      copyMem path[nPath + 1].addr, d.d_name[0].addr, m + 1
+      path.setLen nmAt + m
+      copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
       let mayRec = maxDepth == 0 or depth + 1 < maxDepth
       lst.stx_nlink = 0                            # Mark Stat invalid
       if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
@@ -142,7 +142,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
           preRec  # ANY PRE-RECURSIVE SETUP
           let (nmAt0, len0) = (nmAt, path.len)
           let dirp = fdopendir(dfd)
-          recDent(dfd, dirp, nPath + m + 1, depth + 1)
+          recDent(dfd, dirp, nmAt + m, depth + 1)
           path.setLen len0
           let nmAt {.used.} = nmAt0
           postRec # ONLY `path` IS NON-CLOBBERED HERE
