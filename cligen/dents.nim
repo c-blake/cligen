@@ -117,8 +117,9 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
     return fd
 
   proc recDent(dfd: cint, dirp: ptr DIR, nPath=0, depth=0) =
-    path.add '/'
-    let nmAt {.used.} = nPath + 1
+    let endsInSlash = path.len > 0 and path[^1] == '/'
+    if not endsInSlash: path.add '/'
+    let nmAt {.used.} = if endsInSlash: nPath else: nPath + 1
     while true:
       let d = dirp.readdir
       if d == nil: break
