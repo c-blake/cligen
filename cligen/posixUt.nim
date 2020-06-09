@@ -2,6 +2,55 @@ when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import posix,sets,tables, strutils,strformat,parseUtils, sysUt,argcvt,gcarc,osUt
 
+proc openat*(dirfd: cint, path: cstring, flags: cint):
+       cint {.varargs, importc, header: "<unistd.h>", sideEffect.}
+proc fstatat*(dirfd: cint, path: cstring, stx: var Stat, flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc faccessat*(dirfd: cint; path: cstring; mode: cint; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc fchmodat*(dirfd: cint; path: cstring; mode: Mode; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc fchownat*(dirfd: cint; path: cstring; owner: Uid; group: Gid;
+               flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc futimesat*(dirfd: cint; path: cstring; times: array[2, Timeval]):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc utimensat*(dirfd: cint; path: cstring; times: array[2, Timespec];
+       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc futimens*(fd: cint; times: array[2, Timespec]):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc linkat*(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;
+       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc mkdirat*(dirfd: cint; path: cstring; mode: Mode):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc mknodat*(dirfd: cint; path: cstring; mode: Mode; dev: Dev):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc symlinkat*(target: cstring; newdirfd: cint; linkpath: cstring):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc readlinkat*(dirfd: cint; path: cstring; buf: cstring; bufsiz: csize):
+       clong {.importc, header: "<unistd.h>", sideEffect.}
+proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
+       cint {.importc, header: "<unistd.h>", sideEffect.}
+proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
+       newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
+
+template impConst*(T: untyped, path: string, name: untyped): untyped {.dirty.} =
+  var `loc name` {.header: path, importc: astToStr(name) .}: `T`
+  let name* {.inject.} = `loc name`
+
+template impCint*(path: string, name: untyped): untyped {.dirty.} =
+  impConst(cint, path, name)
+
+impCint("fcntl.h", AT_FDCWD)            ## Tell *at calls to use CWorking Direct
+impCint("fcntl.h", AT_SYMLINK_NOFOLLOW) ## Do not follow symbolic links
+impCint("fcntl.h", AT_REMOVEDIR)        ## Remove dir instead of unlinking file
+impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
+impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
+impConst(clong, "sys/stat.h", UTIME_NOW)  ## tv_nsec value for *utimens* => now
+impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* => omit
+when defined(linux):
+  impCint("fcntl.h", AT_NO_AUTOMOUNT)   ## Suppress terminal automount traversal
+  impCint("fcntl.h", AT_EMPTY_PATH)     ## Allow empty relative pathname
+
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
   if f != nil: f.write s
@@ -462,42 +511,6 @@ iterator paths*(roots:seq[string], maxDepth=0, follow=false, file="",delim='\n',
   let it = recEntries(both(roots, fileStrings(file, delim)),
                       st, dt, follow, maxDepth, err)
   for e in it(): yield e
-
-proc openat*(dirfd: cint, path: cstring, flags: cint):
-       cint {.varargs, importc, header: "<unistd.h>", sideEffect.}
-proc fstatat*(dirfd: cint, path: cstring, stx: var Stat, flags: cint):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc faccessat*(dirfd: cint; path: cstring; mode: cint; flags: cint):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc fchmodat*(dirfd: cint; path: cstring; mode: Mode; flags: cint):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc fchownat*(dirfd: cint; path: cstring; owner: Uid; group: Gid;
-               flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
-proc futimesat*(dirfd: cint; path: cstring; times: array[2, Timeval]):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc utimensat*(dirfd: cint; path: cstring; times: array[2, Timespec];
-       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
-proc futimens*(fd: cint; times: array[2, Timespec]):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc linkat*(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;
-       flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
-proc mkdirat*(dirfd: cint; path: cstring; mode: Mode):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc mknodat*(dirfd: cint; path: cstring; mode: Mode; dev: Dev):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc symlinkat*(target: cstring; newdirfd: cint; linkpath: cstring):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc readlinkat*(dirfd: cint; path: cstring; buf: cstring; bufsiz: csize):
-       clong {.importc, header: "<unistd.h>", sideEffect.}
-proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
-       cint {.importc, header: "<unistd.h>", sideEffect.}
-proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
-       newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
-
-var vUTIME_NOW {.importc: "UTIME_NOW", header: "sys/stat.h".}: clong
-let UTIME_NOW* = vUTIME_NOW
-var vUTIME_OMIT {.importc: "UTIME_OMIT", header: "sys/stat.h".}: clong
-let UTIME_OMIT* = vUTIME_NOW
 
 #These two are almost universally available although not technically "POSIX"
 proc setGroups*(size: csize, list: ptr Gid): cint {. importc: "setgroups",

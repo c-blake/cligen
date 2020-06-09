@@ -68,21 +68,10 @@ proc `<`*(x, y: StatxTs): bool =
 proc `<=`*(x, y: StatxTs): bool =
   x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec <= y.tv_sec)
 
-template impConst*(T: untyped, path: string, name: untyped): untyped {.dirty.} =
-  var `loc name` {.header: path, importc: astToStr(name) .}: `T`
-  let name* {.inject.} = `loc name`
-
-template impCint*(path: string, name: untyped): untyped {.dirty.} =
-  impConst(cint, path, name)
-
-impCint("fcntl.h", AT_FDCWD)            ## Tells *at calls to use CurrWkgDir
-impCint("fcntl.h", AT_SYMLINK_NOFOLLOW) ## Do not follow symbolic links
-impCint("fcntl.h", AT_REMOVEDIR)        ## Remove dir instead of unlinking file
-impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
-impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
+export impConst, impCint, AT_FDCWD, AT_SYMLINK_NOFOLLOW, AT_SYMLINK_FOLLOW,
+       AT_REMOVEDIR, AT_EACCESS       ## These & next export used to live here.
 when defined(linux) and haveStatx:
-  impCint("fcntl.h", AT_NO_AUTOMOUNT)   ## Suppress terminal automount traversal
-  impCint("fcntl.h", AT_EMPTY_PATH)     ## Allow empty relative pathname
+  export AT_NO_AUTOMOUNT, AT_EMPTY_PATH
   impCint("fcntl.h", AT_STATX_SYNC_TYPE)
   impCint("fcntl.h", AT_STATX_SYNC_AS_STAT)
   impCint("fcntl.h", AT_STATX_FORCE_SYNC)
