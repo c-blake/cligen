@@ -78,6 +78,7 @@ template recFailDefault*(context: string) =
   case errno
   of ENOTDIR, EXDEV: discard        # Expected if stats==false/user req no xdev
   of EMFILE, ENFILE: discard        # Too many open files; bottom out recursion
+  of 0: discard                     # Success
   else:
     let m = context & ": \"" & path & "\""; perror cstring(m), m.len
 
