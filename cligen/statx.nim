@@ -68,8 +68,16 @@ proc `<`*(x, y: StatxTs): bool =
 proc `<=`*(x, y: StatxTs): bool =
   x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec <= y.tv_sec)
 
+proc toInt64*(t: StatxTs): int64 =
+  ## 64-bits represents +-292 years from 1970 exactly & conveniently.
+  t.tv_sec * 1_000_000_000 + t.tv_nsec
+
+proc toStatxTs*(t: int64): StatxTs =
+  result.tv_sec  = t div 1_000_000_000
+  result.tv_nsec = int32(t - result.tv_sec * 1_000_000_000)
+
 export impConst, impCint, AT_FDCWD, AT_SYMLINK_NOFOLLOW, AT_SYMLINK_FOLLOW,
-       AT_REMOVEDIR, AT_EACCESS       ## These & next export used to live here.
+       AT_REMOVEDIR, AT_EACCESS      ## These & next export used to live here.
 when defined(linux) and haveStatx:
   export AT_NO_AUTOMOUNT, AT_EMPTY_PATH
   impCint("fcntl.h", AT_STATX_SYNC_TYPE)
