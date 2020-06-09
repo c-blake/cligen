@@ -99,14 +99,14 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
   var dev = 0.Dev
   var did = initHashSet[tuple[dev: Dev, ino: uint64]]()
 
-  proc maybeOpenDir(dfd: cint; path: string; nmAt: int, canRec: var bool): cint =
+  proc maybeOpenDir(dfd: cint; path: string; nmAt: int, canRec: var bool): cint=
     let fd = openat(dfd, path[nmAt..^1], O_RDONLY or O_CLOEXEC or O_DIRECTORY)
     if fd == -1:
       return cint(-1)
     if follow or xdev:                  # Need directory identity
       if dst.stx_nlink == 0 and fstat(fd, dst) != 0:
         return fd                       # Impossible but for NFS gotchas
-      dst.stx_nlink = 0                  # Mark Stat invalid
+      dst.stx_nlink = 0                 # Mark Stat invalid
     if follow and did.containsOrIncl((dst.st_dev, dst.stx_ino)):
       stderr.write "symlink loop at: \"", path, "\"\n"
       return fd
