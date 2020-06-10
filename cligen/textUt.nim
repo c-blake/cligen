@@ -8,6 +8,9 @@ else:
   import std/wordwrap
 
 let tWidth = terminalWidth()
+var errno {.importc, header: "<errno.h>".}: cint
+errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
+
 proc wrap*(prefix: string, s: string, width=tWidth): string =
   let w = width - 2*prefix.len
   if s.count("\n ") > 0:   #Leave alone if there is any indentation
