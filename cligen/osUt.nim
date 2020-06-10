@@ -54,7 +54,7 @@ proc fileStrings*(path: string, delim: char): auto =
   let uSI = useStdin(path)
   result = iterator(): string =
     if uSI or path.len > 0:
-      for entry in getDelim(if uSI: stdin else: system.open(path), delim):
+      for entry in getDelim(if uSI: stdin else: open(path), delim):
         yield entry
 
 proc both*[T](s: seq[T], it: iterator(): T): iterator(): T =
