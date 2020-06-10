@@ -81,6 +81,7 @@ template recFailDefault*(context: string) =
   of 0: discard                     # Success
   else:
     let m = context & ": \"" & path & "\""; perror cstring(m), m.len
+    errno = 0                       # reset after a warning has posted
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
                   depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
