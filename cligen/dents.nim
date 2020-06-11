@@ -101,7 +101,8 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
   var did = initHashSet[tuple[dev: Dev, ino: uint64]]()
 
   proc maybeOpenDir(dfd: cint; path: string; nmAt: int, canRec: var bool): cint=
-    let fd = openat(dfd, path[nmAt..^1], O_RDONLY or O_CLOEXEC or O_DIRECTORY)
+    let fd = openat(dfd, path[nmAt].unsafeAddr.cstring,
+                    O_RDONLY or O_CLOEXEC or O_DIRECTORY)
     if fd == -1:
       return cint(-1)
     if follow or xdev:                  # Need directory identity
