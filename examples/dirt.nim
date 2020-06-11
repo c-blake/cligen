@@ -1,5 +1,5 @@
 # NOTE: Needs `devel` / >= 1.4.0 for `HeapQueue[T].find`.
-import heapqueue, posix, strformat, cligen, cligen/[dents, posixUt, statx]
+import heapqueue, sets, posix, strformat, cligen, cligen/[dents, posixUt, statx]
 
 proc setMTime*(dfd: cint; path: string; m0, m1: StatxTs;
                verb: File=nil, err=stderr, dryRun=false): int =
@@ -15,12 +15,13 @@ proc setMTime*(dfd: cint; path: string; m0, m1: StatxTs;
     err.log &"futimens({dfd}({path}): {strerror(errno)}\n"
 
 proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
-           xdev=false): int =
+           prune: seq[string] = @[], xdev=false): int =
   ## Set mtimes of dirs under ``roots`` to mtime of its newest kid.  This makes
   ## directory mtimes "represent" content age at the expense of erasing evidence
   ## of change which can be nice for time-sorted ls in some archival file areas.
   if roots.len == 0:  # For safety, do nothing if user specifies empty `paths`
     return
+  let prune = toHashSet(prune)
   let verb = if dryRun or verbose: stdout else: nil
   let err  = if quiet: nil else: stderr
   var n    = 0
@@ -30,6 +31,10 @@ proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
       if dt != DT_LNK:                        # Always:
         dirs[^1].push -toInt64(lSt.stx_mtime) #   Track max age
     do:                                       # Pre-recurse:
+      if path[nmAt..^1] in prune:
+        verb.log &"pruning at: {path}\n"
+        discard dirs[^1].pop
+        continue
       dirs.add initHeapQueue[int64]()         #   Add new queue for kid
       let dmt = lSt.stx_mtime                 #   Save old mtime
     do:                                       # Post-recurse:
@@ -46,7 +51,8 @@ proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
 
 when isMainModule:
   dispatch(dirt, short = { "dry-run": 'n' }, help = {
-             "verbose" : "print `utimes` calls as they happen",
-             "quiet"   : "suppress most OS error messages",
-             "dry-run" : "only print what system calls are needed",
-             "xdev"    : "block recursion across device boundaries" })
+             "verbose": "print `utimes` calls as they happen",
+             "quiet"  : "suppress most OS error messages",
+             "dry-run": "only print what system calls are needed",
+             "prune"  : "prune exactly matching paths from recursion",
+             "xdev"   : "block recursion across device boundaries" })
