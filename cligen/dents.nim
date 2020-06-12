@@ -220,14 +220,13 @@ proc find*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false,
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
-      path.add term; stdout.urite path; path.setLen path.len-1
-      #stdout.urite path,term
+      path.add term; stdout.urite path; path.setLen path.len-1 #faster path,term
 
 proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   ## Print file depth statistics
   var histo = newSeq[int](128)
-  var nF = 0
-  var nD = 0
+  var nF = 0                                        # number of files/dents
+  var nD = 0                                        # number of dirs/recursions
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
       histo[min(depth, histo.len - 1)].inc; nF.inc  # Deepest bin catches deeper
@@ -240,7 +239,7 @@ proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   echo "#", nF, " entries; ", nD, " okRecurs"
 
 proc wstats*(roots: seq[string]) =
-  ## Just for timing comparison purposes; Same speed as ``dstats -s``.
+  ## stdlib ``walkDirRec`` impl of hierarchy unaware part of ``dstats -s``
   var nF = 0
   for root in roots:
     for path in walkDirRec(root, { pcFile, pcLinkToFile, pcDir, pcLinkToDir }):
