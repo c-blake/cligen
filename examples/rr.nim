@@ -15,8 +15,8 @@ proc rr*(roots: seq[string], xdev=false): int =
     do:                           # Post-recurse (dt == DT_DIR guaranteed)
       if unlinkat(dfds.pop, path[nmAt..^1], AT_REMOVEDIR) != 0:
         stderr.log &"rr({path}): {strerror(errno)}\n"
-        # Future dir-unlinks are doomed to fail ENOTEMPTY except maybe ENOENT
-        # here if in a race with another unlinker.  Forfeit races & quit here.
+        # Future dir-unlinks are doomed to fail ENOTEMPTY except if ENOENT here
+        # IF racing other unlinker(s).  quit here forfeits any such races.
         quit(1)
     do: recFailDefault("rr")      # Cannot recurse
   return 0
