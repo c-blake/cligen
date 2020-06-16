@@ -66,7 +66,9 @@ when not declared(fromHex):
 
 let attrNames = {  #WTF: const compiles but then cannot look anything up
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
-  "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9", "NONE":      "",
+  "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9",
+  "NONE":   "", "-bold":"21", "-faint": "22", "-italic":"23","-underline":"24",
+  "-blink":"25","-BLINK":"25","-inverse":"27","-struck":"29",
   "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
   "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
   "BLACK"   : "90", "RED"      : "91", "GREEN"    : "92", "YELLOW"   : "93",#LiF
