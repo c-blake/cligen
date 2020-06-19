@@ -149,19 +149,19 @@ when isMainModule:                        #Provide a useful CLI wrapper.
     return if nSet > 0: 1 else: 0     #Exit with appropriate status
 
   dispatch(dups, help = {
-             "file"  : "optional input (\"-\"|!tty=stdin)",
-             "delim" : "input file delimiter (\\0->NUL)",
-             "recurse": "recurse n-levels on dirs; 0:unlimited",
+             "file"  : "optional input ( `\"-\"` | !tty = ``stdin`` )",
+             "delim" : "input file delimiter; `\\\\0` -> NUL",
+             "recurse": "recurse n-levels on dirs; `0`: unlimited",
              "follow": "follow symlinks to dirs in recursion",
              "xdev"  : "block cross-device recursion",
              "Deref" : "dereference symlinks",
              "minLen": "minimum file size to consider",
              "slice" : "file slice (float|%:frac; <0:tailRel)",
-             "Hash"  : "hash function [size|wy|nim|SHA1]",
+             "Hash"  : "hash function `[size|wy|nim|SHA1]`",
              "cmp"   : "compare; do not trust hash",
-             "par"   : "Use parallelism $OMP_NUM_THREADS",
-             "log"   : ">stderr{osErr, summ}",
+             "par"   : "Use parallelism ``$OMP_NUM_THREADS``",
+             "log"   : ">stderr{ `osErr`, `summ` }",
              "brief" : "do NOT print sets of dups",
-             "time"  : "sort each set by file time ([+-][amcv].*)",
+             "time"  : "sort each set by file time: `{-}[bamcv].\\*`",
              "outDlm": "output internal delimiter",
              "endOut": "output record terminator" }, short = { "follow": 'F' })
