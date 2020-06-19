@@ -134,7 +134,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
       path.setLen nmAt + m
       copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
       let mayRec = maxDepth == 0 or depth + 1 < maxDepth
-      lst.stx_nlink = 0                            # Mark Stat invalid
+      lst.stx_nlink = 0                           # Mark Stat invalid
       if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
          lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
         d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
