@@ -9,8 +9,8 @@ proc perr*(x: varargs[string, `$`]) =           #OS Errors like permissions
 
 proc getMeta(paths: seq[string]; file: string; delim: char; recurse,minLen: int;
              follow, xdev, Deref: bool): Table[int, seq[string]] =
-  var sz2paths = initTable[int, seq[string]](512)
-  var inodes = initHashSet[tuple[dev: Dev, ino: Ino]](512)
+  var sz2paths = initTable[int, seq[string]](4096)
+  var inodes = initHashSet[tuple[dev: Dev, ino: uint64]](4096)
   let it = both(paths, fileStrings(file, delim))
   for root in it():
     if root.len == 0: continue                  #Skip any improper inputs
@@ -20,7 +20,7 @@ proc getMeta(paths: seq[string]; file: string; delim: char; recurse,minLen: int;
         if fstatat(dfd, path, st, 0) != 0: perr "fstatat ", path
       if S_ISREG(st.st_mode) and                #Only meaningful to compare reg
          st.st_size >= minLen and               #One easy way to exclude len0.
-         not inodes.containsOrIncl((st.st_dev, st.st_ino)): #Keep ONLY 1stPath
+         not inodes.containsOrIncl((st.st_dev, st.stx_ino)): #Keep ONLY 1st Path
         sz2paths.mgetOrPut(int(st.st_size), @[]).add(path)
   result = sz2paths
 
