@@ -1,7 +1,7 @@
 RELEASE NOTES
 =============
 
-Version: 1.0.1
+Version: 1.1.0
 ---------------
   Add fast file tree walk iteration `cligen/dents.nim`.  Also add
   `examples/chom.nim` to show end-to-end usage as well as to exhibit some fancy
@@ -9,14 +9,25 @@ Version: 1.0.1
 
   Replace `NimVersion vs ""` tests with `(NimMajor,NimMinor,NimPatch)` tests.
 
-  Add some support inequlity routines for `cligen/statx.StatxTs`.
+  Add some support inequality routines for `cligen/statx.StatxTs`.
 
   Repo does auto-CI runs & auto-doc gen now thanks to @jiro4989 and @kaushalmodi
   { Testing pre-commit is better (both less waiting and, well, pre-commit). }
 
-  Fixed bug where one needed *2* indented lines in a `doc` string (comment
-  sourced or otherwise) rather than the always intended any-indent at all to
-  inhibit auto-text-coalescing & wrapping.
+  Added `$doc` and `$help[param]` rendering via any non-nil `clCfg.render`
+  string-to-string transformer.  One easy way to get one is to add a `[render]`
+  section to your `~/.config/cligen/config` file that sets at least one of
+  singleStar, doubleStar, tripleStar, singleBQuo, doubleBQuo to some "on ; off"
+  pair.  That will do an initRstMdSGR/render on $doc and $help[param] text.
+
+  As follow-on from the above better help formating work, also do a smarter
+  word wrap that A) minimizes the Lp norm of the extra-space-at-EOL vector,
+  B) is better about preserving the blank line structure in inputs, and C) can
+  still wrap lines in paragraphs that are outside of indented lines (instead
+  of the prior any-indent-anywhere ==> whole string pre-formatted).
+
+  The top-level help of a dispatchMulti command is now rendered and wrapped
+  just like the `$doc` for each subcommand.
 
 Version: 1.0.0
 ---------------
