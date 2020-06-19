@@ -1,7 +1,7 @@
 ## This is an ``include`` file used by ``cligen.nim`` proper to initialize the
 ## ``clCfg`` global.  Here we use only a parsecfg config file to do so.
 
-import std/[streams, parsecfg]
+import std/[streams, parsecfg, tables]
 const cgConfigFileBaseName = "config"
 
 proc apply(c: var ClCfg, path: string, plain=false) =
@@ -13,6 +13,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
   var f = newFileStream(path, fmRead)
   if f == nil: return
   var p: CfgParser
+  var rendOpts: Table[string, string]
   open(p, f, path)
   while true:
     var e = p.next
@@ -26,11 +27,11 @@ proc apply(c: var ClCfg, path: string, plain=false) =
       else:
         let sec = e.section.optionNormalize
         case sec
-        of "global", "aliases", "layout", "syntax", "color", "templates":
+        of "global","aliases","layout","syntax","color","render","templates":
           activeSection = sec
         else:
           stderr.write path & ":" & " unknown section " & e.section & "\n" &
-            "Expecting: global aliases layout syntax color templates\n"
+            "Expecting: global aliases layout syntax color render templates\n"
           break
     of cfgKeyValuePair, cfgOption:
       case activeSection
@@ -81,6 +82,16 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
             "Expecting: options types defaultvalues descriptions command documentation arguments\n"
+      of "render":
+        case e.key.optionNormalize
+        of "singlestar": rendOpts["singlestar"] = e.value
+        of "doublestar": rendOpts["doublestar"] = e.value
+        of "triplestar": rendOpts["triplestar"] = e.value
+        of "singlebquo": rendOpts["singlebquo"] = e.value
+        of "doublebquo": rendOpts["doublebquo"] = e.value
+        else:
+          stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
+            "Expecting: singlestar, doublestar, triplestar, singlebquo, doublebquo\n"
       of "templates":
         case e.key.optionNormalize
         of "usehdr", "usageheader":  c.useHdr   = hl(e.value)
@@ -92,6 +103,10 @@ proc apply(c: var ClCfg, path: string, plain=false) =
       else: discard # cannot happen since we break early above
     of cfgError: echo e.msg
   close(p)
+  if rendOpts.len > 0:
+    let r = initRstMdSGR(rendOpts, plain)
+    proc renderMarkup(m: string): string = r.render(m)
+    c.render = renderMarkup
 
 var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
 if cfNm.existsFile: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))

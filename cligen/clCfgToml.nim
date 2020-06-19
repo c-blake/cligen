@@ -2,12 +2,13 @@
 ## ``clCfg`` global.  Here we use only a TOML config file to do so.  You must
 ## add parsetoml to your compile setup via nimble install parsetoml or elsewise.
 
-import std/[strformat, sequtils], parsetoml
+import std/[strformat, sequtils, tables], parsetoml
 const cgConfigFileBaseName = "config.toml"
 
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =
   template hl(x): string = specifierHighlight(x, Whitespace, plain,
                                               keepPct=false, termInAttr=false)
+  var rendOpts: Table[string, string]
   let
     tomlCfg = parsetoml.parseFile(cfgFile).getTable()
   for k1, v1 in tomlCfg.pairs:
@@ -73,6 +74,15 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
             c.helpAttr["args"] = colorStr
           else:
             stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
+    of "render":
+      for k2, v2 in v1.getTable().pairs:
+        case k2.toLowerAscii()
+        of "singlestar": rendOpts["singlestar"] = v2.getStr
+        of "doublestar": rendOpts["doublestar"] = v2.getStr
+        of "triplestar": rendOpts["triplestar"] = v2.getStr
+        of "singlebquo": rendOpts["singlebquo"] = v2.getStr
+        of "doublebquo": rendOpts["doublebquo"] = v2.getStr
+        else: stderr.write(&"{cfgFile}: unknown keyword {k2} in [{k1}]\n")
     of "templates":
       for k2, v2 in v1.getTable().pairs:
         let
@@ -86,6 +96,10 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     else:
       stderr.write(&"{cfgFile}: unknown keyword {k1}\n")
+  if rendOpts.len > 0:
+    let r = initRstMdSGR(rendOpts, plain)
+    proc renderMarkup(m: string): string = r.render(m)
+    c.render = renderMarkup
 
 var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
 if cfNm.existsFile: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))

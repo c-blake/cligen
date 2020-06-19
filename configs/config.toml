@@ -14,8 +14,15 @@
   defaultvalue = ["GREEN", "bold"] # .. implemented in `cligen/humanUt.nim:textAttrParse`
   description = ["PURPLE"]         # .. `cligen/humanUt.nim:attrNames` is a good start.
   command = ["bold"]               # Command name in one-liners & in multi-cmd tables
-  doc = ["italic"]                 # Overall documentation
-  args = ["underline"]             # Positional args in one-liners
+  doc = ["YELLOW"]                 # Overall documentation
+  args = ["RED"]                   # Positional args in one-liners
+
+[render]
+  singleStar = "italic     ; -italic"
+  doubleStar = "bold       ; -bold"
+  tripleStar = "bold italic; -bold -italic"
+  singleBQuo = "underline  ; -underline"
+  doubleBQuo = "inverse    ; -inverse"
 
 [layout]
   # rowsep = "\n"  # This is the default; gap between option table rows

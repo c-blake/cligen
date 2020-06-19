@@ -34,6 +34,17 @@ command = "bold red" # *OR*: faint italic underline inverse struck
 # 256-color xterm attrs are [fb][0..23] for F)ORE/B)ACKgrnd grey scale & [fb]RGB
 # with [RGB] in 0..5; true colors are [fb]RRGGBB with RR, etc. in hexadecimal.
 
+# These decide how to convert rST/markdown-like text styles to ANSI SGR for the
+# `doc` and `descrip` sections above.  If there are no settings no markup
+# rendering is done.  They must be "on ; off" pairs.  If you do colors above for
+# `doc`/`descrip` then it is advisable you do only font styles here.
+[render]
+singleStar = "italic     ; -italic"
+doubleStar = "bold       ; -bold"
+tripleStar = "bold italic; -bold -italic"
+singleBQuo = "underline  ; -underline"
+doubleBQuo = "inverse    ; -inverse"
+
 [layout] # Control presentation of the help table
 #cols = "clOptKeys clValType clDflVal clDescrip"  # Presence&order of columns
 #rowSep = "\n"  # Default is ""; "\n" => double-spaced
