@@ -68,6 +68,26 @@ when defined(linux):
       dp.bpos = 0
     result = cast[ptr DirEnt](dp.buf[dp.bpos].addr)
     dp.bpos += cint(result.d_reclen)
+
+  when defined(batch):
+    #Install @c-blake batch in $BAT_DIR & -d:batch --cincludes:$BAT_DIR/include
+    type SysCall {.importc: "syscall_t", header: "linux/batch.h".} =
+      object
+        nr, jumpFail, jump0, jumpPos: cshort  #callNo,jmpFor: -4096<r<0,r==0,r>0
+        argc: cchar                           #arg count. XXX argc[nr]
+        arg: array[6, clong]                  #args for this call
+    proc batch(rets: ptr clong, calls: ptr SysCall, ncall: culong, flags: clong,
+               size: clong): clong {.importc, header: "linux/batch.h".}
+    var SYS_statx {.header: "linux/batch.h", importc: "__NR_statx".}: cint
+    iterator pairs(dp: ptr DIR): tuple[slot: int, dent: ptr DirEnt] =
+      var i = 0
+      dp.bpos = 0
+      while dp.bpos < dp.nRd:
+        let res = cast[ptr DirEnt](dp.buf[dp.bpos].addr)
+        if not res.d_name.dotOrDotDot:
+          yield (i, res)
+          i.inc
+        dp.bpos += cint(res.d_reclen)
 else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
   proc fdopendir(fd: cint): ptr DIR {.importc, header: "<dirent.h>".}
   # cimport of these sometimes fails on poorly tested non-Linux, but the numbers
@@ -128,36 +148,117 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
     if not endsInSlash: path.add '/'
     let nmAt {.used.} = if endsInSlash: nPath else: nPath + 1
     while true:
-      let d = dirp.readdir
-      if d == nil: break
-      if d.d_name.dotOrDotDot: continue
-      ino = uint64(d.d_ino)
-      let m = int(strlen(d.d_name))               # Add d_name to running path
-      path.setLen nmAt + m
-      copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
-      let mayRec = maxDepth == 0 or depth + 1 < maxDepth
-      lst.stx_nlink = 0                           # Mark Stat invalid
-      if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
-         lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
-        d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
-      dt = d.d_type
-      always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
-      if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt == DT_LNK)):
-        if dt == DT_DIR: dst = lst                # Need not re-fstat for ident
-        var canRec = false
-        let dfd = maybeOpenDir(dfd, path, nmAt, canRec)
-        if canRec:
-          preRec  # ANY PRE-RECURSIVE SETUP
-          let (nmAt0, len0) = (nmAt, path.len)
-          let dirp = fdopendir(dfd)
-          recDent(dfd, dirp, nmAt + m, depth + 1)
-          path.setLen len0
-          let nmAt {.used.} = nmAt0
-          postRec # ONLY `path` IS NON-CLOBBERED HERE
-          discard dirp.closedir
+      when defined(linux) and defined(batch):
+        if lstats:
+          if dirp.readdir == nil: break
+          var nB = culong(0)
+          for i, d in dirp: nB.inc
+          if nB == 0: break
+          var dts = newSeq[int8](nB)
+          var sts = newSeq[Statx](nB)
+          var bat = newSeq[SysCall](nB)
+          var rvs = newSeq[clong](nB)
+          for i, d in dirp:
+            dts[i]        = d.d_type
+            bat[i].nr     = cshort(SYS_statx)
+            bat[i].argc   = cchar(5)
+            bat[i].arg[0] = dfd
+            bat[i].arg[1] = cast[clong](d.d_name[0].addr)
+            bat[i].arg[2] = AT_SYMLINK_NOFOLLOW or AT_NO_AUTOMOUNT
+            bat[i].arg[3] = STATX_ALL
+            bat[i].arg[4] = cast[clong](sts[i].addr)
+          discard batch(rvs[0].addr, bat[0].addr, nB, clong(0), clong(0))
+          for i, d in dirp:
+            ino = uint64(d.d_ino)
+            let m = int(strlen(d.d_name))         # Add d_name to running path
+            path.setLen nmAt + m
+            copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
+            let mayRec = maxDepth == 0 or depth + 1 < maxDepth
+            lst.stx_nlink = 0                     # Mark Stat invalid
+            if rvs[i] == 0:
+              lst = sts[i]
+              d.d_type = stat2dtype(lst.stx_mode)
+            dt = d.d_type
+            always    # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+            if mayRec and (dt in {DT_UNKNOWN,DT_DIR} or(follow and dt==DT_LNK)):
+              if dt == DT_DIR: dst = lst          # Need not re-fstat for ident
+              var canRec = false
+              let dfd = maybeOpenDir(dfd, path, nmAt, canRec)
+              if canRec:
+                preRec  # ANY PRE-RECURSIVE SETUP
+                let (nmAt0, len0) = (nmAt, path.len)
+                let dirp = fdopendir(dfd)
+                recDent(dfd, dirp, nmAt + m, depth + 1)
+                path.setLen len0
+                let nmAt {.used.} = nmAt0
+                postRec # ONLY `path` IS NON-CLOBBERED HERE
+                discard dirp.closedir
+              else:
+                if dfd != -1: discard close(dfd)
+                recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
+          dirp.bpos = dirp.nRd       # mark all as done
         else:
-          if dfd != -1: discard close(dfd)
-          recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
+          let d = dirp.readdir
+          if d == nil: break
+          if d.d_name.dotOrDotDot: continue
+          ino = uint64(d.d_ino)
+          let m = int(strlen(d.d_name))             # Add d_name to running path
+          path.setLen nmAt + m
+          copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
+          let mayRec = maxDepth == 0 or depth + 1 < maxDepth
+          lst.stx_nlink = 0                         # Mark Stat invalid
+          if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
+             lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
+            d.d_type = stat2dtype(lst.stx_mode)     # Get d_type from Statx
+          dt = d.d_type
+          always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+          if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt==DT_LNK)):
+            if dt == DT_DIR: dst = lst              #Need not re-fstat for ident
+            var canRec = false
+            let dfd = maybeOpenDir(dfd, path, nmAt, canRec)
+            if canRec:
+              preRec  # ANY PRE-RECURSIVE SETUP
+              let (nmAt0, len0) = (nmAt, path.len)
+              let dirp = fdopendir(dfd)
+              recDent(dfd, dirp, nmAt + m, depth + 1)
+              path.setLen len0
+              let nmAt {.used.} = nmAt0
+              postRec # ONLY `path` IS NON-CLOBBERED HERE
+              discard dirp.closedir
+            else:
+              if dfd != -1: discard close(dfd)
+              recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
+      else:
+        let d = dirp.readdir
+        if d == nil: break
+        if d.d_name.dotOrDotDot: continue
+        ino = uint64(d.d_ino)
+        let m = int(strlen(d.d_name))               # Add d_name to running path
+        path.setLen nmAt + m
+        copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
+        let mayRec = maxDepth == 0 or depth + 1 < maxDepth
+        lst.stx_nlink = 0                           # Mark Stat invalid
+        if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
+           lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
+          d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
+        dt = d.d_type
+        always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+        if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt == DT_LNK)):
+          if dt == DT_DIR: dst = lst                #Need not re-fstat for ident
+          var canRec = false
+          let dfd = maybeOpenDir(dfd, path, nmAt, canRec)
+          if canRec:
+            preRec  # ANY PRE-RECURSIVE SETUP
+            let (nmAt0, len0) = (nmAt, path.len)
+            let dirp = fdopendir(dfd)
+            recDent(dfd, dirp, nmAt + m, depth + 1)
+            path.setLen len0
+            let nmAt {.used.} = nmAt0
+            postRec # ONLY `path` IS NON-CLOBBERED HERE
+            discard dirp.closedir
+          else:
+            if dfd != -1: discard close(dfd)
+            recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
 
   let m = root.len
   path.setLen m
