@@ -1,6 +1,10 @@
+## This is file tree walker module with optimized getdirents functionalities.
+## It also exposes all costly byproduct data like ``Statx`` buffers and ``dfd``
+## to client code to use other ``\*at()`` APIs as desired.
+##
 ## Past y2k, ``d_type``-triggered ``open(O_DIRECTORY)`` rarely fails.  Even on
-## an old FS, failed-``open`` is as fast as ``lstat``, the only way to avoid
-## failure.  So, optimistic-``open`` is fastest *unless* you also need ``lstat``
+## old FSes, failed ``open`` is as fast as ``lstat`` (the only way to avoid
+## failure).  So, optimistic ``open`` is best *unless* you also need ``lstat``
 ## data for *other* reasons, in which case ``lstat``+selective-``open`` is less
 ## work.  This module gives both.  Client code can check ``lst.stx_nlink != 0``
 ## to see if further ``stat`` is needed and request ``lstat``+selective-``open``
@@ -10,12 +14,9 @@
 ## or ``fdopendir``) per dir.  BSD/AIX/.. likely allow similar.  In follow sym-
 ## link mode, loop blocking always needs (dev,ino) per dir, though. An opendir-
 ## to-stat race is easily avoided with ``fdopendir`` (maybe not on Win?).
-##
 ## This packaged recursion is also careful to use the POSIX.2008 ``openat`` API
 ## & its sibling ``fstatat`` which largely eliminates the need to deal with full
-## paths instead of just dirent filenames.  It also exposes all costly byproduct
-## data like ``Statx`` buffers and ``dfd`` to client code to use other ``*at()``
-## APIs if desired.
+## paths instead of just dirent filenames.
 
 import os, sets, posix, cligen/[osUt, posixUt, statx]
 export perror, st_dev, Dev
@@ -239,7 +240,7 @@ proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   echo "#", nF, " entries; ", nD, " okRecurs"
 
 proc wstats*(roots: seq[string]) =
-  ## stdlib ``walkDirRec`` impl of hierarchy unaware part of ``dstats -s``
+  ## stdlib ``walkDirRec`` impl of hierarchy-unaware part of ``dstats -s``
   var nF = 0
   for root in roots:
     for path in walkDirRec(root, { pcFile, pcLinkToFile, pcDir, pcLinkToDir }):
