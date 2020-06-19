@@ -111,14 +111,14 @@ when isMainModule:                        #Provide a useful CLI wrapper.
             Deref=false, minLen=1, slice="", Hash=wy, cmp=false, par=false,
             log={osErr}, brief=false, time="",outDlm="\t", endOut="\n",
             paths: seq[string]): int =
-    ## Print sets of paths with duplicate contents. Examined paths are UNION of
-    ## `paths` & optional `delim`-delimited input `file` (stdin if "-"|if "" &
-    ## stdin not a tty).  Eg., `find -print0|dups -d\\0`.  Exits non-0 if any
-    ## dups exist.  Trusting hashes can give false positives, but sorting can
-    ## be slow w/many large files of the same size|hash. `slice` can reduce IO,
-    ## but can also give false pos. {False negatives not possible. 0 exit =>
-    ## surely no dups.}.  Within set sort is by st_blocks if 'summ' is logged,
-    ## then by requested file time {'v'time=max(m,c)}, and finally by st_ino.
+    ##Print sets of files with duplicate contents. Examined files are UNION of
+    ##*paths* & optional *delim*-delimited input *file* ( `stdin` if "-"|if ""&
+    ##`stdin` not a tty ).  Eg., ``find -print0|dups -d\\0``.  **Exits non-0**
+    ##if a dup exists.  Trusting hashes can give false positives, but sorting
+    ##can be slow w/many large files of the same size|hash. *slice* can reduce
+    ##IO, but can also give false pos. {False negatives not possible. 0 exit =>
+    ##surely no dups.}. Within-set sort is by ``st_blocks`` if `summ` is logged,
+    ##then by requested file time {v=max(m,c)} & finally by ``st_ino``.
     dupsLog = log
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
