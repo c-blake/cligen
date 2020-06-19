@@ -95,7 +95,9 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
   ## instad of ``"/"``, ``path[nmAt..^1]`` is the base name of the dirent while
   ## ``dfd`` is an open file descriptor on the directory containing it (for e.g.
   ## ``fchownat`` like APIs.  ``ino``, ``dt``, ``lst``, ``dst`` are filesystem
-  ## metadata for the path name and most recent directory.
+  ## metadata for the path name and most recent directory while ``did`` is a
+  ## ``HashSet`` of ``(st.st_dev,stx_ino)`` history maintained to block infinite
+  ## symlink loops in ``follow`` mode.
   var path = newStringOfCap(16384)
   var ino: uint64
   var dt: int8
