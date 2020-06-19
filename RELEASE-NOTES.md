@@ -26,8 +26,15 @@ Version: 1.1.0
   still wrap lines in paragraphs that are outside of indented lines (instead
   of the prior any-indent-anywhere ==> whole string pre-formatted).
 
-  The top-level help of a dispatchMulti command is now rendered and wrapped
+  The top-level help of a `dispatchMulti` command is now rendered and wrapped
   just like the `$doc` for each subcommand.
+
+  Speed up `exampls/dups.nim` by 1.02 to 1.2x-ish by using `dents` and exhibit
+  client code use of the new `forPath` parameter `did`.  (Sharing a set for
+  directory identity & client code file identity indeed worsens fragility in a
+  situation where symlinks are followed and inodes are being re-used from some
+  fast & furious directory/file creation/destruction churn, but said situation
+  was always fraught with peril for any loop avoidant recursive file walker.)
 
 Version: 1.0.0
 ---------------

@@ -87,7 +87,7 @@ template recFailDefault*(context: string) =
     errno = 0                       # reset after a warning has posted
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
                   always, preRec, postRec, recFail: untyped) =
   ## Client code sees ``depth``, ``path``, ``dfd``, ``nmAt``, ``ino``, ``dt``,
   ## maybe ``lst`` in the ``always`` branch.  ``depth`` is the recursion depth,
@@ -191,27 +191,30 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
     recFail   # CLIENT CODE SAYS HOW TO REPORT ERRORS
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
                   always, preRec, postRec: untyped) =
-  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+  forPath(root, maxDepth, lstats, follow, xdev,
+          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
     always
   do: preRec
   do: postRec
   do: recFailDefault("")
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
                   always, preRec: untyped) =
-  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+  forPath(root, maxDepth, lstats, follow, xdev,
+          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
     always
   do: preRec
   do: discard
   do: recFailDefault("")
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst: untyped;
+                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
                   always: untyped) =
-  forPath(root,maxDepth,lstats,follow,xdev,depth,path,dfd,nmAt,ino,dt,lst,dst):
+  forPath(root, maxDepth, lstats, follow, xdev,
+          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
     always
   do: discard
   do: discard
@@ -222,7 +225,8 @@ proc find*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false,
   ## 2.75-4.5X faster than GNU "find /usr|.."; 1.7x faster than FreeBSD find
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
-    forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root, recurse, stats, chase, xdev,
+            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
       path.add term; stdout.urite path; path.setLen path.len-1 #faster path,term
 
 proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
@@ -231,7 +235,8 @@ proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
   var nF = 0                                        # number of files/dents
   var nD = 0                                        # number of dirs/recursions
   for root in (if roots.len > 0: roots else: @[ "." ]):
-    forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root, recurse, stats, chase, xdev,
+            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
       histo[min(depth, histo.len - 1)].inc; nF.inc  # Deepest bin catches deeper
     do: discard                                     # No pre-recurse
     do: nD.inc                                      # Count successful recurs
@@ -264,7 +269,8 @@ proc ls1AU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
     var labs: seq[string]
     dirs.add @[]
     labs.add root
-    forPath(root,recurse,stats,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root, recurse, stats, chase, xdev,
+            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
       dirs[^1].add path[nmAt..^1]             # Always add name
     do:
       dirs.add @[]                            # Pre-recurse: add empty seq
@@ -308,7 +314,8 @@ proc lss1AU*(roots: seq[string], recurse=1, chase=false, xdev=false) =
     var labs: seq[string]
     dirs.add @[]
     labs.add root
-    forPath(root,recurse,true,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root, recurse, true, chase, xdev,
+            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
       dirs[^1].add initDEnt(path, nmAt, lst)        # Always add name
     do:
       dirs.add @[]                                # Pre-recurse: add empty seq

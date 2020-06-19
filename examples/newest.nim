@@ -35,7 +35,8 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
   var q  = initHeapQueue[TimePath]()            # min-heap with q[0]=min
   for root in it():
     if root.len == 0: continue                  # skip any improper inputs
-    forPath(root,recurse,false,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root, recurse, false, chase, xdev,
+            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
       if dt != DT_UNKNOWN:                      # unknown here => disappeared
         if (dt==DT_LNK and Deref and doStat(dfd,path,nmAt,lst,Deref,quiet)) or
            lst.stx_nlink != 0 or doStat(dfd,path,nmAt,lst,Deref,quiet):

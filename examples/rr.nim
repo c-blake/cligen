@@ -5,7 +5,7 @@ proc rr*(roots: seq[string], xdev=false): int =
   if roots.len == 0: return
   var dfds: seq[cint]
   for root in roots:
-    forPath(root,0,false,false,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
+    forPath(root,0,false,false,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst,did):
       if dt != DT_DIR:
         if unlinkat(dfd, path[nmAt..^1], 0) != 0:
           stderr.log &"rr({path}): {strerror(errno)}\n"
