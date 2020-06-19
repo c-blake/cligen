@@ -1,6 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
-import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
+import math, strutils, algorithm, sets, tables, parseutils, posix, textUt, re
 when not declared(initHashSet):
   proc initHashSet*[T](): HashSet[T] = initSet[T]()
   proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)
@@ -190,3 +190,59 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
     if cols.len > 2: result.add attrOff
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
+
+type rstMdSGR* = object
+  subs: array[21, tuple[pattern: Regex, repl: string]]
+
+let rstMdSGRDefault = { "singlestar0": "italic      ; -italic"      ,
+                        "doublestar0": "bold        ; -bold"        ,
+                        "triplestar0": "bold italic ; -bold -italic",
+                        "singlebquo0": "underline   ; -underline"   ,
+                        "doublebquo0": "inverse     ; -inverse"     }.toTable
+
+proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
+  ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
+  ## does *only inline* markup (single-|double-|triple-)(*|`) since A) that is
+  ## what is most useful displaying to a terminal and B) the whole idea of these
+  ## markups is to be readable as-is.  Backslash escape & spacing work as usual
+  ## to block adornment interpretation.  This proc inits ``rstMdSGR`` with 0|1
+  ## parameters corresponding to open|close text attributes for each style.
+  proc onOff(key: string): tuple[on, off: string] =
+    let c = attrs[key].split(';')
+    if c.len != 2:
+      stderr.write "[render] values must be ';'-separated on/off pairs\n"
+    (textAttrOn(c[0].strip.split, plain), textAttrOn(c[1].strip.split, plain))
+  let (ss0, ss1) = onOff("singlestar")
+  let (ds0, ds1) = onOff("doublestar")
+  let (ts0, ts1) = onOff("triplestar")
+  let (sb0, sb1) = onOff("singlebquo")
+  let (db0, db1) = onOff("doublebquo")     # Do tpl before dbl before sgl
+  result.subs[ 0] = (re"([^ *\t\n\\])\*\*\*$"     , "$1" & ts1       )
+  result.subs[ 1] = (re"^\*\*\*([^ *\t\n])"       ,        ts0 & "$1")
+  result.subs[ 2] = (re"([^ *\t\n\\])\*\*\*([^*])", "$1" & ts1 & "$2")
+  result.subs[ 3] = (re"([^*\\])\*\*\*([^ \t\n*])", "$1" & ts0 & "$2")
+  result.subs[ 4] = (re"([^ *\t\n\\])\*\*$"       , "$1" & ds1       )
+  result.subs[ 5] = (re"^\*\*([^ *\t\n])"         ,        ds0 & "$1")
+  result.subs[ 6] = (re"([^ *\t\n\\])\*\*([^*])"  , "$1" & ds1 & "$2")
+  result.subs[ 7] = (re"([^*\\])\*\*([^ \t\n*])"  , "$1" & ds0 & "$2")
+  result.subs[ 8] = (re"([^ *\t\n\\])\*$"         , "$1" & ss1       )
+  result.subs[ 9] = (re"^\*([^ *\t\n])"           ,        ss0 & "$1")
+  result.subs[10] = (re"([^ *\t\n\\])\*([^*])"    , "$1" & ss1 & "$2")
+  result.subs[11] = (re"([^*\\])\*([^ \t\n*])"    , "$1" & ss0 & "$2")
+  result.subs[12] = (re"([^ \t\n`\\])``$"         , "$1" & db1       )
+  result.subs[13] = (re"^``([^ \t\n`])"           ,        db0 & "$1")
+  result.subs[14] = (re"([^ `\t\n\\])``([^`])"    , "$1" & db1 & "$2")
+  result.subs[15] = (re"([^`\\])``([^ \t\n`])"    , "$1" & db0 & "$2")
+  result.subs[16] = (re"([^ `\t\n\\])`$"          , "$1" & sb1       )
+  result.subs[17] = (re"^`([^ `\t\n])"            ,        sb0 & "$1")
+  result.subs[18] = (re"([^ `\t\n\\])`([^`])"     , "$1" & sb1 & "$2")
+  result.subs[19] = (re"([^`\\])`([^ \t\n`])"     , "$1" & sb0 & "$2")
+  result.subs[20] = (re"\\(.)"                    , "$1")
+
+proc render*(r: rstMdSGR, rstOrMd: string): string =
+  ## Translate hybrid restructuredText-Markdown-to-ANSI SGR/highlighted text
+  ## using the highlighting rules in ``r``.
+  result = rstOrMd  # rstOrMd.multiReplace(r.subs) fails on single-char-insides
+  for tup in r.subs:
+    let (pat, sub) = tup
+    result = result.replacef(pat, sub)
