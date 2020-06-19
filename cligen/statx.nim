@@ -62,17 +62,17 @@ else:
       stx_dev_major*:       uint32   ## Major ID of dev of FS where file resides
       stx_dev_minor*:       uint32   ## Minor ID of dev of FS where file resides
 
-proc `<`*(x, y: StatxTs): bool =
+proc `<`*(x, y: StatxTs): bool {.inline.} =
   x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec < y.tv_sec)
 
-proc `<=`*(x, y: StatxTs): bool =
+proc `<=`*(x, y: StatxTs): bool {.inline.} =
   x.tv_sec < y.tv_sec or (x.tv_sec == y.tv_sec and x.tv_nsec <= y.tv_sec)
 
-proc toInt64*(t: StatxTs): int64 =
+proc toInt64*(t: StatxTs): int64 {.inline.} =
   ## 64-bits represents +-292 years from 1970 exactly & conveniently.
   t.tv_sec * 1_000_000_000 + t.tv_nsec
 
-proc toStatxTs*(t: int64): StatxTs =
+proc toStatxTs*(t: int64): StatxTs {.inline.} =
   result.tv_sec  = t div 1_000_000_000
   result.tv_nsec = int32(t - result.tv_sec * 1_000_000_000)
 
@@ -119,17 +119,17 @@ when haveStatx:
     statx(dirfd, path, flags, mask, stx.addr)
 
   proc statx*(path: cstring, stx: var Statx,
-              flags=statxFlags, mask=statxMask): cint =
+              flags=statxFlags, mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``stat``.
     statx(AT_FDCWD, path, flags, mask, stx.addr)
 
   proc lstatx*(path: cstring, stx: var Statx,
-              flags=(statxFlags or AT_SYMLINK_NOFOLLOW), mask=statxMask): cint =
+              flags=(statxFlags or AT_SYMLINK_NOFOLLOW), mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``lstat``.
     statx(AT_FDCWD, path, flags, mask, stx.addr)
 
   proc fstatx*(fd: cint, stx: var Statx,
-              flags=(AT_EMPTY_PATH or statxFlags), mask=statxMask): cint =
+              flags=(AT_EMPTY_PATH or statxFlags), mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``fstat``.
     statx(fd, "", flags, mask, stx.addr)
 
@@ -139,18 +139,18 @@ when haveStatx:
 
 #This just uses the antiquated high/low byte of a 16-bit int.  It would be best
 #to get major() & minor() macros out of sys/types.h | sys/sysmacros.h.
-proc st_major*(dno: Dev): uint32 = (dno.uint shr 8).uint32
-proc st_minor*(dno: Dev): uint32 = (dno.uint and 0xFF).uint32
+proc st_major*(dno: Dev): uint32 {.inline.} = (dno.uint shr 8).uint32
+proc st_minor*(dno: Dev): uint32 {.inline.} = (dno.uint and 0xFF).uint32
 
-proc toTimespec*(ts: StatxTs): Timespec =
+proc toTimespec*(ts: StatxTs): Timespec {.inline.} =
   result.tv_sec = ts.tv_sec.Time
   result.tv_nsec = ts.tv_nsec
 
-proc toStatxTs*(ts: Timespec): StatxTs =
+proc toStatxTs*(ts: Timespec): StatxTs {.inline.} =
   result.tv_sec = ts.tv_sec.int64
   result.tv_nsec = ts.tv_nsec.int32
 
-proc stat2statx(dst: var Statx, src: Stat) =
+proc stat2statx(dst: var Statx, src: Stat) {.inline.} =
   dst.stx_mask            = 0xFFFFFFFF.uint32
 # dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
 # dst.stx_attributes_mask = .uint64
@@ -188,9 +188,9 @@ proc st_dev*(st: Statx): Dev         {.inline.} =
   (st.stx_dev_major shl 32 or st.stx_dev_minor).Dev
 proc `st_nlink=`*(st: var Statx, n: Nlink) {.inline.} = st.stx_nlink = uint32(n)
 
-proc st_btim*(st: Statx): Timespec = st.stx_btime.toTimespec
+proc st_btim*(st: Statx): Timespec {.inline.} = st.stx_btime.toTimespec
 
-proc st_vtim*(st: Statx): Timespec =
+proc st_vtim*(st: Statx): Timespec {.inline.} =
   if cmp(st.st_mtim, st.st_ctim) > 0: st.st_mtim
   else:                               st.st_ctim
 
@@ -241,7 +241,7 @@ proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.
   statx(dirfd, path, stx, flags or AT_SYMLINK_NOFOLLOW)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
-  proc name*(stx: Statx): int64 =
+  proc name*(stx: Statx): int64 {.inline.} =
     int(stx.field.tv_sec)*1_000_000_000 + stx.field.tv_nsec
 makeGetTimeNSec(getLastAccTimeNsec, stx_atime)
 makeGetTimeNSec(getLastModTimeNsec, stx_mtime)

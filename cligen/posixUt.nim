@@ -310,8 +310,8 @@ proc pathId*(path: string): PathId =
   if stat(path, st) != -1: return (st.st_dev, st.st_ino)
   return (0.Dev, 0.Ino)
 
-proc `==`*(a, b: PathId): bool = a.dev == b.dev and a.ino == b.ino
-proc hash*(x: PathId): int = x.dev.int * x.ino.int
+proc `==`*(a, b: PathId): bool {.inline.} = a.dev == b.dev and a.ino == b.ino
+proc hash*(x: PathId): int {.inline.} = x.dev.int * x.ino.int
 
 proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
   ## Read whole file of unknown (& fstat-non-informative) size using re-usable
