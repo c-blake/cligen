@@ -22,14 +22,17 @@ proc doStat(dfd: cint, path: string; nmAt: int, st: var Statx; Deref,
 proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
                   quiet=false, xdev=false, outEnd="\n", file="", delim='\n',
                   paths: seq[string]) =
-  ## Echo ``<=n`` newest paths ended by ``outEnd`` in ``time`` order [-][bamcv]
-  ## for Birth, Access, Mod, Ctime, Version=max(MC); Optional '-' (or CAPITAL)
-  ## means oldest instead of newest.  Examined paths are UNION of ``paths`` +
-  ## optional ``delim``-delimited input ``file`` (stdin if "-"|if "" & stdin is
-  ## not a tty).  Eg., ``find -type f|newest -t-m`` prints the m-oldest file.
+  ## Echo ended by *outEnd* <= *n* newest files in file *time* order
+  ## `{-}[bamcv]` for Birth, Access, Mod, Ctime, Version=max(MC); { `-` | CAPITAL
+  ## means ***oldest*** }.  Examined files = UNION of *paths* + optional
+  ## *delim*-delimited input *file* ( ``stdin`` if `"-"`|if `""` & ``stdin`` is
+  ## not a terminal ), **maybe recursed** as roots.  E.g. to echo the 3 oldest
+  ## regular files by m-time under the CWD:
+  ##   ``find . -type f -print| newest -n3 -t-m``.
+
   let tO = fileTimeParse(time)                  #- or CAPITAL=oldest
   let it = both(paths, fileStrings(file, delim))
-  var q  = newHeapQueue[TimePath]()             # min-heap with q[0]=min
+  var q  = initHeapQueue[TimePath]()            # min-heap with q[0]=min
   for root in it():
     if root.len == 0: continue                  # skip any improper inputs
     forPath(root,recurse,false,chase,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst):
@@ -48,7 +51,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
 when isMainModule:  # Exercise this with an actually useful CLI wrapper.
   dispatch(printNewest, cmdName="newest",
            help = { "n"      : "number of 'newest' files",
-                    "time"   : "timestamp to compare ([-][bamcv].*)",
+                    "time"   : "timestamp to compare ({-}[bamcv]\\*)",
                     "recurse": "recurse n-levels on dirs; 0:unlimited",
                     "chase"  : "chase symlinks to dirs in recursion",
                     "xdev"   : "block recursion across device boundaries",
