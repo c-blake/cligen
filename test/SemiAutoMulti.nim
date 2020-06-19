@@ -18,7 +18,7 @@ when isMainModule:
   cc.hTabRowSep = "\n"
   dispatchGen(demo, help = { "alpha" : "what alpha does",
                              "beta"  : "what beta does ",
-                             "verb"  : "on=chatty, off=quiet. 'Nuff said." },
+                             "verb"  : "on=chatty, off=quiet.  'Nuff said." },
               cf=cc)
   dispatchGen(show)
 

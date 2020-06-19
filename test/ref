@@ -168,8 +168,10 @@ Options:
 ==> test/EchoResult.out <==
 Usage:
   editDistanceAscii [required&optional-params] 
-Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
-distance algorithm with only a linear memory overhead.
+Returns the edit distance between `a` and `b`.
+
+This uses the `Levenshtein`:idx: distance algorithm with only a linear memory
+overhead.
 Options:
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend,plurals,..
@@ -299,13 +301,13 @@ Options:
   -h, --help                                print this cligen-erated help
   --help-syntax                             advanced: prepend,plurals,..
   -i=, --i1=     hashset(int8)    {}        include 1 val in i1
-  -I=, --I1=     hashset(int8)    2,3       include 1 val in I1
+  -I=, --I1=     hashset(int8)    3,2       include 1 val in I1
   --i2=          hashset(int16)   {}        include 1 val in i2
   --I2=          hashset(int16)   4,5       include 1 val in I2
   -u=, --u1=     hashset(uint8)   {}        include 1 val in u1
   -U=, --U1=     hashset(uint8)   6,7       include 1 val in U1
   --u2=          hashset(uint16)  {}        include 1 val in u2
-  --U2=          hashset(uint16)  8,9       include 1 val in U2
+  --U2=          hashset(uint16)  9,8       include 1 val in U2
   -e=, --e=      hashset(Color)   {}        include 1 val in e
   -E=, --E=      hashset(Color)   red,blue  include 1 val in E
 
@@ -433,10 +435,10 @@ Usage:
                                         auto-wrapped by alignTable into a
                                         multi-line format unless you have eagle
                                         eyes, a gigantic monitor, or maybe a
-                                        little bit of both. :-)
+                                        little bit of both.  :-)
           -b=, --beta=   float   2.0    This is more modest, but might still
                                         wrap around once or twice or so.
-          -v, --verb     bool    false  on=chatty, off=quiet. 'Nuff said.
+          -v, --verb     bool    false  on=chatty, off=quiet.  'Nuff said.
           -i=, --item=   string  ""     set item
 
     ManualMulti show [optional-params] [paths: string...]
@@ -671,8 +673,10 @@ Options:
 ==> test/ResultInt.out <==
 Usage:
   editDistanceAscii [required&optional-params] 
-Returns the edit distance between `a` and `b`.  This uses the `Levenshtein`:idx:
-distance algorithm with only a linear memory overhead.
+Returns the edit distance between `a` and `b`.
+
+This uses the `Levenshtein`:idx: distance algorithm with only a linear memory
+overhead.
 Options:
   -h, --help                       print this cligen-erated help
   --help-syntax                    advanced: prepend,plurals,..
@@ -827,9 +831,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(756, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(743, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(235, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(764, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(751, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(237, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -854,8 +858,8 @@ Options:
 ==> test/UserAliases.out <==
 Usage:
   UserAliases [optional-params] [args: string...]
-demo entry point with varied, meaningless parameters with an alias system. E.g.,
-USERALIASES='"-Dk=-a9 -b3.0" "-DK=-Rk -v 1 2"' ./UserAliases -RK 3 4 or
+demo entry point with varied, meaningless parameters with an alias system.
+E.g., USERALIASES='"-Dk=-a9 -b3.0" "-DK=-Rk -v 1 2"' ./UserAliases -RK 3 4 or
 USERALIASES_CONFIG=UserAliases.cf ./UserAliases -RK 3 4
 Options:
   -h, --help                     print this cligen-erated help
