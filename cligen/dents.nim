@@ -74,6 +74,8 @@ else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
   # are age-old constants.  Maybe `when compiles()` would be best?
   const EXDEV = 18; const ENOTDIR = 20; const ENFILE = 23; const EMFILE = 24
 var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
+when not declared(O_CLOEXEC):
+  const O_CLOEXEC* = cint(524288)
 
 template recFailDefault*(context: string) =
   case errno
