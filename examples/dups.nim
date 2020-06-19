@@ -1,5 +1,5 @@
 import os, posix, strutils, sets, tables, hashes, std/sha1, algorithm,
-  cligen, cligen/[mfile,fileUt,strUt, osUt,posixUt,sysUt] #fileEq,parseSlice..
+  cligen, cligen/[mfile,fileUt,strUt, osUt,posixUt,sysUt, dents,statx]
 
 type Lg* = enum osErr, summ                     #A tiny logging system
 var dupsLog* = { osErr }
@@ -7,23 +7,22 @@ proc perr*(x: varargs[string, `$`]) =           #OS Errors like permissions
   if osErr in dupsLog: stderr.write "dups: "; stderr.write x; stderr.write ": ",
                                     osErrorMsg(osLastError()), "\n"
 
-proc getMeta(paths: (iterator():string), Deref=false, mL=1):
-       Table[int, seq[string]] =
-  result = initTable[int, seq[string]](512)
-  var st: Stat
+proc getMeta(paths: seq[string]; file: string; delim: char; recurse,minLen: int;
+             follow, xdev, Deref: bool): Table[int, seq[string]] =
+  var sz2paths = initTable[int, seq[string]](512)
   var inodes = initHashSet[tuple[dev: Dev, ino: Ino]](512)
-  for path in paths():
-    if Deref:                                   #stat|lstat based on Deref
-      if stat(path, st) != 0: perr "stat ", path
-    else:
-      if lstat(path, st) != 0: perr "lstat ", path
-    if not S_ISREG(st.st_mode):                 #Only meaningful to compare..
-      continue                                  #..S_ISREG=regular & symlinks.
-    if st.st_size < mL:                         #One easy way to exclude len0.
-      continue                                  #Other small mins also useful.
-    if inodes.containsOrIncl((st.st_dev, st.st_ino)): #Retain only 1st path..
-      continue                                        #..for any given file.
-    result.mgetOrPut(int(st.st_size), @[]).add(path)
+  let it = both(paths, fileStrings(file, delim))
+  for root in it():
+    if root.len == 0: continue                  #Skip any improper inputs
+    forPath(root,recurse,true,follow,xdev, depth,path,dfd,nmAt,ino,dt,st,dst):
+      if Deref and st.st_mode.S_ISLNK:          #Maybe stat again based on Deref
+        #Second stat on symlinks could likely be converted to one upfront stat
+        if fstatat(dfd, path, st, 0) != 0: perr "fstatat ", path
+      if S_ISREG(st.st_mode) and                #Only meaningful to compare reg
+         st.st_size >= minLen and               #One easy way to exclude len0.
+         not inodes.containsOrIncl((st.st_dev, st.st_ino)): #Keep ONLY 1stPath
+        sz2paths.mgetOrPut(int(st.st_size), @[]).add(path)
+  result = sz2paths
 
 proc justPaths(x: openArray[tuple[m: MFile, path: string]]): seq[string] =
   result.setLen(x.len)                          #extract paths from tuples
@@ -81,10 +80,9 @@ proc digest(wkit: var WorkItem, d: Digest, slice: string) =
   if d != size: wkit.m.close()
 
 {.passC: "-fopenmp", passL: "-fopenmp".}
-iterator dupSets*(paths: (iterator(): string), Deref=false, mL=1, slice="",
+iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
                   hash=wy, par=false, cmp=false): seq[string] =
   ## Yield paths to sets of duplicate files as seq[string].  See ``proc dups``.
-  let sz2paths = getMeta(paths, Deref, mL)
   var m: MFile                                  #Files/size usually < CPU cores
   var wkls: seq[WorkItem]                       #..=>WorkList for files&digests
   for sz, paths in sz2paths:
@@ -109,9 +107,10 @@ iterator dupSets*(paths: (iterator(): string), Deref=false, mL=1, slice="",
       yield hashSet
 
 when isMainModule:                        #Provide a useful CLI wrapper.
-  proc dups(file="", delim='\n', recurse=1, follow=false, Deref=false, minLen=1,
-            slice="", Hash=wy, cmp=false, par=false, log={osErr}, brief=false,
-            time="", outDlm="\t", endOut="\n", paths: seq[string]): int =
+  proc dups(file="", delim='\n', recurse=1, follow=false, xdev=false,
+            Deref=false, minLen=1, slice="", Hash=wy, cmp=false, par=false,
+            log={osErr}, brief=false, time="",outDlm="\t", endOut="\n",
+            paths: seq[string]): int =
     ## Print sets of paths with duplicate contents. Examined paths are UNION of
     ## `paths` & optional `delim`-delimited input `file` (stdin if "-"|if "" &
     ## stdin not a tty).  Eg., `find -print0|dups -d\\0`.  Exits non-0 if any
@@ -123,9 +122,8 @@ when isMainModule:                        #Provide a useful CLI wrapper.
     dupsLog = log
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
-    for s in dupSets(recEntries(both(paths, fileStrings(file, delim)),
-                                follow=follow, maxDepth=recurse),
-                     Deref, minLen, slice, Hash, par, cmp):
+    for s in dupSets(getMeta(paths, file, delim, recurse, minLen, follow, xdev,
+                             Deref), slice, Hash, par, cmp):
       inc(nSet)
       if brief and summ notin log:
         break                         #Done once we know there is any duplicate
@@ -155,6 +153,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
              "delim" : "input file delimiter (\\0->NUL)",
              "recurse": "recurse n-levels on dirs; 0:unlimited",
              "follow": "follow symlinks to dirs in recursion",
+             "xdev"  : "block cross-device recursion",
              "Deref" : "dereference symlinks",
              "minLen": "minimum file size to consider",
              "slice" : "file slice (float|%:frac; <0:tailRel)",
