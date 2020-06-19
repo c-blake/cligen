@@ -34,6 +34,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     useHdr*:      string         ## Override of const usage header template
     use*:         string         ## Override of const usage template
     useMulti*:    string         ## Override of const subcmd table template
+    render*:      proc(s: string): string ## string->string help transformer
 
   HelpOnly*    = object of CatchableError
   VersionOnly* = object of CatchableError
@@ -52,7 +53,8 @@ var clCfg* = ClCfg(
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?' },
   hTabSuppress: "CLIGEN-NOHELP",
-  helpAttr:    initTable[string,string]())
+  helpAttr:    initTable[string,string](),
+  render:      nil)   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
@@ -415,7 +417,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
              @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
-      let `setByParseId`: ptr seq[ClParse] = `setByParse`)
+      let `setByParseId`: ptr seq[ClParse] = `setByParse`
+      proc mayRend(x: string): string =
+        if `cf`.render != nil: `cf`.render(x) else: x)
     result.add(quote do:
       if `cf`.version.len > 0:
         `cbId`.incl(optionNormalize("version"), "version")
@@ -462,17 +466,21 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
          `apId`.parRend = if `hky`.len>0: `hky` else:helpCase(`parNm`,clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          if descr != `cf`.hTabSuppress:
-           `tabId`.add(argHelp(`defVal`, `apId`) & descr)
+           `tabId`.add(argHelp(`defVal`, `apId`) & mayRend(descr))
          if `apId`.parReq != 0: `tabId`[^1][2] = `apId`.val4req
          `cbId`.incl(optionNormalize(`parNm`), move(`apId`.parRend))
          `allId`.add(helpCase(`parNm`, clLongOpt)))
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
-      let indentDoc = addPrefix(`prefixId`, wrap(`prefixId`, `cmtDoc`))
+      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`),
+                                                 prefixLen=`prefixId`.len))
       proc hl(tag, val: string): string =
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          (if tag in `cf`.helpAttr: textAttrOff else: ""))
+
+
+
       let use = if `noHdrId`:
                   if `cf`.use.len > 0: `cf`.use  else: `usageId`
                 else:
@@ -792,14 +800,18 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
                    subDocs: auto): string =
   var pairs: seq[seq[string]]
   for i in 0 ..< subCmds.len:
-    pairs.add(@[subCmds[i], subDocs[i].firstParagraph])
+    if clCfg.render != nil:
+      pairs.add(@[subCmds[i], clCfg.render(subDocs[i].firstParagraph)])
+    else:
+      pairs.add(@[subCmds[i], subDocs[i].firstParagraph])
   let ifVsn = if clCfg.version.len > 0: "\nTop-level --version also available"
               else: ""
   let on = @[ clCfg.helpAttr.getOrDefault("cmd", ""),
               clCfg.helpAttr.getOrDefault("doc", "") ]
   let off = @[ (if "cmd" in clCfg.helpAttr: textAttrOff else: ""),
                (if "doc" in clCfg.helpAttr: textAttrOff else: "") ]
-  use % [ "doc", doc, "command", cmd, "ifVersion", ifVsn,
+  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc)) else: wrap(doc)
+  use % [ "doc", docUse, "command", cmd, "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs,2,attrOn=on,attrOff=off))]
 
 proc docDefault(n: NimNode): NimNode =
