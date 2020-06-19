@@ -139,7 +139,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
          lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
         d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
       dt = d.d_type
-      always      # CLIENT CODE GETS: depth, path, dfd, nmAt, ino, dt, lst, dst
+      always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
       if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt == DT_LNK)):
         if dt == DT_DIR: dst = lst                # Need not re-fstat for ident
         var canRec = false
