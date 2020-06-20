@@ -26,12 +26,12 @@ iterator paragraphs*(s: string, indent = {' ', '\t'}):
     let line = $ln                      #..empty line; `mSlices` does not
     if line.len == 0:           # Blank line => end of para; yield accumulated
       if para.len > 0:
-        yield (false, para)
+        yield (false, move para)
         para.setLen 0
       yield (true, "")          # Blanks in input => blanks in output
     elif line[0] in indent:     # Any kind of indent => pre-formatted para
       if para.len > 0:
-        yield (false, para)
+        yield (false, move para)
         para.setLen 0
       yield (true, line)
     else:                       # Non-indented, non-empty line: accumulate

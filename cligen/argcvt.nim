@@ -144,10 +144,11 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   var crbt: CritBitTree[EnumCanon[T]]
   if valNorm.len > 0:
     for e in low(T)..high(T):
-      allCanon.add(helpCase($e, clEnumVal))
-      let norm = optionNormalize(allCanon[^1])
+      let canon = helpCase($e, clEnumVal)
+      allCanon.add canon
+      let norm = optionNormalize(canon)
       allNorm.add(norm)
-      crbt[norm] = (e, move(allCanon[^1]))
+      crbt[norm] = (e, canon)
   var ks: seq[string]; var es: seq[T]
   for v in crbt.valuesWithPrefix(valNorm):
     ks.add(v.canon)
