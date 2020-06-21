@@ -132,7 +132,7 @@ when isMainModule:
 You can manually control the short option for any parameter via the `short`
 macro parameter:
 ```nim
-dispatch(fun, short = { "bar" : 'r' }))
+dispatch(fun, short = { "bar" : 'r' })
 ```
 With that (and our first `fun` example), `"bar"` gets `'r'` while `"baz"`
 gets `'b'` as short options.  To suppress some long option getting *any* short
