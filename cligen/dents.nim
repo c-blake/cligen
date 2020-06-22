@@ -79,7 +79,7 @@ when defined(linux):
     proc batch(rets: ptr clong, calls: ptr SysCall, ncall: culong, flags: clong,
                size: clong): clong {.importc, header: "linux/batch.h".}
     var SYS_statx {.header: "linux/batch.h", importc: "__NR_statx".}: cint
-    iterator pairs(dp: ptr DIR): tuple[slot: int, dent: ptr DirEnt] =
+    iterator pairs*(dp: ptr DIR): tuple[slot: int, dent: ptr DirEnt] =
       var i = 0
       dp.bpos = 0
       while dp.bpos < dp.nRd:
