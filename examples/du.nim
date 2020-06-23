@@ -85,10 +85,11 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
           if fstatat(dfd, path[nmAt..^1].cstring, lst, 0.cint) != 0:
             nErr += 1   # Best effort only; Just use old `lst` if fstatat fails
         if countLinks or not saw.containsOrIncl((lst.st_dev, lst.stx_ino)):
-          tot += (if inodes: 1'u64 else:
-                  if apparentSize: lst.stx_size else: lst.stx_blocks * 512)
+          tot += (if inodes: 1'u64 elif apparentSize: lst.stx_size else:
+                  lst.stx_blocks * 512)
     do:
-      let sub = tot - (if inodes: 1'u64 else: lst.stx_blocks * 512)
+      let sub = tot - (if inodes: 1'u64 elif apparentSize: lst.stx_size else:
+                       lst.stx_blocks * 512)
     do:
       if not summarize:
         emit(inodes, si, tot - sub, scale, scaleA, path, outEnd)
