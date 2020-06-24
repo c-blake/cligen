@@ -61,8 +61,8 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
          roots: seq[string]): int =
   ## Mostly compatible replacement for GNU ``du`` using my 1.4-2x faster file
   ## tree walk that totals ``st_blocks\*512`` with more/better short options.
-  ## Notable differences: drops weakly motivated options{ *time*, *[aDHt]*,
-  ## *max-depth*, *separate-dirs* }; *outEnd* replaces *null|-0*; patterns are
+  ## Notable differences: drops weakly motivated options {*time*, *[aDHt]*,
+  ## *max-depth*, *separate-dirs*}; *outEnd* replaces *null|-0*; patterns are
   ## all PCRE not shell and need ".\*"; *bytes* does not imply *apparent-size*
   ## and *dereference* does not imply *chase*.
   let roots    = if roots.len > 0: roots else: @[ "." ]
@@ -118,7 +118,7 @@ when isMainModule:
              "exclude"        : "exclude paths matching pattern(s)",
              "exclude-from"   : "exclude all pattern(s) in named file",
              "bytes"          : "like --block-size=1",
-             "kilo"           : "like --block-size=1[Kk] ( *DEFAULT* )",
+             "kilo"           : "like --block-size=1[Kk] (*DEFAULT*)",
              "mega"           : "like --block-size=1[Mm]",
              "giga"           : "like --block-size=1[Gg]",
              "tera"           : "like --block-size=1[Tt]",
