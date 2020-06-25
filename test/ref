@@ -235,7 +235,6 @@ Options:
 
 ==> test/FullyAutoMulti.out <==
 Infer & generate command-line interace/option/argument parser
-
 Usage:
   FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
 
@@ -453,7 +452,6 @@ Usage:
 
 ==> test/MultMultMult.out <==
 module doc
-
 Usage:
   MultMultMult {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
@@ -482,7 +480,6 @@ Options:
 ==> test/MultiMulti.out <==
 NAME
   Test sub-sub-command CLI instantiation.
-
 USAGE
   MultiMulti {SUBCMD}  [sub-command options & parameters]
 
@@ -618,7 +615,6 @@ Options:
 
 ==> test/PassValuesMulti.out <==
 Infer & generate command-line interace/option/argument parser
-
 Usage:
   PassValuesMulti {SUBCMD}  [sub-command options & parameters]
 
