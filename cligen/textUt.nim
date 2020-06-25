@@ -89,6 +89,18 @@ let ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
 
+proc isWord(w: string): bool {.inline.} =
+  # True if token ending in '.' could be a normal word.  "E.g.", "Mrs.", "U.S.",
+  # are all normal, but "US." is not (rather it's the end of a sentence).  It is
+  # possible but rare that these tokens *also* end sentences and we would want
+  # an extra space.  Handling that right needs a big dictionary, etc., though.
+  if w.len <= 1: return true      # Call a lone '.' a word; Very odd, though
+  if w.len <= 2: return true      # \<.\.$ is an initial like Johh Q. Public
+  if w[^3] == '.': return true    # \..\. is always a word like ".m." in "a.m."
+  # Other capitalized tokens are abbrevs.  This fails on A) one word sentences
+  # like "Yes." and B) on multi-lowercase abbrevs like "oz."
+  if w[0] in { 'A'..'Z' }: return true
+
 proc wrap*(s: string; maxWidth=ttyWidth, power=3, prefixLen=0): string =
   ## Multi-paragraph with indent==>pre-formatted optimal line wrapping using
   ## the badness metric *sum excess space^power*.
@@ -100,8 +112,8 @@ proc wrap*(s: string; maxWidth=ttyWidth, power=3, prefixLen=0): string =
     else:
       var words = para.strip.splitr
       for i in 0 ..< words.len:
-        if (words[i].len > 1 and words[i][^2] notin {'A'..'Z'} and
-            words[i][^1] == '.') or words[i][^1] == '?':
+        let last = words[i][^1]
+        if last in { '?', '!' } or (last == '.' and not words[i].isWord):
           words[i].add ' '
       var w = newSeq[int](words.len)
       for i, word in words:
