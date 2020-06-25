@@ -59,7 +59,7 @@ iterator optimalWrap(w: openArray[int], words: openArray[string], m=80,
   # Solve by a dynamic programming solution to the recursion (PRINT-NEATLY):
   #   c[j] = if j==0: 0 else:  min (c[i]+C[i,j])
   #                          i=0..<j     |-cost to put words from i..<j in line
-  # Handle double space after '?:.' by adding a space post-splitr, not counting
+  # Handle double space after [?.] by adding a space post-splitr, not counting
   # it right at line-overflow time, and stripping stray space post-join.
   let n = w.len
   var c = newSeq[int](n)    # c[i]=min cost of line in which arr[i] is 1st word
