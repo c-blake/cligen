@@ -1,7 +1,7 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith
 from terminal import terminalWidth
 from unicode  import nil
-import critbits, re, cligen/mslice, math # ^
+import critbits, re, math, ./mslice # math.^
 
 proc printedLen*(a: string): int =
   ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
