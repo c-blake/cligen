@@ -3,9 +3,11 @@ RELEASE NOTES
 
 Version: 1.1.0
 ---------------
-  Add fast file tree walk iteration `cligen/dents.nim`.  Also add
-  `examples/chom.nim` to show end-to-end usage as well as to exhibit some fancy
-  "octal integer" argparse usage.
+  Add fast file tree walk iteration `cligen/dents.forPath`.  On Linux (esp.
+  true Intel), sys\_batch & -d:batch afford even more speed-ups.  Add `chom.nim`
+  example to also exhibit some fancy "octal integer" argparse usage.  Add `rr`,
+  `dirt`, and `du` examples to show non-trivial cases needing a recursion-aware
+  recursion abstraction.
 
   Replace `NimVersion vs ""` tests with `(NimMajor,NimMinor,NimPatch)` tests.
 
@@ -28,13 +30,6 @@ Version: 1.1.0
 
   The top-level help of a `dispatchMulti` command is now rendered and wrapped
   just like the `$doc` for each subcommand.
-
-  Speed up `exampls/dups.nim` by 1.02 to 1.2x-ish by using `dents` and exhibit
-  client code use of the new `forPath` parameter `did`.  (Sharing a set for
-  directory identity & client code file identity indeed worsens fragility in a
-  situation where symlinks are followed and inodes are being re-used from some
-  fast & furious directory/file creation/destruction churn, but said situation
-  was always fraught with peril for any loop avoidant recursive file walker.)
 
 Version: 1.0.0
 ---------------
