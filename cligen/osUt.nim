@@ -12,8 +12,9 @@
 import os, terminal, strutils, dynlib, times, stats, math
 type csize = uint
 
-proc perror*(x: cstring, len: int) =
+proc perror*(x: cstring, len: int, err=stderr) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
+  if err == nil: return
   proc strlen(a: cstring): csize {.importc: "strlen", header: "<string.h>" .}
   let errno  = int(osLastError())
 # var sys_errlist {.importc: "sys_errlist", header: "<stdio.h>".}: cstringArray
@@ -23,10 +24,10 @@ proc perror*(x: cstring, len: int) =
   proc strerror(n: cint): cstring {.importc: "strerror", header: "<string.h>".}
   let errstr = strerror(cint(errno))  #XXX docs claim strerror is not MT-safe,
   let errlen = strlen(errstr)         #    but it sure seems to be on Linux.
-  discard stderr.writeBuffer(pointer(x), len)
-  stderr.write ": "
-  discard stderr.writeBuffer(errstr, errlen)
-  stderr.write "\n"
+  discard err.writeBuffer(pointer(x), len)
+  err.write ": "
+  discard err.writeBuffer(errstr, errlen)
+  err.write "\n"
 
 proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
