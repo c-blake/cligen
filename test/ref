@@ -434,7 +434,7 @@ Usage:
                                         auto-wrapped by alignTable into a
                                         multi-line format unless you have eagle
                                         eyes, a gigantic monitor, or maybe a
-                                        little bit of both. :-)
+                                        little bit of both.  :-)
           -b=, --beta=   float   2.0    This is more modest, but might still
                                         wrap around once or twice or so.
           -v, --verb     bool    false  on=chatty, off=quiet.  'Nuff said.

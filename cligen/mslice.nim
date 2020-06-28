@@ -197,25 +197,33 @@ proc msplit*(s: string, seps=wspace, n=0, repeat=true): seq[MSlice] {.inline.}=
   discard msplit(s, result, seps, n, repeat)
 
 template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
-                   sep: untyped, nextSep: untyped, isSep: untyped) {.dirty.} =
+                   sep: untyped, nextSep: untyped, isSep: untyped,
+                   sp: ptr seq[string]) {.dirty.} =
   fs.setLen(if n < 1: 16 else: n)
+  if sp != nil: sp[].setLen fs.len
   var b0  = slc.mem
   var b   = b0
   var eob = b +! slc.len
   while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], sep):
     b = b +! 1
-    if b == eob: fs.setLen(0); return
+    if b == eob:
+      fs.setLen(0)
+      if sp != nil: sp[].setLen(0)
+      return
   var e = nextSep(b, sep, (eob -! b).csize)
   while e != nil:
     if n < 1:                               #Unbounded splitr
       if result == fs.len - 1:              #Expand capacity
         fs.setLen(if fs.len < 512: 2*fs.len else: fs.len + 512)
+        if sp != nil: sp[].setLen fs.len
     elif result == n - 1:                   #Need 1 more slot for final field
       break
     fs[result] = slc[(b -! b0) ..< (e -! b0)]
     result += 1
+    let e0 = e
     while repeat and eob -! e > 0 and isSep((cast[cstring](e))[1], sep):
       e = e +! 1
+    if sp != nil: sp[][result - 1] = slc[(e0 -! b0) .. (e -! b0)]
     b = e +! 1
     if eob -! b <= 0:
       b = eob
@@ -223,20 +231,24 @@ template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
     e = nextSep(b, sep, (eob -! b).csize)
   if not repeat or eob -! b > 0:
     fs[result] = slc[(b -! b0) ..< (eob -! b0)]
+    if sp != nil: sp[][result] = ""
     result += 1
   fs.setLen(result)
+  if sp != nil: sp[].setLen(result)
 
-proc splitr*(s: string, fs: var seq[string], sep=' ', n=0, repeat=false):int=
+proc splitr*(s: string, fs: var seq[string], sep=' ', n=0, repeat=false,
+             sp: ptr seq[string] = nil): int =
   ##split w/reused ``fs[]`` & bounded cols ``n``, maybe-repeatable sep.
-  defSplitr(s, fs, n, repeat, sep, cmemchr, charEq)
+  defSplitr(s, fs, n, repeat, sep, cmemchr, charEq, sp)
 
 proc splitr*(s: string, sep: char, n=0, repeat=false): seq[string] {.inline.} =
   ##Like ``splitr(string, var seq[string], int, char)``, but return the ``seq``.
   discard splitr(s, result, sep, n, repeat)
 
-proc splitr*(s: string, fs: var seq[string], seps=wspace, n=0, repeat=true):int=
+proc splitr*(s: string, fs: var seq[string], seps=wspace, n=0, repeat=true,
+             sp: ptr seq[string] = nil): int =
   ##split w/reused fs[], bounded cols char-of-set sep which can maybe repeat.
-  defSplitr(s, fs, n, repeat, seps, mempbrk, charIn)
+  defSplitr(s, fs, n, repeat, seps, mempbrk, charIn, sp)
 
 proc splitr*(s: string, seps=wspace, n=0, repeat=true): seq[string] {.inline.}=
   ##Like ``splitr(string, var seq[string], int, set[char])``,but return ``seq``.

@@ -35,7 +35,7 @@ iterator paragraphs*(s: string, indent = {' ', '\t'}):
         para.setLen 0
       yield (true, line)
     else:                       # Non-indented, non-empty line: accumulate
-      para.add ' '; para.add line
+      para.add '\n'; para.add line
   if para.len > 0:
     yield (false, para)
 
@@ -89,28 +89,36 @@ let ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
 
-proc isAbbrevExpectingCap(w: string): bool {.inline.} =
-  # True if token ending in '.' is an abbreviation expecting a capitalized word
-  # like "Dr." or "Mrs.".  The heuristic here is that a token starts with a
-  # capital and has a lowercase letter just before '.'.  This fails on one word
-  # sentences like "Yes." which are hopefully rare.
-  w.len > 2 and w[0] in {'A'..'Z'} and w[^2] in {'a'..'z'}
+proc extraSpace(w0, sep, w1: string): bool {.inline.} =
+  # True if a non-final token ending in '.' should get extra space.  This always
+  # returns true if there is >1 space in ``sep``.  At the end of a line when the
+  # next line starts with a valid sentence opener there is still an ambiguity.
+  # So, authors can add an extra space to disambiguate but EOL whitespace can be
+  # unpopular (as can double space sentence separation, but I find it nice in
+  # monospace fonts).  So, additionally we use a heuristic to suppress the space
+  # if the line ends with "[A-Z].*[a-z]\." like "Dr." which often expects the
+  # next word capitalized but not end-of-sentence.  This heuristic fails if it
+  # really is EOSentence at EOL like "Yes." or "See the Dr.".  These failures
+  # are hopefully rare enough that space at the EOL is not onerous or else the
+  # author wanted to single-space all their sentences anyway which always works.
+  const sentStart = { 'A'..'Z', '\'', '"', '`', '(', '[', '{', '0'..'9' }
+  (sep.len > 1) or ('\n' in sep and w1[0] in sentStart and
+    not (w0.len > 2 and w0[0] in {'A'..'Z'} and w0[^2] in {'a'..'z'}))
 
 proc wrap*(s: string; maxWidth=ttyWidth, power=3, prefixLen=0): string =
   ## Multi-paragraph with indent==>pre-formatted optimal line wrapping using
-  ## the badness metric *sum excess space^power*.
-  const sentStart = { 'A'..'Z', '\'', '"', '`', '(', '[', '{', '0'..'9' }
-  #XXX Add a slack param & pick least badness over maxWidth-slack .. maxWidth.
+  ## the badness metric *sum excessSpace^power*.
   let maxWidth = maxWidth  -  2 * prefixLen
   for tup in s.paragraphs:
     let (pre, para) = tup
     if pre:
       result.add para; result.add '\n'
     else:
-      var words = para.strip.splitr #XXX Create variant saving splitting string
-      for i in 0 ..< words.len:     #..so below need only guess @"\.\n" in input
+      var words, sep: seq[string]
+      discard para.strip.splitr(words, wspace, sp=sep.addr)
+      for i in 0 ..< words.len:
         if words[i][^1] in {'?','!'} or (words[i][^1]=='.' and i+1<words.len and
-           words[i+1][0] in sentStart and not words[i].isAbbrevExpectingCap):
+              extraSpace(words[i], sep[i], words[i+1])):
           words[i].add ' '
       var w = newSeq[int](words.len)
       for i, word in words:
