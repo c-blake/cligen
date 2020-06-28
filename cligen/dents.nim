@@ -38,7 +38,8 @@ when defined(linux):
       d_name:       DirName ## null-terminated filename
 
     DIR = object
-      fd, nRd, bpos, pad: cint
+      fd, nRd, bpos: cint
+      eeof: bool             # early EOF (via short not zero read)
       buf: array[4066, char] # 4080 total; maybe 16B allocator overhead
 
   proc syscall(nr: cint, a1: cint, a2: pointer, a3: csize_t): cint {.
@@ -47,11 +48,12 @@ when defined(linux):
   proc getdents(fd: cint, buf: pointer, len: int): cint {.inline.} =
     syscall(SYS_getdents64, fd, buf, csize_t(len))
 
-  proc fdopendir(fd: cint): ptr DIR {.inline.} =
+  proc fdopendir(fd: cint, eof0=false): ptr DIR {.inline.} =
     result = DIR.createU
     result.fd = fd
     result.nRd = 0
     result.bpos = 0
+    result.eeof = not eof0
 
   proc closedir(dp: ptr DIR): int {.inline.} =
     result = close(dp.fd)
@@ -59,9 +61,8 @@ when defined(linux):
 
   proc readdir(dp: ptr DIR): ptr DirEnt {.inline.} =
     if dp.bpos == dp.nRd:             # Used all that had been read => Read more
-      when defined(dentsLocalFS):     # Sadly, this fails on sshfs/NFS/etc.
-        if dp.nRd > 0 and dp.nRd + 256 + DirEnt.sizeof < dp.buf.sizeof:
-          return nil                  # short read => done
+      if dp.eeof and dp.nRd > 0 and dp.nRd + 256+DirEnt.sizeof < dp.buf.sizeof:
+        return nil                  # short read => done     # Sadly, fails on sshfs/NFS/etc.
       dp.nRd = getdents(dp.fd, dp.buf[0].addr, dp.buf.sizeof)
       if dp.nRd == -1: stderr.write "getdents\n"; return nil # NFS/etc. gotcha
       if dp.nRd == 0: return nil      # done
@@ -97,27 +98,27 @@ var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
 when not declared(O_CLOEXEC):
   const O_CLOEXEC* = cint(524288)
 
-template recFailDefault*(context: string) =
+template recFailDefault*(context: string, err=stderr) =
   case errno
   of ENOTDIR, EXDEV: discard        # Expected if stats==false/user req no xdev
   of EMFILE, ENFILE: discard        # Too many open files; bottom out recursion
   of 0: discard                     # Success
   else:
-    let m = context & ": \"" & path & "\""; perror cstring(m), m.len
+    let m = context & ": \"" & path & "\""; perror cstring(m), m.len, err
     errno = 0                       # reset after a warning has posted
 
-template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
-                  always, preRec, postRec, recFail: untyped) =
-  ## Client code sees ``depth``, ``path``, ``dfd``, ``nmAt``, ``ino``, ``dt``,
-  ## maybe ``lst`` in the ``always`` branch.  ``depth`` is the recursion depth,
-  ## ``path`` the full path name (rooted at ``root`` which may be CWD/something
-  ## instad of ``"/"``, ``path[nmAt..^1]`` is the base name of the dirent while
-  ## ``dfd`` is an open file descriptor on the directory containing it (for e.g.
-  ## ``fchownat`` like APIs.  ``ino``, ``dt``, ``lst``, ``dst`` are filesystem
-  ## metadata for the path name and most recent directory while ``did`` is a
-  ## ``HashSet`` of ``(st.st_dev,stx_ino)`` history maintained to block infinite
-  ## symlink loops in ``follow`` mode.
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
+             err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
+             always, preRec, postRec, recFail: untyped) =
+  ## In the primary ``always`` code body, client code sees recursion parameter
+  ## ``depth``, file parameters ``path``, ``nmAt``, ``ino``, ``dt``, ``lst``,
+  ## and recursed directory parameters ``dfd``, ``dst``, ``did``.  ``path`` is
+  ## the full path (rooted at ``root``) & ``path[nmAt..^1]`` is just the dirent.
+  ## ``ino``, ``dt``, ``lst`` are metadata; the last two may be unreliable- both
+  ## ``dt==DT_UNKNOWN`` or ``lst.stx_nlink==0`` may hold.  ``dfd``, ``dst``,
+  ## ``did`` are an open file descriptor on the dir (e.g. for ``fchownat``-like
+  ## APIs), its ``Statx`` metadata (``if xdev or follow``), and a ``HashSet`` of
+  ## ``(st.st_dev,stx_ino)`` history to block ``follow`` mode symlink loops.
   var path = newStringOfCap(16384)
   var ino: uint64
   var dt: int8
@@ -135,7 +136,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
         return fd                       # Impossible but for NFS gotchas
       dst.stx_nlink = 0                 # Mark Stat invalid
     if follow and did.containsOrIncl((dst.st_dev, dst.stx_ino)):
-      stderr.write "symlink loop at: \"", path, "\"\n"
+      err.write "symlink loop at: \"", path, "\"\n"
       return fd
     if xdev and dst.st_dev != dev:
       errno = EXDEV
@@ -179,7 +180,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
               lst = sts[i]
               d.d_type = stat2dtype(lst.stx_mode)
             dt = d.d_type
-            always    # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+            always    # CLIENT CODE GETS: depth,path,nmAt,ino,dt,lst,dfd,dst,did
             if mayRec and (dt in {DT_UNKNOWN,DT_DIR} or(follow and dt==DT_LNK)):
               if dt == DT_DIR: dst = lst          # Need not re-fstat for ident
               var canRec = false
@@ -187,7 +188,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
               if canRec:
                 preRec  # ANY PRE-RECURSIVE SETUP
                 let (nmAt0, len0) = (nmAt, path.len)
-                let dirp = fdopendir(dfd)
+                let dirp = fdopendir(dfd, eof0)
                 recDent(dfd, dirp, nmAt + m, depth + 1)
                 path.setLen len0
                 let nmAt {.used.} = nmAt0
@@ -211,7 +212,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
              lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
             d.d_type = stat2dtype(lst.stx_mode)     # Get d_type from Statx
           dt = d.d_type
-          always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+          always      # CLIENT CODE GETS: depth,path,nmAt,ino,dt,lst,dfd,dst,did
           if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt==DT_LNK)):
             if dt == DT_DIR: dst = lst              #Need not re-fstat for ident
             var canRec = false
@@ -219,7 +220,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
             if canRec:
               preRec  # ANY PRE-RECURSIVE SETUP
               let (nmAt0, len0) = (nmAt, path.len)
-              let dirp = fdopendir(dfd)
+              let dirp = fdopendir(dfd, eof0)
               recDent(dfd, dirp, nmAt + m, depth + 1)
               path.setLen len0
               let nmAt {.used.} = nmAt0
@@ -242,7 +243,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
            lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
           d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
         dt = d.d_type
-        always      # CLIENT CODE GETS: depth,path,dfd,nmAt,ino,dt,lst,dst,did
+        always      # CLIENT CODE GETS: depth,path,nmAt,ino,dt,lst,dfd,dst,did
         if mayRec and (dt in {DT_UNKNOWN, DT_DIR} or (follow and dt == DT_LNK)):
           if dt == DT_DIR: dst = lst                #Need not re-fstat for ident
           var canRec = false
@@ -250,7 +251,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
           if canRec:
             preRec  # ANY PRE-RECURSIVE SETUP
             let (nmAt0, len0) = (nmAt, path.len)
-            let dirp = fdopendir(dfd)
+            let dirp = fdopendir(dfd, eof0)
             recDent(dfd, dirp, nmAt + m, depth + 1)
             path.setLen len0
             let nmAt {.used.} = nmAt0
@@ -281,7 +282,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
     if canRec:
       preRec  # ANY PRE-RECURSIVE SETUP
       let (nmAt0, len0) = (nmAt, path.len)
-      let dirp = fdopendir(dfd)
+      let dirp = fdopendir(dfd, eof0)
       recDent(dfd, dirp, m)
       path.setLen len0
       let nmAt {.used.} = nmAt0
