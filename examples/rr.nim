@@ -1,11 +1,12 @@
 import strformat, cligen, posix, cligen/[dents, posixUt, statx]
 
-proc rr*(roots: seq[string], xdev=false): int =
+proc rr*(roots: seq[string], xdev=false, eof0=false): int =
   ## Like rm -rf but a bit faster.  Does nothing if no ``roots`` specified.
   if roots.len == 0: return
   var dfds: seq[cint]
   for root in roots:
-    forPath(root,0,false,false,xdev, depth,path,dfd,nmAt,ino,dt,lst,dst,did):
+    forPath(root, 0, false, false, xdev, eof0, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       if dt != DT_DIR:
         if unlinkat(dfd, path[nmAt..^1], 0) != 0:
           stderr.log &"rr({path}): {strerror(errno)}\n"

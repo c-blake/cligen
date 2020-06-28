@@ -294,53 +294,57 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
   else:
     recFail   # CLIENT CODE SAYS HOW TO REPORT ERRORS
 
-template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
-                  always, preRec, postRec: untyped) =
-  forPath(root, maxDepth, lstats, follow, xdev,
-          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
+             err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
+             always, preRec, postRec: untyped) =
+  ## 3-clause reduction of ``forPath``
+  forPath(root, maxDepth, lstats, follow, xdev, eof0, err,
+          depth, path, nmAt, ino, dt, lst, dfd, dst, did):
     always
   do: preRec
   do: postRec
-  do: recFailDefault("")
+  do: recFailDefault("", err)
 
-template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
-                  always, preRec: untyped) =
-  forPath(root, maxDepth, lstats, follow, xdev,
-          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
+             err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
+             always, preRec: untyped) =
+  ## 2-clause reduction of ``forPath``
+  forPath(root, maxDepth, lstats, follow, xdev, eof0, err,
+          depth, path, nmAt, ino, dt, lst, dfd, dst, did):
     always
   do: preRec
   do: discard
-  do: recFailDefault("")
+  do: recFailDefault("", err)
 
-template forPath*(root: string; maxDepth: int; lstats, follow, xdev: bool;
-                  depth, path, dfd, nmAt, ino, dt, lst, dst, did: untyped;
-                  always: untyped) =
-  forPath(root, maxDepth, lstats, follow, xdev,
-          depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
+             err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
+             always: untyped) =
+  ## 1-clause reduction of ``forPath``
+  forPath(root, maxDepth, lstats, follow, xdev, eof0, err,
+          depth, path, nmAt, ino, dt, lst, dfd, dst, did):
     always
   do: discard
   do: discard
-  do: recFailDefault("")
+  do: recFailDefault("", err)
 
-proc find*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false,
-           zero=false) =
+proc find*(roots: seq[string], recurse=0, stats=false, chase=false,
+           xdev=false, eof0=false, zero=false) =
   ## 2.75-4.5X faster than GNU "find /usr|.."; 1.7x faster than FreeBSD find
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
-    forPath(root, recurse, stats, chase, xdev,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, recurse, stats, chase, xdev, eof0, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       path.add term; stdout.urite path; path.setLen path.len-1 #faster path,term
 
-proc dstats*(roots: seq[string], recurse=0, stats=false,chase=false,xdev=false)=
+proc dstats*(roots: seq[string], recurse=0, stats=false, chase=false,
+             xdev=false, eof0=false) =
   ## Print file depth statistics
   var histo = newSeq[int](128)
   var nF = 0                                        # number of files/dents
   var nD = 0                                        # number of dirs/recursions
   for root in (if roots.len > 0: roots else: @[ "." ]):
-    forPath(root, recurse, stats, chase, xdev,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, recurse, stats, chase, xdev, eof0, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       histo[min(depth, histo.len - 1)].inc; nF.inc  # Deepest bin catches deeper
     do: discard                                     # No pre-recurse
     do: nD.inc                                      # Count successful recurs
@@ -364,7 +368,8 @@ proc showNames*(label: string, dir: seq[string], wrote: var bool) {.inline.} =
   for e in dir: stdout.urite e, "\n"
   wrote = true
 
-proc ls1AU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
+proc ls1AU*(roots: seq[string], recurse=1, stats=false, chase=false,
+            xdev=false, eof0=false) =
   ## -r0 is 1.7-2.25x faster than GNU "ls -1AUR --color=none /usr >/dev/null".
   var top: seq[string]
   var wrote = false
@@ -373,8 +378,8 @@ proc ls1AU*(roots: seq[string], recurse=1, stats=false,chase=false,xdev=false) =
     var labs: seq[string]
     dirs.add @[]
     labs.add root
-    forPath(root, recurse, stats, chase, xdev,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, recurse, stats, chase, xdev, eof0, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       dirs[^1].add path[nmAt..^1]             # Always add name
     do:
       dirs.add @[]                            # Pre-recurse: add empty seq
@@ -409,7 +414,7 @@ proc showLong*(label: string, dir: seq[DEnt], wrote: var bool) {.inline.} =
   for e in dir: stdout.urite e.lst.stx_blocks shr 1, " ", e.nm, "\n"
   wrote = true
 
-proc lss1AU*(roots: seq[string], recurse=1, chase=false, xdev=false) =
+proc lss1AU*(roots: seq[string], recurse=1, chase=false, xdev=false,eof0=false)=
   ## -r0 is 1.45-2.0x faster than "ls -s1AUR --color=none /usr >/dev/null".
   var top: seq[DEnt]
   var wrote = false
@@ -418,8 +423,8 @@ proc lss1AU*(roots: seq[string], recurse=1, chase=false, xdev=false) =
     var labs: seq[string]
     dirs.add @[]
     labs.add root
-    forPath(root, recurse, true, chase, xdev,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, recurse, true, chase, xdev, eof0, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       dirs[^1].add initDEnt(path, nmAt, lst)        # Always add name
     do:
       dirs.add @[]                                # Pre-recurse: add empty seq

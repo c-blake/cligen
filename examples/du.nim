@@ -66,7 +66,7 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
   ## all PCRE not shell and need ".\*"; *bytes* does not imply *apparent-size*
   ## and *dereference* does not imply *chase*.
   let roots    = if roots.len > 0: roots else: @[ "." ]
-  let err      = if quiet: nil else: stderr #XXX `forPath` should take & use err
+  let err      = if quiet: nil else: stderr
   var nErr     = 0
   var grandTot = 0'u64
   let scale    = getScale(bytes, kilo, mega, giga, tera, peta, si,
@@ -78,8 +78,8 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
   for root in it():
     if root.len == 0: continue                  # skip any improper inputs
     var tot = 0'u64
-    forPath(root, 0, true, chase, oneFileSystem,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, 0, true, chase, oneFileSystem, false, err,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       if not path.excluded(excls):
         if dereference and dt == DT_LNK:
           if fstatat(dfd, path[nmAt..^1].cstring, lst, 0.cint) != 0:

@@ -39,8 +39,8 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
   let err   = if quiet: nil else: stderr
   var nCall = 0
   for root in paths:
-    forPath(root, recurse, true, chase, xdev,
-            depth, path, dfd, nmAt, ino, dt, lst, dst, did):
+    forPath(root, recurse, true, chase, xdev, false, stderr,
+            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
       if dt == DT_LNK and stat(path, lst) != 0:      # want st not lst data here
         err.log &"stat({path}): {strerror(errno)}\n" # ..(unless we do `lchown`)
       else:

@@ -13,8 +13,8 @@ proc getMeta(paths: seq[string]; file: string; delim: char; recurse,minLen: int;
   let it = both(paths, fileStrings(file, delim))
   for root in it():
     if root.len == 0: continue                  #Skip any improper inputs
-    forPath(root, recurse, true, follow, xdev,
-            depth, path, dfd, nmAt, ino, dt, st, dst, did):
+    forPath(root, recurse, true, follow, xdev, false, stderr,
+            depth, path, nmAt, ino, dt, st, dfd, dst, did):
       if Deref and st.st_mode.S_ISLNK:          #Maybe stat again based on Deref
         #Second stat on symlinks could likely be converted to one upfront stat
         if fstatat(dfd, path, st, 0) != 0: perr "fstatat ", path
