@@ -89,31 +89,28 @@ let ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
 
-proc isWord(w: string): bool {.inline.} =
-  # True if token ending in '.' could be a normal word.  "E.g.", "Mrs.", "U.S.",
-  # are all normal, but "US." is not (rather it's the end of a sentence).  It is
-  # possible but rare that these tokens *also* end sentences and we would want
-  # an extra space.  Handling that right needs a big dictionary, etc., though.
-  if w.len <= 1: return true      # Call a lone '.' a word; Very odd, though
-  if w.len <= 2: return true      # \<.\.$ is an initial like Johh Q. Public
-  if w[^3] == '.': return true    # \..\. is always a word like ".m." in "a.m."
-  # Other capitalized tokens are abbrevs.  This fails on A) one word sentences
-  # like "Yes." and B) on multi-lowercase abbrevs like "oz."
-  if w[0] in { 'A'..'Z' }: return true
+proc isAbbrevExpectingCap(w: string): bool {.inline.} =
+  # True if token ending in '.' is an abbreviation expecting a capitalized word
+  # like "Dr." or "Mrs.".  The heuristic here is that a token starts with a
+  # capital and has a lowercase letter just before '.'.  This fails on one word
+  # sentences like "Yes." which are hopefully rare.
+  w.len > 2 and w[0] in {'A'..'Z'} and w[^2] in {'a'..'z'}
 
 proc wrap*(s: string; maxWidth=ttyWidth, power=3, prefixLen=0): string =
   ## Multi-paragraph with indent==>pre-formatted optimal line wrapping using
   ## the badness metric *sum excess space^power*.
+  const sentStart = { 'A'..'Z', '\'', '"', '`', '(', '[', '{', '0'..'9' }
+  #XXX Add a slack param & pick least badness over maxWidth-slack .. maxWidth.
   let maxWidth = maxWidth  -  2 * prefixLen
   for tup in s.paragraphs:
     let (pre, para) = tup
     if pre:
       result.add para; result.add '\n'
     else:
-      var words = para.strip.splitr
-      for i in 0 ..< words.len:
-        let last = words[i][^1]
-        if last in { '?', '!' } or (last == '.' and not words[i].isWord):
+      var words = para.strip.splitr #XXX Create variant saving splitting string
+      for i in 0 ..< words.len:     #..so below need only guess @"\.\n" in input
+        if words[i][^1] in {'?','!'} or (words[i][^1]=='.' and i+1<words.len and
+           words[i+1][0] in sentStart and not words[i].isAbbrevExpectingCap):
           words[i].add ' '
       var w = newSeq[int](words.len)
       for i, word in words:
