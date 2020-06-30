@@ -294,6 +294,22 @@ iterator items*(a: MSlice): char {.inline.} =
   for i in 0 ..< a.len:
     yield a[i]
 
+proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
+  ## Searches for *NOT* `chars` in `s` inside inclusive range ``start..last``.
+  ## If `last` is unspecified, it defaults to `s.high` (the last element).
+  ##
+  ## If `s` contains none of the characters in `chars`, -1 is returned.
+  ## Otherwise the index returned is relative to ``s[0]``, not ``start``.
+  ## Use `s[start..last].find` for a ``start``-origin index.
+  ##
+  ## See also:
+  ## * `rfind proc<#rfind,string,set[char],Natural,int>`_
+  ## * `multiReplace proc<#multiReplace,string,varargs[]>`_
+  let last = if last == 0: s.high else: last
+  for i in int(start)..last:
+    if s[i] notin chars: return i
+  return -1
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
