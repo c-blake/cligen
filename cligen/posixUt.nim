@@ -47,7 +47,7 @@ impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
 impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
 impConst(clong, "sys/stat.h", UTIME_NOW)  ## tv_nsec value for *utimens* => now
 impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* => omit
-when defined(linux):
+when defined(linux) and not defined(tcc):
   impCint("fcntl.h", AT_NO_AUTOMOUNT)   ## Suppress terminal automount traversal
   impCint("fcntl.h", AT_EMPTY_PATH)     ## Allow empty relative pathname
 
