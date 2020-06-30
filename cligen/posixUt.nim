@@ -47,9 +47,9 @@ impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
 impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
 impConst(clong, "sys/stat.h", UTIME_NOW)  ## tv_nsec value for *utimens* => now
 impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* => omit
-when defined(linux) and not defined(tcc):
-  impCint("fcntl.h", AT_NO_AUTOMOUNT)   ## Suppress terminal automount traversal
-  impCint("fcntl.h", AT_EMPTY_PATH)     ## Allow empty relative pathname
+when defined(linux):
+  const AT_NO_AUTOMOUNT* = 0x800        ## Suppress terminal automount traversal
+  const AT_EMPTY_PATH*   = 0x1000       ## Allow empty relative pathname
 
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
