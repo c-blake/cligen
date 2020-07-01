@@ -97,10 +97,10 @@ else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
 
 var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
 when not declared(O_CLOEXEC): (const O_CLOEXEC* = cint(524288))
-when not declared(EXDEV)    : (const EXDEV*     = cint(18))
-when not declared(ENOTDIR)  : (const ENOTDIR*   = cint(20))
-when not declared(ENFILE)   : (const ENFILE*    = cint(23))
-when not declared(EMFILE)   : (const EMFILE*    = cint(24))
+const EXDEV*   = cint(18)
+const ENOTDIR* = cint(20)
+const ENFILE*  = cint(23)
+const EMFILE*  = cint(24)
 
 template recFailDefault*(context: string, err=stderr) =
   case errno
