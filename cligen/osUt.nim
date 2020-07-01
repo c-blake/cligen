@@ -159,9 +159,11 @@ proc writeNumberToFile*(path: string, num: int) =
   except:
     stderr.write "cannot open \"", path, "\" to write ", $num, '\n'
 
-var vIOFBF {.importc: "_IOFBF", nodecl.}: cint
-var vIONBF {.importc: "_IOFBF", nodecl.}: cint
+var vIOFBF {.importc: "_IOFBF", header: "stdio.h", nodecl.}: cint
+var vIOLBF {.importc: "_IOLBF", header: "stdio.h", nodecl.}: cint
+var vIONBF {.importc: "_IOFBF", header: "stdio.h", nodecl.}: cint
 let IOFBF* = vIOFBF
+let IOLBF* = vIOLBF
 let IONBF* = vIONBF
 proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize_t): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
