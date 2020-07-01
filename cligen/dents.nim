@@ -94,6 +94,7 @@ else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
   # cimport of these sometimes fails on poorly tested non-Linux, but the numbers
   # are age-old constants.  Maybe `when compiles()` would be best?
   const EXDEV = 18; const ENOTDIR = 20; const ENFILE = 23; const EMFILE = 24
+  proc fdopendir(fd: cint, eof0: bool): ptr DIR {.inline.} = fdopendir(fd)
 var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
 when not declared(O_CLOEXEC):
   const O_CLOEXEC* = cint(524288)

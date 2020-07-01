@@ -132,6 +132,8 @@ when haveStatx:
               flags=(AT_EMPTY_PATH or statxFlags), mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``fstat``.
     statx(fd, "", flags, mask, stx.addr)
+else:
+  var statxMask* = cint(0) # Just a dummy to compile when not haveStatx
 
 #A code porting/compatibility layer so client code can just replace "Stat" with
 #"Statx", use all the same query call names as overloads, and access all .st_
@@ -235,10 +237,10 @@ proc statx*(dirfd: cint, path: cstring, flags: cint, stx: var Statx,
     fstatat(dirfd, path, stx, flags)
 
 proc statxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
-  statx(dirfd, path, stx, flags)
+  statx(dirfd, path, flags, stx)
 
 proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
-  statx(dirfd, path, stx, flags or AT_SYMLINK_NOFOLLOW)
+  statx(dirfd, path, flags or AT_SYMLINK_NOFOLLOW, stx)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
   proc name*(stx: Statx): int64 {.inline.} =
