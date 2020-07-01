@@ -21,7 +21,7 @@
 import os, sets, posix, cligen/[osUt, posixUt, statx]
 export perror, st_dev, Dev
 
-type csize_t = culong             # To compile with older Nim's
+type csize_t = uint #For older Nim
 type DirName = array[256, cchar]  # Some helpers for names in dirents
 proc strlen(s: cstring): csize_t {.importc: "strlen", header: "<string.h>".}
 proc strlen(a: DirName): csize_t {.inline.} = a[0].unsafeAddr.cstring.strlen
@@ -93,11 +93,14 @@ else:                   #XXX stdlib should add both `fdopendir` & `O_DIRECTORY`
   proc fdopendir(fd: cint): ptr DIR {.importc, header: "<dirent.h>".}
   # cimport of these sometimes fails on poorly tested non-Linux, but the numbers
   # are age-old constants.  Maybe `when compiles()` would be best?
-  const EXDEV = 18; const ENOTDIR = 20; const ENFILE = 23; const EMFILE = 24
   proc fdopendir(fd: cint, eof0: bool): ptr DIR {.inline.} = fdopendir(fd)
+
 var O_DIRECTORY {.header: "fcntl.h", importc: "O_DIRECTORY".}: cint
-when not declared(O_CLOEXEC):
-  const O_CLOEXEC* = cint(524288)
+when not declared(O_CLOEXEC): (const O_CLOEXEC* = cint(524288))
+when not declared(EXDEV)    : (const EXDEV*     = cint(18))
+when not declared(ENOTDIR)  : (const ENOTDIR*   = cint(20))
+when not declared(ENFILE)   : (const ENFILE*    = cint(23))
+when not declared(EMFILE)   : (const EMFILE*    = cint(24))
 
 template recFailDefault*(context: string, err=stderr) =
   case errno

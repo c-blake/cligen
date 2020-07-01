@@ -165,5 +165,5 @@ var vIONBF {.importc: "_IOFBF", header: "stdio.h", nodecl.}: cint
 let IOFBF* = vIOFBF
 let IOLBF* = vIOLBF
 let IONBF* = vIONBF
-proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize_t): cint {.
+proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
