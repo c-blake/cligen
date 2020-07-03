@@ -54,6 +54,13 @@ proc `$`*(ms: MSlice): string {.inline.} =
   ## Return a Nim string built from an MSlice.
   ms.toString(result)
 
+proc add*(s: var string, ms: MSlice) {.inline.} =
+  ## Append an `MSlice` to a Nim string
+  if ms.len < 1: return
+  let len0 = s.len
+  s.setLen len0 + ms.len
+  copyMem s[len0].addr, ms.mem, ms.len
+
 proc `==`*(x, y: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for strict equality.
   result = (x.len == y.len and equalMem(x.mem, y.mem, x.len))
@@ -76,6 +83,10 @@ proc urite*(f: File, ms: MSlice) {.inline.} =
     proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
             importc: "fwrite", header: "<stdio.h>".}
   discard c_fwrite(ms.mem, 1, ms.len.csize, f)
+
+proc mrite*(f: File, mses: varargs[MSlice]) {.inline.} =
+  ## unlocked write all ``mses`` to file ``f``; Be careful of many fwrite()s.
+  for ms in items(mses): f.urite ms
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
