@@ -46,7 +46,8 @@ iterator getDelim*(stream: File, dlm: char='\n'): string =
     let length = c_gd(cline.addr, nAlloc.addr, cint(dlm), stream)
     if length == -1: break
     res.setLen(length - 1)      #-1 => remove dlm char like system.lines()
-    copyMem(addr res[0], cline, length - 1)
+    if length > 1:
+      copyMem(addr res[0], cline, length - 1)
     yield res
   free(cline)
 
