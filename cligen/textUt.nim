@@ -3,17 +3,27 @@ from terminal import terminalWidth
 from unicode  import nil
 import critbits, re, math, ./mslice # math.^
 
+proc stripSGR*(a: string): string =
+  ## Return `a` with ANSI SGR escape sequences ("\e[..m") removed.
+  result = newStringOfCap(a.len)
+  var postEsc = false
+  var inSGR = false
+  for c in a:
+    if inSGR:
+      if c == 'm': inSGR = false
+    elif postEsc:
+      if c == '[': inSGR = true
+      else:
+        result.add '\e'
+        result.add c
+      postEsc = (c == '\e')
+    elif c == '\e':
+      postEsc = true
+    else: result.add c
+
 proc printedLen*(a: string): int =
   ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
-  var inEscSeq = false
-  var s = newStringOfCap(a.len)
-  for c in a:
-    if inEscSeq:
-      if c == 'm': inEscSeq = false
-    else:
-      if c == '\e': inEscSeq = true
-      else: s.add c
-  result = unicode.runeLen s
+  unicode.runeLen a.stripSGR
 
 iterator paragraphs*(s: string, indent = {' ', '\t'}):
     tuple[pre: bool, para: string] =
