@@ -31,6 +31,8 @@ Version: 1.1.0
   The top-level help of a `dispatchMulti` command is now rendered and wrapped
   just like the `$doc` for each subcommand.
 
+  Add more conveniences in cligen/mslice, cilgen/osUt, & factor out stripSGR.
+
 Version: 1.0.0
 ---------------
   No new problems in the past few weeks => call it time to stamp 1.0.  (Truly
