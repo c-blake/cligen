@@ -153,7 +153,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
     if not endsInSlash: path.add '/'
     let nmAt {.used.} = if endsInSlash: nPath else: nPath + 1
     while true:
-      when defined(linux) and defined(batch):
+      when defined(linux) and not defined(android) and defined(batch):
         if lstats:
           if dirp.readdir == nil: break
           var nB = culong(0)
