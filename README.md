@@ -9,9 +9,9 @@ Reflection/introspection then suffices to generate parser-dispatchers
 translating `seq[string]` command input into calls to a wrapped proc.  In Nim,
 adding a CLI can be as easy as:
 ```nim
-proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]): int=
+proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]):int=
   ## Some existing API call
-  result = 1        # Of course, real code would have real logic here
+  result = 1      # Of course, real code would have real work here
 import cligen; dispatch(fun) # Whoa..Just 1 line??
 ```
 Compile it to `fun` (e.g., `nim c fun.nim`) and then run `./fun --help`
@@ -37,7 +37,7 @@ _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man` (e.g.
 When you want more specific help than `set foo`, just add parameter-keyed
 metadata with Nim's association-list literals:
 ```nim
-dispatch(fun, help = { "foo" : "the beginning", "bar" : "the rate" })
+dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
 ```
 That's it!  No specification language/complex arg parsing API/Nim pragma tags
 to learn.  If you aren't sold already, here is more
@@ -74,8 +74,8 @@ If a proc parameter has no explicit default value, it becomes required input,
 but the syntax for input is the same as for optional values.  So, in the below
 ```nim
 proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
-  discard           # Of course, real code would have real logic here
-when isMainModule:  # Preserve ability to `import api`/call from Nim
+  discard          # Of course, real code would have real work here
+when isMainModule: # Preserve ability to `import api`/call from Nim
   import cligen; dispatch(fun)
 ```
 the command-line user must give `--myRequired=something` somewhere to avoid an
@@ -117,14 +117,14 @@ the same keyword parameters as the most salient features of `dispatch`:
 type App* = object
   srcFile*: string
   show*: bool
-const dfl* = App(srcFile: "junk")  # set defaults != default for type
+const dfl* = App(srcFile: "junk")  # set defaults!=default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
 when isMainModule:
   import cligen
   var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
-  app.logic()  # Only --help/--version/parse errors cause early exit
+  app.logic() # Only --help/--version/parse errors cause early exit
 ```
 
 ### Common Overrides, Exit Protocol, Config File/Environment Vars
