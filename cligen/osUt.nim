@@ -34,16 +34,17 @@ proc useStdin*(path: string): bool =
   result = (path in [ "-", "/dev/stdin" ] or
             (path.len == 0 and not terminal.isatty(stdin)))
 
+proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
+  importc: "getdelim", header: "<stdio.h>".}
+
 iterator getDelim*(stream: File, dlm: char='\n'): string =
   ## Efficient file line/record iterator using POSIX getdelim
-  proc c_gd(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
-    importc: "getdelim", header: "<stdio.h>".}
   proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
   var cline: cstring
   var nAlloc: csize
   var res: string
   while true:
-    let length = c_gd(cline.addr, nAlloc.addr, cint(dlm), stream)
+    let length = c_getdelim(cline.addr, nAlloc.addr, cint(dlm), stream)
     if length == -1: break
     res.setLen(length - 1)      #-1 => remove dlm char like system.lines()
     if length > 1:
