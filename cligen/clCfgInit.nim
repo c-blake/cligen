@@ -28,8 +28,10 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         let sec = e.section.optionNormalize
         case sec
         of "global","aliases","layout","syntax","color","render","templates":
-          activeSection = sec
-        else:
+          activeSection.setLen sec.len
+          copyMem activeSection[0].addr, sec[0].unsafeAddr, sec.len
+#         activeSection = sec;  # gc:arc bug Gen C code points `sec` at this
+        else:                   # but then *also* calls destructor on sec.
           stderr.write path & ":" & " unknown section " & e.section & "\n" &
             "Expecting: global aliases layout syntax color render templates\n"
           break
