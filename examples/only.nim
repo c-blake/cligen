@@ -64,7 +64,7 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
   ## libmagic is NOT MT-SAFE.
   if patterns.len == 0:
     return
-  gAll  = all; gNo = no                         # Copy to globals
+  gAll = all; gNo = no                          # Copy to globals
   let trimLen = trim.len
   let flags = {reStudy} + (if insens: {reIgnoreCase} else: {})
   for r in patterns:
