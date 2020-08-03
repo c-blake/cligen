@@ -191,22 +191,23 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
 
+let rstMdSGRDefault* = { "singlestar": "italic     ; -italic"       ,
+                         "doublestar": "bold        ; -bold"        ,
+                         "triplestar": "bold italic ; -bold -italic",
+                         "singlebquo": "underline   ; -underline"   ,
+                         "doublebquo": "inverse     ; -inverse"     }.toTable
+
 type rstMdSGR* = object
   subs: array[21, tuple[pattern: Regex, repl: string]]
-
-let rstMdSGRDefault = { "singlestar0": "italic      ; -italic"      ,
-                        "doublestar0": "bold        ; -bold"        ,
-                        "triplestar0": "bold italic ; -bold -italic",
-                        "singlebquo0": "underline   ; -underline"   ,
-                        "doublebquo0": "inverse     ; -inverse"     }.toTable
 
 proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
   ## does *only inline* markup (single-|double-|triple-)(*|`) since A) that is
   ## what is most useful displaying to a terminal and B) the whole idea of these
   ## markups is to be readable as-is.  Backslash escape & spacing work as usual
-  ## to block adornment interpretation.  This proc inits ``rstMdSGR`` with 0|1
-  ## parameters corresponding to open|close text attributes for each style.
+  ## to block adornment interpretation.  This proc inits ``rstMdSGR`` with a
+  ## Table of {style: "open;close"} text adornments. ``plain==true`` will make
+  ## the associated ``render`` proc merely remove all such adornments.
   proc onOff(key: string): tuple[on, off: string] =
     let c = attrs[key].split(';')
     if c.len != 2:
