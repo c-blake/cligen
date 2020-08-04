@@ -16,3 +16,7 @@
   `positionals = @[ "param1", "param1", "rest" ]` (or `string`-vs-`seq` literal
   check on the current `positional`) could resuscitate mandatory non-keyed-entry
   positional arguments.
+
+  Add helpSyntax to clCfg
+
+  Add noAbbreviations to clCfg
