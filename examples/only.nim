@@ -57,10 +57,10 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
   ## pattern.  ``all`` & ``no`` can combine to mean not all patterns match.
   ##
   ## `file(1)` is very CPU bound & a 4-64x parallel speed-up can help!  The
-  ## equivalent find | xargs -PN file -n -F:XxX: | grep ":XxX: .*$@" | sed -e
+  ## similar find | xargs -PN file -n -F:XxX: | grep ":XxX: .*$@" | sed -e
   ## 's/:XxX: .*$//' jumbles output { |grep fills up, writers sleep & then awake
   ## in any order }.  Non-portable Linux O_DIRECT flag on pipes might work, but
-  ## that also needs a manual pipeline build.  This runs in forked kids since
+  ## also needs a manual pipeline build.  This runs in forked kids since
   ## libmagic is NOT MT-SAFE.
   if patterns.len == 0:
     return
@@ -98,4 +98,5 @@ when isMainModule:
                         "no"    : "*no* patterns match (vs. *any*)",
                         "insens": "regexes are case-insensitive",
                         "excl"  : "tests to exclude like `file(1)`",
-                        "jobs"  : "use this many kids (0=auto)" })
+                        "jobs"  : "use this many kids (0=auto)" },
+           short = {"excl": 'x'})
