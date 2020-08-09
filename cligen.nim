@@ -611,11 +611,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let posId = spars[posIx][0]
       let tmpId = ident("tmp" & $posId)
       result[0].add(newNimNode(nnkElse).add(quote do:
-        var rewind = false                  #Ugly machinery is so tmp=pos[0]..
-        if len(`posId`) == 0:               #..type inference works.
-          `posId`.setLen(1)
-          rewind = true
-        var `tmpId` = `posId`[0]
+        var `tmpId`: typeof(`posId`[0])
         `apId`.key = "positional $" & $`posNoId`
         `apId`.val = `pId`.key
         `apId`.sep = "="
@@ -633,7 +629,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if not `prsOnlyId` and not argParse(`tmpId`, `tmpId`, `apId`):
             stderr.write `apId`.msg
             raise newException(ParseError, msg)
-        if rewind: `posId`.setLen(0)
         `posId`.add(`tmpId`)))
     else:
       result.add(quote do:
