@@ -557,3 +557,23 @@ when defined(testDropPriv):
     discard execvp(arg0.cstring, argv)
     stderr.write "cannot exec `id`\n"
   quit(1)
+
+proc system*(csa: cstringArray; wait=true): cint =
+  ## Like system(3) but does fork & exec of an already set up ``cstringArray``.
+  ## If wait==true, returns status for WEXITSTATUS(); else returns kid pid.
+  var status: cint
+  case (let pid = fork(); pid):
+  of -1: return cint(-1)                          # fork fails
+  of 0: discard execvp(csa[0], csa); quit(1)      # kid exec err
+  else:
+    if wait:
+      discard wait4(pid, status.addr, 0, nil)     # errs impossible in context
+      return status
+    else:
+      return cint(pid)
+
+proc reapAnyKids*(signo: cint) {.noconv.} =
+  ## Wait on any/only waitable kids; Useful to ``signal(SIGCHLD, reapAnyKids)``
+  ## to avoid zombies when treating all background children the same is ok.
+  var status: cint
+  while wait4(Pid(-1), status.addr, WNOHANG, nil) > 0: discard
