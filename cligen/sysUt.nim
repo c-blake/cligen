@@ -26,7 +26,7 @@ iterator maybePar*(parallel: bool, a, b: int): int =
 import macros
 
 macro enumerate*(x: ForLoopStmt): untyped =
-  ## Generic enumerate macro
+  ## Generic enumerate macro; E.g.: ``for i,e in enumerate([3,2,1]): echo i``.
   expectKind x, nnkForStmt
   result = newStmtList()
   result.add newVarStmt(x[0], newLit(0))
@@ -40,6 +40,18 @@ macro enumerate*(x: ForLoopStmt): untyped =
   newFor.add x[^2][1]
   newFor.add body
   result.add newFor
+
+macro toItr*(x: ForLoopStmt): untyped =
+  ## Convert factory proc call for inline-iterator-like usage.
+  ## E.g.: ``for e in toItr(myFactory(parm)): echo e``.
+  let expr = x[0]
+  let call = x[1][1] # Get foo out of toItr(foo)
+  let body = x[2]
+  result = quote do:
+    block:
+      let itr = `call`
+      for `expr` in itr():
+        `body`
 
 proc incd*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to prefix ``++`` in C languages: increment then yield value
