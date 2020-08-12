@@ -1,7 +1,7 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith
 from terminal import terminalWidth
 from unicode  import nil
-import critbits, re, math, ./mslice # math.^
+import critbits, math, ./mslice # math.^
 
 proc stripSGR*(a: string): string =
   ## Return `a` with ANSI SGR escape sequences ("\e[..m") removed.

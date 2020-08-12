@@ -1,6 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
-import math, strutils, algorithm, sets, tables, parseutils, posix, textUt, re
+import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
 when not declared(initHashSet):
   proc initHashSet*[T](): HashSet[T] = initSet[T]()
   proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)
@@ -191,59 +191,119 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
   except:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
 
+#NOTE: \-escape off only inside inline DB literals breaks any parser layering &
+#I think blocks any 1-pass parse.  For now ``lit\eral`` -> <DB0>literal<DB1>.
+#Also, the old parser/substitutor also failed in this same, way.
+iterator descape(s: string, escape='\\'): tuple[c: char; escaped: bool] =
+  var escaping = false  # This just yields a char & bool escaped status
+  for c in s:
+    if escaping: escaping = false; yield (c, true)
+    elif c == escape: escaping = true
+    else: yield (c, false)
+
+type
+  RstKind = enum rstNil, rstBeg,rstEnd, rstEsc, rstWhite,rstText, rstOpn,rstCls,
+                 rstPunc, rstSS,rstDS,rstTS, rstSB,rstDB
+  RstToken = tuple[kind: RstKind; text: string; ix: int]
+let rstMarks = { rstSS, rstDS, rstTS, rstSB, rstDB }
+let bktOpn = "([{<\"'"
+let bktCls = ")]}>\"'"
+let punc = { '-', ':', '/', '.', ',', ';', '!', '?' }
+
+let key2tok = { "singlestar": rstSS, "doublestar": rstDS, "triplestar": rstTS,
+                "singlebquo": rstSB, "doublebquo": rstDB }.toTable
+
 let rstMdSGRDefault* = { "singlestar": "italic     ; -italic"       ,
                          "doublestar": "bold        ; -bold"        ,
                          "triplestar": "bold italic ; -bold -italic",
                          "singlebquo": "underline   ; -underline"   ,
                          "doublebquo": "inverse     ; -inverse"     }.toTable
-
 type rstMdSGR* = object
-  subs: array[21, tuple[pattern: Regex, repl: string]]
+  attr: Table[RstKind, tuple[on, off: string]]
 
 proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
-  ## does *only inline* markup (single-|double-|triple-)(*|`) since A) that is
-  ## what is most useful displaying to a terminal and B) the whole idea of these
-  ## markups is to be readable as-is.  Backslash escape & spacing work as usual
-  ## to block adornment interpretation.  This proc inits ``rstMdSGR`` with a
-  ## Table of {style: "open;close"} text adornments. ``plain==true`` will make
+  ## does *only inline* font markup (single-|double-|triple-)(*|`) since A) that
+  ## is what is most useful displaying to a terminal and B) the whole idea of
+  ## these markups is to be readable as-is.  Backslash escape & spacing work as
+  ## usual to block adornment interpretation.  This proc inits ``rstMdSGR`` with
+  ## a Table of {style: "open;close"} text adornments. ``plain==true`` will make
   ## the associated ``render`` proc merely remove all such adornments.
-  proc onOff(key: string): tuple[on, off: string] =
-    let c = attrs[key].split(';')
+  for key, val in attrs:
+    let c = val.split(';')
     if c.len != 2:
       stderr.write "[render] values must be ';'-separated on/off pairs\n"
-    (textAttrOn(c[0].strip.split, plain), textAttrOn(c[1].strip.split, plain))
-  let (ss0, ss1) = onOff("singlestar")
-  let (ds0, ds1) = onOff("doublestar")
-  let (ts0, ts1) = onOff("triplestar")
-  let (sb0, sb1) = onOff("singlebquo")
-  let (db0, db1) = onOff("doublebquo")     # Do tpl before dbl before sgl
-  result.subs[ 0] = (re"([^ *\t\n\\])\*\*\*$"        , "$1" & ts1       )
-  result.subs[ 1] = (re"^\*\*\*([^ *\t\n])"          ,        ts0 & "$1")
-  result.subs[ 2] = (re"([^ [({*\t\n\\])\*\*\*([^*])", "$1" & ts1 & "$2")
-  result.subs[ 3] = (re"([^*\\])\*\*\*([^ \t\n*])"   , "$1" & ts0 & "$2")
-  result.subs[ 4] = (re"([^ *\t\n\\])\*\*$"          , "$1" & ds1       )
-  result.subs[ 5] = (re"^\*\*([^ *\t\n])"            ,        ds0 & "$1")
-  result.subs[ 6] = (re"([^ [({*\t\n\\])\*\*([^*])"  , "$1" & ds1 & "$2")
-  result.subs[ 7] = (re"([^*\\])\*\*([^ \t\n*])"     , "$1" & ds0 & "$2")
-  result.subs[ 8] = (re"([^ *\t\n\\])\*$"            , "$1" & ss1       )
-  result.subs[ 9] = (re"^\*([^ *\t\n])"              ,        ss0 & "$1")
-  result.subs[10] = (re"([^ [({*\t\n\\])\*([^*])"    , "$1" & ss1 & "$2")
-  result.subs[11] = (re"([^*\\])\*([^ \t\n*])"       , "$1" & ss0 & "$2")
-  result.subs[12] = (re"([^ \t\n`\\])``$"            , "$1" & db1       )
-  result.subs[13] = (re"^``([^ \t\n`])"              ,        db0 & "$1")
-  result.subs[14] = (re"([^ [({`\t\n\\])``([^`])"    , "$1" & db1 & "$2")
-  result.subs[15] = (re"([^`\\])``([^ \t\n`])"       , "$1" & db0 & "$2")
-  result.subs[16] = (re"([^ `\t\n\\])`$"             , "$1" & sb1       )
-  result.subs[17] = (re"^`([^ `\t\n])"               ,        sb0 & "$1")
-  result.subs[18] = (re"([^ [({`\t\n\\])`([^`])"     , "$1" & sb1 & "$2")
-  result.subs[19] = (re"([^`\\])`([^ \t\n`])"        , "$1" & sb0 & "$2")
-  result.subs[20] = (re"\\(.)"                       , "$1")
+    result.attr[key2tok[key]] =
+      (textAttrOn(c[0].strip.split, plain), textAttrOn(c[1].strip.split, plain))
 
+iterator rstTokens(s: string): RstToken =
+  var tok: RstToken = (rstBeg, "", -1)
+  yield tok
+  tok.kind = rstNil
+
+  template doYield() =          # Maybe yield and if so reset token
+    if tok.kind != rstNil:
+      yield tok
+      tok.text.setLen 0
+      tok.kind = rstNil
+      tok.ix = -1
+
+  for c, escaped in s.descape:
+    let op = bktOpn.find(c)     # -1 | index of open bracket
+    let cl = bktCls.find(c)     # -1 | index of close bracket
+    if escaped:
+      doYield()
+      tok.kind = rstEsc; tok.text.add c
+    elif c in Whitespace:
+      if tok.kind == rstWhite: tok.text.add c
+      else: doYield(); tok.kind = rstWhite; tok.text.add c
+    elif c == '*':
+      if    tok.kind == rstSS: tok.kind = rstDS
+      elif  tok.kind == rstDS: tok.kind = rstTS; doYield()
+      else: doYield(); tok.kind = rstSS
+    elif c == '`':
+      if    tok.kind == rstSB: tok.kind = rstDB; doYield()
+      else: doYield(); tok.kind = rstSB
+    elif c in punc:
+      if tok.kind == rstPunc: tok.text.add c
+      else: doYield(); tok.kind = rstPunc; tok.text.add c
+    elif op != -1:
+      doYield()
+      tok.kind = rstOpn; tok.text.add bktOpn[op]; tok.ix = op; doYield()
+    elif cl != -1:
+      doYield()
+      tok.kind = rstCls; tok.text.add bktCls[cl]; tok.ix = cl; doYield()
+    else:
+      if tok.kind == rstText: tok.text.add c
+      else: doYield(); tok.kind = rstText; tok.text.add c
+  doYield()
+  yield (rstEnd, "", -1)
+
+# docutils.sourceforge.io/docs/ref/rst/restructuredtext.html: inline markup rec.
+# Markup is done when the following patterns occur (where MARK = *|**|***|`|``,
+# OPEN = [({<.. & CLOSE = ])}>..):
+#   BegText|White|OPEN|BegPunc MARK nonWhite|[0]!=MchCLOSE          => Beg font
+#   nonWhite                   MARK EndText|White|CLOSE|Esc|EndPunc => End font
 proc render*(r: rstMdSGR, rstOrMd: string): string =
-  ## Translate hybrid restructuredText-Markdown-to-ANSI SGR/highlighted text
-  ## using the highlighting rules in ``r``.
-  result = rstOrMd  # rstOrMd.multiReplace(r.subs) fails on single-char-insides
-  for tup in r.subs:
-    let (pat, sub) = tup
-    result = result.replacef(pat, sub)
+  ## Translate restructuredText inline font markup (extended with triple star)
+  ## to ANSI SGR/highlighted text via highlighting ``r``.
+  var toks: seq[RstToken]       # Last 2 tokens + current decide what to do
+  var mup = false               # Markup does not nest; mup==true => cannot Beg
+  let none = ("", "")
+  for tok in rstOrMd.rstTokens:
+    if toks.len < 2:
+      toks.add tok
+      continue
+    result.add toks[0].text
+    if mup and toks[0].kind != rstWhite and toks[1].kind in rstMarks and
+       tok.kind in {rstEnd, rstWhite, rstCls, rstEsc, rstPunc}:
+      mup = false
+      result.add r.attr.getOrDefault(toks[1].kind, none).off
+    elif not mup and toks[0].kind in {rstBeg, rstWhite, rstOpn, rstPunc} and
+         toks[1].kind in rstMarks and tok.kind != rstWhite:
+      mup = true
+      #XXX for rstOpn lexer tells us .ix; Should save & use above for rstCls
+      result.add r.attr.getOrDefault(toks[1].kind, none).on
+    toks[0] = toks[1]; toks[1] = tok    # shift
+  for tok in toks:
+    result.add tok.text
