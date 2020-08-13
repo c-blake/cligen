@@ -85,8 +85,7 @@ iterator readyReplies*(pp: var ProcPool): MSlice =
           yield s
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
-  var status: cint
-  var done: bool
+  var st: cint
   var n = pp.nProc                                    # Do final answers
   var fdset0 = pp.fdset
   while n > 0:
@@ -94,10 +93,11 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
     if select(pp.fdMax, fdset.addr, nil, nil, nil) > 0:
       for i in 0 ..< pp.nProc:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
+          var done = false
           for reply in pp.kids[i].frameReplies(done):
             yield reply
-          if done:  # worker quit; remove from fdset & wait to prevent zombies
-            FD_CLR pp.kids[i].fd1, fdset0
-            discard pp.kids[i].fd1.close
-            discard waitpid(pp.kids[i].pid, status, 0)
+          if done:                                    # Worker quit
+            FD_CLR pp.kids[i].fd1, fdset0             # Rm from fdset
+            discard pp.kids[i].fd1.close              # Reclaim fd
+            discard waitpid(pp.kids[i].pid, st, 0)    # Accum CPU to par;No zomb
             n.dec
