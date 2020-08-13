@@ -71,6 +71,9 @@ iterator frameReplies(f: var Filter, done: var bool): MSlice =
 proc request*(pp: ProcPool, kid: int, buf: pointer, len: int) =
   discard pp.kids[kid].fd0.write(buf, len)
 
+proc close*(pp: ProcPool, kid: int) =
+  discard pp.kids[kid].fd0.close
+
 iterator readyReplies*(pp: var ProcPool): MSlice =
   var done: bool
   var noTO: Timeval                                   # Zero timeout => no block
