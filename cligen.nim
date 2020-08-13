@@ -34,6 +34,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     useHdr*:      string         ## Override of const usage header template
     use*:         string         ## Override of const usage template
     useMulti*:    string         ## Override of const subcmd table template
+    helpSyntax*:  string         ## Override of const syntaxHelp string
     render*:      proc(s: string): string ## string->string help transformer
 
   HelpOnly*    = object of CatchableError
@@ -54,6 +55,7 @@ var clCfg* = ClCfg(
                  '|', '~', '^', '$', '#', '<', '>', '?' },
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
+  helpSyntax:  syntaxHelp,
   render:      nil)   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
 {.pop.}
 
@@ -479,8 +481,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          (if tag in `cf`.helpAttr: textAttrOff else: ""))
 
-
-
       let use = if `noHdrId`:
                   if `cf`.use.len > 0: `cf`.use  else: `usageId`
                 else:
@@ -513,9 +513,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       newStrLitNode("helpsyntax")).add(
         quote do:
           if cast[pointer](`setByParseId`) != nil:
-            `setByParseId`[].add(("helpsyntax", "", syntaxHelp, clHelpOnly))
+            `setByParseId`[].add(("helpsyntax","", `cf`.helpSyntax, clHelpOnly))
           if not `prsOnlyId`:
-            stdout.write(syntaxHelp); raise newException(HelpOnly, "")))
+            stdout.write(`cf`.helpSyntax); raise newException(HelpOnly, "")))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("version"), newStrLitNode(vsnSh)).add(
         quote do:
@@ -824,7 +824,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     prefix = procBrackets[0][0].strVal
   var cmd = srcBaseName(procBkts)
   var doc = newStrLitNode(""); var docChanged=false
-  var use = quote do: clUseMulti
+  var use = quote do: (if clCfg.useMulti.len>0: clCfg.useMulti else: clUseMulti)
   let multiId = ident(prefix)
   let subCmdsId = ident(prefix & "SubCmds")
   let subMchsId = ident(prefix & "SubMchs")
@@ -935,7 +935,7 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   result = newStmtList()
   result.add(newCall("dispatchGen", multiId))
   var doc = newStrLitNode(""); var docChanged=false
-  var use = quote do: clUseMulti
+  var use = quote do: (if clCfg.useMulti.len>0: clCfg.useMulti else: clUseMulti)
   var cmd = srcBaseName(procBrackets)
   if procBrackets[0][0].kind == nnkStrLit:
     prefix = procBrackets[0][0].strVal

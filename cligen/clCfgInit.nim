@@ -96,9 +96,10 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             "Expecting: singlestar, doublestar, triplestar, singlebquo, doublebquo\n"
       of "templates":
         case e.key.optionNormalize
-        of "usehdr", "usageheader":  c.useHdr   = hl(e.value)
-        of "use", "usage":           c.use      = hl(e.value)
-        of "usemulti", "usagemulti": c.useMulti = hl(e.value)
+        of "usehdr", "usageheader" :  c.useHdr    = hl(e.value)
+        of "use", "usage"          : c.use        = hl(e.value)
+        of "usemulti", "usagemulti": c.useMulti   = hl(e.value)
+        of "helpsyntax"            : c.helpSyntax = hl(e.value)
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
             "Expecting: usageheader usage usagemulti\n"
