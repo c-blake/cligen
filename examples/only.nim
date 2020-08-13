@@ -28,8 +28,6 @@ proc classifyAndMatch() =
     stderr.write "cannot load magic DB: %s\x0A", m.magic_error, "\n"
     quit(1)
   for path in stdin.getDelim('\0'):
-    if path.len == 0:
-      quit(0)
     let fileType = $m.magic_file(path)
     if fileType.len == 0:
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
@@ -83,8 +81,8 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
     if i + 1 == pp.len:                         # At the end of each req cycle
       for answer in pp.readyReplies:            #..handle ready replies.
         answer.print eor
-  for i in 0 ..< pp.len:                        # Terminate input requests
-    pp.request(i, cstring(""), 1)
+  for i in 0 ..< pp.len:                        # Send EOFs
+    pp.close(i)
   for answer in pp.finalReplies:                # Handle final replies
     answer.print eor
   discard inp.pclose
