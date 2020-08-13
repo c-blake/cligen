@@ -17,8 +17,6 @@
   check on the current `positional`) could resuscitate mandatory non-keyed-entry
   positional arguments.
 
-  Add helpSyntax to clCfg
-
   Add noAbbreviations to clCfg
 
   Be able to wrap procs taking `openArray[T]` by building a `seq[T]` from CL
