@@ -48,7 +48,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
                        execPerm, verb, err, dryRun)
     do: discard                                     # No pre-recurse
     do: discard                                     # No post-recurse
-    do: recFailDefault("chom")                      # cannot recurse
+    do: recFailDefault("chom", path)                # cannot recurse
   return min(nCall, 255)
 
 when isMainModule:

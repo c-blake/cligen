@@ -93,7 +93,7 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
     do:
       if not summarize:
         emit(inodes, si, tot - sub, scale, scaleA, path, outEnd)
-    do: recFailDefault("du")
+    do: recFailDefault("du", path)
     if summarize:
       emit(inodes, si, tot, scale, scaleA, root, outEnd)
     if total:

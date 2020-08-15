@@ -19,7 +19,7 @@ proc rr*(roots: seq[string], xdev=false, eof0=false): int =
         # Future dir-unlinks are doomed to fail ENOTEMPTY except if ENOENT here
         # IF racing other unlinker(s).  quit here forfeits any such races.
         quit(1)
-    do: recFailDefault("rr")      # Cannot recurse
+    do: recFailDefault("rr", path)  # Cannot recurse
   return 0
 
 when isMainModule:

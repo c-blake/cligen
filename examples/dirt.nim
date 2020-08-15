@@ -47,7 +47,7 @@ proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
             dirs[^2].del  dirs[^2].find(-toInt64(dmt)) #XXX BST/BTreeQ 4big dirs
             dirs[^2].push kidTm               #   reflect dmt -> kidTm in parent
         discard dirs.pop                      #   discard kid queue
-    do: recFailDefault("dirt")                # Cannot recurse
+    do: recFailDefault("dirt", path)          # Cannot recurse
   return min(n, 255)
 
 when isMainModule:

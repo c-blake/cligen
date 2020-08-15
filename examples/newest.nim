@@ -45,7 +45,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
           elif tp > q[0]: discard q.replace(tp)
     do: discard
     do: discard
-    do: recFailDefault("newest")
+    do: recFailDefault("newest", path)
   while q.len > 0:                              # q now has top n times; Print
     stdout.write q.pop().path, outEnd           #..in the specified-time order.
 
