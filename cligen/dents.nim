@@ -102,7 +102,7 @@ const ENOTDIR* = cint(20)
 const ENFILE*  = cint(23)
 const EMFILE*  = cint(24)
 
-template recFailDefault*(context: string, err=stderr) =
+template recFailDefault*(context: string, path: string, err=stderr) =
   case errno
   of ENOTDIR, EXDEV: discard        # Expected if stats==false/user req no xdev
   of EMFILE, ENFILE: discard        # Too many open files; bottom out recursion
@@ -307,7 +307,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
     always
   do: preRec
   do: postRec
-  do: recFailDefault("", err)
+  do: recFailDefault("", path, err)
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
              err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
@@ -318,7 +318,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
     always
   do: preRec
   do: discard
-  do: recFailDefault("", err)
+  do: recFailDefault("", path, err)
 
 template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
              err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;
@@ -329,7 +329,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
     always
   do: discard
   do: discard
-  do: recFailDefault("", err)
+  do: recFailDefault("", path, err)
 
 proc find*(roots: seq[string], recurse=0, stats=false, chase=false,
            xdev=false, eof0=false, zero=false) =
@@ -352,7 +352,7 @@ proc dstats*(roots: seq[string], recurse=0, stats=false, chase=false,
       histo[min(depth, histo.len - 1)].inc; nF.inc  # Deepest bin catches deeper
     do: discard                                     # No pre-recurse
     do: nD.inc                                      # Count successful recurs
-    do: recFailDefault("dstats")
+    do: recFailDefault("dstats", path)
   echo "#Depth Nentry"
   for i, cnt in histo:
     if cnt != 0: echo i, " ", cnt
