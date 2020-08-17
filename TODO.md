@@ -17,6 +17,10 @@
   check on the current `positional`) could resuscitate mandatory non-keyed-entry
   positional arguments.
 
-  Add noAbbreviations to clCfg
+  Be able to wrap procs taking `openArray[T]` by building a `seq[T]` from CL.
+  This needs a different concrete vs passed type.  
 
-  Be able to wrap procs taking `openArray[T]` by building a `seq[T]` from CL
+  Allow positionals to map to other aggregates { `set[T]`, `HashSet[T]` or
+  user-defined collections maybe via some kind of `positionalTransform=fromSeq`
+  construct where `fromSeq[T]` converts a parsed `seq[T]` to a target aggregate
+  similarly to `toSeq`.
