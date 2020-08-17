@@ -34,7 +34,7 @@ proc rawPfx[T](t: Trie[T], key: string, nPfx: var int, longest=false): Node[T] =
     nPfx.inc
   n
 
-proc rawGet[T](t: Trie[T], key: string): Node[T] =
+proc rawGet[T](t: Trie[T], key: string): Node[T] {.inline.} =
   let n = t.rawPfx(key)
   result = if n == nil or not n.term: nil else: n
 
@@ -62,7 +62,7 @@ proc rawInsert[T](t: var Trie[T], key: string): Node[T] =
     t.depth = max(t.depth, depth)
   n
 
-proc missingOrExcl*[T](t: var Trie[T], key: string): bool =
+proc missingOrExcl*[T](t: var Trie[T], key: string): bool {.inline.} =
   ## ``t.excl(key)`` if present in ``t`` and return true else just return false.
   var stack = newSeqOfCap[Node[T]](t.depth)
   var stackH = newSeqOfCap[int](t.depth)
@@ -86,7 +86,7 @@ proc missingOrExcl*[T](t: var Trie[T], key: string): bool =
   if stack[0].cnt == 0:
     t.root = nil
 
-proc excl*[T](t: var Trie[T], key: string) =
+proc excl*[T](t: var Trie[T], key: string) {.inline.} =
   ## Remove ``key`` (and any associated value) from ``t`` or do nothing.
   discard t.missingOrExcl key
 
@@ -211,7 +211,7 @@ proc `[]`*[T](t: var Trie[T], key: string): var T {.inline.} =
   ## Retrieves modifiable value at ``t[key]`` or raises ``KeyError`` if missing.
   get(t, key)
 
-proc mgetOrPut*[T](t: var Trie[T], key: string, val: T): var T =
+proc mgetOrPut*[T](t: var Trie[T], key: string, val: T): var T {.inline.} =
   ## Retrieves modifiable value at ``t[key]`` or inserts if missing.
   let oldLen = t.len
   var n = rawInsert(t, key)
@@ -219,7 +219,7 @@ proc mgetOrPut*[T](t: var Trie[T], key: string, val: T): var T =
     n.val = val
     n.val
 
-proc containsOrIncl*[T](t: var Trie[T], key: string, val: T): bool =
+proc containsOrIncl*[T](t: var Trie[T], key: string, val: T): bool {.inline.} =
   ## Returns true iff ``t`` contains ``key`` or does ``t[key]=val`` if missing.
   let oldLen = t.len
   var n = rawInsert(t, key)
@@ -227,27 +227,27 @@ proc containsOrIncl*[T](t: var Trie[T], key: string, val: T): bool =
   when T isnot void:
     if not result: n.val = val
 
-proc containsOrIncl*[T](t: var Trie[T], key: string): bool {.discardable.}=
+proc containsOrIncl*[T](t:var Trie[T], key:string): bool {.discardable,inline.}=
   ## Returns true iff ``t`` contains ``key`` or inserts into ``t`` if missing.
   let oldLen = t.len
   discard rawInsert(t, key)
   result = t.len == oldLen
 
-proc inc*[T](t: var Trie[T], key: string, val: int = 1) =
+proc inc*[T](t: var Trie[T], key: string, val: int = 1) {.inline.} =
   ## Increments ``t[key]`` by ``val`` (starting from 0 if missing).
   var n = rawInsert(t, key)
   inc n.val, val
 
-proc incl*(t: var Trie[void], key: string) =
+proc incl*(t: var Trie[void], key: string) {.inline.} =
   ## Includes ``key`` in ``t``.
   discard rawInsert(t, key)
 
-proc incl*[T](t: var Trie[T], key: string, val: T) =
+proc incl*[T](t: var Trie[T], key: string, val: T) {.inline.} =
   ## Inserts ``key`` with value ``val`` into ``t``, overwriting if present
   var n = rawInsert(t, key)
   n.val = val
 
-proc `[]=`*[T](t: var Trie[T], key: string, val: T) =
+proc `[]=`*[T](t: var Trie[T], key: string, val: T) {.inline.} =
   ## Inserts ``key``, ``val``-pair into ``t``, overwriting if present.
   var n = rawInsert(t, key)
   n.val = val
