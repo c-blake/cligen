@@ -92,7 +92,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         of "usageheader", "usehdr" : c.useHdr     = hl(templStr)
         of "usage", "use"          : c.use        = hl(templStr)
         of "usagemulti", "usemulti": c.useMulti   = hl(templStr)
-        of "helpsyntax"            : c.helpSyntax = hl(e.value)
+        of "helpsyntax"            : c.helpSyntax = hl(templStr)
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     else:
