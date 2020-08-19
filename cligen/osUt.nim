@@ -96,6 +96,18 @@ proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
   ## Unlocked (i.e. single threaded) libc write (maybe Linux-only).
   for x in items(a): urite(f, x)
 
+proc cfeof(f: File): cint {.importc: "feof", header: "<stdio.h>".}
+proc eof*(f: File): bool {.inline.} = f.cfeof != 0
+
+proc ureadBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
+  when defined(linux) and not defined(android):
+    proc c_fread(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fread_unlocked", header: "<stdio.h>".}
+  else:
+    proc c_fread(buf: pointer, size, n: csize, f: File): cint {.
+            importc: "fread", header: "<stdio.h>".}
+  result = c_fread(buffer, 1, len.csize, f)
+
 proc simplifyPath*(path: string, collapseDotDot=false): string =
   ##``"././hey///ho/./there/"`` => ``"hey/ho/there/"``.  Result always ends with
   ##``'/'`` as source does (it's an easy client check & setLen to remove it).
