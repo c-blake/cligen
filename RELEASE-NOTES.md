@@ -1,6 +1,28 @@
 RELEASE NOTES
 =============
 
+Version: 1.2.0
+--------------
+
+  Roll our own very partial rST/markdown-like font markup parser to remove
+  run-time dependency on PCRE libraries for easier deployment.
+
+  Add `cgCfg.helpSyntax` field which CLI authors can default differently and
+  `[templates]/helpSyntax` which end CL users can override to say whatever.
+
+  The type `ClCfg`, the global compile-time default `clCfg`, and the two
+  provided config file parsers have grown ways to suppress prefix matching.
+  A CLauthor can set clCfg.longPfxOk = false and then his (savvy) CLusers
+  can override that default with longPrefixOk = false in the syntax section
+  of their config file (unless the CLauthor doesn't use a config file or
+  overrides the provided impls...).
+
+  Add `sysUt.toItr` to simplify life when using closure iterators.  Show use
+  in `trie.leaves` recursive iterator.
+
+  Add PoC super minimal Python multiprocessing like module & `only` example.
+  Also add `dirq.nim` example using inotify as a reliable OS queue.
+
 Version: 1.1.0
 ---------------
   Add fast file tree walk iteration `cligen/dents.forPath`.  On Linux (esp.
