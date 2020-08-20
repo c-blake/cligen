@@ -50,6 +50,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           c.sepChars = {}
           for ch in v2.getElems().mapIt(it.getStr()[0]):
             c.sepChars.incl(ch)
+        of "longprefixok": c.longPfxOk = v2.getBool()
+        of "stopprefixok": c.longPfxOk = v2.getBool()
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "color":

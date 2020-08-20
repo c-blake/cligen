@@ -100,10 +100,12 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
 proc valsWithPfx*[T](cb: CritBitTree[T], key: string): seq[T] =
   for v in cb.valuesWithPrefix(optionNormalize(key)): result.add(v)
 
-proc lengthen*[T](cb: CritBitTree[T], key: string): string =
+proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
   ## Use ``cb`` to find normalized long form of ``key``. Return empty string if
   ## ambiguous or unchanged string on no match.
   let n = optionNormalize(key)
+  if not prefixOk:
+    return n
   var ks: seq[string]
   for k in cb.keysWithPrefix(n): ks.add(k)
   if ks.len == 1:
@@ -135,6 +137,8 @@ type
     requireSep*: bool         ## require separator between option key & val
     sepChars*: set[char]      ## all the chars that can be valid separators
     opChars*: set[char]       ## all chars that can prefix a sepChar
+    longPfxOk*: bool          ## true means unique prefix is ok for longOpts
+    stopPfxOk*: bool          ## true means unique prefix is ok for stopWords
     sep*: string              ## actual string separating key & value
     message*: string          ## message to display upon cmdError
     kind*: CmdLineKind        ## the detected command line token
@@ -143,11 +147,10 @@ type
                               ## the option was given a value
 
 proc initOptParser*(cmdline: seq[string] = commandLineParams(),
-                    shortNoVal: set[char] = {},
-                    longNoVal: seq[string] = @[],
-                    requireSeparator=false,  # true imitates old parseopt2
-                    sepChars={'=',':'}, opChars: set[char] = {},
-                    stopWords: seq[string] = @[]): OptParser =
+                    shortNoVal: set[char] = {}, longNoVal: seq[string] = @[],
+                    requireSeparator=false, sepChars={'=',':'},
+                    opChars: set[char] = {}, stopWords: seq[string] = @[],
+                    longPfxOk=true, stopPfxOk=true): OptParser =
   ## Initializes a parse. ``cmdline`` should not contain parameter 0, typically
   ## the program name.  If ``cmdline`` is not given, default to current program
   ## parameters.
@@ -166,6 +169,10 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## separator are reported in the ``.sep`` field of an element parse.  This
   ## allows "incremental" syntax like ``--values+=val``.
   ##
+  ## If ``longPfxOk`` then unique prefix matching is done for long options.
+  ## If ``stopPfxOk`` then unique prefix matching is done for stop words
+  ## (usually subcommand names).
+  ##
   ## Parameters following either "--" or any literal parameter in ``stopWords``
   ## are never interpreted as options.
   result.cmd = cmdline
@@ -179,6 +186,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   for w in stopWords:
     if w.len > 0: result.stopWords.incl(optionNormalize(w), w)
   {.pop.}
+  result.longPfxOk = longPfxOk
+  result.stopPfxOk = stopPfxOk
   result.off = 0
   result.optsDone = false
 
@@ -247,7 +256,7 @@ proc doLong(p: var OptParser) =
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past "--"
-  let k = p.longNoVal.lengthen(optionNormalize(p.key))
+  let k = p.longNoVal.lengthen(optionNormalize(p.key), p.longPfxOk)
   if k in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
@@ -274,7 +283,7 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
-    let k = p.stopWords.lengthen(p.cmd[p.pos])  #Q: maybe let through ambig?
+    let k = p.stopWords.lengthen(optionNormalize(p.cmd[p.pos]), p.stopPfxOk)
     if k in p.stopWords:                #Step4: chk for stop word
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1

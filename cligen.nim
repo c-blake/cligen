@@ -29,6 +29,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
     sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
+    longPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
+    stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
     useHdr*:      string         ## Override of const usage header template
@@ -53,6 +55,8 @@ var clCfg* = ClCfg(
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?' },
+  longPfxOk:   true,
+  stopPfxOk:   true,
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
   helpSyntax:  syntaxHelp,
@@ -501,7 +505,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
 
   proc optCases0(): NimNode =
     result = newNimNode(nnkCaseStmt).add(quote do:
-      if p.kind == cmdLongOption: lengthen(`cbId`, `pId`.key) else: `pId`.key)
+      if p.kind == cmdLongOption: lengthen(`cbId`, `pId`.key, `cf`.longPfxOk)
+      else: `pId`.key)
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("help"), shortHlp).add(
         quote do:
@@ -664,7 +669,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         var `posNoId` = 0
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
-                                  `stopWords`)
+                                  `stopWords`, `cf`.longPfxOk, `cf`.stopPfxOk)
         while true:
           next(`pId`)
           if `pId`.kind == cmdEnd: break
@@ -922,7 +927,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
     proc `multiId`(`cmdLineId`: seq[string], `usageId`=clUse,`prefixId`="  ")=
       {.push hint[XDeclaredButNotUsed]: off.}
       let n = `cmdLineId`.len
-      let `arg0Id` = if n > 0: `subMchsId`.lengthen `cmdLineId`[0] else: ""
+      let `arg0Id`=if n>0: `subMchsId`.lengthen(`cmdLineId`[0], clCfg.stopPfxOk)
+                   else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ]
       `cases`)
   when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
@@ -987,8 +993,8 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      {.push hint[GlobalVar]: off.}
      {.push warning[ProveField]: off.}
      let ps  = cast[seq[string]](mergeParams(@["multi"]))
-     let ps0 = if ps.len >= 1: `subMchsId`.lengthen ps[0] else: ""
-     let ps1 = if ps.len >= 2: `subMchsId`.lengthen ps[1] else: ""
+     let ps0 = if ps.len>=1: `subMchsId`.lengthen(ps[0], clCfg.stopPfxOk)else:""
+     let ps1 = if ps.len>=2: `subMchsId`.lengthen(ps[1], clCfg.stopPfxOk)else:""
      if ps.len>0 and ps0.len>0 and ps[0][0] != '-' and ps0 notin `subMchsId`:
        unknownSubcommand(ps[0], `subCmdsId`)
      elif ps.len > 0 and ps0.len == 0:
