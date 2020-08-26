@@ -1,12 +1,14 @@
 ## This module provides a facility like Python's multiprocessing module but is
 ## less automagic (and also very little error handling is done) right now.
-## Multiple replies from worker processes are delimited by NUL ('\0') bytes.
-## ``MSlice`` is used as a reply type to avoid cpy in case replies are large.
-## Also implicit right now that is replies are always <= buf.sizeof.
-## examples/only.nim has a complete usage example.  The 3 for loops there could
-## be lifted & auto-marshal/unmarshal used to clone ``imap_unordered``.  This
-## also needs portability love to work on Windows.  It's very much at the proof
-## of concept stage.  PRs to build out functionality are welcome.
+## Multiple replies from worker processes are delimited by NUL ('\0') bytes { it
+## would be easy to pass an arbitrary closure iterator frameReplies that could
+## work on (length, binary data) that maybe just defaulted to NUL-delimited }.
+## ``MSlice`` is used as a reply type to avoid copies in case replies are large.
+## Implicit right now that is replies are <= buf.sizeof.  ``examples/only.nim``
+## has a complete usage example.  The 4 for loops there could be lifted into a
+## template & some auto-marshal/unmarshal used to mimick Python's ``for x in
+## p.imap_unordered``.  This also needs Windows portability work.  It's very
+## much at the proof of concept stage.  PRs welcome to build out functionality.
 
 import cpuinfo, posix, ./mslice
 type
