@@ -9,19 +9,19 @@ const e2Flag = {  # CSV & json missing; Maybe cligen/magic needs updating?
   tar     : MAGIC_NO_CHECK_TAR     , text    : MAGIC_NO_CHECK_TEXT    }.toTable
 
 var gPats: seq[RegEx]
-var gAll, gNo: bool
 var gFlags = cint(0)
+var gAll, gNo: bool                           # Support Boolean AND/OR/NOT
 
-proc any(fileType: string): bool {.inline.} =
+proc any(fileType: string): bool {.inline.} = # Support Boolean OR
   for pat in gPats:
     if fileType.find(pat) != -1: return true
 
-proc all(fileType: string): bool {.inline.} =
+proc all(fileType: string): bool {.inline.} = # Support Boolean AND
   for pat in gPats:
     if fileType.find(pat) == -1: return false
   result = true
 
-proc classifyAndMatch() =
+proc classifyAndMatch() = # Reply with same path as input if it passes filter.
   const TERM = "\0"
   var m = magic_open(gFlags)
   if m == nil or magic_load(m, nil) != 0:
@@ -31,7 +31,7 @@ proc classifyAndMatch() =
     let fileType = $m.magic_file(path)
     if fileType.len == 0:
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
-    if gAll:
+    if gAll:                                    # Handle all 4 Boolean cases
       if gNo:
         if not all(fileType): stdout.urite path, TERM
       else:
@@ -42,10 +42,15 @@ proc classifyAndMatch() =
       else:
         if any(fileType): stdout.urite path, TERM
 
-proc print(s: MSlice, eor: char) {.inline.} = 
-  let eos = cast[uint](s.mem) + cast[uint](s.len)
-  cast[ptr char](eos)[] = eor
+proc print(s: MSlice, eor: char) {.inline.} =
+  let eos = cast[uint](s.mem) + cast[uint](s.len)   # Hijack end of string here.
+  cast[ptr char](eos)[] = eor                       # It won't be used again.
   discard stdout.uriteBuffer(s.mem, s.len + 1)
+
+iterator getNoPfx(stream: File, dlm: char='\n', pfx="./"): string =
+  # `find x y -print0` prefixes results with "[xy]/" which can annoy if x=".".
+  for path in stream.getDelim(dlm):
+    yield (if path.startsWith(pfx): path[pfx.len..^1] else: path)
 
 proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
            all=false, no=false, insens=false, excl: set[Excl]={},
@@ -54,37 +59,22 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
   ## emit any path (followed by ``eor``) whose `file(1)` type matches any listed
   ## pattern.  ``all`` & ``no`` can combine to mean not all patterns match.
   ##
-  ## `file(1)` is very CPU bound & a 4-64x parallel speed-up can help!  The
-  ## similar find | xargs -PN file -n -F:XxX: | grep ":XxX: .*$@" | sed -e
-  ## 's/:XxX: .*$//' jumbles output { |grep fills up, writers sleep & then awake
-  ## in any order }.  Non-portable Linux O_DIRECT flag on pipes might work, but
-  ## also needs a manual pipeline build.  This runs in forked kids since
-  ## libmagic is NOT MT-SAFE.
+  ## `file(1)` is *very* CPU bound & 4-64x parallel speed-up can help a lot! A
+  ## similar ``find | xargs -PN file -n -F:XxX: | grep ":XxX: .*$@" | sed -e
+  ## 's/:XxX: .*$//'`` jumbles output; \|grep fills up unaligned, writers sleep
+  ## & awake out of order. This runs in forked kids since libmagic is MT-UNSAFE.
   if patterns.len == 0:
     return
   gAll = all; gNo = no                          # Copy to globals
-  let trimLen = trim.len
   let flags = {reStudy} + (if insens: {reIgnoreCase} else: {})
-  for r in patterns:
+  for r in patterns:                            # Compile pattern recognizers
     gPats.add re(r, flags)
-  for e in excl:
+  for e in excl:                                # Set up gFlags for libmagic
     gFlags = gFlags or cint(e2Flag[e])
-  let inp = popen(gen % dlr1, "r")
-  var pp = initProcPool(classifyAndMatch, jobs)
-  var i = 0
-  for path in inp.getDelim('\0'):
-    if path.startsWith(trim):                   # Let a full pipe block
-      pp.request(i, cstring(path[trimLen..^1]), path.len + 1 - trimLen)
-    else:
-      pp.request(i, cstring(path), path.len + 1)
-    i = (i + 1) mod pp.len
-    if i + 1 == pp.len:                         # At the end of each req cycle
-      for answer in pp.readyReplies:            #..handle ready replies.
-        answer.print eor
-  for i in 0 ..< pp.len:                        # Send EOFs
-    pp.close(i)
-  for answer in pp.finalReplies:                # Handle final replies
-    answer.print eor
+  let inp = popen(gen % dlr1, "r")              # Fire input path generator
+  # Any reply is an `okPath`; `pp.unord` doesn't need a request to have a reply.
+  var pp = initProcPool(classifyAndMatch, jobs) # Start & drive process pool
+  pp.eval(path, okPath, inp.getNoPfx('\0', trim), okPath.print(eor))
   discard inp.pclose
 
 when isMainModule:
