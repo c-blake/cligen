@@ -18,10 +18,10 @@ Version: 1.2.0
   overrides the provided impls...).
 
   Add `sysUt.toItr` to simplify life when using closure iterators.  Show use
-  in `trie.leaves` recursive iterator.
+  in `trie.leaves` as a "recursive iterator" (as close as makes sense in Nim).
 
-  Add PoC super minimal Python multiprocessing like module & `only` example.
-  Also add `dirq.nim` example using inotify as a reliable OS queue.
+  Add minimal proof-of-concept Python multiprocessing-like `procpool` module &
+  `examples/only` and `examples/dirq` using inotify as a reliable OS queue.
 
 Version: 1.1.0
 ---------------
