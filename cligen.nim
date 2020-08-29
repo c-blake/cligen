@@ -760,11 +760,11 @@ template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  stopWords: seq[string] = @[], noHdr=false): untyped =
   ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
-  proc cligenDoNotCollideWithGlobalVar(cf: ClCfg) =
+  proc cligenScope(cf: ClCfg) =
    dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, dispatchName, mergeNames,
               alias, stopWords, noHdr)
-  cligenDoNotCollideWithGlobalVar(clCfg)
+  cligenScope(clCfg)
 
 proc subCmdName(p: NimNode): string =
   if p.paramPresent("cmdName"):     #CLI author-specified
@@ -1081,10 +1081,10 @@ template initFromCL*[T](default: T, cmdName: string="", doc: string="",
     alias: seq[ClAlias] = @[]): T =
   ## Convenience `initFromCLcf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are as for `initFromCLcf` (except for no `cf`).
-  proc cligenDoNotCollideWithGlobalVar(cf: ClCfg): T =
+  proc cligenScope(cf: ClCfg): T =
     initFromCLcf(default, cmdName, doc, help, short, usage, cf, positional,
                  suppress, mergeNames, alias)
-  cligenDoNotCollideWithGlobalVar(clCfg)
+  cligenScope(clCfg)
 
 macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
                        suppress: seq[string] = @[]; body: untyped): untyped =
