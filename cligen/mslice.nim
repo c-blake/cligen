@@ -63,7 +63,7 @@ proc add*(s: var string, ms: MSlice) {.inline.} =
 
 proc `==`*(x, y: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for strict equality.
-  result = (x.len == y.len and equalMem(x.mem, y.mem, x.len))
+  x.len == y.len and equalMem(x.mem, y.mem, x.len)
 
 proc `<`*(a,b: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for inequality.
