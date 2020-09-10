@@ -41,10 +41,10 @@ iterator dqueue*(dir: string; events={inMovedTo, inCloseWr}):
 when isMainModule:
   proc dirq(events={inMovedTo, inCloseWr}; dir="."; wait=false;
             cmdPrefix: seq[string]): int =
-    ## Wait for *events* to occur on *dir* and then run *cmdPrefix* **NAME**
-    ## where **NAME** is the filename (not full path) delivered with the event.
-    ## Default events are any writable fd-close on files in *dir* or rename
-    ## into *dir* (typically signals that **NAME** is ready as an input file).
+    ## chdir(*dir*) & wait for *events* to occur on it; then run *cmdPrefix*
+    ## **NAME** where **NAME** is the filename (not full path) delivered with
+    ## the event.  Default events are any writable fd-close on files in *dir* or
+    ## rename into *dir* (usually signaling **NAME** is ready as an input file).
     let n   = cmdPrefix.len                     # index of a new last slot
     let cmd = allocCStringArray(cmdPrefix & "") # setup ready-to-exec buffer
     if not wait:
