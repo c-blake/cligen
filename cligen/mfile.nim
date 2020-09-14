@@ -206,3 +206,24 @@ iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
     for s in lines(f):
       yield toMSlice(s, keep)
     if f != stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
+
+proc findPathPattern*(pathPattern: string): string =
+  ## Search directory containing pathPattern (or ".") for *first* matching name.
+  ## Pattern matching is currently substring only.
+  proc c_strstr(hay,needle: cstring): cstring {. importc: "strstr", header: "<string.h>" .}
+  proc c_strlen(str: cstring): csize_t {. importc: "strlen", header: "<string.h>" .}
+  var tmp  = pathPattern    #basename & dirname both write into buffer; So copy.
+  let base = basename(tmp)  #Also, order matters here: must call basename first.
+  let dir  = dirname(tmp)
+  if (let d = opendir(dir); d) != nil:
+    while (let de = d.readdir; de) != nil:
+      let mch = cast[cstring](de.d_name[0].addr)
+      if c_strstr(mch, base) != nil:
+        let nDir = int(c_strlen(dir))
+        let nMch = int(c_strlen(mch))
+        result.setLen nDir + 1 + nMch
+        copyMem result[0].addr, dir, nDir
+        result[nDir] = '/'
+        copyMem result[nDir+1].addr, de.d_name[0].addr, nMch + 1
+        break
+    discard d.closedir
