@@ -408,16 +408,20 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       var `apId`: ArgcvtParams
       `apId`.val4req = `cf`.hTabVal4req
       let shortH = `shortHlp`
-      var `allId`: seq[string] = @[ "help", "help-syntax" ]
+      var `allId`: seq[string] =
+        if `cf`.helpSyntax.len > 0: @[ "help", "help-syntax" ] else: @[ "help" ]
       var `cbId`: CritBitTree[string]
       `cbId`.incl(optionNormalize("help"), "help")
-      `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
+      if `cf`.helpSyntax.len > 0:
+        `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
       var `mandId`: seq[string]
       var `tabId`: TextTab =
         if `skipHelp`:              # Do not incl; Nice for e.g. `helpDump`
           if shortH != "h":         # Do not skip if --help short opt is unusual
             @[ @[ "-"&shortH&", --help","","","print this cligen-erated help" ]]
           else: @[ ]
+        elif `cf`.helpSyntax.len == 0: # Don't include help-syntax in help table
+          @[ @[ "-"&shortH&", --help", "","", "print this cligen-erated help" ]]
         else:                       # Include help help in help table
           @[ @[ "-"&shortH&", --help", "","", "print this cligen-erated help" ],
              @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
