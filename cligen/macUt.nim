@@ -130,7 +130,10 @@ macro docFromProc*(sym: typed{nkSym}): untyped =
 
 proc maybeDestrop*(id: NimNode): NimNode =
   ## Used to remove stropping backticks \`\`, if present, from an ident node
-  if id.kind == nnkAccQuoted: id[0] else: id
+  case id.kind
+  of nnkAccQuoted: id[0] 
+  of nnkSym: newIdentNode($id)
+  else: id
 
 macro with*(ob: typed, fields: untyped, body: untyped): untyped =
   ## Usage ``with(ob, [ f1, f2, ... ]): body`` where ``ob`` is any expression
