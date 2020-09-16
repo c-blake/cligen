@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.2.1
+--------------
+  Empty helpSyntax string suppresses showing --help-syntax in the automated
+  help table.
+
+  Compatibility fix for pending Nim changes.
+
 Version: 1.2.0
 --------------
 
