@@ -3,12 +3,19 @@
 
 import macros, strutils, os
 
+proc maybeDestrop*(id: NimNode): NimNode =
+  ## Used to remove stropping backticks \`\`, if present, from an ident node
+  case id.kind
+  of nnkAccQuoted: id[0] 
+  of nnkSym: newIdentNode($id)
+  else: id
+
 proc findByName*(parId: NimNode, fpars: NimNode): int =
   ## formal param slot of named parameter
   result = -1
   if len($parId) == 0: return
   for i in 1 ..< len(fpars):
-    if fpars[i][0] == parId:
+    if maybeDestrop(fpars[i][0]) == maybeDestrop(parId):
       result = i
       break
   if result == -1:
@@ -127,13 +134,6 @@ macro docFromProc*(sym: typed{nkSym}): untyped =
   var cmtDoc = ""
   collectComments(cmtDoc, impl)
   newStrLitNode(strip(cmtDoc))
-
-proc maybeDestrop*(id: NimNode): NimNode =
-  ## Used to remove stropping backticks \`\`, if present, from an ident node
-  case id.kind
-  of nnkAccQuoted: id[0] 
-  of nnkSym: newIdentNode($id)
-  else: id
 
 macro with*(ob: typed, fields: untyped, body: untyped): untyped =
   ## Usage ``with(ob, [ f1, f2, ... ]): body`` where ``ob`` is any expression
