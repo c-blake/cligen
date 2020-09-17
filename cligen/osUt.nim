@@ -31,8 +31,7 @@ proc perror*(x: cstring, len: int, err=stderr) =
 
 proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
-  result = (path in [ "-", "/dev/stdin" ] or
-            (path.len == 0 and not terminal.isatty(stdin)))
+  (path in ["-", "/dev/stdin"] or (path.len==0 and not terminal.isatty(stdin)))
 
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
@@ -54,11 +53,11 @@ iterator getDelim*(stream: File, dlm: char='\n'): string =
 
 proc fileStrings*(path: string, delim: char): auto =
   ## Return an iterator yielding ``delim``-delimited records in file ``path``.
-  let uSI = useStdin(path)
   result = iterator(): string =
-    if uSI or path.len > 0:
-      for entry in getDelim(if uSI: stdin else: open(path), delim):
-        yield entry
+    if path.useStdin:
+      for entry in getDelim(stdin, delim): yield entry
+    elif path.len > 0:
+      for entry in getDelim(open(path), delim): yield entry
 
 proc both*[T](s: seq[T], it: iterator(): T): iterator(): T =
   ## Return an iterator yielding both seq elements and the passed iterator.
