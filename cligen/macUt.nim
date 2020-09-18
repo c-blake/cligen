@@ -55,6 +55,10 @@ proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
       for kid in strSeqInitializer[1]:
         result.add(ident($kid))
 
+proc has*(ns: seq[NimNode], n: NimNode): bool =
+  for e in ns:
+    if eqIdent(e, n): return true
+
 proc srcPath*(n: NimNode): string =
   let fileParen = lineInfo(n)
   fileParen[0 .. (rfind(fileParen, "(") - 1)]

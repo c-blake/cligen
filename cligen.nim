@@ -145,9 +145,9 @@ proc formalParamExpand(fpars: NimNode, n: auto,
   for declIx in 1 ..< len(fpars):
     let idefs = fpars[declIx]
     for i in 0 ..< len(idefs) - 3:
-      if idefs[i] notin suppress:
+      if not suppress.has(idefs[i]):
         result.add(newIdentDefs(idefs[i], idefs[^2]))
-    if idefs[^3] notin suppress:
+    if not suppress.has(idefs[^3]):
       result.add(newIdentDefs(idefs[^3], idefs[^2], idefs[^1]))
 
 proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
@@ -350,7 +350,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if fpars[i][1].kind == nnkEmpty:
           error("parameter `" & $(fpars[i][0]) &
                 "` has neither a type nor a default value")
-        if fpars[i][0] notin implDef:
+        if not implDef.has(fpars[i][0]):
           mandatory.add(i)
   let posNoId = ident("posNo")          # positional arg number
   let keyCountId = ident("keyCount")    # id for keyCount table
@@ -1042,7 +1042,7 @@ macro initGen*(default: typed, T: untyped, positional="",
   for kid in ti.children:         #iterate over fields
     if kid.kind != nnkIdentDefs: warning "case objects unsupported"
     let id = ident(kid[0].strVal)
-    if id in suppressed: continue
+    if suppressed.has(id): continue
     params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
     when (NimMajor,NimMinor,NimPatch) <= (0,20,0):  #XXX delete branch someday
@@ -1119,7 +1119,7 @@ macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
   for kid in ti.children:         #iterate over fields
     if kid.kind != nnkIdentDefs: warning "case objects unsupported"
     let id = ident(kid[0].strVal)
-    if id in suppressed: continue
+    if suppressed.has(id): continue
     params.add(if id == posId: newIdentDefs(id, kid[1], empty)
                else: newIdentDefs(id, empty, quote do: `default`.`id`))
     call.add(quote do: `id`)
