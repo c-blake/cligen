@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.2.2
+--------------
+  Just compatibility fixes.
+
 Version: 1.2.1
 --------------
   Empty helpSyntax string suppresses showing --help-syntax in the automated
