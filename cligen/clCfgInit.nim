@@ -1,5 +1,7 @@
 ## This is an ``include`` file used by ``cligen.nim`` proper to initialize the
 ## ``clCfg`` global.  Here we use only a parsecfg config file to do so.
+when defined(nimHasWarningObservableStores):
+  {.push warning[ObservableStores]: off.}
 
 import std/[streams, parsecfg, tables]
 const cgConfigFileBaseName = "config"
@@ -108,14 +110,10 @@ proc apply(c: var ClCfg, path: string, plain=false) =
       else: discard # cannot happen since we break early above
     of cfgError: echo e.msg
   close(p)
-  when defined(nimHasWarningObservableStores):
-    {.push warning[ObservableStores]: off.}
   if rendOpts.len > 0:
     let r = initRstMdSGR(rendOpts, plain)
     proc renderMarkup(m: string): string = r.render(m)
     c.render = renderMarkup
-  when defined(nimHasWarningObservableStores):
-    {.pop.}
 
 var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
 if cfNm.fileExists: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
@@ -124,3 +122,6 @@ elif cfNm.splitPath.head == "config" and (cfNm/cgConfigFileBaseName).fileExists:
 # Any given end CL user likely wants just one global system of color aliases.
 # Default to leaving initial ones defined, but clear if an env.var says to.
 if existsEnv("CLIGEN_COLORS_CLEAR"): textAttrAliasClear()
+
+when defined(nimHasWarningObservableStores):
+  {.pop.}
