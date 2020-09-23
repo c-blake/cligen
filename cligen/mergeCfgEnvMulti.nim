@@ -17,9 +17,9 @@ proc mergeParams(cmdNames: seq[string],
   var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
   if cfPath.len == 0:
     cfPath = os.getConfigDir() & cmdNames[0] & "/config"
-    if not existsFile(cfPath):
+    if not fileExists(cfPath):
       cfPath = cfPath[0..^8]
-  if existsFile(cfPath):
+  if fileExists(cfPath):
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
   result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   result.add cmdLine

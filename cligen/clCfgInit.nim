@@ -114,8 +114,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
     c.render = renderMarkup
 
 var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
-if cfNm.existsFile: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
-elif cfNm.splitPath.head == "config" and (cfNm/cgConfigFileBaseName).existsFile:
+if cfNm.fileExists: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
+elif cfNm.splitPath.head == "config" and (cfNm/cgConfigFileBaseName).fileExists:
   clCfg.apply(cfNm/cgConfigFileBaseName, existsEnv("NO_COLOR"))
 # Any given end CL user likely wants just one global system of color aliases.
 # Default to leaving initial ones defined, but clear if an env.var says to.
