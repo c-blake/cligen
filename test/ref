@@ -1,5 +1,5 @@
 ==> test/AllSeqTypes.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
@@ -36,7 +36,7 @@ Options:
   --F8=          float64s  25.0,26.0   append 1 val to F8
 
 ==> test/AllSetTypes.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
@@ -57,7 +57,7 @@ Options:
   -E=, --E=      set(Color)   red,green,blue  include 1 val in E
 
 ==> test/AllTypes.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
@@ -83,7 +83,7 @@ Options:
   -q=, --qq=     float    13.0   set qq
 
 ==> test/BlockedShort.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -98,7 +98,7 @@ Options:
   --aloha=       string  ""     set aloha
 
 ==> test/CustomCmdName.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   deeeemo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -113,7 +113,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/CustomType.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -127,7 +127,7 @@ Options:
   -s=, --stuff=  CSV   "ab,cd"  append 1 val to stuff
 
 ==> test/DetectSet.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   foo [optional-params] 
 Options:
@@ -137,7 +137,7 @@ Options:
   -b=, --beta=   int  2  set beta
 
 ==> test/DistinctInt.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   main [required&optional-params] 
 Options:
@@ -146,7 +146,7 @@ Options:
   -a=, --age=    int  REQUIRED  set age
 
 ==> test/DupShort.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -161,7 +161,7 @@ Options:
   --aloha=       string  ""     set aloha
 
 ==> test/EarlySeq.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -176,7 +176,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/EchoResult.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   editDistanceAscii [required&optional-params] 
 Returns the edit distance between `a` and `b`.
@@ -190,7 +190,7 @@ Options:
   -b=, --b=      string  REQUIRED  set b
 
 ==> test/Enums.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -204,7 +204,7 @@ Options:
   -x=, --x=      int         0         set x
 
 ==> test/External.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -219,7 +219,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/FancyRepeats.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -234,7 +234,7 @@ Options:
   -s=, --stuff=  strings  ab,cd  append 1 val to stuff
 
 ==> test/FancyRepeats2.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -249,7 +249,7 @@ Options:
   -s=, --stuff=  strings  ab,cd  append 1 val to stuff
 
 ==> test/FullyAutoMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Infer & generate command-line interace/option/argument parser
 Usage:
   FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
@@ -309,7 +309,7 @@ where subcommand syntaxes are as follows:
       -v, --verb     bool  false  set verb
 
 ==> test/HashSets.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
@@ -328,7 +328,7 @@ Options:
   -E=, --E=      hashset(Color)   red,blue  include 1 val in E
 
 ==> test/HelpTabCols.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -343,7 +343,7 @@ Options:
   -i=, --item=   set item                       ""
 
 ==> test/ImplicitDefault.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -357,7 +357,7 @@ Options:
   -i=, --iteM=   string  ""        set iteM
 
 ==> test/InitOb.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   InitOb [optional-params] [iters: int (loops per slot)]
 do some app
@@ -368,7 +368,7 @@ Options:
   -s, --show     bool    false    show informative compiler info
 
 ==> test/InitObPtr.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   InitOb [optional-params] [iters: int (loops per slot)]
 do some app
@@ -379,7 +379,7 @@ Options:
   -s, --show     bool    false    show informative compiler info
 
 ==> test/InitObRef.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   InitOb [optional-params] [iters: int (loops per slot)]
 do some app
@@ -390,7 +390,7 @@ Options:
   -s, --show     bool    false    show informative compiler info
 
 ==> test/InitTup.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   InitOb [optional-params] 
 do some app
@@ -402,7 +402,7 @@ Options:
   -S, --show       bool    false    show informative compiler info
 
 ==> test/ListDecl.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] [args: int...]
 demo entry point with varied, meaningless parameters.
@@ -414,7 +414,7 @@ Options:
   -v, --verb     bool   false     set verb
 
 ==> test/Mandatory.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -429,7 +429,7 @@ Options:
   -i=, --item=   string  REQUIRED  set item
 
 ==> test/MandatoryNoPos.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -444,7 +444,7 @@ Options:
   -i=, --item=   string  REQUIRED  set item
 
 ==> test/ManualMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   ManualMulti demo|show [subcommand-args]
 
@@ -478,7 +478,7 @@ Usage:
           -v, --verb     bool   false  set verb
 
 ==> test/MultMultMult.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 module doc
 Usage:
   MultMultMult {SUBCMD}  [sub-command options & parameters]
@@ -495,7 +495,7 @@ Run "MultMultMult help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/MultiFlag.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -507,7 +507,7 @@ Options:
   -v, --verb     bool  false  set verb
 
 ==> test/MultiMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 NAME
   Test sub-sub-command CLI instantiation.
 USAGE
@@ -554,7 +554,7 @@ where subcommand syntaxes are as follows:
       -v, --verb     bool  false  set verb
 
 ==> test/NoPositional.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -569,7 +569,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/NoShort.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -584,7 +584,7 @@ Options:
   --aloha=       string  ""     set aloha
 
 ==> test/OmitInHelpTable.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -599,7 +599,7 @@ Options:
   -i=, --item=    string  ""     set item
 
 ==> test/OneCharLong.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   test [optional-params] 
 Options:
@@ -610,7 +610,7 @@ Options:
   -s=, --s=      string  ""  set s
 
 ==> test/OneCharParams.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [b: string...]
 This tests if single character parameters work as expected
@@ -622,7 +622,7 @@ Options:
   -g=, --g=      string  "ho"        set g
 
 ==> test/ParseOnly.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 fooParse:
   (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\nOptions:\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
   (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
@@ -638,7 +638,7 @@ Options:
 
 
 ==> test/PassValues.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   myCmd [optional-params] [a1: string...]
 The doc
@@ -651,7 +651,7 @@ Options:
   -a=, --a2=      strings  {}   append 1 val to a2
 
 ==> test/PassValuesMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Infer & generate command-line interace/option/argument parser
 Usage:
   PassValuesMulti {SUBCMD}  [sub-command options & parameters]
@@ -670,7 +670,7 @@ Run "PassValuesMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/PerParam.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -685,7 +685,7 @@ Options:
   -i=, --item=    string  ""     set item
 
 ==> test/QualifiedMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   QualifiedMulti {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
@@ -699,7 +699,7 @@ Run "QualifiedMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "QualifiedMulti help" to get *comprehensive* help.
 
 ==> test/QualifiedSym.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   get [optional-params] 
 Options:
@@ -708,7 +708,7 @@ Options:
   -a=, --a=      int  1  set a
 
 ==> test/ResultInt.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   editDistanceAscii [required&optional-params] 
 Returns the edit distance between `a` and `b`.
@@ -723,7 +723,7 @@ Options:
   -b=, --b=      string  REQUIRED  set b
 
 ==> test/ReturnEmpty.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -738,7 +738,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/ReturnInt.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -753,7 +753,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/ReturnNonInt.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -768,7 +768,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/ReturnNonIntNoAuto.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -783,7 +783,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/ReturnString.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -798,7 +798,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/SemiAutoMulti.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   multi [optional-params] [subCmd: string...]
 Run command with no parameters for a full help message.
@@ -807,7 +807,7 @@ Options:
   --help-syntax      advanced: prepend,plurals,..
 
 ==> test/SemiMultMult.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   multi [optional-params] [cmdLine: string...]
 Run command with no parameters for a full help message.
@@ -816,7 +816,7 @@ Options:
   --help-syntax      advanced: prepend,plurals,..
 
 ==> test/SeqInt.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: int...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -831,7 +831,7 @@ Options:
   -i=, --item=   string  ""     set item
 
 ==> test/SetByParse.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   foo [optional-params] [rest: int...]
 Options:
@@ -841,7 +841,7 @@ Options:
   -b=, --beta=   int    2    set beta
 
 ==> test/StroppedParams.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   repro [optional-params] 
 Options:
@@ -853,7 +853,7 @@ Options:
   -b, --b                bool  false  single letter parameters don't suffer
 
 ==> test/SubScope.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   SubScope {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
@@ -867,7 +867,7 @@ Run "SubScope {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "SubScope help" to get *comprehensive* help.
 
 ==> test/Suppress.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
@@ -880,7 +880,7 @@ Options:
   -b=, --beta=   float  2.0  shrink target
 
 ==> test/TwoNondefaultedSeq.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
 cligen.nim(768, 14) template/generic instantiation of `dispatchCf` from here
 cligen.nim(755, 14) template/generic instantiation of `dispatchGen` from here
@@ -896,7 +896,7 @@ Options:
   -s=, --stuff=  strings  REQUIRED  append 1 val to stuff
 
 ==> test/TwoNondefaultedSeqSwap.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [required&optional-params] [ stuff (0 or more strings) ]
 demo entry point with varied, meaningless parameters.
@@ -908,7 +908,7 @@ Options:
   --args=        strings  REQUIRED  append 1 val to args
 
 ==> test/UserAliases.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   UserAliases [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters with an alias system.
@@ -925,7 +925,7 @@ Options:
   -i=, --item=    string  ""     set item
 
 ==> test/UserDispIdCollide.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   demo [optional-params] [args: string...]
 This tests if things work when a wrapped user-proc uses identifiers also used in
@@ -938,7 +938,7 @@ Options:
   -g=, --getopt=   string  "ho"        set getopt
 
 ==> test/Version.out <==
-/u/cb/pkg/nim/cg/cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
+cligen/clCfgInit.nim(114, 9) Warning: observable stores to ':env.r1' [ObservableStores]
 Usage:
   Version [optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
