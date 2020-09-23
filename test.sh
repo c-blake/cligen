@@ -18,3 +18,4 @@ head -n900 test/*.out | grep -v '^Hint: ' |
          -e 's@.*/test/@test/@' > test/out
 rm -f test/*.out
 diff test/ref test/out
+exit 0
