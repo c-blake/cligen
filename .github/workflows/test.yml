@@ -22,7 +22,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macOS-latest
+          # - macOS-latest # no devel-compiler of mac
           # - windows-latest # FIXME
         nim_version:
           - 'devel'
