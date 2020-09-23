@@ -108,10 +108,14 @@ proc apply(c: var ClCfg, path: string, plain=false) =
       else: discard # cannot happen since we break early above
     of cfgError: echo e.msg
   close(p)
+  when defined(nimHasWarningObservableStores):
+    {.push warning[ObservableStores]: off.}
   if rendOpts.len > 0:
     let r = initRstMdSGR(rendOpts, plain)
     proc renderMarkup(m: string): string = r.render(m)
     c.render = renderMarkup
+  when defined(nimHasWarningObservableStores):
+    {.pop.}
 
 var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
 if cfNm.fileExists: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
