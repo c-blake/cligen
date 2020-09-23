@@ -25,7 +25,6 @@ jobs:
           - macOS-latest
           # - windows-latest # FIXME
         nim_version:
-#         - '1.2.6'
           - 'devel'
     needs: before
     steps:
