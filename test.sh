@@ -7,6 +7,9 @@ v="--verbosity:1"
 h="--hint[Processing]=off"
 #XXX I do not know why the warning push in the code fails to suppress.
 w="--warning[ObservableStores]:off"
+if ${nim:-nim} c $w /dev/null 2>&1 | grep -q 'unknown warning:'; then
+  w=""
+fi
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
   c=$HOME/.cache/nim/cache-${n%.nim}
