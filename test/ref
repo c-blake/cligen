@@ -826,6 +826,9 @@ Options:
   -b=, --beta=   float  2.0  shrink target
 
 ==> test/TwoNondefaultedSeq.out <==
+test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
+cligen.nim(768, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(755, 14) template/generic instantiation of `dispatchGen` from here
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
