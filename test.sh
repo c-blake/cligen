@@ -3,13 +3,15 @@ exec < /dev/null
 export COLUMNS=80
 export CLIGEN=/dev/null
 rm -rf $HOME/.cache/nim/*
+v="--verbosity:1"
+h="--hint[Processing]=off"
+#XXX I do not know why the warning push in the code fails to suppress.
+w="--warning[ObservableStores]:off"
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
   c=$HOME/.cache/nim/cache-${n%.nim}
-  ${nim:-nim} ${BE:-c} --nimcache:$c "$@" --run $n --help 2>&1 |
-    grep -v '^CC:' |
-    grep -v '^\.CC:' |
-    grep -Ev '^\.{8}' > $o &
+  ${nim:-nim} ${BE:-c} --nimcache:$c $v $h $w "$@" --run $n --help 2>&1 |
+    grep -v '\<CC: ' > $o &
 done
 wait
 ./test/FullyAutoMulti help > test/FullyAutoMultiTopLvl.out 2>&1
