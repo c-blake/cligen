@@ -8,6 +8,7 @@ for n in test/[A-Z]*.nim; do
   c=$HOME/.cache/nim/cache-${n%.nim}
   ${nim:-nim} ${BE:-c} --nimcache:$c "$@" --run $n --help 2>&1 |
     grep -v '^CC:' |
+    grep -v '^\.CC:' |
     grep -Ev '^\.{8}' > $o &
 done
 wait
