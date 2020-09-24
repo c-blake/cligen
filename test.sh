@@ -7,7 +7,9 @@ for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
   c=$HOME/.cache/nim/cache-${n%.nim}
   ${nim:-nim} ${BE:-c} --nimcache:$c "$@" --run $n --help 2>&1 |
-    grep -v '^CC:' > $o &
+    grep -v '^CC:' |
+    grep -v '^\.CC:' |
+    grep -Ev '^\.{8}' > $o &
 done
 wait
 ./test/FullyAutoMulti help > test/FullyAutoMultiTopLvl.out 2>&1
@@ -18,4 +20,3 @@ head -n900 test/*.out | grep -v '^Hint: ' |
          -e 's@.*/test/@test/@' > test/out
 rm -f test/*.out
 diff test/ref test/out
-exit 0

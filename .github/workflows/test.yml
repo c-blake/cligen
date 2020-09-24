@@ -22,7 +22,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macOS-latest
+          # - macOS-latest # no devel-compiler of mac
           # - windows-latest # FIXME
         nim_version:
           - 'devel'
@@ -41,7 +41,7 @@ jobs:
         with:
           path: ~/.nimble
           key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
-      - uses: jiro4989/setup-nim-action@v1.0.2
+      - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim_version }}
 
