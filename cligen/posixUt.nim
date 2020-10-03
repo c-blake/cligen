@@ -1,6 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import posix,sets,tables, strutils,strformat,parseUtils, sysUt,argcvt,gcarc,osUt
+import std/[posix,sets,tables,strutils,strformat,parseutils], sysUt,argcvt,gcarc,osUt
 
 proc openat*(dirfd: cint, path: cstring, flags: cint):
        cint {.varargs, importc, header: "<unistd.h>", sideEffect.}
