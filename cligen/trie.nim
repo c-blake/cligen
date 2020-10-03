@@ -3,7 +3,7 @@
 ##itself compatible with both ``HashSet[string]`` & ``Table[string,*]``.  It was
 ##easier for me to extend this with ``match``&``nearLev`` than ``CritBitTree``.
 
-import sets, ./sysUt, algorithm, strutils   #HashSet, findUO|findO, :=, reverse
+import ./sysUt, std/[sets, algorithm, strutils] # findUO|findO, HashSet, reverse
 type
   NodeOb[T] {.acyclic.} = object
     term*: bool

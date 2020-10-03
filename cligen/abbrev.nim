@@ -28,7 +28,7 @@
 ##making strings harder to read & gets slower to compute.  Efficient algorithms
 ##for this case are a work in progress. This algo research area seems neglected.
 
-import strutils, algorithm, sets, tables, math,
+import std/[strutils, algorithm, sets, tables, math],
        ./tern, ./humanUt, ./textUt, ./trie
 
 type Abbrev* = object
