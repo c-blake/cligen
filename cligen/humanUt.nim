@@ -1,6 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
-import math, strutils, algorithm, sets, tables, parseutils, posix, textUt
+import std/[math, strutils, algorithm, sets, tables, parseutils, posix], textUt
 when not declared(initHashSet):
   proc initHashSet*[T](): HashSet[T] = initSet[T]()
   proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)

@@ -4,7 +4,7 @@
 
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import strformat, sets, ./textUt, ./gcarc, ./parseopt3, critbits, strutils
+import std/[strformat, sets, critbits, strutils], ./textUt, ./gcarc, ./parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 from strutils   import `%`, join, split, strip, toLowerAscii, cmpIgnoreStyle
 when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system

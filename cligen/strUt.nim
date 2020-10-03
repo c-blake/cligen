@@ -1,4 +1,4 @@
-import strutils, sets
+import std/[strutils, sets]
 
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
