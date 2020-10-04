@@ -1,5 +1,5 @@
-import ./mfile, parseutils
-from strutils import nil
+import ./mfile, std/parseutils
+from std/strutils import nil
 
 proc fileEq*(pathA, pathB: string): bool =
   ## Compare whole file contents given paths. Returns true if and only if equal.

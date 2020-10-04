@@ -23,7 +23,7 @@ iterator maybePar*(parallel: bool, a, b: int): int =
   else:
     for i in a .. b: yield i
 
-import macros
+import core/macros
 
 macro enumerate*(x: ForLoopStmt): untyped =
   ## Generic enumerate macro; E.g.: ``for i,e in enumerate([3,2,1]): echo i``.

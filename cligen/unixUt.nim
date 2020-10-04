@@ -1,4 +1,4 @@
-import posix
+import std/posix
 type csize = uint
 
 var lastBadDev = 0.Dev

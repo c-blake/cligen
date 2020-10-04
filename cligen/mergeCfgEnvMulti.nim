@@ -1,4 +1,4 @@
-import os, strutils, cligen/cfUt
+import std/[os, strutils], cligen/cfUt
 
 {.push warning[ProveField]: off.}
 proc mergeParams(cmdNames: seq[string],

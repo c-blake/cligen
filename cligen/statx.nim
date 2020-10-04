@@ -3,7 +3,7 @@
 ## program to the "superset" using ``Statx`` and ``statx`` and i just works.
 ## We simulate/translate ordinary ``Stat`` results when necessary.
 
-import posix, posixUt
+import std/posix, cligen/posixUt
 
 const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
 {.passC: "-D_GNU_SOURCE".}

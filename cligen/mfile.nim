@@ -4,7 +4,7 @@
 ## layered differently, has non-system.open-colliding type constructors, and
 ## uses ``.len`` instead of ``.size`` for constency with other Nim things.
 
-import posix, ./osUt, ./mslice # perror cMemCmp mSlices
+import std/posix, ./osUt, ./mslice # perror cMemCmp mSlices
 
 type
   MFile* = object   ## Like MemFile but safe in an MT-environment

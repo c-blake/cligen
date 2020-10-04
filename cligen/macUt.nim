@@ -1,7 +1,7 @@
 ## This is a module of utility procs that might be more broadly useful than only
 ## cligen.nim activity.
 
-import macros, strutils, os
+import core/macros, std/[strutils, os]
 
 proc maybeDestrop*(id: NimNode): NimNode =
   ## Used to remove stropping backticks \`\`, if present, from an ident node

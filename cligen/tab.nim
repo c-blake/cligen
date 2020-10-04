@@ -1,5 +1,5 @@
-import math, strutils, algorithm, tables, parseutils, posix
-from unicode import nil
+import std/[math, strutils, algorithm, tables, parseutils, posix]
+from std/unicode import nil
 
 proc colPad*(cw: var seq[int]; fw=80, pm=999, m=1, j = -1) =
   ##Pad layout of column widths ``cw`` with up to ``pm`` spaces per major col,

@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import os, terminal, strutils, dynlib, times, stats, math
+import std/[os, terminal, strutils, dynlib, times, stats, math]
 type csize = uint
 
 proc perror*(x: cstring, len: int, err=stderr) =

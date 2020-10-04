@@ -92,7 +92,7 @@ proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
 proc `==`*(ms: MSlice, b: string): bool {.inline.} = b == ms
 
-import hashes # hashData
+import std/hashes # hashData
 proc hash*(ms: MSlice): Hash {.inline.} =
   ## hash MSlice data; With ``==`` all we need to put in a Table/Set
   result = hashData(ms.mem, ms.len)

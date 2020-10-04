@@ -61,7 +61,7 @@
 ## E.g, a user entering "="  causes ``sep == "="`` while entering "+=" gets
 ## ``sep == "+="``, and "+/-+=" gets ``sep == "+/-+="``.
 
-import os, strutils, critbits
+import std/[os, strutils, critbits]
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ## Normalizes option key ``s`` to allow command syntax to be style-insensitive

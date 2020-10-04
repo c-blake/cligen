@@ -1,4 +1,4 @@
-import os, parsecfg, streams, strutils
+import std/[os, parsecfg, streams, strutils]
 
 proc cfToCL*(path: string, subCmdName="", quiet=false,
              noRaise=false, activeSec=false): seq[string] =
