@@ -620,7 +620,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let posId = spars[posIx][0]
       let tmpId = ident("tmp" & $posId)
       result[0].add(newNimNode(nnkElse).add(quote do:
-        var `tmpId`: typeof(`posId`[0])
+        var `tmpId`: type(`posId`[0])
         `apId`.key = "positional $" & $`posNoId`
         `apId`.val = `pId`.key
         `apId`.sep = "="
