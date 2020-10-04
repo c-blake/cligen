@@ -1,4 +1,4 @@
-import sets, parseutils, posix, re,
+import std/[sets, parseutils, posix, re],
        cligen, cligen/[dents, statx, osUt, posixUt, humanUt]
 
 proc parseSize(size: string): int64 =

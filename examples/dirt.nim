@@ -1,5 +1,5 @@
 # NOTE: Needs `devel` / >= 1.4.0 for `HeapQueue[T].find`.
-import heapqueue, sets, posix, strformat, cligen, cligen/[dents, posixUt, statx]
+import std/[heapqueue,sets,posix,strformat], cligen,cligen/[dents,posixUt,statx]
 
 proc setMTime*(dfd: cint; path: string; m0, m1: StatxTs;
                verb: File=nil, err=stderr, dryRun=false): int =

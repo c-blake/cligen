@@ -1,4 +1,4 @@
-import strformat, cligen, posix, cligen/[dents, posixUt, statx]
+import std/[strformat, posix], cligen, cligen/[dents, posixUt, statx]
 
 proc rr*(roots: seq[string], xdev=false, eof0=false): int =
   ## Like rm -rf but a bit faster.  Does nothing if no ``roots`` specified.

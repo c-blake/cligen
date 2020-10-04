@@ -6,7 +6,7 @@
 ## logic might mimick Python's ``for x in p.imap_unordered`` more closely.  This
 ## is very much at the proof of concept stage.  PRs welcome to build it out.
 
-import cpuinfo, posix, ./mslice
+import std/[cpuinfo, posix], ./mslice
 type
   Filter =  # Abstract a coprocess filter which reads|writes its stdin|stdout.
     tuple[pid: Pid; fd0, fd1: cint; off: int; buf: array[16384, char]]

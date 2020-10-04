@@ -1,4 +1,4 @@
-import os, posix, strutils, sets, tables, hashes, std/sha1, algorithm,
+import std/[os, posix, strutils, sets, tables, hashes, sha1, algorithm],
   cligen, cligen/[mfile,fileUt,strUt, osUt,posixUt,sysUt, dents,statx]
 
 type Lg* = enum osErr, summ                     #A tiny logging system

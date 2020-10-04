@@ -1,4 +1,4 @@
-import posix, strformat, cligen/[dents, posixUt, statx]
+import std/[posix, strformat], cligen/[dents, posixUt, statx]
 
 proc chom1*(dfd:cint,path:string,nmAt:int, st:Statx, uid=Uid.high, gid=Gid.high,
             dirPerm=0o2775.Mode, filePerm=0o664.Mode, execPerm=0o775.Mode,

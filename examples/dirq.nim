@@ -1,4 +1,4 @@
-import posix/inotify, posix, cligen/[sysUt, posixUt], cligen
+import posix/inotify, std/posix, cligen, cligen/[sysUt, posixUt]
 
 type Event* = enum
   inAccess    ="access"   , inAttrib ="attrib"    , inModify    ="modify"      ,

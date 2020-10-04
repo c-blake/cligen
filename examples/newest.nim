@@ -1,4 +1,4 @@
-import heapqueue, posix, cligen/[osUt, posixUt, dents, statx], cligen
+import std/[heapqueue, posix], cligen, cligen/[osUt, posixUt, dents, statx]
 
 type TimePath = tuple[tm: int64, path: string]
 

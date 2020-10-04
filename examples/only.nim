@@ -1,4 +1,4 @@
-import posix, re, strutils, tables, cligen, cligen/[osUt,mslice,magic,procpool]
+import std/[posix,re,strutils,tables], cligen,cligen/[osUt,mslice,magic,procpool]
 
 type Excl = enum compress,tar,soft,apptype,elf,text,cdf,tokens,encoding,ascii
 const e2Flag = {  # CSV & json missing; Maybe cligen/magic needs updating?
