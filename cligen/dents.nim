@@ -18,7 +18,7 @@
 ## & its sibling ``fstatat`` which largely eliminates the need to deal with full
 ## paths instead of just dirent filenames.
 
-import os, sets, posix, cligen/[osUt, posixUt, statx]
+import std/[os, sets, posix], cligen/[osUt, posixUt, statx]
 export perror, st_dev, Dev
 
 type csize_t = uint #For older Nim
