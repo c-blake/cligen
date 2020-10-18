@@ -56,7 +56,7 @@ proc fileStrings*(path: string, delim: char): auto =
   result = iterator(): string =
     if path.useStdin:
       for entry in getDelim(stdin, delim): yield entry
-    elif path.len > 0:
+    elif path.len > 0 and path != "/":
       for entry in getDelim(open(path), delim): yield entry
 
 proc both*[T](s: seq[T], it: iterator(): T): iterator(): T =
