@@ -65,11 +65,11 @@ proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
   var oflags: cint
   if path.len == 0: return
   if (prot and (PROT_READ or PROT_WRITE)) == (PROT_READ or PROT_WRITE):
-    oflags = O_RDWR or O_CREAT
+    oflags = O_RDWR or O_CREAT or O_NONBLOCK
   elif (prot and PROT_READ) != 0:
-    oflags = O_RDONLY
+    oflags = O_RDONLY or O_NONBLOCK
   elif (prot and PROT_WRITE) != 0:    #Write-only memory is only rarely useful
-    oflags = O_WRONLY or O_CREAT
+    oflags = O_WRONLY or O_CREAT or O_NONBLOCK
   let fd = open(path, oflags, perMask)
   if fd == -1:
     perror cstring("open"), 4; return
