@@ -53,6 +53,7 @@ iterator getDelim*(stream: File, dlm: char='\n'): string =
 
 proc fileStrings*(path: string, delim: char): auto =
   ## Return an iterator yielding ``delim``-delimited records in file ``path``.
+  ## Note ``path = "/"`` is equivalent to a Unix ``path = "/dev/null"``.
   result = iterator(): string =
     if path.useStdin:
       for entry in getDelim(stdin, delim): yield entry
