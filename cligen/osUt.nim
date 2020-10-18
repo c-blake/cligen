@@ -31,7 +31,7 @@ proc perror*(x: cstring, len: int, err=stderr) =
 
 proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
-  (path in ["-", "/dev/stdin"] or (path.len==0 and not terminal.isatty(stdin)))
+  path in ["-", "/dev/stdin"] or (path.len == 0 and not stdin.isatty)
 
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
