@@ -531,7 +531,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           if cast[pointer](`setByParseId`) != nil:
             `setByParseId`[].add(("version", "", `cf`.version, clVersionOnly))
           if not `prsOnlyId`:
-            stdout.write(`cf`.version,"\n");raise newException(VersionOnly,"")))
+            if `cf`.version.len > 0:
+              stdout.write(`cf`.version, "\n")
+              raise newException(VersionOnly, "")
+            else:
+              stdout.write("Unknown version\n")
+              raise newException(VersionOnly, "")))
     if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0: #CL user aliases
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(aliasDefN), aliasDefS).add(
