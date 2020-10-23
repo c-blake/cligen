@@ -13,6 +13,8 @@ proc cmemrchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
 proc cmemcmp*(a, b: pointer, n: csize): cint {. #Exported by system/ansi_c??
   importc: "memcmp", header: "<string.h>", noSideEffect.}
+proc cmemcpy*(a, b: pointer, n: csize): cint {.
+  importc: "memcpy", header: "<string.h>", noSideEffect.}
 proc `-!`*(p, q: pointer): int {.inline.} =
   (cast[int](p) -% cast[int](q)).int
 proc `+!`*(p: pointer, i: int): pointer {.inline.} =
