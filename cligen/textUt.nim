@@ -4,7 +4,7 @@ from unicode  import nil
 import critbits, math, ./mslice # math.^
 
 proc stripEsc*(a: string): string =
-  ## Return `a` with ANSI escape sequences ("\e[..m", "\e]..\e\\") removed.
+  ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
   result = newStringOfCap(a.len)
   var postEsc = false
   var inSGR = false
@@ -33,8 +33,9 @@ proc stripEsc*(a: string): string =
     else: result.add c
     inc i
 
-proc stripSGR*(a: string): string {.deprecated: "Use stripEsc instead.".} =
-  ## Return `a` with ANSI escape sequences ("\e[..m", "\e]..\e\\") removed.
+proc stripSGR*(a: string): string =
+  ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
+  ## Just an alias for `stripEsc`.
   a.stripEsc
 
 proc printedLen*(a: string): int =
