@@ -5,7 +5,7 @@
 ## styles can also be bounded by a number of splits/number of outputs and accept
 ## either ``MSlice`` or ``string`` as inputs to produce the ``seq[MSlice]``.
 
-import cligen/prefetch
+import ./prefetch
 type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
