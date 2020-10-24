@@ -1,6 +1,6 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith
 from terminal import terminalWidth
-from unicode  import nil
+from unicode  import runeLen
 import critbits, math, ./mslice # math.^
 
 proc stripEsc*(a: string): string =
@@ -38,9 +38,8 @@ proc stripSGR*(a: string): string =
   ## Just an alias for `stripEsc`.
   a.stripEsc
 
-proc printedLen*(a: string): int =
+proc printedLen*(a: string): int = a.stripEsc.runeLen
   ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
-  unicode.runeLen a.stripEsc
 
 iterator paragraphs*(s: string, indent = {' ', '\t'}):
     tuple[pre: bool, para: string] =
