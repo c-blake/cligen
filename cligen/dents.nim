@@ -169,7 +169,8 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
             bat[i].argc   = cchar(5)
             bat[i].arg[0] = dfd
             bat[i].arg[1] = cast[clong](d.d_name[0].addr)
-            bat[i].arg[2] = AT_SYMLINK_NOFOLLOW or AT_NO_AUTOMOUNT
+            bat[i].arg[2] = AT_NO_AUTOMOUNT or
+                            (if follow: 0 else: AT_SYMLINK_NOFOLLOW)
             bat[i].arg[3] = STATX_ALL
             bat[i].arg[4] = cast[clong](sts[i].addr)
           discard batch(rvs[0].addr, bat[0].addr, nB, clong(0), clong(0))
