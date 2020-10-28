@@ -168,7 +168,9 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
             bat[i].nr     = cshort(SYS_statx)
             bat[i].argc   = cchar(5)
             bat[i].arg[0] = dfd
-            bat[i].arg[1] = cast[clong](d.d_name[0].addr)
+            bat[i].arg[1] = if d.d_name[0] == '.' and d.d_name[1] == '/':
+                                  cast[clong](d.d_name[2].addr)
+                            else: cast[clong](d.d_name[0].addr)
             bat[i].arg[2] = AT_NO_AUTOMOUNT or
                             (if follow: 0 else: AT_SYMLINK_NOFOLLOW)
             bat[i].arg[3] = STATX_ALL
