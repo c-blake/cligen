@@ -333,7 +333,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
 
 proc find*(roots: seq[string], recurse=0, stats=false, chase=false,
            xdev=false, eof0=false, zero=false) =
-  ## 2.75-4.5X faster than GNU "find /usr|.."; 1.7x faster than FreeBSD find
+  ## 2.75-4.5X faster than GNU "find /usr|.."; 1.7x faster than BSD find|fd
   let term = if zero: '\0' else: '\n'
   for root in (if roots.len > 0: roots else: @[ "." ]):
     forPath(root, recurse, stats, chase, xdev, eof0, stderr,
