@@ -43,15 +43,16 @@ macro enumerate*(x: ForLoopStmt): untyped =
 
 macro toItr*(x: ForLoopStmt): untyped =
   ## Convert factory proc call for inline-iterator-like usage.
-  ## E.g.: ``for e in toItr(myFactory(parm)): echo e``.
-  let expr = x[0]
-  let call = x[1][1] # Get foo out of toItr(foo)
-  let body = x[2]
+  ## E.g.: ``for e in toItr myFactory(parm): echo e``.
+  let call = x[^2][1]                   # Get foo out of toItr(foo)
+  let sym  = ident"itr"                 # sym = genSym(ident="itr")
+  var tree = nnkForStmt.newTree         # for
+  for v in x[0..^3]: tree.add v         # for v1,...
+  tree.add(nnkCall.newTree(sym), x[^1]) # for v1,... in itr(): body
   result = quote do:
     block:
-      let itr = `call`
-      for `expr` in itr():
-        `body`
+      let `sym` {.inject.} = `call`
+      `tree`
 
 proc incd*[T: Ordinal | uint | uint64](x: var T, amt=1): T {.inline.} =
   ##Similar to prefix ``++`` in C languages: increment then yield value
