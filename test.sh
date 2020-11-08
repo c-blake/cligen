@@ -1,4 +1,8 @@
 #!/bin/sh
+# If you cannot|refuse to run in an 80 column terminal|with no ctty at all then
+#   x=$COLUMNS; stty columns 80; ./test.sh; stty columns $x
+# will likely match reference output.  (NOTE: Final stty clobbers test.sh $?)
+# But this script is really only for cligen developers.
 exec < /dev/null
 export COLUMNS=80
 export CLIGEN=/dev/null
