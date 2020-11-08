@@ -323,6 +323,11 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
   defer: discard close(fd)
   if st != nil:
     if fstat(fd, st[]) == -1: return  #early return virtually impossible
+    if st[].st_size > 0:
+      buf.setLen st[].st_size         #may miss actively added; (a race anyway)
+      let nRead = read(fd, buf[0].addr, st[].st_size)
+      if nRead == st[].st_size: return
+      off = buf.len                   #fall through on a short read
   while true:
     buf.setLen(buf.len + perRead)
     let nRead = read(fd, buf[off].addr, perRead)
