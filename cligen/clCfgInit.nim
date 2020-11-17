@@ -3,7 +3,7 @@
 when defined(nimHasWarningObservableStores):
   {.push warning[ObservableStores]: off.}
 
-import std/[streams, parsecfg, tables]
+import std/[os, streams, parsecfg, tables]
 const cgConfigFileBaseName = "config"
 
 proc apply(c: var ClCfg, path: string, plain=false) =
@@ -24,7 +24,9 @@ proc apply(c: var ClCfg, path: string, plain=false) =
     of cfgSectionStart:
       if e.section.startsWith("include__"):
         let sub = e.section[9..^1]
-        let subp = if sub == sub.toUpperAscii: getEnv(sub) else: sub
+        let subs = sub.split("__") # Allow include__VAR_NAME__DEFAULT[__..IGNOR]
+        let subp = if subs.len>0 and subs[0] == subs[0].toUpperAscii:
+                     getEnv(subs[0], if subs.len>1: subs[1] else: "") else: sub
         c.apply(if subp.startsWith("/"): subp else: relTo & subp, plain)
       else:
         let sec = e.section.optionNormalize
