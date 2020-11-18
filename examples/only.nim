@@ -59,9 +59,9 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
   ## emit any path (followed by ``eor``) whose `file(1)` type matches any listed
   ## pattern.  ``all`` & ``no`` can combine to mean not all patterns match.
   ##
-  ## `file(1)` is *very* CPU bound & 4-64x parallel speed-up can help a lot!  A
-  ## similar ``find|xargs -PN stdout -oL file -F:Xx:|grep ":Xx: .*$@"|sed -e
-  ## 's/:Xx: .*$//'`` pipeline is ~2x slower; MT-UNSAFE libmagic => forked kids.
+  ## `file(1)` is *very* CPU bound. Parallel speed-up can help a lot. A
+  ## ``find|xargs -PN stdout -oL file -F:Xx:|grep ":Xx: .*$@"|sed -e 's/:Xx:
+  ## .*$//'`` is slower & needs :Xx: delimiter; MT-UNSAFE libmagic=>forked kids.
   if patterns.len == 0:
     return
   gAll = all; gNo = no                          # Copy to globals
