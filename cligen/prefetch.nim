@@ -8,7 +8,7 @@ type
     pfEvictL2   = 2
     pfEvictNone = 3
 
-when defined(gcc):                              #XXX or defined(clang) etc.
+when defined(x86prefetch) and defined(gcc): #XXX or defined(clang) etc.
   {.passc: "-march=native".}
   proc prefetch*(data: pointer, rw=pfRead, kind=pfEvictNone) {.
     importc: "__builtin_prefetch", nodecl .}
