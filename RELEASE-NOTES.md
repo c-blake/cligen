@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.3.1
+--------------
+  Quick fix to deactivate mslice prefetch causing build problems for some.
+  { Should at least be guarded by defined(prefetch) or something. }
+
 Version: 1.3.0
 --------------
   More compatibility fixes; Deprecation warning removals; Use std/ qualifiers
