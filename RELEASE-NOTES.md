@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.3.2
+--------------
+  Remove prefetching optimization idea, anyway.  On AMD 2950X, it was quite a
+  bit slower anyway.
+
+  Better fix to deactivate prefetch doing anything unless user activates (and
+  maybe uses special gcc flags, too.).  `cligen/prefix` module is retained for
+  backward compatibility { no longer touching compiler flags at all }.
+
 Version: 1.3.1
 --------------
   Quick fix to deactivate mslice prefetch causing build problems for some.

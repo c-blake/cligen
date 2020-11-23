@@ -8,8 +8,8 @@ type
     pfEvictL2   = 2
     pfEvictNone = 3
 
-when defined(x86prefetch) and defined(gcc): #XXX or defined(clang) etc.
-  {.passc: "-march=native".}
+#XXX or defined(clang) etc. You may need some gcc flags for this to do anything.
+when defined(cpuPrefetch) and defined(gcc):
   proc prefetch*(data: pointer, rw=pfRead, kind=pfEvictNone) {.
     importc: "__builtin_prefetch", nodecl .}
   proc prefetchw*(data: pointer, kind=pfEvictNone) {.inline.} =
