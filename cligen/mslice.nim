@@ -5,7 +5,7 @@
 ## styles can also be bounded by a number of splits/number of outputs and accept
 ## either ``MSlice`` or ``string`` as inputs to produce the ``seq[MSlice]``.
 
-import ./prefetch
+#import ./prefetch
 type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
@@ -123,7 +123,7 @@ iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
       ms.len = recEnd -! ms.mem                     #sep is NOT included
       if eat != '\0' and ms.len > 0 and ms[ms.len - 1] == eat:
         dec(ms.len)                                 #trim pre-sep char
-      prefetch(recEnd, pfRead, pfEvictNone)
+#     prefetch(recEnd, pfRead, pfEvictNone)
       yield ms
       ms.mem = recEnd +! 1                          #skip sep
       remaining = mslc.len - (ms.mem -! mslc.mem)
