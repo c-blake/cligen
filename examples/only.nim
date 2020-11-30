@@ -32,10 +32,10 @@ proc classifyAndMatch() = # Reply with same path as input if it passes filter.
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
     if gAll:                                    # Handle all 4 Boolean cases
       if gNo: (if not all(fileType): stdout.urite path, '\0')
-      else  : (if all(fileType): stdout.urite path, '\0')
+      else  : (if     all(fileType): stdout.urite path, '\0')
     else:
       if gNo: (if not any(fileType): stdout.urite path, '\0')
-      else  : (if any(fileType): stdout.urite path, '\0')
+      else  : (if     any(fileType): stdout.urite path, '\0')
 
 proc framesO(f: var Filter): iterator(): MSlice =
   ## This frame iterator is for NUL('\0') terminated `work` proc reply records
