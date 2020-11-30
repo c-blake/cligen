@@ -1,4 +1,4 @@
-import std/[posix,re,strutils,tables], cligen,cligen/[osUt,mslice,magic,procpool]
+import std/[posix,re,strutils,tables],cligen,cligen/[osUt,mslice,magic,procpool]
 
 type Excl = enum compress,tar,soft,apptype,elf,text,cdf,tokens,encoding,ascii
 const e2Flag = {  # CSV & json missing; Maybe cligen/magic needs updating?
@@ -22,7 +22,6 @@ proc all(fileType: string): bool {.inline.} = # Support Boolean AND
   result = true
 
 proc classifyAndMatch() = # Reply with same path as input if it passes filter.
-  const TERM = "\0"
   var m = magic_open(gFlags)
   if m == nil or magic_load(m, nil) != 0:
     stderr.write "cannot load magic DB: %s\x0A", m.magic_error, "\n"
@@ -32,15 +31,31 @@ proc classifyAndMatch() = # Reply with same path as input if it passes filter.
     if fileType.len == 0:
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
     if gAll:                                    # Handle all 4 Boolean cases
-      if gNo:
-        if not all(fileType): stdout.urite path, TERM
-      else:
-        if all(fileType): stdout.urite path, TERM
+      if gNo: (if not all(fileType): stdout.urite path, '\0')
+      else  : (if all(fileType): stdout.urite path, '\0')
     else:
-      if gNo:
-        if not any(fileType): stdout.urite path, TERM
-      else:
-        if any(fileType): stdout.urite path, TERM
+      if gNo: (if not any(fileType): stdout.urite path, '\0')
+      else  : (if any(fileType): stdout.urite path, '\0')
+
+proc framesO(f: var Filter): iterator(): MSlice =
+  ## This frame iterator is for NUL('\0') terminated `work` proc reply records
+  ## bounded to less than the `bufSize` parameter to `initProcPool`.
+  let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
+  result = iterator(): MSlice =
+    let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
+    if nRd > 0:
+      let ms = MSlice(mem: f.buf[0].addr, len: f.off + nRd)
+      let eoms = cast[uint](ms.mem) + cast[uint](ms.len)
+      f.off = 0
+      for s in ms.mSlices('\0'):
+        let eos = cast[uint](s.mem) + cast[uint](s.len)
+        if eos < eoms and cast[ptr char](eos)[] == '\0':
+          yield s
+        else:
+          f.off = s.len
+          moveMem f.buf[0].addr, s.mem, s.len
+    else:
+      f.done = true
 
 proc print(s: MSlice, eor: char) {.inline.} =
   let eos = cast[uint](s.mem) + cast[uint](s.len)   # Hijack end of string here.
@@ -72,7 +87,7 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
     gFlags = gFlags or cint(e2Flag[e])
   let inp = popen(gen % dlr1, "r")              # Fire input path generator
   # Any reply is an `okPath`; `pp.unord` doesn't need a request to have a reply.
-  var pp = initProcPool(classifyAndMatch, jobs) # Start & drive process pool
+  var pp = initProcPool(classifyAndMatch, framesO, jobs) # Start&drive kid pool
   pp.eval(path, okPath, inp.getNoPfx('\0', trim), okPath.print(eor))
   discard inp.pclose
 

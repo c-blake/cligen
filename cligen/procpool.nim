@@ -1,15 +1,19 @@
 ## This module provides a facility like Python's multiprocessing module but is
-## less automagic (and also very little error handling is done) right now.
-## Multiple replies from worker processes are delimited by NUL ('\0') bytes.
-## ``MSlice`` is used as a reply type to avoid copies in case replies are large.
-## Implicit right now that is replies are < ``bufSize``.  Auto-marshal/unmarshal
-## logic might mimick Python's ``for x in p.imap_unordered`` more closely.  This
-## is very much at the proof of concept stage.  PRs welcome to build it out.
+## less automagic & little error handling is done.  `MSlice` is used as a reply
+## type to avoid copy in case replies are large.  Auto-pack/unpack logic could
+## mimic Python's `for x in p.imap_unordered` more closely.  This is very much
+## at Proof Of Concept stage.  PRs welcome to complete.
 
-import std/[cpuinfo, posix], ./mslice
+import std/[cpuinfo, posix], ./mslice, ./sysUt
 type
-  Filter =  # Abstract a coprocess filter which reads|writes its stdin|stdout.
-    tuple[pid: Pid; fd0, fd1: cint; off: int; done: bool; buf: string]
+  Filter* = object ## Abstract coprocess filter reading|writing its stdin|stdout
+    pid: Pid
+    fd0, fd1*: cint
+    off*: int
+    done*: bool
+    buf*: string
+
+  Frames* = proc(f: var Filter): iterator(): MSlice
 
   ProcPool* = object  ## A process pool to do work on multiple cores
     nProc: int
@@ -17,6 +21,7 @@ type
     kids: seq[Filter]
     fdset: TFdSet
     fdMax: cint
+    frames: Frames
 
 proc len*(pp: ProcPool): int {.inline.} = pp.nProc
 
@@ -25,23 +30,6 @@ proc request*(pp: ProcPool, kid: int, buf: pointer, len: int) =
 
 proc close*(pp: ProcPool, kid: int) =
   discard pp.kids[kid].fd0.close
-
-iterator frameReplies(f: var Filter): MSlice =
-  #XXX Should probably be a parameter to readyReplies, finalReplies, and eval.
-  let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
-  if nRd > 0:
-    let ms = MSlice(mem: f.buf[0].addr, len: f.off + nRd)
-    let eoms = cast[uint](ms.mem) + cast[uint](ms.len)
-    f.off = 0
-    for s in ms.mSlices('\0'):
-      let eos = cast[uint](s.mem) + cast[uint](s.len)
-      if eos < eoms and cast[ptr char](eos)[] == '\0':
-        yield s
-      else:
-        f.off = s.len
-        moveMem f.buf[0].addr, s.mem, s.len
-  else:
-    f.done = true
 
 # The next 4 procs use Unix select not stdlib `selectors` for now since Windows
 # CreatePipe/CreateProcess seem tricky for parent-kid coprocesses and I have no
@@ -68,7 +56,8 @@ proc initFilter(work: proc(), bufSize: int): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc initProcPool*(work: proc(); jobs=0; bufSize=16384): ProcPool =
+proc initProcPool*(work: proc(); frames: Frames; jobs = 0;
+                   bufSize = 16384): ProcPool =
   result.nProc = if jobs == 0: countProcessors() else: jobs
   result.kids.setLen result.nProc
   FD_ZERO result.fdset
@@ -77,6 +66,7 @@ proc initProcPool*(work: proc(); jobs=0; bufSize=16384): ProcPool =
     FD_SET result.kids[i].fd1, result.fdset
     result.fdMax = max(result.fdMax, result.kids[i].fd1)
   result.fdMax.inc
+  result.frames = frames
 
 iterator readyReplies*(pp: var ProcPool): MSlice =
   var noTO: Timeval                                   # Zero timeout => no block
@@ -84,8 +74,7 @@ iterator readyReplies*(pp: var ProcPool): MSlice =
   if select(pp.fdMax, fdset.addr, nil, nil, noTO.addr) > 0:
     for i in 0 ..< pp.nProc:
       if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
-        for s in pp.kids[i].frameReplies:
-          yield s
+        for rep in toItr(pp.frames(pp.kids[i])): yield rep
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
   var st: cint
@@ -96,8 +85,7 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
     if select(pp.fdMax, fdset.addr, nil, nil, nil) > 0:
       for i in 0 ..< pp.nProc:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
-          for reply in pp.kids[i].frameReplies:
-            yield reply
+          for rep in toItr(pp.frames(pp.kids[i])): yield rep
           if pp.kids[i].done:                         # got EOF from kid
             FD_CLR pp.kids[i].fd1, fdset0             # Rm from fdset
             discard pp.kids[i].fd1.close              # Reclaim fd
@@ -105,11 +93,11 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
             n.dec
 
 template eval*(pp, req, rep, reqGen, onReply: untyped) =
-  ## The idea is to use `pp = initProcPool()` and then use this template to give
-  ## identifiers `req` and `rep`, a generator of requests (any iterator expr),
-  ## and `onReply` to do something upon any reply (some expr involving `rep`).
-  ## No reply at all is considered valid here; Ctrl flow options would be nice.
-  ## ``examples/only.nim`` has a complete usage example.
+  ## The idea is to use `pp=initProcPool()` & then use this template to give ids
+  ## `req` & `rep`, a generator of requests (any iterator expr), and `onReply`
+  ## to do something with replies (an expr involving `rep`).  No reply at all is
+  ## considered ok; Ctrl flow options would be nice. `examples/only.nim` has a
+  ## complete usage example also with a custom `frames` iterator.
   var i = 0
   for req in reqGen:
     pp.request(i, cstring(req), req.len + 1)    # keep NUL; Let full pipe block
