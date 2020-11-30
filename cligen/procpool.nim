@@ -2,17 +2,18 @@
 ## less automagic (and also very little error handling is done) right now.
 ## Multiple replies from worker processes are delimited by NUL ('\0') bytes.
 ## ``MSlice`` is used as a reply type to avoid copies in case replies are large.
-## Implicit right now that is replies are <= buf.sizeof.  Auto-marshal/unmarshal
+## Implicit right now that is replies are < ``bufSize``.  Auto-marshal/unmarshal
 ## logic might mimick Python's ``for x in p.imap_unordered`` more closely.  This
 ## is very much at the proof of concept stage.  PRs welcome to build it out.
 
 import std/[cpuinfo, posix], ./mslice
 type
   Filter =  # Abstract a coprocess filter which reads|writes its stdin|stdout.
-    tuple[pid: Pid; fd0, fd1: cint; off: int; buf: array[16384, char]]
+    tuple[pid: Pid; fd0, fd1: cint; off: int; done: bool; buf: string]
 
   ProcPool* = object  ## A process pool to do work on multiple cores
     nProc: int
+    bufSz: int
     kids: seq[Filter]
     fdset: TFdSet
     fdMax: cint
@@ -25,9 +26,9 @@ proc request*(pp: ProcPool, kid: int, buf: pointer, len: int) =
 proc close*(pp: ProcPool, kid: int) =
   discard pp.kids[kid].fd0.close
 
-iterator frameReplies(f: var Filter, done: var bool): MSlice =
+iterator frameReplies(f: var Filter): MSlice =
   #XXX Should probably be a parameter to readyReplies, finalReplies, and eval.
-  let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.sizeof - f.off)
+  let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
   if nRd > 0:
     let ms = MSlice(mem: f.buf[0].addr, len: f.off + nRd)
     let eoms = cast[uint](ms.mem) + cast[uint](ms.len)
@@ -40,12 +41,12 @@ iterator frameReplies(f: var Filter, done: var bool): MSlice =
         f.off = s.len
         moveMem f.buf[0].addr, s.mem, s.len
   else:
-    done = true
+    f.done = true
 
 # The next 4 procs use Unix select not stdlib `selectors` for now since Windows
 # CreatePipe/CreateProcess seem tricky for parent-kid coprocesses and I have no
 # test platform.  If some one knows how to do that, submit a when(Windows) PR.
-proc initFilter(work: proc()): Filter {.inline.} =
+proc initFilter(work: proc(), bufSize: int): Filter {.inline.} =
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
   discard fds1.pipe         # pipe for data flowing from kid -> parent
@@ -60,30 +61,30 @@ proc initFilter(work: proc()): Filter {.inline.} =
     work()
     quit(0)
   else:
+    result.buf = newString(bufSize) # allocate, setLen, but no-init
     result.pid = pid
     result.fd0 = fds0[1]    # Parent writes to fd0 & reads from fd1;  Those are
     result.fd1 = fds1[0]    #..like the fd nums in the kid, but with RW/swapped.
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc initProcPool*(work: proc(); jobs=0): ProcPool =
+proc initProcPool*(work: proc(); jobs=0; bufSize=16384): ProcPool =
   result.nProc = if jobs == 0: countProcessors() else: jobs
   result.kids.setLen result.nProc
   FD_ZERO result.fdset
   for i in 0 ..< result.nProc:                  # Create nProc Filter kids
-    result.kids[i] = initFilter(work)
+    result.kids[i] = initFilter(work, bufSize)
     FD_SET result.kids[i].fd1, result.fdset
     result.fdMax = max(result.fdMax, result.kids[i].fd1)
   result.fdMax.inc
 
 iterator readyReplies*(pp: var ProcPool): MSlice =
-  var done: bool
   var noTO: Timeval                                   # Zero timeout => no block
   var fdset = pp.fdset
   if select(pp.fdMax, fdset.addr, nil, nil, noTO.addr) > 0:
     for i in 0 ..< pp.nProc:
       if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
-        for s in pp.kids[i].frameReplies(done):
+        for s in pp.kids[i].frameReplies:
           yield s
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
@@ -95,10 +96,9 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
     if select(pp.fdMax, fdset.addr, nil, nil, nil) > 0:
       for i in 0 ..< pp.nProc:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
-          var done = false
-          for reply in pp.kids[i].frameReplies(done):
+          for reply in pp.kids[i].frameReplies:
             yield reply
-          if done:                                    # Worker quit
+          if pp.kids[i].done:                         # got EOF from kid
             FD_CLR pp.kids[i].fd1, fdset0             # Rm from fdset
             discard pp.kids[i].fd1.close              # Reclaim fd
             discard waitpid(pp.kids[i].pid, st, 0)    # Accum CPU to par;No zomb
