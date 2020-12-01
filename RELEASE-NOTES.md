@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.3.3
+--------------
+  Lift NUL-terminated easily boundable framing out of cligen/procpool into
+  `examples/only.nim`.  In the unlikely event you were using this, you will
+  need to implement framing yourself (which pairs well with implementing the
+  worker generating output to frame in the first place).
+
 Version: 1.3.2
 --------------
   Remove prefetching optimization idea, anyway.  On AMD 2950X, it was quite a
