@@ -1,8 +1,8 @@
 ## This module provides a facility like Python's multiprocessing module but is
 ## less automagic & little error handling is done.  `MSlice` is used as a reply
 ## type to avoid copy in case replies are large.  Auto-pack/unpack logic could
-## mimic Python's `for x in p.imap_unordered` more closely.  This is very much
-## at Proof Of Concept stage.  PRs welcome to complete.
+## mimic Python's `for x in p.imap_unordered` more closely.  This is only at the
+## Proof Of Concept stage.  Another idea would be channels wrapping processses.
 
 import std/[cpuinfo, posix], ./mslice, ./sysUt
 type
