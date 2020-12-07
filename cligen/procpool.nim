@@ -39,7 +39,7 @@ proc initFilter(work: proc(), bufSize: int): Filter {.inline.} =
   discard fds0.pipe         # pipe for data flowing from parent -> kid
   discard fds1.pipe         # pipe for data flowing from kid -> parent
   case (let pid = fork(); pid):
-  of -1: raise newException(OSError, "fork")
+  of -1: result.pid = -1
   of 0:
     discard dup2(fds0[0], 0)
     discard dup2(fds1[1], 1)
@@ -64,9 +64,14 @@ proc initProcPool*(work: proc(); frames: Frames; jobs = 0;
   FD_ZERO result.fdset
   for i in 0 ..< result.nProc:                        # Create nProc Filter kids
     result.kids[i] = initFilter(work, bufSize)
+    if result.kids[i].pid == -1:                      # -1 => fork failed
+      for j in 0 ..< i:                               # for prior launched kids:
+        result.kids[j].fd1.close                      #   close fd to kid
+        kill result.kids[j].pid, SIGKILL              #   and kill it.
+        raise newException(OSError, "fork") # vague chance trying again may work
     FD_SET result.kids[i].fd1, result.fdset
     result.fdMax = max(result.fdMax, result.kids[i].fd1)
-  result.fdMax.inc
+  result.fdMax.inc                                    # select takes fdMax + 1
   result.frames = frames
 
 iterator readyReplies*(pp: var ProcPool): MSlice =
