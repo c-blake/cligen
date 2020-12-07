@@ -38,8 +38,9 @@ proc initFilter(work: proc(), bufSize: int): Filter {.inline.} =
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
   discard fds1.pipe         # pipe for data flowing from kid -> parent
-  let pid = fork()
-  if pid == 0:
+  case (let pid = fork(); pid):
+  of -1: raise newException(OSError, "fork")
+  of 0:
     discard dup2(fds0[0], 0)
     discard dup2(fds1[1], 1)
     discard close(fds0[0])
@@ -61,7 +62,7 @@ proc initProcPool*(work: proc(); frames: Frames; jobs = 0;
   result.nProc = if jobs == 0: countProcessors() else: jobs
   result.kids.setLen result.nProc
   FD_ZERO result.fdset
-  for i in 0 ..< result.nProc:                  # Create nProc Filter kids
+  for i in 0 ..< result.nProc:                        # Create nProc Filter kids
     result.kids[i] = initFilter(work, bufSize)
     FD_SET result.kids[i].fd1, result.fdset
     result.fdMax = max(result.fdMax, result.kids[i].fd1)
