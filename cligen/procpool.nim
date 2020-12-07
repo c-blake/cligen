@@ -66,8 +66,8 @@ proc initProcPool*(work: proc(); frames: Frames; jobs = 0;
     result.kids[i] = initFilter(work, bufSize)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
-        result.kids[j].fd1.close                      #   close fd to kid
-        kill result.kids[j].pid, SIGKILL              #   and kill it.
+        discard result.kids[j].fd1.close              #   close fd to kid
+        discard kill(result.kids[j].pid, SIGKILL)     #   and kill it.
         raise newException(OSError, "fork") # vague chance trying again may work
     FD_SET result.kids[i].fd1, result.fdset
     result.fdMax = max(result.fdMax, result.kids[i].fd1)
