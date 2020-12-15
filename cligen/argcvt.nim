@@ -390,7 +390,7 @@ proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, df ]
 
 # HashSets
-when (NimMajor,NimMinor,NimPatch) <= (0,19,8):
+when not declared(initHashSet):
   proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
 
 proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],

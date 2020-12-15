@@ -1,5 +1,5 @@
 import sets
-when (NimMajor,NimMinor,NimPatch) <= (0,19,8):
+when not declared(initHashSet):
   proc toHashSet[A](keys: openArray[A]): HashSet[A] = toSet[A](keys)
   proc initHashSet[A](initialSize=64): HashSet[A] = initSet[A](initialSize)
 
