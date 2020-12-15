@@ -38,13 +38,13 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   elif b == Off(-1):                        #Do special whole file mode
     b0 = Off(result.st.st_size)
   b0 = min(b0, Off(result.st.st_size))      #Do not exceed file sz
-  if b0 == a: perror cstring("length0slice"), 12; return
-  result.mem = mmap(nil, int(b0 - a), prot, flags, fd, Off(a))
-  if result.mem == cast[pointer](MAP_FAILED):
-    perror cstring("mmap"), 4
-    result.mem = nil
-    return
-  result.len = int(b0 - a)
+  if b0 > a:                                #Leave .mem nil & .len==0 if empty
+    result.len = int(b0 - a)
+    result.mem = mmap(nil, result.len, prot, flags, fd, Off(a))
+    if result.mem == cast[pointer](MAP_FAILED):
+      perror cstring("mmap"), 4
+      result.mem = nil
+      return
 
 proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
             a=0, b = -1, allowRemap=false, noShrink=false): MFile =
