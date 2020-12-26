@@ -25,7 +25,7 @@ when isMainModule:
   import cligen, tables; include cligen/mergeCfgEnv
   {.push hint[GlobalVar]: off.}
 
-  const hlUse = "\e[7m$command $args\e[0m\n\e[1m${doc}\e[0mOptions:\n$options"
+  const hlUse = "\e[7m$command $args\e[m\n\e[1m${doc}\e[mOptions:\n$options"
 
   const nimbleFile = staticRead "../cligen.nimble"  #Use YOURPKG not cligen
   let docLine = nimbleFile.fromNimble("description") & "\n\n"

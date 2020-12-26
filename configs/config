@@ -23,7 +23,7 @@
 optKeys = green   # foreground in: black red green yellow blue purple cyan white
 valType = on_CYAN # prepend on_ for background; ALL UPPERCASE is "bright bank"
 dflval  = "YELLOW on_red" # Can list any number of attrs; multi-word needs ""
-descrip = NONE    # "NONE" => ""; "plain" => "\e[0m".
+descrip = NONE    # "NONE" => ""; "plain" => "\e[m".
 
 command = "bold red" # *OR*: faint italic underline inverse struck
 #doc     = underline #       blink = slow blink; BLINK = fast blink
