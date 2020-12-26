@@ -121,7 +121,7 @@ proc textAttrOn*(spec: seq[string], plain=false): string =
   if components.len>0 and "" notin components: "\x1b["&components.join(";")&"m"
   else: ""
 
-const textAttrOff* = "\x1b[0m"
+const textAttrOff* = "\x1b[m"
 
 proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
     openBkt="([{", closeBkt=")]}", keepPct=true, termInAttr=true): string =
