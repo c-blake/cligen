@@ -246,10 +246,11 @@ proc initCritBitTree*[T](): CritBitTree[T] =
   ##``CritBitTree[T]``.
   discard
 
-proc toCritBitTree*[T](pairs: openArray[(string, T)]): CritBitTree[T] =
-  ##Like ``toTable`` but for ``CritBitTree[T]`` which requires string keys.
-  for key, val in items(pairs):
-    result[key] = val
+when not declared(toCritBitTree):
+  proc toCritBitTree*[T](pairs: openArray[(string, T)]): CritBitTree[T] =
+    ##Like ``toTable`` but for ``CritBitTree[T]`` which requires string keys.
+    for key, val in items(pairs):
+      result[key] = val
 
 proc keys*[T](cb: CritBitTree[T]): seq[string] =
   for k in cb.keys: result.add k
