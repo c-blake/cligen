@@ -13,7 +13,7 @@
   fmts.  If output/input fmt are compatible/inverses this might allow elegant
   construction of a multi-command of pipelinable subcommands.
 
-  `positionals = @[ "param1", "param1", "rest" ]` (or `string`-vs-`seq` literal
+  `positionals = @[ "param1", "param2", "rest" ]` (or `string`-vs-`seq` literal
   check on the current `positional`) could resuscitate mandatory non-keyed-entry
   positional arguments.
 
