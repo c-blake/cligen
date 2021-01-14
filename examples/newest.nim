@@ -28,7 +28,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
   ## *delim*-delimited input *file* ( ``stdin`` if `"-"`|if `""` & ``stdin`` is
   ## not a terminal ), **maybe recursed** as roots.  E.g. to echo the 3 oldest
   ## regular files by m-time under the CWD:
-  ##   ``find . -type f -print| newest -n3 -t-m``.
+  ##   ``find . -type f -print | newest -n3 -t-m``.
   let err = if quiet: nil else: stderr
   let tO = fileTimeParse(time)                  #- or CAPITAL=oldest
   let it = both(paths, fileStrings(file, delim))
