@@ -59,6 +59,10 @@ Nim's style-insensitive identifiers, but with extra "kebab-case-insensitivity".
 The exact spelling of the key in `help` controls the look of printed help while
 layout details like column spacing and help colorization are controlled [by a
 CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
+Here are screenshots of an example
+[night-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dirqHelpNight.png)
+and
+[day-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dupsHelpDay.png).
 
 ---
 
