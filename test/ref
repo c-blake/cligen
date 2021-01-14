@@ -789,6 +789,14 @@ Options:
   -a=, --alpha=  float  1.0  set alpha
   -b=, --beta=   int    2    set beta
 
+==> test/SpecifiedOverload.out <==
+Usage:
+  get [optional-params] 
+Options:
+  -h, --help                 print this cligen-erated help
+  --help-syntax              advanced: prepend,plurals,..
+  -b=, --b=      float  1.0  set b
+
 ==> test/StroppedParams.out <==
 Usage:
   repro [optional-params] 
