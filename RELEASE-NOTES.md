@@ -1,12 +1,17 @@
 RELEASE NOTES
 =============
 
-Version: 1.3.3
+Version: 1.4.0
 --------------
   Lift NUL-terminated easily boundable framing out of cligen/procpool into
   `examples/only.nim`.  In the unlikely event you were using this, you will
   need to implement framing yourself (which pairs well with implementing the
   worker generating output to frame in the first place).
+
+  Robustify against existence of stdlib-provided `toCritBits`.
+  Minimize ANSI SGR escape off string to "\e[m".
+  Enhance sysUt.toItr to work with iterators yielding more general values.
+  Robustify `mfile` to not emit errors on empty files.
 
 Version: 1.3.2
 --------------
