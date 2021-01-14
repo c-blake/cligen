@@ -64,5 +64,6 @@ test/OmitInHelpTable
 test/StroppedParams
 test/PassValues
 test/PassValuesMulti
+test/SpecifiedOverload
 cligen/abbrev
 cligen/dents
