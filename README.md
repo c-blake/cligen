@@ -10,7 +10,7 @@ translating `seq[string]` command input into calls to a wrapped proc.  In Nim,
 adding a CLI can be as easy as:
 ```nim
 proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]):int=
-  ## Some existing API call
+  ## An API call doc comment
   result = 1      # Of course, real code would have real work here
 import cligen; dispatch(fun) # Whoa..Just 1 line??
 ```
@@ -19,7 +19,7 @@ to get a minimal (but not so useless!) help message:
 ```
 Usage:
   fun [optional-params] [paths: string...]
-Some existing API call
+An API call doc comment
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
