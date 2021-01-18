@@ -1,7 +1,7 @@
 # cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 
-This approach to CLIs was inspired by [Andrey Mikhaylenko's nice Python module
-'argh'](https://pythonhosted.org/argh/) (in turn preceded by
+This approach to CLIs was inspired by [Andrey Mikhaylenko's Python module
+argh](https://pythonhosted.org/argh/) (in turn preceded by
 [Plac](https://github.com/micheles/plac)).
 The basic idea is that proc signatures encode/declare almost everything needed
 to generate CLIs - names, types, and default values.  Reflection then suffices
