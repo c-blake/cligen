@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.4.1
+--------------
+  Work around a long-stnding nim-devel (but not 1.4) cpp codegen bug.
+
 Version: 1.4.0
 --------------
   Lift NUL-terminated easily boundable framing out of cligen/procpool into
