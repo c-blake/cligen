@@ -119,6 +119,8 @@ proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
   return n  #ks.len==0 => case-else clause suggests spelling in .msg.
 {.pop.}
 
+when not declared(TaintedString):
+  type TaintedString* = string
 type
   CmdLineKind* = enum         ## the detected command line token
     cmdEnd,                   ## end of command line reached
