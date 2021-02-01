@@ -227,3 +227,15 @@ proc findPathPattern*(pathPattern: string): string =
         copyMem result[nDir+1].addr, de.d_name[0].addr, nMch + 1
         break
     discard d.closedir
+
+proc nSplit*(n: int, path: string, delim = '\n'):
+    tuple[mf: MFile; parts: seq[MSlice]] =
+  ## Split seekable file @`path` into `n` roughly equal `delim`-delimited parts
+  ## with any delimiter char included in slices. Caller should close `result.mf`
+  ## (which is `nil` on failure) when desired.  `result.len` can be < `n` for
+  ## small file sizes (in number of `delim`s).  For IO efficiency, subdivision
+  ## is done by bytes as a guess.  So, this is fast, but accuracy is limited by
+  ## statistical regularity.
+  result.mf = mopen(path)
+  if result.mf.mem != nil:
+    result.parts = n.nSplit(result.mf.toMSlice, delim)

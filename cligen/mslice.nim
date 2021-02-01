@@ -323,6 +323,37 @@ proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
     if s[i] notin chars: return i
   return -1
 
+proc eos*(ms: MSlice): pointer {.inline.} = ms.mem +! ms.len
+  ## Address 1 past last valid byte in slice
+
+proc extend*(ms: MSlice, max: int, sep = '\n'): MSlice {.inline.} =
+  ## If `ms` does not end in `sep` then extend until it does or `ms.len==max`
+  ## whichever comes first.
+  if ms.len > 0 and cast[ptr char](ms.mem +! (ms.len - 1))[] == sep:
+    return ms
+  result.mem = ms.mem
+  let eos = ms.eos
+  let next = cmemchr(eos, sep, (max - ms.len).csize)
+  result.len = if next != nil: (next -! eos + ms.len + 1) else: max
+
+proc nSplit*(n: int, data: MSlice, sep = '\n'): seq[MSlice] =
+  ## Split `data` into `n` roughly equal parts delimited by `delim` with any
+  ## delimiter included in slices.  `result.len` can be < `n` for small `data`
+  ## sizes (in number of `delim`s, not bytes).  For IO efficiency, subdivision
+  ## is done by bytes as a guess.  So, this is fast, but accuracy is limited by
+  ## statistical regularity.
+  if n < 2: result.add data             # n<1 & n<0 swept into just n==1 no-op
+  else:
+    let eod  = data.eos
+    let step = max(data.len div n, 1)
+    result.add extend(MSlice(mem: data.mem, len: step), data.len, sep)
+    var eos = result[^1].eos
+    while cast[uint](eos) < cast[uint](eod) and result.len < n:
+      let mx = eod -! eos               # maximum slice length
+      result.add extend(MSlice(mem: eos, len: min(mx, step)), mx, sep)
+      eos = result[^1].eos              # update End Of Slice
+    result[^1].len = data.len - (result[^1].mem -! data.mem)
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
