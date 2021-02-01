@@ -3,7 +3,13 @@ RELEASE NOTES
 
 Version: 1.4.1
 --------------
-  Work around a long-stnding nim-devel (but not 1.4) cpp codegen bug.
+  Work around a long-standing nim-devel (but not 1.4) cpp codegen bug.
+
+  Add some utility code and a test program to ease bulk parallelization in the
+  common case that a giant file has enough statistical line-length regularity
+  that subdividing by bytes are a good guess to subdividing by lines (or some
+  other variable record delimiting).  This can make such parallelization just
+  a few lines of code allowing users to focus on thei application logic.
 
 Version: 1.4.0
 --------------
