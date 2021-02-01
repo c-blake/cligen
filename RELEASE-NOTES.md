@@ -9,7 +9,8 @@ Version: 1.4.1
   common case that a giant file has enough statistical line-length regularity
   that subdividing by bytes are a good guess to subdividing by lines (or some
   other variable record delimiting).  This can make such parallelization just
-  a few lines of code allowing users to focus on thei application logic.
+  a few lines of code allowing users to focus on thei application logic.  See
+  https://forum.nim-lang.org/t/7447 for one such user in need.
 
 Version: 1.4.0
 --------------
