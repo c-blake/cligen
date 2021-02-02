@@ -323,6 +323,9 @@ proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
     if s[i] notin chars: return i
   return -1
 
+template toOpenArrayChar*(ms: MSlice): untyped =
+  toOpenArray(cast[ptr UncheckedArray[char]](ms.mem), 0, ms.len - 1)
+
 proc eos*(ms: MSlice): pointer {.inline.} = ms.mem +! ms.len
   ## Address 1 past last valid byte in slice
 
