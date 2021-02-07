@@ -322,7 +322,8 @@ Options:
   -z=, --alpha=  growth constant                1
   -b=, --beta=   shrink target                  2.0
   -v, --verb     set verb                       false
-  -i=, --item=   set item                       ""
+  -i=, --item=   set item                       "this is one honking long
+                                                default value"
 
 ==> test/ImplicitDefault.out <==
 Usage:

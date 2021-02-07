@@ -1,4 +1,4 @@
-from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith
+from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith, toUpper
 from terminal import terminalWidth
 from unicode  import runeLen
 import critbits, math, ./mslice # math.^
@@ -172,9 +172,15 @@ proc addPrefix*(prefix: string, multiline=""): string =
 
 type TextTab* = seq[seq[string]]
 
+proc mx[T](x: openArray[T]): T =
+  result = T.low
+  for e in x: result = max(result, e)
+
 proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
-                 cols = @[0,1], attrOn = @["",""], attrOff = @["",""],
-                 width = ttyWidth): string =
+    cols = @[0,1], attrOn = @["",""], attrOff = @["",""], aligns = "",
+    width=ttyWidth, measure=printedLen): string =
+  let colsMx = cols.mx + 1
+  let aligns = if aligns.len >= colsMx: aligns else: repeat("L", colsMx)
   result = ""
   if tab.len == 0: return
   proc nCols(): int =
@@ -183,26 +189,36 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   var wCol = newSeq[int](nCols())
   let last = cols[^1]
   for row in tab:
-    for c in cols[0 .. ^2]: wCol[c] = max(wCol[c], row[c].len)
+    for c in cols: wCol[c] = max(wCol[c], row[c].measure)
   var wTerm = width - prefixLen
   var leader = (cols.len - 1) * colGap
   for c in cols[0 .. ^2]: leader += wCol[c]
-  wCol[last] = max(minLast, wTerm - leader)
+  template doCol(c: int): untyped =
+    let aln  = if aligns[c] == 'l': 'L' else: aligns[c]
+    let inr  = attrOn[c] & row[c] & attrOff[c]
+    let extr = wCol[c] - row[c].measure
+    if   aln == 'L': result &= inr & repeat(" ", extr + colGap)
+    elif aln == 'R': result &= repeat(" ", extr) & inr & repeat(" ", colGap)
+    elif aln == 'C':
+      let nL = extr div 2
+      result &= repeat(" ", nL) & inr & repeat(" ", extr - nL + colGap)
   for row in tab:
-    for c in cols[0 .. ^2]:
-      result &= attrOn[c] & row[c] & attrOff[c] &
-                  repeat(" ", wCol[c] - row[c].len + colGap)
+    for c in cols[0 .. ^2]: doCol c
+    if aligns[^1] != 'L': # Only default Cap L eligible for word-wrap
+      doCol cols.len - 1
+      result &= '\n'
+      continue
+    let wLast = max(minLast, wTerm - leader)
     var wrapped = if '\n' in row[last]: row[last].split("\n")
-                  else: wrap(row[last], wCol[last]).split("\n")
-    result &= attrOn[cols[^1]] & (if wrapped.len>0: wrapped[0] else: "")
+                  else: wrap(row[last], wLast).split("\n")
+    result &= attrOn[last] & (if wrapped.len>0: wrapped[0] else: "")
     if wrapped.len == 1:
-      result &= attrOff[cols[^1]] & "\n" & rowSep
+      result &= attrOff[last] & "\n" & rowSep
     else:
       result &= '\n'
       for j in 1 ..< wrapped.len - 1:
         result &= repeat(" ", leader) & wrapped[j] & "\n"
-      result &= repeat(" ", leader) & wrapped[^1] & attrOff[cols[^1]] & "\n" &
-                rowSep
+      result &= repeat(" ",leader) & wrapped[^1] & attrOff[last] & "\n" & rowSep
 
 type C = int16      ##Type for edit cost values & totals
 const mxC = C.high
