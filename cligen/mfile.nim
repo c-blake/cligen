@@ -5,6 +5,7 @@
 ## uses ``.len`` instead of ``.size`` for constency with other Nim things.
 
 import std/posix, ./osUt, ./mslice # perror cMemCmp mSlices
+export PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_POPULATE
 
 type
   MFile* = object   ## Like MemFile but safe in an MT-environment
@@ -30,15 +31,18 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   result.prot  = prot
   result.flags = flags
   if (prot and PROT_WRITE) != 0 and Off(st.st_size) != b:
-    if b > Off(st.st_size) or not noShrink:
+    if (b > Off(st.st_size) or not noShrink) and flags != MAP_PRIVATE:
       if ftruncate(fd, b) == -1:            #Writable & too small => grow
         perror cstring("ftruncate"), 9
         return                              #Likely passed non-writable fd
       discard fstat(fd, result.st)          #Refresh st data ftrunc; Cannot fail
+    elif b == Off(-1):                      #Do special whole file mode
+      b0 = Off(result.st.st_size)
   elif b == Off(-1):                        #Do special whole file mode
     b0 = Off(result.st.st_size)
   b0 = min(b0, Off(result.st.st_size))      #Do not exceed file sz
   if b0 > a:                                #Leave .mem nil & .len==0 if empty
+    let prot = if flags == MAP_PRIVATE: (PROT_READ or PROT_WRITE) else: prot
     result.len = int(b0 - a)
     result.mem = mmap(nil, result.len, prot, flags, fd, Off(a))
     if result.mem == cast[pointer](MAP_FAILED):
@@ -59,12 +63,14 @@ proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
   result = mopen(fd, result.st, prot, flags, a, b, allowRemap, noShrink)
 
 proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
-            allowRemap=false, noShrink=false, perMask=0666): MFile =
+            allowRemap=false, noShrink=false, perMask=0o666): MFile =
   ## Init map for ``path``.  ``See mopen(cint,Stat)`` for mapping details.
   ## This proc also creates a file, if necessary, with permission ``perMask``.
   var oflags: cint
   if path.len == 0: return
-  if (prot and (PROT_READ or PROT_WRITE)) == (PROT_READ or PROT_WRITE):
+  if flags == MAP_PRIVATE:
+    oflags = O_RDONLY or O_NONBLOCK
+  elif (prot and (PROT_READ or PROT_WRITE)) == (PROT_READ or PROT_WRITE):
     oflags = O_RDWR or O_CREAT or O_NONBLOCK
   elif (prot and PROT_READ) != 0:
     oflags = O_RDONLY or O_NONBLOCK
@@ -228,14 +234,14 @@ proc findPathPattern*(pathPattern: string): string =
         break
     discard d.closedir
 
-proc nSplit*(n: int, path: string, delim = '\n'):
-    tuple[mf: MFile; parts: seq[MSlice]] =
+proc nSplit*(n: int, path: string, delim = '\n', prot=PROT_READ,
+             flags=MAP_SHARED, noShrink=true): tuple[mf: MFile; parts: seq[MSlice]] =
   ## Split seekable file @`path` into `n` roughly equal `delim`-delimited parts
   ## with any delimiter char included in slices. Caller should close `result.mf`
   ## (which is `nil` on failure) when desired.  `result.len` can be < `n` for
   ## small file sizes (in number of `delim`s).  For IO efficiency, subdivision
   ## is done by bytes as a guess.  So, this is fast, but accuracy is limited by
   ## statistical regularity.
-  result.mf = mopen(path)
+  result.mf = mopen(path, prot=prot, flags=flags, noShrink=noShrink)
   if result.mf.mem != nil:
     result.parts = n.nSplit(result.mf.toMSlice, delim)
