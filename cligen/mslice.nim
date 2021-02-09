@@ -302,6 +302,93 @@ proc split*(s: Sep, line: string, cols: var seq[string], n=0) {.inline.} =
 proc split*(s: Sep, line: string, n=0): seq[string] {.inline.} =
   s.split(line, result, n)
 
+# `frame` APIs include separations unlike `split` APIs. Specifically, iterators
+# yield `2*j+1` times where `j`=count of separations|splits.  If input starts
+# with a separator, the initial yield is an empty data frame `.ms.len==0` while
+# if input ends with one the final yield is also an empty data frame.  Callers
+# can check `len` to decide what to do for such cases and may want special EOS
+# logic.  For repeating separator variants, `.isSep` strictly toggles between
+# `true|false`.  { So, only initial or final data slices can be empty. }
+
+type TextFrame* = tuple[ms: MSlice, isSep: bool] ## sep|data, flag => which
+
+template defFrame(s: MSlice; n: int; repeat: bool; sep, next, eq: untyped) =
+  if s.mem != nil:
+    var f: TextFrame = (MSlice(mem: s.mem, len: 0), false)
+    var left = s.len
+    var j = 0
+    while left > 0 and (let d = next(f.ms.mem, sep, left.uint); d) != nil:
+      j.inc
+      if n != 0 and j > n: break
+      f.ms.len = d -! f.ms.mem
+      f.isSep  = false
+      yield f                           # yield data
+      left.dec f.ms.len + 1
+      f.ms.mem = d
+      f.ms.len = 1
+      if repeat:
+        while left > 0 and eq(sep, cast[ptr char](f.ms.mem +! f.ms.len)[]):
+          f.ms.len.inc; left.dec
+      f.isSep  = true
+      yield f                           # yield separator
+      f.ms.mem = d +! f.ms.len          # set up for next loop
+    f.isSep = false                     # last frame always data
+    f.ms.len = left                     # but empty if left == 0
+    yield f
+
+iterator frame1(s: MSlice, sep: char, n=0): TextFrame =
+  defFrame(s, n, false, sep, cmemchr, `==`)
+
+iterator frame1(s: MSlice, seps: set[char], n=0): TextFrame =
+  defFrame(s, n, false, seps, mempbrk, contains)
+
+iterator frameR(s: MSlice, sep: char, n=0): TextFrame =
+  defFrame(s, n, true, sep, cmemchr, `==`)
+
+iterator frameR(s: MSlice, seps: set[char], n=0): TextFrame =
+  defFrame(s, n, true, seps, mempbrk, contains)
+
+iterator frame*(s: MSlice, sep: char, repeat=false, n=0): TextFrame =
+  ## Iterate over `TextFrame`s (data|sep slices) in `s` delimited by a single
+  ## char `sep` split `<=n` times.  Repeats are folded `if repeat`.
+  if repeat:
+    for f in s.frameR(sep, n): yield f
+  else:
+    for f in s.frame1(sep, n): yield f
+
+iterator frame*(s: MSlice, seps: set[char], repeat=false, n=0): TextFrame =
+  ## Iterate over `TextFrame`s (data|sep slices) in `s` delimited by a
+  ## `set[char] seps` split `<=n` times.  Repeats are folded `if repeat`.
+  if repeat:
+    for f in s.frameR(seps, n): yield f
+  else:
+    for f in s.frame1(seps, n): yield f
+
+iterator frame*(s: MSlice, sep: Sep, n=0): TextFrame =
+  ## Yield all `sep`-separated `TextFrame` in `s` split `<=n` times (0=unlim).
+  ##
+  ## .. code-block:: nim
+  ##   let x = "hi there you "
+  ##   for tok in x.toMSlice.frame(" ".initSep, n=1): echo $tok
+  if sep.n == 1:
+    for f in s.frame(sep.chrDlm, sep.repeat, n): yield f
+  else:
+    for f in s.frame(sep.setDlm, sep.repeat, n): yield f
+
+proc frame*(s: MSlice, fs: var seq[TextFrame], sep: Sep, n=0): int =
+  ## Fill `seq` w/all `sep`-separated `TextFrame` in `s` split `<=n` times (0=unlim).
+  fs.setLen 0
+  for f in s.frame(sep): fs.add f
+  fs.len
+
+proc frame*(s: MSlice, sep: Sep, n=0): seq[TextFrame] =
+  ## Return `seq` of all `sep`-separated `TextFrame` in `s` split `<=n` times (0=unlim).
+  ##
+  ## .. code-block:: nim
+  ##   let x = "hi there you "
+  ##   for tok in x.toMSlice.frame(" ".initSep, n=1): echo $tok
+  discard s.frame(result, sep, n)
+
 iterator items*(a: MSlice): char {.inline.} =
   ## Iterates over each char of `a`.
   for i in 0 ..< a.len:
