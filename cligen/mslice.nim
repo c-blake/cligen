@@ -340,9 +340,9 @@ proc extend*(ms: MSlice, max: int, sep = '\n'): MSlice {.inline.} =
   result.len = if next != nil: (next -! eos + ms.len + 1) else: max
 
 proc nSplit*(n: int, data: MSlice, sep = '\n'): seq[MSlice] =
-  ## Split `data` into `n` roughly equal parts delimited by `delim` with any
-  ## delimiter included in slices.  `result.len` can be < `n` for small `data`
-  ## sizes (in number of `delim`s, not bytes).  For IO efficiency, subdivision
+  ## Split `data` into `n` roughly equal parts delimited by `sep` with any
+  ## separator included in slices.  `result.len` can be < `n` for small `data`
+  ## sizes (in number of `sep`s, not bytes).  For IO efficiency, subdivision
   ## is done by bytes as a guess.  So, this is fast, but accuracy is limited by
   ## statistical regularity.
   if n < 2: result.add data             # n<1 & n<0 swept into just n==1 no-op
