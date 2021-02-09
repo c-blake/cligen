@@ -1,4 +1,4 @@
-import std/sets, cligen, cligen/[mfile, mslice, osUt] #mSlices MSlice Splitr
+import std/sets, cligen, cligen/[mfile, mslice, osUt] # mSlices MSlice Sep
 
 proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
           blanksOk=false, cut=false, origin=1, colNums: seq[int]) =
@@ -7,11 +7,11 @@ proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
     var colSet = initSet[int](rightSize(len(colNums)))
     if cut:
         for c in colNums: colSet.incl(c)
-    let splitr = initSplitr(delim)
+    let sep = initSep(delim)
     var cols: seq[MSlice] = @[ ]
     for line in mSlices(input, eat='\0'):   #RO mmap | slices from stdio
         var wroteSomething = false
-        splitr.split(line, cols)
+        sep.split(line, cols)
         if cut:
             var ith = 0
             for j, f in cols:
