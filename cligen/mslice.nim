@@ -267,39 +267,39 @@ proc splitr*(s: string, seps=wspace, n=0, repeat=true): seq[string] {.inline.}=
   ##Like ``splitr(string, var seq[string], int, set[char])``,but return ``seq``.
   discard splitr(s, result, seps, n, repeat)
 
-type Splitr* = tuple[ repeat: bool, chrDlm: char, setDlm: set[char], n: int ]
+type Sep* = tuple[repeat: bool, chrDlm: char, setDlm: set[char], n: int]
 
-proc initSplitr*(delim: string): Splitr =
-  ##Abstract single-string hybrid specification of maybe-repeat-folding 1-char |
-  ##maybe-repeat-folding char set delimiting.  Specifically, if ``delim`` chars
-  ##are all the same, ``repeat=delim.len>1`` & delimiting is 1-char.  Else, if
-  ##``delim`` chars vary, ``repeat=*ANY*dup``. Magic val ``"white"``=>repeated
-  ##white space chars. Eg.: ``","``=strict CSV, ``"<SPC><SPC>"``=folding spaces
-  ##``",:"``=strict comma-colon-separation, ",::"= repeat-folding common-colon.
-  if delim == "white":          #User can use any other permutation if needed
+proc initSep*(seps: string): Sep =
+  ## Abstract single-string hybrid spec of maybe repeat-folding 1-char | maybe
+  ## repeat-folding char set separation.  Specifically, if any char of `seps`
+  ## repeats, separators fold while value diversity implies char set separation.
+  ## A magic val `"white"` = folding white space chars.  E.g.: `","` = strict
+  ## CSV, `"<SPC><SPC>"` = folding spaces `" "` = strict spaces.
+  if seps == "white":           #User can use other permutation if cset needed
     result.repeat = true
     result.chrDlm = ' '
     result.setDlm = wspace
     result.n      = wspace.card #=6 unless wspace defn changes
-    return
-  for c in delim:
-    if c in result.setDlm:
-      result.repeat = true
-      continue
-    result.setDlm.incl(c)
-    inc(result.n)
-  if result.n == 1:             #support n==1 test to allow memchr optimization
-    result.chrDlm = delim[0]
+  elif seps.len == 0:
+    raise newException(ValueError, "Empty seps disallowed")
+  else:
+    for d in seps: result.setDlm.incl d
+    result.n = result.setDlm.card
+    result.chrDlm = seps[0]
+    result.repeat = result.setDlm.card < seps.len
 
-proc split*(s: Splitr, line: MSlice, cols: var seq[MSlice], n=0) {.inline.} =
+type Splitr* {.deprecated: "use Sep".} = Sep
+proc initSplitr*(seps: string): Sep {.deprecated: "use initSep".}= initSep(seps)
+
+proc split*(s: Sep, line: MSlice, cols: var seq[MSlice], n=0) {.inline.} =
   if s.n > 1: discard msplit(line, cols, seps=s.setDlm, n, s.repeat)
   else      : discard msplit(line, cols, s.chrDlm     , n, s.repeat)
 
-proc split*(s: Splitr, line: string, cols: var seq[string], n=0) {.inline.} =
+proc split*(s: Sep, line: string, cols: var seq[string], n=0) {.inline.} =
   if s.n > 1: discard splitr(line, cols, seps=s.setDlm, n, s.repeat)
   else      : discard splitr(line, cols, s.chrDlm     , n, s.repeat)
 
-proc split*(s: Splitr, line: string, n=0): seq[string] {.inline.} =
+proc split*(s: Sep, line: string, n=0): seq[string] {.inline.} =
   s.split(line, result, n)
 
 iterator items*(a: MSlice): char {.inline.} =
