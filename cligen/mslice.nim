@@ -394,6 +394,11 @@ iterator items*(a: MSlice): char {.inline.} =
   for i in 0 ..< a.len:
     yield a[i]
 
+iterator pairs*(a: MSlice): tuple[ix: int; c: char] {.inline.} =
+  ## Yields each (index,char) in `a`.
+  for i in 0 ..< a.len:
+    yield (i, a[i])
+
 proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
   ## Searches for *NOT* `chars` in `s` inside inclusive range ``start..last``.
   ## If `last` is unspecified, it defaults to `s.high` (the last element).
