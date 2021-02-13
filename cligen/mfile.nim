@@ -234,14 +234,14 @@ proc findPathPattern*(pathPattern: string): string =
         break
     discard d.closedir
 
-proc nSplit*(n: int, path: string, sep='\n', prot=PROT_READ, flags=MAP_SHARED,
-             noShrink=true): tuple[mf: MFile; parts: seq[MSlice]] =
+proc nSplit*(n: int, path: string, sep='\n', prot=PROT_READ, flags=MAP_SHARED):
+       tuple[mf: MFile; parts: seq[MSlice]] =
   ## Split seekable file @`path` into `n` roughly equal `sep`-delimited parts
   ## with any separator char included in slices. Caller should close `result.mf`
   ## (which is `nil` on failure) when desired.  `result.len` can be < `n` for
   ## small file sizes (in number of `sep`s).  For IO efficiency, subdivision is
   ## done by bytes as a guess.  So, this is fast, but accuracy is limited by
   ## statistical regularity.
-  result.mf = mopen(path, prot=prot, flags=flags, noShrink=noShrink)
+  result.mf = mopen(path, prot, flags, allowRemap=false, noShrink=true)
   if result.mf.mem != nil:
     result.parts = n.nSplit(result.mf.toMSlice, sep)
