@@ -1,7 +1,10 @@
+#nim c --gc:arc --threads:on -d:threadpoolWaitMs=0 -d:danger linect
 import math, mfile, mslice, osproc, threadpool, cligen
 
 proc doLines(sub: ptr int, c: int, part: MSlice) =
-  for s in part.mSlices('\n'): sub[].inc
+  var tot = sub[]                       # sub[] is part of a dense array
+  for s in part.mSlices('\n'): tot.inc  #..ENSURING cache thrashing.  So,
+  sub[] = tot                           #..shadow w/local updated only once.
 
 proc lc(path: string, n: int, untermOk=true, pparts=false): int =
   var (mf, parts) = n.nSplit(path)      # file & sections
