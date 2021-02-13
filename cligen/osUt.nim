@@ -181,3 +181,24 @@ let IOLBF* = vIOLBF
 let IONBF* = vIONBF
 proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
+
+when defined(linux):
+  import posix
+  type CPUSet*{.importc: "cpu_set_t", header: "<sched.h>", final,pure.} = object
+    discard # Need impl, but it is ignored; CPUSet=cpu_set_t, including sizeof
+  proc cpu_zero*(set: ptr CPUSet) {.importc: "CPU_ZERO", header: "<sched.h>".}
+  proc cpu_set*(cpu: cint; set: ptr CPUSet)
+          {.importc: "CPU_SET", header: "<sched.h>".}
+  proc getcpu*: cint {.importc: "sched_getcpu", header: "<sched.h>".}
+  proc sched_setaffinity*(pid: Pid; sz: csize; mask: ptr CPUSet): cint
+          {.importc: "sched_setaffinity", header: "<sched.h>".}
+
+  proc setAffinity*(cpus: openArray[cint] = []) =
+    ## Pin current thread to CPUs; No arg is like `setaffinity [getcpu()]`.
+    var cs: CPUSet #; cpu_zero(cs.addr)
+    if cpus.len == 0:
+      cpu_set(getcpu(), cs.addr)
+    else:
+      for cpu in cpus:
+        cpu_set(cpu.cint, cs.addr)
+    discard sched_setaffinity(0.Pid, cs.sizeof.csize, cs.addr)
