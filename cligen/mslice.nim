@@ -46,6 +46,9 @@ proc toCstr*(p: pointer): cstring {.inline.} =
 proc `[]`*(ms: MSlice, i: int): char {.inline.} =
   ms.mem.toCstr[i]
 
+proc `[]=`*(ms: MSlice, i: int, c: char) {.inline.} =
+  cast[ptr char](ms.mem +! i)[] = c
+
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
   s.setLen(ms.len)
