@@ -1,4 +1,4 @@
-import math, mfile, mslice, osproc, threadpool, cligen
+import std/[math, osproc], cligen/[mfile, mslice], cligen
 
 type ThrDat = tuple[part: ptr MSlice, subp: ptr int]
 var thrs: seq[Thread[ThrDat]]
