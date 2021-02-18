@@ -6,7 +6,7 @@ export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
        suggestions, strip, split, helpCase, postInc, delItem, fromNimble,
-       summaryOfModule, docFromModuleOf, docFromProc, match
+       summaryOfModule, docFromModuleOf, docFromProc, match, wrapWidth
 
 # NOTE: `helpTmpl`, `clCfgInit`, and `syntaxHelp` can all be overridden on a per
 # client project basis with a local `cligen/` before cligen-actual in `path`.
@@ -38,6 +38,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     useMulti*:    string         ## Override of const subcmd table template
     helpSyntax*:  string         ## Override of const syntaxHelp string
     render*:      proc(s: string): string ## string->string help transformer
+    widthEnv*:    string         ## name of environment var for width override
 
   HelpOnly*    = object of CatchableError
   VersionOnly* = object of CatchableError
@@ -60,7 +61,8 @@ var clCfg* = ClCfg(
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
   helpSyntax:  syntaxHelp,
-  render:      nil)   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
+  render:      nil,   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
+  widthEnv:    "CLIGEN_WIDTH")
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
@@ -490,7 +492,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
-      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`),
+      let ww = wrapWidth(`cf`.widthEnv)
+      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), ww,
                                                  prefixLen=`prefixId`.len))
       proc hl(tag, val: string): string =
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
@@ -508,7 +511,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
                                          `cf`.hTabRowSep, toInts(`cf`.hTabCols),
-                                         `cf`.onCols, `cf`.offCols)) ]
+                                         `cf`.onCols, `cf`.offCols, width=ww)) ]
       if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -827,9 +830,12 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
               clCfg.helpAttr.getOrDefault("doc", "") ]
   let off = @[ (if "cmd" in clCfg.helpAttr: textAttrOff else: ""),
                (if "doc" in clCfg.helpAttr: textAttrOff else: "") ]
-  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc)) else: wrap(doc)
+  let ww = wrapWidth(clCfg.widthEnv)
+  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), ww)
+               else: wrap(doc, ww)
   use % [ "doc", docUse, "command", cmd, "ifVersion", ifVsn,
-          "subcmds", addPrefix("  ", alignTable(pairs,2,attrOn=on,attrOff=off))]
+          "subcmds", addPrefix("  ", alignTable(pairs, 2, attrOn=on,
+                                                attrOff=off, width=ww))]
 
 proc docDefault(n: NimNode): NimNode =
   if   n.len > 1: newStrLitNode(summaryOfModule(n[1][0]))

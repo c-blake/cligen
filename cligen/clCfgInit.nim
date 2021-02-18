@@ -51,6 +51,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
                        "Can only be \"colors\"\n"
       of "layout":
         case e.key.optionNormalize
+        of "widthenv": c.widthEnv = e.value
         of "rowsep", "rowseparator": c.hTabRowSep = e.value
         of "colgap", "columngap":    c.hTabColGap = parseInt(e.value)
         of "minlast", "leastfinal":  c.hTabMinLast = parseInt(e.value)

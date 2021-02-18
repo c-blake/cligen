@@ -1,7 +1,7 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith, toUpper
 from terminal import terminalWidth
 from unicode  import runeLen
-import critbits, math, ./mslice # math.^
+import os, parseutils, critbits, math, ./mslice # math.^
 
 proc stripEsc*(a: string): string =
   ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
@@ -114,6 +114,13 @@ iterator optimalWrap(w: openArray[int], words: openArray[string], m=80,
 let ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
+
+proc wrapWidth*(envVar: string, defaultWidth=ttyWidth): int =
+  result = defaultWidth
+  if existsEnv(envVar):
+    let ev = getEnv(envVar)
+    if parseInt(ev, result) != ev.len:
+      raise newException(ValueError, envVar & " must be an integer")
 
 proc extraSpace(w0, sep, w1: string): bool {.inline.} =
   # True if a non-final token ending in '.' should get extra space.  This always
