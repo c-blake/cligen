@@ -119,7 +119,7 @@ proc wrapWidth*(envVar: string, defaultWidth=ttyWidth): int =
   result = defaultWidth
   if existsEnv(envVar):
     let ev = getEnv(envVar)
-    if parseInt(ev, result) != ev.len:
+    if ev != "AUTO" and parseInt(ev, result) != ev.len:
       raise newException(ValueError, envVar & " must be an integer")
 
 proc extraSpace(w0, sep, w1: string): bool {.inline.} =
