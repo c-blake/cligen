@@ -1,6 +1,29 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.0
+--------------
+
+  Add ability to customize description column for help, help-syntx, version
+  or to surgically suppress any of those rows with hTabSuppress/CLIGEN-NOHELP.
+
+  Add `$CLIGEN_WIDTH` (really whatever `clCfg.widthEnv` says) to allow user
+  override of detected terminal width.  (No controlling terminal processes
+  could already use `COLUMNS`).  Set to `"AUTO"` to have a value, but still
+  fall back to OS terminal inteface calls.
+
+  Try to get ahead of eventual removal of `TaintedString`.
+
+  Fix a few gotchas/inadequacies in `mfile` & `mlice` for mmap prot/flags/using
+  the buffers.  Rename `mslice.Splitr` -> `mslice.Sep`.  Leave deprecated
+  aliases.  Add more general split-like API called `frame`.  This is nice when
+  you want to write a text filter that transforms "inner text" but leaves the
+  outer text alone.
+
+  Generalize `textUt.alignTable` to allow caller to specify left/right/center.
+
+  Add a little `osUt.setAffinity` api to ease "createThread & setAffinity" use.
+
 Version: 1.4.1
 --------------
   Work around a long-standing nim-devel (but not 1.4) cpp codegen bug.
