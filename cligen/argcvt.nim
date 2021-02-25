@@ -172,39 +172,44 @@ proc argHelp*[T: enum](dfl: T; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, $T, helpCase($dfl, clEnumVal) ]
 
 # various numeric types
-proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
-proc high*[T: uint|uint64](x: typedesc[T]): T = cast[T](-1) #Missing in stdlib
+when not compiles(uint.low):
+  proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
+  proc high*[T: uint|uint64](x: typedesc[T]): T = cast[T](-1) #Missing in stdlib
 
-template argParseHelpNum*(WideT: untyped, parse: untyped, T: untyped): untyped =
-  proc argParse*(dst: var T, dfl: T, a: var ArgcvtParams): bool =
-    var parsed: WideT
-    let stripped = strip(a.val)
-    if len(stripped) == 0 or parse(stripped, parsed) != len(stripped):
-      a.msg = "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
-              [ a.val, a.key, $T, a.help ]
-      return false
-    if parsed < WideT(T.low) or parsed > WideT(T.high):
-      a.msg = "Bad value: \"$1\" for option \"$2\"; out of range for $3\n$4" %
-              [ a.val, a.key, $T, a.help ]
-      return false
+template doArgParse[WideT: SomeNumber, T: SomeNumber](
+    parse: untyped, dst: var T, dfl: T, a: var ArgcvtParams): bool =
+  ## Auxilary template that performs `argParse` for numeric types.
+  ## Required because we cannot store symbols `parseBiggestInt/UInt` in
+  ## a `const` (limitation of Nim's VM). However, we can pass them to
+  ## an `untyped` parameter of a template without problems.
+  var parsed: WideT
+  let stripped = strip(a.val)
+  if len(stripped) == 0 or parse(stripped, parsed) != len(stripped):
+    a.msg = "Bad value: \"$1\" for option \"$2\"; expecting $3\n$4" %
+            [ a.val, a.key, $type(dfl), a.help ]
+    false
+  elif parsed < WideT(T.low) or parsed > WideT(T.high):
+    a.msg = "Bad value: \"$1\" for option \"$2\"; out of range for $3\n$4" %
+            [ a.val, a.key, $type(dfl), a.help ]
+    false
+  else:
     dst = T(parsed)
-    return true
+    true
 
-  proc argHelp*(dfl: T, a: var ArgcvtParams): seq[string] =
-    result = @[ a.argKeys, $T, $dfl ]
+proc argParse*[T: SomeNumber](dst: var T, dfl: T, a: var ArgcvtParams): bool =
+  when T is SomeSignedInt:
+    doArgParse[BiggestInt](parseBiggestInt, dst, dfl, a)
+  elif T is SomeUnsignedInt:
+    doArgParse[BiggestUInt](parseBiggestUInt, dst, dfl, a)
+  else:
+    doArgParse[BiggestFloat](parseBiggestFloat, dst, dfl, a)
 
-argParseHelpNum(BiggestInt  , parseBiggestInt  , int    )  #ints
-argParseHelpNum(BiggestInt  , parseBiggestInt  , int8   )
-argParseHelpNum(BiggestInt  , parseBiggestInt  , int16  )
-argParseHelpNum(BiggestInt  , parseBiggestInt  , int32  )
-argParseHelpNum(BiggestInt  , parseBiggestInt  , int64  )
-argParseHelpNum(BiggestUInt , parseBiggestUInt , uint   )  #uints
-argParseHelpNum(BiggestUInt , parseBiggestUInt , uint8  )
-argParseHelpNum(BiggestUInt , parseBiggestUInt , uint16 )
-argParseHelpNum(BiggestUInt , parseBiggestUInt , uint32 )
-argParseHelpNum(BiggestUInt , parseBiggestUInt , uint64 )
-argParseHelpNum(BiggestFloat, parseBiggestFloat, float32)  #floats
-argParseHelpNum(BiggestFloat, parseBiggestFloat, float  )
+proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
+  when T is float64:
+    const typeName = "float"
+  else:
+    const typeName = $T
+  result = @[ a.argKeys, typeName, $dfl ]
 
 ## PARSING AGGREGATES (set,seq,..)
 ## ###############################

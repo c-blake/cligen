@@ -379,6 +379,17 @@ Options:
   -s=, --srcFile=  string  ""       script to run
   -S, --show       bool    false    show informative compiler info
 
+==> test/IntRanges.out <==
+Usage:
+  demo [optional-params] 
+Options:
+  -h, --help                          print this cligen-erated help
+  --help-syntax                       advanced: prepend,plurals,..
+  -n=, --nat=    Natural           0  set nat
+  -p=, --pos=    Positive          1  set pos
+  -d=, --dice=   Dice              6  set dice
+  --delta=       range -5..5(int)  0  set delta
+
 ==> test/ListDecl.out <==
 Usage:
   demo [required&optional-params] [args: int...]
