@@ -166,7 +166,7 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
     Table[string, (string, string)] =
   template setCk(k, p, h: untyped) {.dirty.} =   #set & check result entries
     result[k] = (p, h)
-    if not fpars.containsParam(ident(k)):
+    if not fpars.containsParam(ident(k)) and k notin ["help", "helpsyntax"]:
       error $proNm & " has no param matching `help` key \"" & p & "\""
 
   result = initTable[string, (string, string)]() #help key & text for any param
@@ -410,6 +410,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                       parser(move(`dflSub`), `provideId`=false)
                 else: newNimNode(nnkEmpty)
 
+  let helpHelp = helps.getOrDefault("help",
+                   ("help", "print this cligen-erated help"))
+  let helpSyn = helps.getOrDefault("helpsyntax", ("help-syntax",
+                  "advanced: prepend,plurals,.."))
   proc initVars0(): NimNode =           # init vars & build help str
     result = newStmtList()
     let tabId = ident("tab")            # local help table var
@@ -427,13 +431,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       var `tabId`: TextTab =
         if `skipHelp`:              # Do not incl; Nice for e.g. `helpDump`
           if shortH != "h":         # Do not skip if --help short opt is unusual
-            @[ @[ "-"&shortH&", --help","","","print this cligen-erated help" ]]
+            @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]]
           else: @[ ]
-        elif `cf`.helpSyntax.len == 0: # Don't include help-syntax in help table
-          @[ @[ "-"&shortH&", --help", "","", "print this cligen-erated help" ]]
+        elif `cf`.helpSyntax.len == 0 or `helpSyn`[1].len == 0: # no help-syntax
+          @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]]
         else:                       # Include help help in help table
-          @[ @[ "-"&shortH&", --help", "","", "print this cligen-erated help" ],
-             @[ "--help-syntax", "", "", "advanced: prepend,plurals,.." ] ]
+          @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ],
+             @[ "--" & `helpSyn`[0], "", "", `helpSyn`[1] ] ]
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
