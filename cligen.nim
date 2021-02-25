@@ -67,6 +67,8 @@ var clCfg* = ClCfg(
 var cgParseErrorExitCode* = 1
 {.pop.}
 
+const builtinOptions = ["help", "helpsyntax", "version"]
+
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
   ##Internal routine to convert help column enums to just ints for `alignTable`.
   for e in x: result.add(int(e))
@@ -168,7 +170,7 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
     Table[string, (string, string)] =
   template setCk(k, p, h: untyped) {.dirty.} =   #set & check result entries
     result[k] = (p, h)
-    if not fpars.containsParam(ident(k)) and k notin ["help", "helpsyntax"]:
+    if not fpars.containsParam(ident(k)) and k notin builtinOptions:
       error $proNm & " has no param matching `help` key \"" & p & "\""
 
   result = initTable[string, (string, string)]() #help key & text for any param
@@ -184,7 +186,7 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   template setCk(lo, sh: untyped) {.dirty.} =    #set & check result entries
     result[lo] = sh
     if lo.len > 0 and not fpars.containsParam(ident(lo)) and
-        lo != "version" and lo != "help" and lo != "helpsyntax":
+        lo notin builtinOptions:
       error $proNm & " has no param matching `short` key \"" & lo & "\""
 
   result = initTable[string, char]()  #table giving user-specified short options
@@ -416,6 +418,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                    ("help", "print this cligen-erated help"))
   let helpSyn = helps.getOrDefault("helpsyntax", ("help-syntax",
                   "advanced: prepend,plurals,.."))
+  let helpVsn = helps.getOrDefault("version", ("version", "print version"))
+
   proc initVars0(): NimNode =           # init vars & build help str
     result = newStmtList()
     let tabId = ident("tab")            # local help table var
@@ -430,16 +434,15 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       if `cf`.helpSyntax.len > 0:
         `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
       var `mandId`: seq[string]
-      var `tabId`: TextTab =
-        if `skipHelp`:              # Do not incl; Nice for e.g. `helpDump`
-          if shortH != "h":         # Do not skip if --help short opt is unusual
-            @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]]
-          else: @[ ]
-        elif `cf`.helpSyntax.len == 0 or `helpSyn`[1].len == 0: # no help-syntax
-          @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]]
-        else:                       # Include help help in help table
-          @[ @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ],
-             @[ "--" & `helpSyn`[0], "", "", `helpSyn`[1] ] ]
+      var `tabId`: TextTab = @[]
+      let helpHelpRow = @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]
+      if `skipHelp`:                    # auto-skip help help for `helpDump`
+        if shortH != "h" and `helpHelp`[1] != `cf`.hTabSuppress:
+          `tabId`.add(helpHelpRow)
+      elif `helpHelp`[1] != `cf`.hTabSuppress: `tabId`.add(helpHelpRow)
+      if `cf`.helpSyntax.len > 0 and `helpSyn`[1] != `cf`.hTabSuppress and
+         not `skipHelp`:
+        `tabId`.add(@[ "--" & `helpSyn`[0], "", "", `helpSyn`[1] ])
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
@@ -447,10 +450,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if `cf`.render != nil: `cf`.render(x) else: x)
     result.add(quote do:
       if `cf`.version.len > 0:
+        `allId`.add "version"
         `cbId`.incl(optionNormalize("version"), "version")
         `apId`.parNm = "version"; `apId`.parSh = `vsnSh`
-        `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
-        `tabId`.add(argHelp(false, `apId`) & "print version"))
+        `apId`.parReq = 0; `apId`.parRend = `helpVsn`[0]
+        if `helpVsn`[1] != `cf`.hTabSuppress:
+          `tabId`.add(argHelp(false, `apId`) & `helpVsn`[1]))
     if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0:
       result.add(quote do:              # add opts for user alias system
         `cbId`.incl(optionNormalize(`aliasDefL`), `aliasDefL`)

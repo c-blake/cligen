@@ -22,4 +22,5 @@ when isMainModule:
     when defined(versionShort):
       dispatch(demo, short = { "version": 'V' })
     else:
-      dispatch(demo, cmdName="Version")
+      dispatch(demo, cmdName="Version",
+               help = { "version": "Print Version & Exit 0" })
