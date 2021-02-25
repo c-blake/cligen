@@ -63,6 +63,8 @@ var clCfg* = ClCfg(
   helpSyntax:  syntaxHelp,
   render:      nil,   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
   widthEnv:    "CLIGEN_WIDTH")
+
+var cgParseErrorExitCode* = 1
 {.pop.}
 
 proc toInts*(x: seq[ClHelpCol]): seq[int] =
@@ -730,23 +732,23 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
   when echoResult:                            #CLI author requests echo
     try: echo p; quit(0)                      #May compile-time fail, but do..
     except HelpOnly, VersionOnly: quit(0)     #..want bubble up to CLI auth.
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   elif compiles(int(p)):                      #Can convert to int
     try: quit(int(p))
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   elif not noAutoEcho and compiles(echo p):   #autoEcho && have `$`
     try: echo p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   elif compiles(type(p)):                     #no convert to int,str but typed
     try: discard p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   else:                                       #void return type
     try: p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
 
 template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped,
                      skipHlp: untyped, noUHdr=false): auto =
@@ -805,13 +807,13 @@ template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   else:
     stderr.write "It is not similar to defined subcommands.\n\n"
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
-  quit(1)
+  quit(cgParseErrorExitCode)
 
 template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "Ambiguous subcommand \"", attempt, "\" matches:\n"
   stderr.write "  ", cb.valsWithPfx(attempt).join("\n  "), "\n"
   stderr.write "Run with no-argument or \"help\" for more details.\n"
-  quit(1)
+  quit(cgParseErrorExitCode)
 
 proc firstParagraph(doc: string): string =
   var first = true
@@ -1099,7 +1101,7 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
                 @[], @[], "x", mergeNames, alias)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   callIt()      #inside proc is not strictly necessary, but probably safer.
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
@@ -1153,7 +1155,7 @@ macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
       var `obName` = `call`    #a, b, ..
       `body`
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(1)
+    except ParseError: quit(cgParseErrorExitCode)
   result = newProc(name = dispName, params = params, body = body)
   when defined(printIDGen): echo repr(result)  # maybe print gen code
 
