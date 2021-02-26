@@ -46,4 +46,4 @@ jobs:
           nim-version: ${{ matrix.nim_version }}
 
       - name: Test
-        run: sh test.sh '--warning[Deprecated]=off'
+        run: sh test.sh "--warning[Deprecated]=off"
