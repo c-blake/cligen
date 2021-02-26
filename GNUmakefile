@@ -2,7 +2,7 @@
 # few minor c-blake updates.  gmake -j$(nproc) runs & checks all tests.  Also
 # useful to clean up test programs via `gmake clean`.
 
-DIFF ?= diff # DIFF='diff -u' gmake -e | gmake DIFF='diff --color=auto' | etc.
+DIFF ?= diff # DIFF='diff -u' gmake | gmake DIFF='diff --color=auto' | etc.
 
 .PHONY: test clean clean_cache
 export COLUMNS := 80
