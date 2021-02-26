@@ -176,6 +176,9 @@ when not compiles(uint.low):
   proc low *[T: uint|uint64](x: typedesc[T]): T = cast[T](0)  #Missing in stdlib
   proc high*[T: uint|uint64](x: typedesc[T]): T = cast[T](-1) #Missing in stdlib
 
+when not compiles($range[0'u32 .. 1'u32](0)):
+  proc `$`(x: range and SomeUnsignedInt): string = $BiggestUInt(x)
+
 template doArgParse[WideT: SomeNumber, T: SomeNumber](
     parse: untyped, dst: var T, dfl: T, a: var ArgcvtParams): bool =
   ## Auxilary template that performs `argParse` for numeric types.
@@ -205,18 +208,31 @@ proc argParse*[T: SomeNumber](dst: var T, dfl: T, a: var ArgcvtParams): bool =
     doArgParse[BiggestFloat](parseBiggestFloat, dst, dfl, a)
 
 proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
-  when T is float64:
-    const typeName = "float"
-  elif T is range:
-    const lb =
-      if T.low < 0 and BiggestInt(T.low) < -1_000_000_000: ""
-      else: $T.low
-    const ub =
-      if T.high > 1_000_000_000: ""
-      else: $T.high
+  when T is range:
+    when T is SomeInteger:
+      when T is SomeUnsignedInt:
+        type WideT = BiggestUInt
+        const lb = $T.low
+      else:
+        type WideT = BiggestInt
+        const lb =
+          if WideT(T.low) < -1_000_000_000: ""
+          else: $T.low
+      const ub =
+        if WideT(T.high) > WideT(1_000_000_000): ""
+        else: $T.high
+    else:
+      const lb =
+        if BiggestFloat(T.low) == NegInf: ""
+        else: $T.low
+      const ub =
+        if BiggestFloat(T.high) == Inf: ""
+        else: $T.high
     const typeName =
       if lb.len + ub.len > 0: lb & ".." & ub
       else: $T
+  elif T is float64:
+    const typeName = "float"
   else:
     const typeName = $T
   result = @[ a.argKeys, typeName, $dfl ]
