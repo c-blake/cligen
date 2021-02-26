@@ -4,13 +4,13 @@ RELEASE NOTES
 Version: 1.5.0
 --------------
 
-  Add ability to customize description column for help, help-syntx, version
-  or to surgically suppress any of those rows with hTabSuppress/CLIGEN-NOHELP.
+  Add ability to customize description column for help, help-syntax, version or
+  to surgically suppress any such rows with `hTabSuppress`/`"CLIGEN-NOHELP"`.
 
   Add `$CLIGEN_WIDTH` (really whatever `clCfg.widthEnv` says) to allow user
   override of detected terminal width.  (No controlling terminal processes
   could already use `COLUMNS`).  Set to `"AUTO"` to have a value, but still
-  fall back to OS terminal inteface calls.
+  fall back to OS terminal interface calls.
 
   Try to get ahead of eventual removal of `TaintedString`.
 
