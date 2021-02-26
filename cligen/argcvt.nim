@@ -207,6 +207,16 @@ proc argParse*[T: SomeNumber](dst: var T, dfl: T, a: var ArgcvtParams): bool =
 proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
   when T is float64:
     const typeName = "float"
+  elif T is range:
+    const lb =
+      if T.low < 0 and BiggestInt(T.low) < -1_000_000_000: ""
+      else: $T.low
+    const ub =
+      if T.high > 1_000_000_000: ""
+      else: $T.high
+    const typeName =
+      if lb.len + ub.len > 0: lb & ".." & ub
+      else: $T
   else:
     const typeName = $T
   result = @[ a.argKeys, typeName, $dfl ]

@@ -383,12 +383,14 @@ Options:
 Usage:
   demo [optional-params] 
 Options:
-  -h, --help                          print this cligen-erated help
-  --help-syntax                       advanced: prepend,plurals,..
-  -n=, --nat=    Natural           0  set nat
-  -p=, --pos=    Positive          1  set pos
-  -d=, --dice=   Dice              6  set dice
-  --delta=       range -5..5(int)  0  set delta
+  -h, --help                   print this cligen-erated help
+  --help-syntax                advanced: prepend,plurals,..
+  -n=, --nat=    0..       0   set nat
+  -p=, --pos=    1..       1   set pos
+  -d=, --dice=   1..6      6   set dice
+  --delta=       -5..5     0   set delta
+  -s=, --score=  0..100    0   set score
+  -q=, --q=      QuasiInt  -1  set q
 
 ==> test/ListDecl.out <==
 Usage:
