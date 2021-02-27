@@ -23,7 +23,8 @@ NIM_FLAGS += --verbosity:1 --hint[Processing]=off $a
 NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))
-TESTS_TOP_LVL_OUT := test/FullyAutoMultiTopLvl.out test/MultiMultiTopLvl.out
+TESTS_TOP_LVL_OUT := $(patsubst %,test/%TopLvl.out,\
+	FullyAutoMulti MultiMulti RangeTypes)
 OUT := test/out
 
 test: $(TESTS_OUT) $(TESTS_TOP_LVL_OUT)

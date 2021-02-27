@@ -222,12 +222,9 @@ proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
         if WideT(T.high) > WideT(1_000_000_000): ""
         else: $T.high
     else:
-      const lb =
-        if BiggestFloat(T.low) == NegInf: ""
-        else: $T.low
-      const ub =
-        if BiggestFloat(T.high) == Inf: ""
-        else: $T.high
+      const
+        lb = $T.low
+        ub = $T.high
     const typeName =
       if lb.len + ub.len > 0: lb & ".." & ub
       else: $T
