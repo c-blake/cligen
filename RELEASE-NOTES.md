@@ -4,6 +4,9 @@ RELEASE NOTES
 Version: 1.5.0
 --------------
 
+  Add range type ability (thanks to @SirNickolas). `test/RangeTypes.nim` has
+  test/example code.
+
   Add ability to customize description column for help, help-syntax, version or
   to surgically suppress any such rows with `hTabSuppress`/`"CLIGEN-NOHELP"`.
 
