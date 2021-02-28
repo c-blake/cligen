@@ -24,6 +24,7 @@ test/MultiFlag
 test/SemiAutoMulti
 test/FullyAutoMulti
 test/AllTypes
+test/RangeTypes
 test/EchoResult
 test/TwoNondefaultedSeq
 test/TwoNondefaultedSeqSwap

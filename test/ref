@@ -667,6 +667,41 @@ Options:
   --help-syntax          advanced: prepend,plurals,..
   -a=, --a=      int  1  set a
 
+==> test/RangeTypes.out <==
+Usage:
+  RangeTypes {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
+  help      print comprehensive or per-cmd help
+  demo-int  
+  demo-flt  
+
+RangeTypes {-h|--help} or with no args at all prints this message.
+RangeTypes --help-syntax gives general cligen syntax help.
+Run "RangeTypes {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "RangeTypes help" to get *comprehensive* help.
+
+==> test/RangeTypesTopLvl.out <==
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
+    RangeTypes {SUBCMD} [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  demo-int [optional-params] 
+  Options:
+      -n=, --nat=    0..       0   set nat
+      -p=, --pos=    1..       1   set pos
+      -d=, --dice=   1..6      6   set dice
+      --delta=       -5..5     0   set delta
+      -s=, --score=  0..100    0   set score
+      -q=, --q=      QuasiInt  -1  set q
+
+  demo-flt [optional-params] 
+  Options:
+      -a=, --angle=  0.0..360.0   90.0  set angle
+      -d=, --dist=   -1.45..1.45  1.0   set dist
+      -f=, --f32=    -3.2..3.2    0.0   set f32
+      --f64=         -6.4..6.4    0.0   set f64
+
 ==> test/ResultInt.out <==
 Usage:
   editDistanceAscii [required&optional-params] 
