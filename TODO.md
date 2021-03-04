@@ -27,3 +27,4 @@
 
   Maybe have a smarter textUt.alignTable rendering engine that can wrap columns
   besides the final one and also wrap at punctuation, not just at whitespace.
+  See https://github.com/c-blake/cligen/issues/190 for more details.
