@@ -196,7 +196,9 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
         setCk(tup[1].strVal.optionNormalize, tup[2].intVal.char)
   else:
     for losh in shorts:
-      setCk(losh[1][0].strVal.optionNormalize, losh[1][1].intVal.char)
+      if losh[1][1].kind == nnkCharLit:
+        setCk(losh[1][0].strVal.optionNormalize, losh[1][1].intVal.char)
+      else: error "`short` value for \"" & losh[1][0].strVal & "\" not a `char`"
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
      Table[string, char] =      # Table giving short[param] avoiding collisions
