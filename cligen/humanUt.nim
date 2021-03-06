@@ -229,6 +229,7 @@ proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## usual to block adornment interpretation.  This proc inits ``rstMdSGR`` with
   ## a Table of {style: "open;close"} text adornments. ``plain==true`` will make
   ## the associated ``render`` proc merely remove all such adornments.
+  result.attr = initTable[RstKind, tuple[on, off: string]]()
   for key, val in attrs:
     let c = val.split(';')
     if c.len != 2:

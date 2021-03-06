@@ -8,7 +8,7 @@ const cgConfigFileBaseName = "config.toml"
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =
   template hl(x): string = specifierHighlight(x, Whitespace, plain,
                                               keepPct=false, termInAttr=false)
-  var rendOpts: Table[string, string]
+  var rendOpts = initTable[string, string]()
   let
     tomlCfg = parsetoml.parseFile(cfgFile).getTable()
   for k1, v1 in tomlCfg.pairs:
