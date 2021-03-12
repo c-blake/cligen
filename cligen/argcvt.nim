@@ -234,6 +234,44 @@ proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
     const typeName = $T
   result = @[ a.argKeys, typeName, $dfl ]
 
+proc argParse*[T,U](dst: var HSlice[T,U], dfl: HSlice[T,U],
+                    a: var ArgcvtParams): bool =
+  ## Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into `HSlice`.
+  ## Interpretation is up to caller/slice user.  Missing sides get 0.
+  let inp = a.val.strip
+  let fieldI = inp.split("..")
+  let fieldX = inp.split(":")
+  if fieldI.len > 2 or fieldX.len > 2 or inp.len == 0:
+    a.msg="Bad value: \"$1\" for option \"$2\"; expecting $3|$3:$4|$3..$4\n$5" %
+          [ a.val, a.key, $type(T), $type(U), a.help ]; return
+  elif fieldX.len > 1:
+    if fieldX[0].len > 0:
+      a.val = fieldX[0]
+      if not argParse(dst.a, dfl.a, a): return
+    else: dst.a = 0
+    if fieldX[1].len > 0:
+      a.val = fieldX[1]
+      if not argParse(dst.b, dfl.b, a): return
+      dst.b.dec                         # make exclusive
+    else: dst.b = 0
+  elif fieldI.len > 1:
+    if fieldI[0].len > 0:
+      a.val = fieldI[0]
+      if not argParse(dst.a, dfl.a, a): return
+    else: dst.a = 0
+    if fieldI[1].len > 0:
+      a.val = fieldI[1]
+      if not argParse(dst.b, dfl.b, a): return
+    else: dst.b = 0
+  elif inp.len > 0:
+    a.val = inp
+    if not argParse(dst.a, dfl.a, a): return
+    dst.b = U(dst.a)
+  result = true
+
+proc argHelp*[T,U](dfl: HSlice[T,U]; a: var ArgcvtParams): seq[string] =
+  @[ a.argKeys, "Slice", $dfl.a & ".." & $dfl.b ]
+
 ## PARSING AGGREGATES (set,seq,..)
 ## ###############################
 ## This module also defines ``argParse``/``argHelp`` pairs for ``seq[T]`` and
