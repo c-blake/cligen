@@ -30,14 +30,12 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   result.st    = st
   result.prot  = prot
   result.flags = flags
-  if (prot and PROT_WRITE) != 0 and Off(st.st_size) != b:
+  if (prot and PROT_WRITE) != 0 and Off(st.st_size) != b and b != Off(-1):
     if (b > Off(st.st_size) or not noShrink) and flags != MAP_PRIVATE:
       if ftruncate(fd, b) == -1:            #Writable & too small => grow
         perror cstring("ftruncate"), 9
         return                              #Likely passed non-writable fd
       discard fstat(fd, result.st)          #Refresh st data ftrunc; Cannot fail
-    elif b == Off(-1):                      #Do special whole file mode
-      b0 = Off(result.st.st_size)
   elif b == Off(-1):                        #Do special whole file mode
     b0 = Off(result.st.st_size)
   b0 = min(b0, Off(result.st.st_size))      #Do not exceed file sz
@@ -51,7 +49,7 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
       return
 
 proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
-            a=0, b = -1, allowRemap=false, noShrink=false): MFile =
+            a=0, b = Off(-1), allowRemap=false, noShrink=false): MFile =
   ## Init map for already open ``fd``.  See ``mopen(cint,Stat)`` for details.
   if fd == -1:
     return
