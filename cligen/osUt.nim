@@ -56,7 +56,7 @@ iterator getDelims*(stream: File, dlm: char='\n'): (cstring, int) =
   ## Note that unlike `lines` or `getDelim`, `len` always *includes* `dlm`.
   ##
   ## .. code-block:: nim
-  ##  for (s, n) in stdin.getDelims:
+  ##  for (s, n) in stdin.getDelims: # or proc toNimStr(str: cstring, len: int)
   ##    discard toOpenArray[char](cast[ptr UncheckedArray[char]](s), 0, n-1).len
   var s: cstring
   var room: csize
