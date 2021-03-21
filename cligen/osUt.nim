@@ -36,9 +36,9 @@ proc useStdin*(path: string): bool =
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
 
+proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
 iterator getDelim*(stream: File, dlm: char='\n'): string =
   ## Efficient file line/record iterator using POSIX getdelim
-  proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
   var cline: cstring
   var nAlloc: csize
   var res: string
@@ -50,6 +50,19 @@ iterator getDelim*(stream: File, dlm: char='\n'): string =
       copyMem(addr res[0], cline, length - 1)
     yield res
   free(cline)
+
+iterator getDelims*(stream: File, dlm: char='\n'): (cstring, int) =
+  ## Like `getDelim` but yield `(ptr, len)` not auto-built Nim string.
+  ## Note that unlike `lines` or `getDelim`, `len` always *includes* `dlm`.
+  ##
+  ## .. code-block:: nim
+  ##  for (s, n) in stdin.getDelims:
+  ##    discard toOpenArray[char](cast[ptr UncheckedArray[char]](s), 0, n-1).len
+  var s: cstring
+  var room: csize
+  while (let n = c_getdelim(s.addr, room.addr, cint(dlm), stream); n) + 1 > 0:
+    yield (s, n)
+  s.free
 
 proc fileStrings*(path: string, delim: char): auto =
   ## Return an iterator yielding ``delim``-delimited records in file ``path``.
