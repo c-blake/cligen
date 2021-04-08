@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.0
+--------------
+  Probably no one but me uses procpool.eval, but its signature has been
+  substantially simplified and a default output framer is also now provided
+  for `initProcPool`.
+
 Version: 1.5.0
 --------------
 
