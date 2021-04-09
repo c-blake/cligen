@@ -33,17 +33,17 @@ proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
   path in ["-", "/dev/stdin"] or (path.len == 0 and not stdin.isatty)
 
-proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, stream: File): int {.
+proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
 
 proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
-iterator getDelim*(stream: File, dlm: char='\n'): string =
+iterator getDelim*(f: File, dlm: char='\n'): string =
   ## Efficient file line/record iterator using POSIX getdelim
   var cline: cstring
   var nAlloc: csize
   var res: string
   while true:
-    let length = c_getdelim(cline.addr, nAlloc.addr, cint(dlm), stream)
+    let length = c_getdelim(cline.addr, nAlloc.addr, cint(dlm), f)
     if length == -1: break
     res.setLen(length - 1)      #-1 => remove dlm char like system.lines()
     if length > 1:
@@ -51,7 +51,7 @@ iterator getDelim*(stream: File, dlm: char='\n'): string =
     yield res
   free(cline)
 
-iterator getDelims*(stream: File, dlm: char='\n'): (cstring, int) =
+iterator getDelims*(f: File, dlm: char='\n'): (cstring, int) =
   ## Like `getDelim` but yield `(ptr, len)` not auto-built Nim string.
   ## Note that unlike `lines` or `getDelim`, `len` always *includes* `dlm`.
   ##
@@ -60,7 +60,7 @@ iterator getDelims*(stream: File, dlm: char='\n'): (cstring, int) =
   ##    discard toOpenArray[char](cast[ptr UncheckedArray[char]](s), 0, n-1).len
   var s: cstring
   var room: csize
-  while (let n = c_getdelim(s.addr, room.addr, cint(dlm), stream); n) + 1 > 0:
+  while (let n = c_getdelim(s.addr, room.addr, cint(dlm), f); n) + 1 > 0:
     yield (s, n)
   s.free
 
