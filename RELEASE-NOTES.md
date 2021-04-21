@@ -1,11 +1,14 @@
 RELEASE NOTES
 =============
 
-Version: 1.6.0
+Version: 1.5.1
 --------------
   Probably no one but me uses procpool.eval, but its signature has been
   substantially simplified and a default output framer is also now provided
   for `initProcPool`.
+
+  Quick release to address Nim important packages CI as per
+  https://github.com/c-blake/cligen/pull/193#issuecomment-823941827
 
 Version: 1.5.0
 --------------
