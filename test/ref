@@ -234,7 +234,7 @@ Options:
   -s=, --stuff=  strings  ab,cd  append 1 val to stuff
 
 ==> test/FullyAutoMulti.out <==
-Infer & generate command-line interace/option/argument parser
+Infer & generate command-line interface/option/argument parser
 Usage:
   FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
 
@@ -615,7 +615,7 @@ Options:
   -a=, --a2=      strings  {}   append 1 val to a2
 
 ==> test/PassValuesMulti.out <==
-Infer & generate command-line interace/option/argument parser
+Infer & generate command-line interface/option/argument parser
 Usage:
   PassValuesMulti {SUBCMD}  [sub-command options & parameters]
 

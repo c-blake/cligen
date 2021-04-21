@@ -735,9 +735,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-template typeOrVoid[T](a: T): type =
-  # pending https://github.com/nim-lang/Nim/pull/17807
-  T
+when not declared(typeOrVoid):
+  template typeOrVoid[T](a: T): type = T
 
 template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
   when echoResult:                            #CLI author requests echo
@@ -752,7 +751,7 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     try: echo p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(cgParseErrorExitCode)
-  elif typeOrVoid(p) isnot void:                     #no convert to int,str but typed
+  elif typeOrVoid(p) isnot void:              #no convert to int,str but typed
     try: discard p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(cgParseErrorExitCode)
@@ -763,10 +762,10 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
 
 template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped,
                      skipHlp: untyped, noUHdr=false): auto =
-  when typeOrVoid(p()) isnot void: # TODO: the `p()` seems suspicious
+  when typeOrVoid(p()) isnot void:            #only discard non-void return type
     try: discard p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
     except HelpOnly: discard
-  else:
+  else: # dispatchFoo {.discardable.}, etc. may be another option.
     try: p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
     except HelpOnly: discard
 
