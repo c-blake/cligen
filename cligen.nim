@@ -735,8 +735,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `callIt`
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
-when not declared(typeOrVoid):
-  template typeOrVoid[T](a: T): type = T
+template discarder[T](a: T): void = # discard if possible, else identity;  Name
+  when T is not void: discard a     #..ideas: discardVoid alwaysDiscard Discard
+  else: a                           #..discarded maybeDiscard discardor..
 
 template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
   when echoResult:                            #CLI author requests echo
@@ -751,23 +752,15 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
     try: echo p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(cgParseErrorExitCode)
-  elif typeOrVoid(p) isnot void:              #no convert to int,str but typed
-    try: discard p; quit(0)
-    except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(cgParseErrorExitCode)
   else:                                       #void return type
-    try: p; quit(0)
+    try: discarder(p); quit(0)
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(cgParseErrorExitCode)
 
-template cligenHelp*(p:untyped, hlp: untyped, use: untyped, pfx: untyped,
+template cligenHelp*(p: untyped, hlp: untyped, use: untyped, pfx: untyped,
                      skipHlp: untyped, noUHdr=false): auto =
-  when typeOrVoid(p()) isnot void:            #only discard non-void return type
-    try: discard p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
-    except HelpOnly: discard
-  else: # dispatchFoo {.discardable.}, etc. may be another option.
-    try: p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr)
-    except HelpOnly: discard
+  try: discarder(p(hlp, usage=use, prefix=pfx, skipHelp=skipHlp, noHdr=noUHdr))
+  except HelpOnly: discard
 
 macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
                      pro: untyped, echoResult: bool, noAutoEcho: bool,
