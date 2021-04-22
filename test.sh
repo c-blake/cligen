@@ -22,6 +22,6 @@ wait
 head -n900 test/*.out | grep -v '^Hint: ' |
      sed -e 's@.*/cligen.nim(@cligen.nim(@' \
          -e 's@.*/cligen/@cligen/@' \
-         -e 's@.*/test/@test/@' > test/out
+         -e 's@.*/test/@test/@' | tr -d \\037 > test/out
 rm -f test/*.out
 diff test/ref test/out
