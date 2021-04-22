@@ -86,6 +86,7 @@ proc both*[T](it: iterator(): T, s: seq[T]): iterator(): T =
     for e in s: yield e
 
 proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
+  ## Unlocked (i.e. single threaded) libc `writeBuffer` (maybe Linux-only).
   when defined(linux) and not defined(android):
     proc c_fwrite(buf: pointer, size, n: csize, f: File): cint {.
             importc: "fwrite_unlocked", header: "<stdio.h>".}
@@ -94,19 +95,13 @@ proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
             importc: "fwrite", header: "<stdio.h>".}
   result = c_fwrite(buffer, 1, len.csize, f)
 
-#when defined(nimHasExceptionsQuery):
-#  const gotoBasedExceptions* = compileOption("exceptions", "goto")
-#else:
-#  const gotoBasedExceptions* = false
-
 proc urite*(f: File, s: string) {.inline.} =
-# when gotoBasedExceptions:
-#   if uriteBuffer(f, cstring(s), s.len) != s.len:
-#     raise newException(IOError, "cannot write string to file")
-  discard uriteBuffer(f, cstring(s), s.len)
+  ## Unlocked (i.e. single threaded) libc `write` (maybe Linux-only).
+  if uriteBuffer(f, cstring(s), s.len) != s.len:
+    raise newException(IOError, "cannot write string to file")
 
 proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
-  ## Unlocked (i.e. single threaded) libc write (maybe Linux-only).
+  ## Unlocked (i.e. single threaded) libc `write` (maybe Linux-only).
   for x in items(a): urite(f, x)
 
 proc cfeof(f: File): cint {.importc: "feof", header: "<stdio.h>".}
