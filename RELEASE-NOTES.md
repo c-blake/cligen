@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.2
+--------------
+  Cleaner fix for Nim CI via `discarder` to discard if needed/possible and
+  otherwise do nothing.  Simplifies both `cligenQuit` and `cligenHelp` and
+  seems to work back to Nim-0.19.2.
+
+  Properly raise on write errors in `osUt.urite`.
+
+  Add `sysUt.seekable` to test seekability/random access of a Nim `File`.
+
 Version: 1.5.1
 --------------
   Probably no one but me uses procpool.eval, but its signature has been
