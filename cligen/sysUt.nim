@@ -75,3 +75,8 @@ proc delItem*[T](x: var seq[T], item: T): int =
   result = find(x, item)
   if result >= 0:
     x.del(Natural(result))
+
+proc seekable*(f: File): bool =
+  ## True if Nim `File` is bound to an OS file pointing at a seekable device.
+  proc ftell(f: File): int64 {.importc, header: "stdio.h".}
+  f.ftell != -1
