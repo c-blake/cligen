@@ -5,7 +5,7 @@ rm -rf $HOME/.cache/nim/*
 v="--verbosity:1"
 h="--hint[Processing]=off"
 #XXX I do not know why the warning push in the code fails to suppress.
-w="--warning[ObservableStores]:off"
+: ${w:="--warning[ObservableStores]:off --warning[Deprecated]:off"}
 if ${nim:-nim} c $w /dev/null 2>&1 | grep -q 'unknown warning:'; then
   w=""
 fi
