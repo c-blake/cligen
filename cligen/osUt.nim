@@ -107,6 +107,12 @@ proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
 proc cfeof(f: File): cint {.importc: "feof", header: "<stdio.h>".}
 proc eof*(f: File): bool {.inline.} = f.cfeof != 0
 
+template outu*(a: varargs[string, `$`]) = stdout.urite(a)
+  ## Like `stdout.write` but using fwrite_unlocked
+
+template erru*(a: varargs[string, `$`]) = stderr.urite(a)
+  ## Like `stderr.write` but using fwrite_unlocked
+
 proc ureadBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
   when defined(linux) and not defined(android):
     proc c_fread(buf: pointer, size, n: csize, f: File): cint {.
