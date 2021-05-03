@@ -1,7 +1,7 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import std/[os, macros, tables, strutils, critbits],
-       cligen/[parseopt3, argcvt, textUt, sysUt, macUt, humanUt,  gcarc]
+import std/[os, macros, tables, strutils, critbits], system.ansi_c,
+       cligen/[parseopt3, argcvt, textUt, sysUt, macUt, humanUt, gcarc]
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
        ArgcvtParams, argParse, argHelp, getDescription, join, `%`, CritBitTree,
        incl, valsWithPfx, contains, addPrefix, wrap, TextTab, alignTable,
@@ -15,6 +15,8 @@ include cligen/syntaxHelp
 
 type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ClHelpCol* = enum clOptKeys, clValType, clDflVal, clDescrip
+
+  ClSIGPIPE* = enum spRaise="raise", spPass="pass", spIsOk="isOk"
 
   ClAlias* = tuple[long: string, short: char, helpStr: string,
                    dfl: seq[seq[string]]]         ## User CL aliases
@@ -39,6 +41,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     helpSyntax*:  string         ## Override of const syntaxHelp string
     render*:      proc(s: string): string ## string->string help transformer
     widthEnv*:    string         ## name of environment var for width override
+    sigPIPE*:     ClSIGPIPE      ## `dispatch` use allows end-user SIGPIPE ctrl
 
   HelpOnly*    = object of CatchableError
   VersionOnly* = object of CatchableError
@@ -62,7 +65,8 @@ var clCfg* = ClCfg(
   helpAttr:    initTable[string,string](),
   helpSyntax:  syntaxHelp,
   render:      nil,   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
-  widthEnv:    "CLIGEN_WIDTH")
+  widthEnv:    "CLIGEN_WIDTH",
+  sigPIPE:     spIsOk)
 
 var cgParseErrorExitCode* = 1
 {.pop.}
@@ -108,6 +112,19 @@ const ClNoCall* = ClErrors + ClExit
 
 var setByParseDum: seq[ClParse]; let cgSetByParseNil* = setByParseDum.addr
 var varSeqStrDum: seq[string]  ; let cgVarSeqStrNil*  = varSeqStrDum.addr
+
+proc die0(s: cint) {.noconv.} = quit(0)
+proc SIGPIPE_isOk*() =
+  ## Install signal handler to exit success upon OS posting SIGPIPE.  This is
+  ## more or less what (non-network) programs/users "expect".
+  when declared(SIGPIPE): c_signal(SIGPIPE, die0)
+
+proc SIGPIPE_pass*() =
+  ## Restore default signal disposition to allow OS to post SIGPIPE and likely
+  ## terminate with non-zero exit status (typically 141=128+signo13).  This
+  ## optimizes for "no surprises" behavior of exec()d code reasonably expecting
+  ## to inherit a near default SIGPIPE disposition.
+  when declared(SIGPIPE) and declared(SIG_DFL): c_signal(SIGPIPE, SIG_DFL)
 
 proc contains*(x: openArray[ClParse], paramName: string): bool =
   ##Test if the ``seq`` updated via ``setByParse`` contains a parameter.
@@ -690,6 +707,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                    quote do: `docsVar`.add(`cmtDoc`)
                  else: newNimNode(nnkEmpty)
   result = quote do:                                    #Overall Structure
+    case `cf`.sigPIPE
+    of spRaise: discard     # "Nim stdlib default"; Becoming raise in devel/1.6
+    of spPass: SIGPIPE_pass()
+    of spIsOk: SIGPIPE_isOk()
     if cast[pointer](`docs`) != cgVarSeqStrNil: `docsStmt`
     proc `disNm`(`cmdLineId`: seq[string] = mergeParams(`mrgNames`),
                  `usageId`=`usage`,`prefixId`="", `prsOnlyId`=false,

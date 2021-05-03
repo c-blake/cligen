@@ -29,6 +29,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           for k3, v3 in v2.getTable().pairs:
             # echo &"    {k1}.{k2}.{k3} = {v3} "
             textAttrAlias(k3, v3.getStr().strip())
+        of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](e.value.optionNormalize)
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "layout":

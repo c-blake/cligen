@@ -46,6 +46,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "colors":               #..allows darkBG symlink-> (lc|procs)/darkBG
           let cols = e.value.split('=')
           textAttrAlias(cols[0].strip, cols[1].strip)
+        of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](e.value.optionNormalize)
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
                        "Can only be \"colors\"\n"
