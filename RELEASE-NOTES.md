@@ -1,5 +1,28 @@
 RELEASE NOTES
 =============
+Version: 1.5.3
+--------------
+  The big one here is a new sigpipe configuration capability.  This only
+  impacts newer versions of Nim.  A simple layout is:
+    Older Nim:
+      always traceback w/good debugging & SIGPIPE: Pipe closed regardless
+    Newer Nim/devel and 1.6 & later:
+      isok  - exit 0 even with set -o pipefail
+      raise - traceback only
+      pass  - signal only; typically termination w/exit 128+signo=141
+  The command-default can be set via clCfg.sigpipe while CL-end users can
+  set (~/.config/cligen|~/.config/cligen/config):sigpipe = the same values
+  (unless CLauthors override config file parsing to block it).
+
+  This may seem complex, but only end CLusers can really know what signal
+  protocol is least disruptive..whether they do `set -o pipefail` in shell
+  configs, whether programs that their cligen programs in turn execve/etc.
+  expect/need a default SIGPIPE disposition (not all such programs are Nim or
+  even open source), whether a stack trace means anything to them, and even
+  whether they compile their program to get much of a stack trace capability.
+
+  Add `osUt.outu|erru` convenience shortcuts, tweak test.sh, and also adapt to
+  newer nim-devel in other ways.
 
 Version: 1.5.2
 --------------
