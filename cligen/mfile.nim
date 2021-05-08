@@ -208,7 +208,11 @@ iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
   else:
     let f = if path == "/dev/stdin": stdin else: open(path)
     for (cs, n) in f.getDelims:
-      yield MSlice(mem: cs, len: n)
+      if n > 0 and cs[n-1] == '\n':
+        cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
+        yield MSlice(mem: cs, len: n - 1)
+      else:
+        yield MSlice(mem: cs, len: n)
     if f != stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
 
 proc findPathPattern*(pathPattern: string): string =
