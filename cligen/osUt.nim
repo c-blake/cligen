@@ -216,3 +216,36 @@ when defined(linux):
       for cpu in cpus:
         cpu_set(cpu.cint, cs.addr)
     discard sched_setaffinity(0.Pid, cs.sizeof.csize, cs.addr)
+
+proc splitPathName*(path: string, shortestExt=false):
+    tuple[dir, name, ext: string] =
+  ## Like `os.splitFile` but return longest extensions not shortest (unless
+  ## `shortestExt`).  E.g. `"/a/b/c.tar.gz"` => `("/a/b", "c", ".tar.gz")`, but
+  ## with `shortest` would be `("/a/b", "c.tar", ".gz")`.
+  var namePos = -1
+  var dotPos  = -1
+  for i in countdown(path.len - 1, 0):  # find start of last path component
+    if path[i] in {DirSep, AltSep}:
+      namePos = i; break                # *including* the separator
+  for i in namePos + 1 ..< path.len:    # find extension within final component
+    if path[i] == ExtSep:
+      dotPos = i                        # stop @first = longest such extension
+      if not shortestExt: break         # or @last = shortest such extension
+  if namePos >= 0:
+    result.dir = path[0..namePos]
+  namePos.inc                           # unconditional: not found => 0
+  if dotPos >= 0:
+    result.name = path[namePos..dotPos-1]
+    result.ext  = path[dotPos..^1]
+  else:                                 # not found/no extension
+    result.name = path[namePos..^1]
+  if result.dir.len > 1:                # strip trailing DirSep except for root
+    result.dir.setLen result.dir.len - 1
+
+proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
+  ## Wrapper around system.open that ensures leading directory prefix exists.
+  let (dir, _, _) = splitPathName(path)
+  if dir.len > 0:
+    if not existsOrCreateDir(dir):
+      raise newException(IOError, path & ": cannot create")
+  open(path, mode, bufSize)
