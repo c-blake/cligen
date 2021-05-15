@@ -64,6 +64,18 @@ iterator getDelims*(f: File, dlm: char='\n'): (cstring, int) =
     yield (s, n)
   s.free
 
+iterator getLenPfx*[T: SomeNumber](f: File): string =
+  ## Like `getDelim` but "parse" length-prefixed values where a native-endian
+  ## format binary length prefix is `SomeNumber`.  *Caller is responsible for
+  ## specifying the right numeric type*, but format is simple & 8-bit clean.
+  var s: string
+  var len: T
+  while f.ureadBuffer(len.addr, len.sizeof) == len.sizeof:
+    let n = len.int
+    s.setLen n
+    if f.ureadBuffer(s[0].addr, n) < n: break
+    yield s
+
 proc fileStrings*(path: string, delim: char): auto =
   ## Return an iterator yielding ``delim``-delimited records in file ``path``.
   ## Note ``path = "/"`` is equivalent to a Unix ``path = "/dev/null"``.
