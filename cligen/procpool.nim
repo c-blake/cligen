@@ -16,14 +16,13 @@ type
   Frames* = proc(f: var Filter): iterator(): MSlice
 
   ProcPool* = object  ## A process pool to do work on multiple cores
-    nProc: int
     bufSz: int
     kids: seq[Filter]
     fdset: TFdSet
     fdMax: cint
     frames: Frames
 
-proc len*(pp: ProcPool): int {.inline.} = pp.nProc
+proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
 proc request*(pp: ProcPool, kid: int, buf: pointer, len: int) =
   discard pp.kids[kid].fd0.write(buf, len)
@@ -97,18 +96,18 @@ iterator readyReplies*(pp: var ProcPool): MSlice =
   var noTO: Timeval                                   # Zero timeout => no block
   var fdset = pp.fdset
   if select(pp.fdMax, fdset.addr, nil, nil, noTO.addr) > 0:
-    for i in 0 ..< pp.nProc:
+    for i in 0 ..< pp.len:
       if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
         for rep in toItr(pp.frames(pp.kids[i])): yield rep
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
   var st: cint
-  var n = pp.nProc                                    # Do final answers
+  var n = pp.len                                      # Do final answers
   var fdset0 = pp.fdset
   while n > 0:
     var fdset = fdset0                                # nil timeout => block
     if select(pp.fdMax, fdset.addr, nil, nil, nil) > 0:
-      for i in 0 ..< pp.nProc:
+      for i in 0 ..< pp.len:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
           for rep in toItr(pp.frames(pp.kids[i])): yield rep
           if pp.kids[i].done:                         # got EOF from kid
