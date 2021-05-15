@@ -113,7 +113,7 @@ const ClNoCall* = ClErrors + ClExit
 var setByParseDum: seq[ClParse]; let cgSetByParseNil* = setByParseDum.addr
 var varSeqStrDum: seq[string]  ; let cgVarSeqStrNil*  = varSeqStrDum.addr
 
-proc die0(s: cint) {.noconv.} = quit(0)
+proc die0(s: cint) {.noconv, used.} = quit(0)
 proc SIGPIPE_isOk*() =
   ## Install signal handler to exit success upon OS posting SIGPIPE.  This is
   ## more or less what (non-network) programs/users "expect".
