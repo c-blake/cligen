@@ -113,3 +113,13 @@ proc joins*[T](sst: seq[seq[T]], delim: T): seq[T] =
     result = result & st
     if i != last:
       result.add delim
+
+proc commentStrip*(s: string): string =
+  ## return string with any pre-'#' whitespace and any post-'#' text removed.
+  if s.startsWith("#"): return          # implicit ""
+  if (let ix = s.find('#'); ix > 0):
+    for i in countdown(ix - 1, 0):
+      if s[i] notin Whitespace:
+        result = s[0..i]
+        break
+  else: result = s
