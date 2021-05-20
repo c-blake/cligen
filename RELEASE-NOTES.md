@@ -1,5 +1,13 @@
 RELEASE NOTES
 =============
+Version: 1.5.4
+--------------
+  Fix a bug in mfile.mSlices; Add splitPathName for the *longest* extension
+  unlike stdlib shortest extension, `mkdirOpen` and spruce up `procpool`
+  including a new 8-bit clean message mode (via length-prefixed messages).
+  Add a little demo program `grl` that competes well with `ripgrep` in
+  some cases being noticably faster.
+
 Version: 1.5.3
 --------------
   The big one here is a new sigpipe configuration capability.  This only
