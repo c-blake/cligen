@@ -116,6 +116,18 @@ proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
   ## Unlocked (i.e. single threaded) libc `write` (maybe Linux-only).
   for x in items(a): urite(f, x)
 
+proc replacingUrite*(f: File, s: string, eor: char, subEor: string) =
+  ## Unlocked write `s` to `f` replacing any `eor` char with `subEor`.
+  var off = 0
+  while true:
+    if (let ix = s.find(eor, start=off); ix >= 0):
+      discard f.uriteBuffer(s[off].unsafeAddr, ix - off)
+      discard f.uriteBuffer(subEor[0].unsafeAddr, subEor.len)
+      off = ix + 1
+    else:
+      discard f.uriteBuffer(s[off].unsafeAddr, s.len - off)
+      return
+
 proc cfeof(f: File): cint {.importc: "feof", header: "<stdio.h>".}
 proc eof*(f: File): bool {.inline.} = f.cfeof != 0
 
