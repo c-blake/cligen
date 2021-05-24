@@ -296,7 +296,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##
   ##``help`` is a ``{(paramNm, str)}`` of per-param help, eg. ``{"quiet": "be
   ##quiet"}``.  Often, only these help strings are needed for a decent CLI.
-  ##``str==clCfg.hTabSuppress`` (default== ``"SUPPRESS"``) trims help table row.
+  ##A row of the help table can be suppressed from showing by setting the ``str``
+  ##to a magic ``clCfg.hTabSuppress`` string value (defaults to ``"CLIGEN-NOHELP"``,
+  ##customizable).
   ##
   ##``short`` is a ``{(paramNm, char)}`` of per-param single-char option keys.
   ##
