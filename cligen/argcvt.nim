@@ -317,6 +317,8 @@ proc getDescription*[T](defVal: T, parNm: string, defaultHelp: string): string =
     result = "append 1 val to " & parNm
   elif T is set or T is HashSet:
     result = "include 1 val in " & parNm
+  elif T is enum:
+    result = "select 1 enum " & $T
   else:
     result = "set " & parNm
 

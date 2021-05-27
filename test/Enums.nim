@@ -9,6 +9,6 @@ when isMainModule:
   import cligen
   dispatch(demo,
            help = { "c"   : "primary color",
-                    "bg"  : "background color",
+#                   "bg"  : "background color",
                     "fg"  : "foreround colors",
                     "curs": "cursor colors" })
