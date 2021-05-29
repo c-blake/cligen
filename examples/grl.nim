@@ -21,6 +21,7 @@ proc print(eor: char, s: MSlice) {.inline.} =
   discard stdout.uriteBuffer(eor.unsafeAddr, 1)
 
 proc grl(jobs=0, eor='\n', sub: string, paths: seq[string]) =
+  ## print each path (& `eor`) containing string `sub` with parallelism `jobs`.
   gSub = sub
   var pp = initProcPool(inFile, framesLenPfx, jobs) # Start&drive kid pool
   pp.evalp(paths, eor.print)
