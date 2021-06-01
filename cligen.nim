@@ -301,6 +301,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##customizable).
   ##
   ##``short`` is a ``{(paramNm, char)}`` of per-param single-char option keys.
+  ##Setting a parameter value to ``'\0'`` suppresses the assignment of a short option.
+  ##Suppress all short options by passing an empty key: ``{ "": ' ' }``.
+  ##
+  ##``help`` and ``short`` definitions outside of a call require explicit ``toTable``
+  ## (from ``std/tables``) conversions.
   ##
   ##``usage`` is a help template interpolating $command $args $doc $options.
   ##
