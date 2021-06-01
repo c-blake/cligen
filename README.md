@@ -27,20 +27,24 @@ Options:
   --baz=         string  "hi"   set baz
   -v, --verb     bool    false  set verb
 ```
-Other invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
+That's it!  No specification language/complex arg parsing API/Nim pragma tags
+to learn.  If you aren't sold already, here is more
+[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+
+The `help` column is filled with generic `set foo` placeholders by default, but
+you can override it using parameter-keyed association-list literals:
+```nim
+dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
+```
+The same goes for the `short` versions of the CLI arguments.  More on that in the
+"Common Overrides" section below.
+
+Other forms of invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
 
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man` (e.g.
 `help2man -N ./fun|man /dev/stdin`).
 
-When you want more specific help than `set foo`, just add parameter-keyed
-metadata with Nim's association-list literals:
-```nim
-dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
-```
-That's it!  No specification language/complex arg parsing API/Nim pragma tags
-to learn.  If you aren't sold already, here is more
-[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 Nim CLI authors who have understood things this far can mostly use `cligen`
 already.  Enter illegal commands or `--help` to get help messages to exhibit
 the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
@@ -137,14 +141,25 @@ macro parameter:
 ```nim
 dispatch(fun, short = { "bar" : 'r' })
 ```
-With that (and our first `fun` example), `"bar"` gets `'r'` while `"baz"`
-gets `'b'` as short options.  To suppress some long option getting *any* short
-option, specify `'\0'` as the value for its short key.  To suppress _all_
-short options, give `short` a key of `""`.
+If you'd like to define `short` or `help` parameters outside of a `dispatch` call,
+you need an explicit conversion to a table:
+```nim
+import cligen
+from std/tables import toTable
+const
+  Help =  { "foo": "the beginning", "bar": "the rate" }.toTable()
+  Short = { "foo": 'f', "bar": 'r'}.toTable()
+proc fun(foo = 1, bar = 2, baz = "hi") = discard
+dispatch(fun, help = Help, short = Short)
+```
+With that `"bar"` gets `'r'` while `"baz"` gets `'b'` as short options.
+To suppress some long option getting *any* short option, specify `'\0'`
+as the value for its short key.  To suppress _all_ short options, give 
+`short` a key of `""`.
 
 To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
 To suppress presence only in the help message use `help = { "apiParam":
-"SUPPRESS" }`.  Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper
+"CLIGEN-NOHELP" }`.  Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper
 default API parameter values with no explicit initilization to the Nim default
 for a type.
 
