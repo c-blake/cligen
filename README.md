@@ -39,7 +39,7 @@ dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
 The same goes for the `short` versions of the CLI arguments.  More on that in the
 "Common Overrides" section below.
 
-Other forms of invocations (`./fun --foo=2 --bar=2.7 ...`) all work as expected.
+Other invocations (`./fun --foo 2 -b=2.7 --baz:"ho"...`) work as expected.
 
 Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man` (e.g.
@@ -141,8 +141,8 @@ macro parameter:
 ```nim
 dispatch(fun, short = { "bar" : 'r' })
 ```
-If you'd like to define `short` or `help` parameters outside of a `dispatch` call,
-you need an explicit conversion to a table:
+If you'd like to define `short` or `help` parameters outside of a `dispatch`
+call, you need an explicit conversion to a `Table`:
 ```nim
 import cligen
 from std/tables import toTable
