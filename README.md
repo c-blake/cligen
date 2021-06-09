@@ -77,8 +77,8 @@ values to such parameters.
 
 ---
 
-If a proc parameter has no explicit default value, it becomes required input,
-but the syntax for input is the same as for optional values.  So, in the below
+If a proc parameter has no *explicit* default value (via `=`) then it becomes
+required, but the input syntax is the same as for optional values.  So, in
 ```nim
 proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
   discard          # Of course, real code would have real work here
