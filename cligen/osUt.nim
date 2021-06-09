@@ -266,10 +266,17 @@ proc splitPathName*(path: string, shortestExt=false):
   if result.dir.len > 1:                # strip trailing DirSep except for root
     result.dir.setLen result.dir.len - 1
 
+proc mkdirP*(path: string) =
+  ## Create all parent dirs and path itself like Unix `mkdir -p foo/bar/baz`.
+  if path.len == 0: return              # nothing to do => must have succeeded
+  var path = path
+  var sep, err: int
+  while sep != -1:
+    sep = path.find(DirSep, sep + 1)
+    discard existsOrCreateDir(if sep > 0: path[0..<sep] else: path)
+
 proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
   ## Wrapper around system.open that ensures leading directory prefix exists.
   let (dir, _, _) = splitPathName(path)
-  if dir.len > 0:
-    if not existsOrCreateDir(dir):
-      raise newException(IOError, path & ": cannot create")
+  if dir.len > 0: mkdirP(dir)
   open(path, mode, bufSize)
