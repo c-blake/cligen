@@ -280,3 +280,39 @@ proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
   let (dir, _, _) = splitPathName(path)
   if dir.len > 0: mkdirP(dir)
   open(path, mode, bufSize)
+
+template popent(cmd, path, bufSize, mode, modeStr, dfl, dflStr): untyped =
+  when defined(Windows):
+    proc popen(a1, a2: cstring): File {.importc: "_popen".}
+    let modeExtra = "b"
+  else:
+    let modeExtra = ""
+  if cmd.len > 0:
+    let c = cmd % path                  # Q: Also export $INPUT?
+    if (let f = popen(c, modeStr & modeExtra); f != nil):
+      if bufSize != -1: discard c_setvbuf(f, nil, 0.cint, bufSize.csize)
+      result = f
+    else: raise newException(OSError, "cannot popen: \"" & c & "\"")
+  elif path.len == 0 or path == "/dev/std" & dflStr:
+    if bufSize != -1:                   # typically cancels any pending IO!
+      discard c_setvbuf(dfl, nil, 0.cint, bufSize.csize)
+    result = dfl
+  else: result = open(path, mode, bufSize)
+
+proc popenr*(cmd, path: string, bufSize = -1): File =
+  ## If `cmd.len==0` this is like regular `open(mode=fmRead)` except that "" or
+  ## "/dev/stdin" are in-line translated to return `stdin`.  It otherwise wraps
+  ## `popen(cmd % path, "rb")`.  So, $1 is how users place `path` in `cmd`.
+  popent cmd, path, bufSize, fmRead, "r", stdin, "in"
+
+proc popenw*(cmd, path: string, bufSize = -1): File =
+  ## If `cmd.len==0` this is like regular `open(mode=fmWrite)` except that "" or
+  ## "/dev/stdout" are in-line translated to return `stdout`. It otherwise wraps
+  ## `popen(cmd % path,"wb")`.  So, $1 is how users place `path` in `cmd`.
+  popent cmd, path, bufSize, fmWrite, "w", stdout, "out"
+
+proc pclose*(f: File, cmd: string): cint =
+  ## Clean-up for `popen[rw]`.  Returns exit status of popen()d command.
+  when defined(Windows):
+    proc pclose(a: File): File {.importc: "_pclose".}
+  if cmd.len > 0: f.pclose else: (f.close; 0.cint) # WEXITSTATUS(result)
