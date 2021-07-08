@@ -154,3 +154,6 @@ template evalp*(pp, reqGen, onReply: untyped) =
       for rep in pp.readyReplies: onReply(rep)  #..handle ready replies.
   for i in 0 ..< pp.len: pp.close(i)            # Send EOFs
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
+
+proc noop*(s: MSlice) = discard
+  ## A convenience noop which does nothing with a `rep` for `eval` or `evalp`.

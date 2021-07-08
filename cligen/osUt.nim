@@ -275,10 +275,14 @@ proc mkdirP*(path: string) =
     sep = path.find(DirSep, sep + 1)
     discard existsOrCreateDir(if sep > 0: path[0..<sep] else: path)
 
-proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
-  ## Wrapper around system.open that ensures leading directory prefix exists.
+proc mkdirTo*(path: string) =
+  ## Ensure leading directory prefix of `path` exists.
   let (dir, _, _) = splitPathName(path)
   if dir.len > 0: mkdirP(dir)
+
+proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
+  ## Wrapper around system.open that ensures leading directory prefix exists.
+  mkdirTo(path)
   open(path, mode, bufSize)
 
 template popent(cmd, path, bufSize, mode, modeStr, dfl, dflStr): untyped =
