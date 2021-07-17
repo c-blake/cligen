@@ -8,7 +8,8 @@ const
                "/usr/lib/libmagic.so",
                "/usr/lib/x86_64-linux-gnu/libmagic.so.1",
                "/usr/lib/x86_64-linux-gnu/libmagic.so",
-               "/lib/aarch64-linux-gnu/libmagic.so.1" ]:
+               "/lib/aarch64-linux-gnu/libmagic.so.1",
+               "/data/data/com.termux/files/usr/lib/libmagic.so" ]:
       if gorgeEx("test -e " & f)[1] == 0:
         r = f
         break
