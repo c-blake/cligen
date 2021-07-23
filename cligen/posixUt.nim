@@ -66,7 +66,7 @@ template localAlloc*(param; typ: typedesc) {.dirty.} =
   var `param here`: typ
   let param = if param == nil: `param here`.addr else: param
 
-proc getTime*(): Timespec =
+proc getTime*(clockId=CLOCK_REALTIME): Timespec =
   ##Placeholder to avoid `times` module
   discard clock_gettime(0.ClockId, result)
 
@@ -231,8 +231,15 @@ proc getDents*(fd: cint, st: Stat, dts: ptr seq[int8] = nil,
     result.add $cstring(addr d.d_name)
 
 proc ns*(t: Timespec): int =
-  ## Signed ns since epoch; Signed 64bit ints => +-292 years from 1970.
-  int(t.tv_sec) * 1000_000_000 + t.tv_nsec
+  ## Signed nanoseconds since origin (usually epoch, but maybe not if `t` comes
+  ## from `CLOCK_MONOTONIC`); Signed 64bit ints => +-292 years from 1970.  Eg.:
+  ## `let t0 = path.getLastModificationTime.ns`.
+  t.tv_sec.int * 1000_000_000 + t.tv_nsec.int
+  when int.sizeof < 8: {.warning: "using 64-bit API on <64-bit platform".}
+
+proc getTmNs*(clockId=CLOCK_REALTIME): int = clockId.getTime.ns
+  ## Eg.: `let t0 = getTmNs(); let dt = getTmNs() - t0`.  Worry of NTP/etc.
+  ## fiddling with the system clock is addressed by `CLOCK_MONOTONIC.getTmNs`.
 
 proc fileTimeParse*(code: string): tuple[tim: char, dir: int] =
   ##Parse [+-][amcvAMCV]* into a file time order specification.  In case default
