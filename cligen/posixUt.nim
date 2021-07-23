@@ -241,6 +241,10 @@ proc getTmNs*(clockId=CLOCK_REALTIME): int = clockId.getTime.ns
   ## Eg.: `let t0 = getTmNs(); let dt = getTmNs() - t0`.  Worry of NTP/etc.
   ## fiddling with the system clock is addressed by `CLOCK_MONOTONIC.getTmNs`.
 
+proc dtNs*(t0: int, clockId=CLOCK_REALTIME): int = clockId.getTime.ns - t0
+  ## Eg.: `let t0 = getTmNs(); echo dtNs(t0)`.  Worry of NTP/etc. fiddling with
+  ## the system clock is addressed by `CLOCK_MONOTONIC.getTmNs`.
+
 proc fileTimeParse*(code: string): tuple[tim: char, dir: int] =
   ##Parse [+-][amcvAMCV]* into a file time order specification.  In case default
   ##increasing order is non-intuitive, this provides two ways to specify reverse
