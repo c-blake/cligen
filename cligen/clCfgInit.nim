@@ -3,7 +3,7 @@
 when defined(nimHasWarningObservableStores):
   {.push warning[ObservableStores]: off.}
 
-import std/[os, streams, parsecfg, tables]
+import std/[streams, parsecfg] # , os, tables # for standalone
 const cgConfigFileBaseName = "config"
 
 proc apply(c: var ClCfg, path: string, plain=false) =
