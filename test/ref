@@ -55,7 +55,6 @@ Options:
   -E=, --E=      set(Color)   red,green,blue  include 1 val in E
 
 ==> test/AllTypes.out <==
-cligen/argcvt.nim(119, 12) Warning: implicit conversion to 'cstring' from a non-const location: a.val; this will become a compile time error in the future [CStringConv]
 Usage:
   demo [optional-params] [args: string...]
 demo entry point with parameters of all basic types.
