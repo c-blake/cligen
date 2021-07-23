@@ -14,13 +14,13 @@ NIM := $(or $(nim),nim)
 NIM_BACKEND := $(or $(BE),c)
 
 #XXX I do not know why the warning push in the code fails to suppress.
-NIM_FLAGS := --warning[ObservableStores]:off
+NIM_FLAGS := --warning[ObservableStores]:off --warning[Deprecated]:off
 
 ifeq ($(shell $(NIM) c $(NIM_FLAGS) /dev/null 2>&1 | \
 		grep -q 'unknown warning:'; echo $$?),0)
 	NIM_FLAGS :=
 endif
-NIM_FLAGS += --verbosity:1 --hint[Processing]:off $a
+NIM_FLAGS += --verbosity:1 --hint[Processing]:off --hint[SuccessX]=off $a
 NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))
