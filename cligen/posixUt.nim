@@ -234,8 +234,8 @@ proc ns*(t: Timespec): int =
   ## Signed nanoseconds since origin (usually epoch, but maybe not if `t` comes
   ## from `CLOCK_MONOTONIC`); Signed 64bit ints => +-292 years from 1970.  Eg.:
   ## `let t0 = path.getLastModificationTime.ns`.
-  t.tv_sec.int * 1000_000_000 + t.tv_nsec.int
   when int.sizeof < 8: {.warning: "using 64-bit API on <64-bit platform".}
+  t.tv_sec.int * 1000_000_000 + t.tv_nsec.int
 
 proc getTmNs*(clockId=CLOCK_REALTIME): int = clockId.getTime.ns
   ## Eg.: `let t0 = getTmNs(); let dt = getTmNs() - t0`.  Worry of NTP/etc.
