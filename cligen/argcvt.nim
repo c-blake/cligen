@@ -113,10 +113,11 @@ proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal.add(move(a.parNm))  # So, add to *NoVal.
 
-# cstrings
-proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
-  dst = a.val
-  return true
+when defined(cgSupportCString):
+  # cstrings
+  proc argParse*(dst: var cstring, dfl: cstring, a: var ArgcvtParams): bool =
+    dst = a.val
+    return true
 
 proc argHelp*(dfl: cstring; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "string", nimEscape($dfl) ]
