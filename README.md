@@ -89,6 +89,40 @@ the command-line user must give `--myRequired=something` somewhere to avoid an
 error.  Non-option arguments must be parsable as `int` with whitespace stripped,
 e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 
+### Custom Parameter Types or Parsing
+
+While `cligen` supports basic Nim types out of the box (strings, numbers, enums,
+sequences and sets of such, etc.), the parsing/printing system is extensible.
+This is done via in-dispatch scope `argParse` & `argHelp` overloads for types.
+(These could almost be `parseType` & `$`; CLusers!=CLauthors & other integration
+ requirements motivate two separate names.)  A simple example:
+```nim
+import std/times
+proc foo(i: int = 42, d: DateTime): void = echo d
+
+when isMainModule:
+  import cligen/argcvt, cligen
+  proc argParse(dst: var DateTime, dfl: DateTime,
+                a: var ArgcvtParams): bool =
+    try: dst = times.parse(a.val, "yyyyMMdd")
+    except TimeParseError:
+      echo "bad DateTime: ", a.val; return false
+    return true
+
+  proc argHelp(dfl: DateTime, a: var ArgcvtParams):seq[string]=
+    @[a.argKeys, "DateTime", ""]
+
+  dispatch foo, help={"i": "favorite number", "d": "birthday"}
+```
+These two "argument IO" procs take a shared coodination parameter for argument
+metadata (more fully documented in `cligen/argcvt.nim`).  As just one simple
+example, `a.parNm` is the name of the parameter being parsed.  While not useful
+ordinarily, this can be used to parse the same Nim type differently, detect when
+the user alters the parameter from the default, count utterances, etc.
+
+You can also use this mechanism to override existing cligen/argcvt
+parser/helpers if if the built-ins are not what you want.
+
 ### Subcommands, dispatch to object init
 
 `dispatchMulti` lets you expose two or more procs with subcommands a la `git` or
@@ -209,11 +243,9 @@ help templates.
 
 ### Even More Controls and Details
 
-After many feature requests `cligen` grew many knobs & levers.  First there are
-more [DETAILS](https://github.com/c-blake/cligen/tree/master/DETAILS.md) on the
-restrictions on wrappable procs and extending the parser to new argument types.
-A good starting point for various advanced usages is the many examples in my
-automated test suite:
+After many feature requests `cligen` grew many knobs & levers.  A good starting
+point for various advanced usages is the many examples in my automated test
+suite:
   [test/](https://github.com/c-blake/cligen/tree/master/test/).
 Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and generated
 documentation for the three main modules:
