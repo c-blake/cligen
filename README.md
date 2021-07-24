@@ -241,6 +241,20 @@ Nim stdlib's `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
 which allows command-line end users to tweak colors, layout, syntax, and usage
 help templates.
 
+### Restrictions
+
+ 1. Can only wrap basic funcs/procs -- no `auto|var` types, generics, etc.
+   
+ 2. Param types used must have argParse, argHelp in scope (including generic
+    parameters like the `T` in `seq[T]`).
+
+ 3. No param of a wrapped proc can be named "help".  (Name collision!)
+
+The first non-defaulted `seq[T]` parameter maps to a trailing series of
+positional command arguments.  Such tail series are a fairly established CLI
+tool convention.  Choice of the parameter can be altered via `dispatch
+positional="myParam"`.
+
 ### Even More Controls and Details
 
 After many feature requests `cligen` grew many knobs & levers.  A good starting
