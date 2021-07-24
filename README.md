@@ -146,7 +146,7 @@ while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
 or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
 Like long option keys or enum value names, subcommand names can also be ***any
-unambiguous prefix and are case-kebab-insensitive***.  So, `./cmd f-o -m1` would
+unambiguous prefix and are case-kebab-insensitive***.  So, `./cmd f-O -m1` would
 also work above.
 
 ---
