@@ -98,7 +98,7 @@ This is done via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
  requirements motivate two separate names.)  A simple example:
 ```nim
 import std/times
-proc foo(i: int = 42, d: DateTime): void = echo d
+proc foo(i = 42, d = now()): void = echo d
 
 when isMainModule:
   import cligen/argcvt, cligen
@@ -110,7 +110,7 @@ when isMainModule:
     return true
 
   proc argHelp(dfl: DateTime, a: var ArgcvtParams): seq[string]=
-    @[a.argKeys, "DateTime", ""] # 3rd slot how to fmt default
+    @[a.argKeys, "DateTime", getDateStr(dfl)]
 
   dispatch foo, help={"i": "favorite number", "d": "birthday"}
 ```
