@@ -56,16 +56,16 @@ the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
 hitting the TAB key to complete is unnecessary **if** the completion is unique.
-This is patterned after, e.g. Mercurial, gdb, gnuplot, or Vim ex-commands.
-Long options can also be spelled flexibly, e.g.  `--dry-run`|`--dryRun`, like
-Nim's style-insensitive identifiers, but with extra "kebab-case-insensitivity".
-The exact spelling of the key in `help` controls the look of printed help.
+This is patterned after, e.g. gnuplot, gdb, Vim ex-commands, etc.  Long options
+can also be **spelled flexibly**, e.g. `--dry-run`|`--dryRun`, like Nim's
+style-insensitive identifiers, but with extra "kebab-case-insensitivity".
+(The exact spelling of the key in `help` controls the look of printed help.
 Layout details like column spacing and help colorization are controlled [by a
 CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
 Here are screenshots of an example
 [night-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dirqHelpNight.png)
 and
-[day-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dupsHelpDay.png).
+[day-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dupsHelpDay.png)).
 
 ---
 
@@ -77,7 +77,7 @@ values to such parameters.
 
 ---
 
-If a proc parameter has no *explicit* default value (via `=`) then it becomes
+If a proc parameter has no **explicit** default value (via `=`) then it becomes
 required, but the input syntax is the same as for optional values.  So, in
 ```nim
 proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
@@ -92,7 +92,7 @@ e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 ### Custom Parameter Types or Parsing
 
 While `cligen` supports basic Nim types out of the box (strings, numbers, enums,
-sequences and sets of such, etc.), the parsing/printing system is extensible.
+sequences and sets of such, etc.), the parsing/printing system is *extensible*.
 This is done via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
 (These could almost be `parseType` & `$`; CLusers!=CLauthors & other integration
  requirements motivate two separate names.)  A simple example:
@@ -116,13 +116,13 @@ when isMainModule:
 ```
 These two "argument IO" procs take a shared coodination parameter for argument
 metadata (more fully documented in `cligen/argcvt.nim`).  As just one simple
-example, `a.parNm` is the name of the parameter being parsed.  While not useful
-ordinarily, this can be used to parse the same Nim type differently, detect when
-the user alters the parameter from the default, count utterances, etc.
+e.g., `a.parNm` is the name of the parameter being parsed.  While not useful
+ordinarily, this can be used to parse the same Nim type differently (based on
+the name), detect when CLusers alter parameters from defaults, count uses, etc.
 
-This same mechanism can override existing cligen/argcvt parser/helpers if the
-built-ins are not what you want.  Consulting cligen/argcvt for examples is a
-good idea.
+This same mechanism can ***override existing*** `cligen/argcvt` parser/helpers if
+the built-ins are not what you want.  Consulting `cligen/argcvt` for examples is
+a good idea.
 
 ### Subcommands, dispatch to object init
 
@@ -134,9 +134,8 @@ sub-`dispatch`.  Tune command syntax and help strings in the same way as
 proc foo(myRequired: int, mynums: seq[int], foo=1, verb=false) =
   ## Some API call
   discard
-proc bar(yippee: int, myfloats: seq[float], verb=false) =
+proc bar(yippee: int, myFlts: seq[float], verb=false) = discard
   ## Some other API call
-  discard
 when isMainModule:
   import cligen
   dispatchMulti([foo, help={"myRequired": "Need it!"}], [bar])
@@ -146,15 +145,15 @@ With the above in `cmd.nim`, CLI users can run `./cmd foo -m1` or
 while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
 or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
-Like long option keys or enum value names, subcommand names can also be any
-unambiguous prefix and are kebab-insensitive.  So, `./cmd f-o -m1` would also
-work above.
+Like long option keys or enum value names, subcommand names can also be ***any
+unambiguous prefix and are case-kebab-insensitive***.  So, `./cmd f-o -m1` would
+also work above.
 
 ---
 
 Rather than dispatching to a proc and exiting, you can also initialize the
-fields of an object/tuple from the command-line with `initFromCL` which has
-the same keyword parameters as the most salient features of `dispatch`:
+***fields of an object/tuple*** from the command-line with `initFromCL` which
+has the same keyword parameters as the most salient features of `dispatch`:
 ```nim
 type App* = object
   srcFile*: string
