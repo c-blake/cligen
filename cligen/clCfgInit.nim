@@ -119,7 +119,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
     proc renderMarkup(m: string): string = r.render(m)
     c.render = renderMarkup
 
-var cfNm = getEnv("CLIGEN", os.getConfigDir()/"cligen"/cgConfigFileBaseName)
+var cfNm = getEnv("CLIGEN",(let cg = getConfigDir()/"cligen";
+                            if dirExists(cg): cg/cgConfigFileBaseName else: cg))
 if cfNm.fileExists: clCfg.apply(move(cfNm), existsEnv("NO_COLOR"))
 elif cfNm.splitPath.head == "config" and (cfNm/cgConfigFileBaseName).fileExists:
   clCfg.apply(cfNm/cgConfigFileBaseName, existsEnv("NO_COLOR"))
