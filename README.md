@@ -89,6 +89,11 @@ the command-line user must give `--myRequired=something` somewhere to avoid an
 error.  Non-option arguments must be parsable as `int` with whitespace stripped,
 e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 
+The first non-defaulted `seq[T]` parameter maps to a trailing series of
+positional command arguments.  Such tail series are a fairly established CLI
+tool convention.  Choice of the parameter can be altered via `dispatch
+positional="myParam"`.
+
 ### Custom Parameter Types or Parsing
 
 While `cligen` supports basic Nim types out of the box (strings, numbers, enums,
@@ -250,11 +255,6 @@ help templates.
     parameters like the `T` in `seq[T]`).
 
  3. No param of a wrapped proc can be named "help".  (Name collision!)
-
-The first non-defaulted `seq[T]` parameter maps to a trailing series of
-positional command arguments.  Such tail series are a fairly established CLI
-tool convention.  Choice of the parameter can be altered via `dispatch
-positional="myParam"`.
 
 ### Even More Controls and Details
 
