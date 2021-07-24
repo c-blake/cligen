@@ -93,7 +93,7 @@ e.g. `./fun --myRequired=2.0 1 2 " -3"`.
 
 While `cligen` supports basic Nim types out of the box (strings, numbers, enums,
 sequences and sets of such, etc.), the parsing/printing system is extensible.
-This is done via in-dispatch scope `argParse` & `argHelp` overloads for types.
+This is done via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
 (These could almost be `parseType` & `$`; CLusers!=CLauthors & other integration
  requirements motivate two separate names.)  A simple example:
 ```nim
