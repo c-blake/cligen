@@ -51,7 +51,7 @@ the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
 `cligen` supports string-to-native conversion for most elementary Nim types
 (ints, floats, enums, etc.), as well as `seq`s, `set`s, `HashSet`s of them.
 
-### Token Matching, Rendering, Trailing Args, Required Parameters
+### CLusage: Token Match, Render, Trailing Args, Required Parameters
 
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
@@ -88,11 +88,6 @@ when isMainModule: # Preserve ability to `import api`/call from Nim
 the command-line user must give `--myRequired=something` somewhere to avoid an
 error.  Non-option arguments must be parsable as `int` with whitespace stripped,
 e.g. `./fun --myRequired=2.0 1 2 " -3"`.
-
-The first non-defaulted `seq[T]` parameter maps to a trailing series of
-positional command arguments.  Such tail series are a fairly established CLI
-tool convention.  Choice of the parameter can be altered via `dispatch
-positional="myParam"`.
 
 ### Custom Parameter Types or Parsing
 
