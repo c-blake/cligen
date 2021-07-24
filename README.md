@@ -51,7 +51,7 @@ the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
 `cligen` supports string-to-native conversion for most elementary Nim types
 (ints, floats, enums, etc.), as well as `seq`s, `set`s, `HashSet`s of them.
 
-### CLusage: Token Match, Render, Trailing Args, Required Parameters
+### CLusage: Token Match, Render, Trailing Args, Required Params
 
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
