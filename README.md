@@ -109,8 +109,8 @@ when isMainModule:
       echo "bad DateTime: ", a.val; return false
     return true
 
-  proc argHelp(dfl: DateTime, a: var ArgcvtParams):seq[string]=
-    @[a.argKeys, "DateTime", ""]
+  proc argHelp(dfl: DateTime, a: var ArgcvtParams): seq[string]=
+    @[a.argKeys, "DateTime", ""] # 3rd slot how to fmt default
 
   dispatch foo, help={"i": "favorite number", "d": "birthday"}
 ```
@@ -120,8 +120,9 @@ example, `a.parNm` is the name of the parameter being parsed.  While not useful
 ordinarily, this can be used to parse the same Nim type differently, detect when
 the user alters the parameter from the default, count utterances, etc.
 
-You can also use this mechanism to override existing cligen/argcvt
-parser/helpers if if the built-ins are not what you want.
+This same mechanism can override existing cligen/argcvt parser/helpers if the
+built-ins are not what you want.  Consulting cligen/argcvt for examples is a
+good idea.
 
 ### Subcommands, dispatch to object init
 
