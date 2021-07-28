@@ -1,4 +1,6 @@
-import std/[os, strutils], cligen/cfUt
+when not declared(os.joinPath):    import std/os
+when not declared(strutils.split): import std/strutils
+when not declared(cfToCL):         import cligen/cfUt
 
 {.push warning[ProveField]: off.}
 proc mergeParams(cmdNames: seq[string],
