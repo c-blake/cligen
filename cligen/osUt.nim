@@ -270,7 +270,7 @@ proc mkdirP*(path: string) =
   ## Create all parent dirs and path itself like Unix `mkdir -p foo/bar/baz`.
   if path.len == 0: return              # nothing to do => must have succeeded
   var path = path
-  var sep, err: int
+  var sep: int
   while sep != -1:
     sep = path.find(DirSep, sep + 1)
     discard existsOrCreateDir(if sep > 0: path[0..<sep] else: path)
