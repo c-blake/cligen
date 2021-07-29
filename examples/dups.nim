@@ -17,7 +17,7 @@ proc getMeta(paths: seq[string]; file: string; delim: char; recurse,minLen: int;
             depth, path, nmAt, ino, dt, st, dfd, dst, did):
       if Deref and st.st_mode.S_ISLNK:          #Maybe stat again based on Deref
         #Second stat on symlinks could likely be converted to one upfront stat
-        if fstatat(dfd, path, st, 0) != 0: perr "fstatat ", path
+        if fstatat(dfd, path.cstring, st, 0) != 0: perr "fstatat ".cstring, path
       if S_ISREG(st.st_mode) and                #Only meaningful to compare reg
          st.st_size >= minLen and               #One easy way to exclude len0.
          not did.containsOrIncl((st.st_dev, st.stx_ino)): #Keep ONLY 1st Path
@@ -96,7 +96,7 @@ iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
   for i in maybePar(par, 0, wkls.len-1):  #hashWY runs@6B/cyc~30GB/s >>IObw =>
     digest(wkls[i], hash, slice)          #..par will help rarely||w/SHA1&!cmp
   let sizeGuess = wkls.len div 2          #pretty good guess if <set.len> =~ 2
-  var answer = initTable[string, seq[string]](tables.rightSize(sizeGuess))
+  var answer = initTable[string, seq[string]](sizeGuess)
   for i in 0 ..< wkls.len:
     answer.mgetOrPut(wkls[i].dig, @[]).add(wkls[i].path)
   for hashSet in answer.values():
@@ -132,7 +132,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
         var meta = newSeq[tuple[st: Stat, ix: int]](s.len)
         for i in 0 ..< s.len:         #Stat all again for st_*tim, st_blocks
           meta[i].ix = i
-          if stat(s[i], meta[i].st) != 0: perr "stat2 ", s[i]
+          if stat(s[i].cstring, meta[i].st) != 0: perr "stat2 ", s[i]
         if summ in log:               #Total extra space, if requested
           meta = meta.sortedByIt(it.st.st_blocks)  #blocks because sparse files
           for i in 1 ..< s.len: tot += 512 * meta[i].st.st_blocks    #1st=least

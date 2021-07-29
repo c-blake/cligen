@@ -51,7 +51,7 @@ when isMainModule:
       signal(SIGCHLD, reapAnyKids)              # Block zombies
     for (name, nmLen) in dqueue(dir, events):
       if nmLen > 0 or name != nil:
-        cmd[n] = name                           # Poke ptr char into slot and..
+        cmd[n] = name.cstring                   # Poke ptr char into slot and..
         discard cmd.system(wait)                #..run command, maybe in bkgd
 
   dispatch(dirq, help = { "events": "inotify event types to use; " &

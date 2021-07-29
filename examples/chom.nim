@@ -5,7 +5,7 @@ proc chom1*(dfd:cint,path:string,nmAt:int, st:Statx, uid=Uid.high, gid=Gid.high,
             verb: File=nil, err=stderr, dryRun=false): int =
   ## This proc enforces specified {owner, group owner, permissions} for {dirs,
   ## non-dirs/non-executable files, and user-executable files}.
-  let nm  = path[nmAt..^1]
+  let nm  = path[nmAt..^1].cstring
   let uid = if uid == Uid.high: st.st_uid else: uid
   let gid = if gid == Gid.high: st.st_gid else: gid
   if st.st_uid != uid or st.st_gid != gid:      #uid/gid mismatch: fchownat
@@ -41,7 +41,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
   for root in paths:
     forPath(root, recurse, true, chase, xdev, false, stderr,
             depth, path, nmAt, ino, dt, lst, dfd, dst, did):
-      if dt == DT_LNK and stat(path, lst) != 0:      # want st not lst data here
+      if dt==DT_LNK and stat(path.cstring, lst)!=0:  # want st not lst data here
         err.log &"stat({path}): {strerror(errno)}\n" # ..(unless we do `lchown`)
       else:
         nCall += chom1(dfd, path, nmAt, lst, uid, gid, dirPerm, filePerm,
@@ -52,7 +52,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
   return min(nCall, 255)
 
 when isMainModule:
-  import cligen, cligen/argcvt, parseutils, strformat
+  import cligen, cligen/argcvt, parseutils
 
   proc argParse(dst: var Mode, dfl: Mode, a: var ArgcvtParams): bool =
     return a.val.parseOct(dst) > 0

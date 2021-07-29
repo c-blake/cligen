@@ -56,7 +56,7 @@ proc parseSlice*(slcSpec: string, sz: int; a, b: var int) =
 proc parseSlice*(s: string): tuple[a, b: int] =
   ## Parse ``[a][:][b]``-like Python index/slice specification.
   result[0] = 0
-  result[1] = result[1].high
+  result[1] = result[1].type.high
   if s.len == 0:
     return
   let fs = strutils.split(s, ':')

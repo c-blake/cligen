@@ -12,8 +12,9 @@ proc inFile() = # Reply with same path as input if gSub is in the file
       stdout.urite path
     if (var f = mopen(path); f.mem != nil):
       if (f.len and 4095) == 0:
-        if memmem(cast[cstring](f.mem), f.len, gSub, gSub.len) != nil: wr()
-      elif strstr(cast[cstring](f.mem), gSub) != nil: wr()
+        if memmem(cast[cstring](f.mem), f.len, gSub.cstring, gSub.len) != nil:
+          wr()
+      elif strstr(cast[cstring](f.mem), gSub.cstring) != nil: wr()
       f.close
 
 proc print(eor: char, s: MSlice) {.inline.} =
