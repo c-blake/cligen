@@ -59,40 +59,32 @@ when haveMagic:
     MAGIC_NO_CHECK_TROFF*    = 0x00000000
     MAGIC_VERSION*           = 533
 
-  type magic_t* = pointer # ptr magic_set
+  type magic_t* = pointer # ptr magic_set; Opaque struct in the C magic.h
 
-  proc magic_open*(a2: cint): magic_t {.importc:"magic_open".}
-  proc magic_close*(a2: magic_t) {.importc:"magic_close".}
-  proc magic_getpath*(a2: cstring; a3: cint): cstring {.
-       importc:"magic_getpath".}
-  proc magic_file*(a2: magic_t; a3: cstring): cstring {.importc:"magic_file".}
-  proc magic_descriptor*(a2: magic_t; a3: cint): cstring {.
-       importc:"magic_descriptor".}
-  proc magic_buffer*(a2: magic_t; a3: pointer; a4: csize): cstring {.
-       importc:"magic_buffer".}
-  proc magic_error*(a2: magic_t): cstring {.importc:"magic_error".}
-  proc magic_getflags*(a2: magic_t): cint {.importc:"magic_getflags".}
-  proc magic_setflags*(a2: magic_t; a3: cint): cint {.importc:"magic_setflags".}
-  proc magic_version*(): cint {.importc:"magic_version".}
-  proc magic_load*(a2: magic_t; a3: cstring): cint {.importc:"magic_load".}
-  proc magic_load_buffers*(a2: magic_t; a3: ptr pointer; a4: ptr csize;
-                           a5: csize): cint {.importc:"magic_load_buffers".}
-  proc magic_compile*(a2: magic_t; a3: cstring): cint {.
-       importc:"magic_compile".}
-  proc magic_check*(a2: magic_t; a3: cstring): cint {.
-       importc:"magic_check".}
-  proc magic_list*(a2: magic_t; a3: cstring): cint {.importc:"magic_list".}
-  proc magic_errno*(a2: magic_t): cint {.importc:"magic_errno".}
+  proc magic_open*(flags: cint): magic_t {.importc.}
+  proc magic_close*(m: magic_t) {.importc.}
+  proc magic_getpath*(magicFile: cstring; action: cint): cstring {.importc.}
+  proc magic_file*(m: magic_t; inName: cstring): cstring {.importc.}
+  proc magic_descriptor*(m: magic_t; fd: cint): cstring {.importc.}
+  proc magic_buffer*(m: magic_t; buf: pointer; nb: csize): cstring {.importc.}
+  proc magic_error*(m: magic_t): cstring {.importc.}
+  proc magic_getflags*(m: magic_t): cint {.importc.}
+  proc magic_setflags*(m: magic_t; flags: cint): cint {.importc.}
+  proc magic_version*(): cint {.importc.}
+  proc magic_load*(m: magic_t; magicFile: cstring): cint {.importc.}
+  proc magic_load_buffers*(m: magic_t; bufs: ptr pointer; sizes: ptr csize;
+                           nbufs: csize): cint {.importc.}
+  proc magic_compile*(m: magic_t; magicFile: cstring): cint {.importc.}
+  proc magic_check*(m: magic_t; magicFile: cstring): cint {.importc.}
+  proc magic_list*(m: magic_t; magicFile: cstring): cint {.importc.}
+  proc magic_errno*(m: magic_t): cint {.importc.}
 
-  const
-    MAGIC_PARAM_INDIR_MAX* = 0
-    MAGIC_PARAM_NAME_MAX* = 1
-    MAGIC_PARAM_ELF_PHNUM_MAX* = 2
-    MAGIC_PARAM_ELF_SHNUM_MAX* = 3
-    MAGIC_PARAM_ELF_NOTES_MAX* = 4
-    MAGIC_PARAM_REGEX_MAX* = 5
-    MAGIC_PARAM_BYTES_MAX* = 6
-  proc magic_setparam*(a2: magic_t; a3: cint; a4: pointer): cint {.
-       importc:"magic_setparam".}
-  proc magic_getparam*(a2: magic_t; a3: cint; a4: pointer): cint {.
-       importc:"magic_getparam".}
+  const MAGIC_PARAM_INDIR_MAX* = 0
+  const MAGIC_PARAM_NAME_MAX* = 1
+  const MAGIC_PARAM_ELF_PHNUM_MAX* = 2
+  const MAGIC_PARAM_ELF_SHNUM_MAX* = 3
+  const MAGIC_PARAM_ELF_NOTES_MAX* = 4
+  const MAGIC_PARAM_REGEX_MAX* = 5
+  const MAGIC_PARAM_BYTES_MAX* = 6
+  proc magic_setparam*(m: magic_t; param: cint; val: pointer): cint {.importc.}
+  proc magic_getparam*(m: magic_t; param: cint; val: pointer): cint {.importc.}
