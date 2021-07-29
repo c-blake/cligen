@@ -27,7 +27,7 @@ proc classifyAndMatch() = # Reply with same path as input if it passes filter.
     stderr.write "cannot load magic DB: %s\x0A", m.magic_error, "\n"
     quit(1)
   for path in stdin.getDelim('\0'):
-    let fileType = $m.magic_file(path)
+    let fileType = $m.magic_file(path.cstring)
     if fileType.len == 0:
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
     if gAll:                                    # Handle all 4 Boolean cases
@@ -65,7 +65,7 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
     gPats.add re(r, flags)
   for e in excl:                                # Set up gFlags for libmagic
     gFlags = gFlags or cint(e2Flag[e])
-  let inp = popen(gen % dlr1, "r")              # Fire input path generator
+  let inp = popen(cstring(gen % dlr1), "r".cstring) # Fire input path generator
   # Any reply is an `okPath`; `pp.unord` doesn't need a request to have a reply.
   var pp = initProcPool(classifyAndMatch, frames0, jobs) # Start&drive kid pool
   pp.eval(inp.getNoPfx('\0', trim), eor.print)
