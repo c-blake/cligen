@@ -4,7 +4,7 @@ proc cols(input="/dev/stdin", delim="white", output="/dev/stdout", sepOut=" ",
           blanksOk=false, cut=false, origin=1, colNums: seq[int]) =
     ##Write just some columns of input to output; Memory map input if possible.
     var outFile = open(output, fmWrite)
-    var colSet = initSet[int](rightSize(len(colNums)))
+    var colSet = initHashSet[int](colNums.len)
     if cut:
         for c in colNums: colSet.incl(c)
     let sep = initSep(delim)
