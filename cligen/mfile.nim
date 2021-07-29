@@ -221,8 +221,8 @@ proc findPathPattern*(pathPattern: string): string =
   proc strstr(hay,needle: cstring): cstring {.importc, header: "<string.h>".}
   proc strlen(str: cstring): csize {.importc, header: "<string.h>".}
   var tmp  = pathPattern    #basename & dirname both write into buffer; So copy.
-  let base = basename(tmp)  #Also, order matters here: must call basename first.
-  let dir  = dirname(tmp)
+  let base = basename(tmp.cstring)  #Also, order matters: Call basename first.
+  let dir  = dirname(tmp.cstring)
   if (let d = opendir(dir); d) != nil:
     while (let de = d.readdir; de) != nil:
       let mch = cast[cstring](de.d_name[0].addr)

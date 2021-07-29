@@ -176,7 +176,7 @@ proc loadSym*(x: string): pointer =
   let lib = loadLib(cols[0])
   if lib == nil:
     stderr.write("could not loadLib \"" & cols[0] & "\"\n"); return
-  let sym = symAddr(lib, cols[1])
+  let sym = symAddr(lib, cols[1].cstring)
   if sym == nil:
     stderr.write("could not find \"" & cols[1] & "\"\n")
   sym
@@ -293,7 +293,7 @@ template popent(cmd, path, bufSize, mode, modeStr, dfl, dflStr): untyped =
     let modeExtra = ""
   if cmd.len > 0:
     let c = cmd % path                  # Q: Also export $INPUT?
-    if (let f = popen(c, modeStr & modeExtra); f != nil):
+    if (let f = popen(c.cstring, cstring(modeStr & modeExtra)); f != nil):
       if bufSize != -1: discard c_setvbuf(f, nil, 0.cint, bufSize.csize)
       result = f
     else: raise newException(OSError, "cannot popen: \"" & c & "\"")
