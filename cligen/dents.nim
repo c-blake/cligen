@@ -274,7 +274,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
   lst.stx_nlink = 0
   dst.stx_nlink = 0
 
-  if lstat(root, lst) != 0: # lstat => user can use trailing /. to force follow
+  if lstat(root.cstring, lst) != 0: # lstat=>user can do trail/. to force follow
     let m = "stat: \"" & root & "\""; perror cstring(m), m.len
   let depth {.used.} = 0             # Establish other locals to visit a root
   let dfd  {.used.}  = AT_FDCWD
