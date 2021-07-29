@@ -172,27 +172,27 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
-iterator rows*(mf: MFile, s: Splitr, row: var seq[MSlice], n=0, sep='\l',
+iterator rows*(mf: MFile, s: Sep, row: var seq[MSlice], n=0, sep='\l',
                eat='\r'): seq[MSlice] =
-  ##Like ``lines(MFile)`` but also split each line into columns with ``Splitr``.
+  ##Like ``lines(MFile)`` but also split each line into columns with ``Sep``.
   if mf.mem != nil:
     for line in mSlices(mf, sep, eat):
       s.split(line, row, n)
       yield row
 
-iterator rows*(mf: MFile, s: Splitr, n=0, sep='\l', eat='\r'): seq[MSlice] =
-  ## Exactly like ``rows(MFile, Splitr)`` but yields new Nim ``seq``s.
+iterator rows*(mf: MFile, s: Sep, n=0, sep='\l', eat='\r'): seq[MSlice] =
+  ## Exactly like ``rows(MFile, Sep)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[MSlice](n)
   for row in rows(mf, s, sq, n, sep, eat): yield sq
 
-iterator rows*(f: File, s: Splitr, row: var seq[string], n=0): seq[string] =
-  ## Like ``lines(File)`` but also split each line into columns with ``Splitr``.
+iterator rows*(f: File, s: Sep, row: var seq[string], n=0): seq[string] =
+  ## Like ``lines(File)`` but also split each line into columns with ``Sep``.
   for line in lines(f):
     s.split(line, row, n)
     yield row
 
-iterator rows*(f: File, s: Splitr, n=0): seq[string] =
-  ## Exactly like ``rows(File, Splitr)`` but yields new Nim ``seq``s.
+iterator rows*(f: File, s: Sep, n=0): seq[string] =
+  ## Exactly like ``rows(File, Sep)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[string](n)
   for row in rows(f, s, sq, n): yield sq
 
