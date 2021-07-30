@@ -32,11 +32,11 @@ when haveMagic:
     MAGIC_RAW*               = 0x00000100
     MAGIC_ERROR*             = 0x00000200
     MAGIC_MIME_ENCODING*     = 0x00000400
-    MAGIC_MIME*              = (MAGIC_MIME_TYPE or MAGIC_MIME_ENCODING)
+    MAGIC_MIME*              = MAGIC_MIME_TYPE or MAGIC_MIME_ENCODING
     MAGIC_APPLE*             = 0x00000800
     MAGIC_EXTENSION*         = 0x01000000
     MAGIC_COMPRESS_TRANSP*   = 0x02000000
-    MAGIC_NODESC*            = (MAGIC_EXTENSION or MAGIC_MIME or MAGIC_APPLE)
+    MAGIC_NODESC*            = MAGIC_EXTENSION or MAGIC_MIME or MAGIC_APPLE
     MAGIC_NO_CHECK_COMPRESS* = 0x00001000
     MAGIC_NO_CHECK_TAR*      = 0x00002000
     MAGIC_NO_CHECK_SOFT*     = 0x00004000
@@ -47,9 +47,9 @@ when haveMagic:
     MAGIC_NO_CHECK_TOKENS*   = 0x00100000
     MAGIC_NO_CHECK_ENCODING* = 0x00200000
     ## No built-in tests; only consult the magic file
-    MAGIC_NO_CHECK_BUILTIN*  = (MAGIC_NO_CHECK_COMPRESS or MAGIC_NO_CHECK_TAR or
+    MAGIC_NO_CHECK_BUILTIN*  = MAGIC_NO_CHECK_COMPRESS or MAGIC_NO_CHECK_TAR or
         MAGIC_NO_CHECK_APPTYPE or MAGIC_NO_CHECK_ELF or MAGIC_NO_CHECK_TEXT or
-        MAGIC_NO_CHECK_CDF or MAGIC_NO_CHECK_TOKENS or MAGIC_NO_CHECK_ENCODING)
+        MAGIC_NO_CHECK_CDF or MAGIC_NO_CHECK_TOKENS or MAGIC_NO_CHECK_ENCODING
         ## or MAGIC_NO_CHECK_SOFT
     MAGIC_SNPRINTB* = "\x7F\x10b\x00debug\x00b\x01symlink\x00b\x02compress\x00b\x03devices\x00b\x04mime_type\x00b\x05continue\x00b\x06check\x00b\apreserve_atime\x00b\braw\x00b\terror\x00b\nmime_encoding\x00b\vapple\x00b\fno_check_compress\x00b\cno_check_tar\x00b\x0Eno_check_soft\x00b\x0Fno_check_sapptype\x00b\x10no_check_elf\x00b\x11no_check_text\x00b\x12no_check_cdf\x00b\x13no_check_reserved0\x00b\x14no_check_tokens\x00b\x15no_check_encoding\x00b\x16no_check_reserved1\x00b\x17no_check_reserved2\x00b\x18extension\x00b\x19transp_compression\x00"
     ## Defined for backwards compatibility (renamed)
