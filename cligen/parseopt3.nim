@@ -121,6 +121,7 @@ proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
 
 when not declared(TaintedString):
   type TaintedString* = string
+{.push warning[Deprecated]: off.}
 type
   CmdLineKind* = enum         ## the detected command line token
     cmdEnd,                   ## end of command line reached
@@ -355,3 +356,4 @@ when declared(paramCount):
       next(p)
       if p.kind == cmdEnd: break
       yield (p.kind, p.key, p.val)
+{.pop.}
