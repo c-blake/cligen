@@ -6,7 +6,7 @@ v="--verbosity:1"
 h="--hint[Processing]=off --hint[SuccessX]=off"
 #XXX I do not know why the warning push in the code fails to suppress.
 : ${w="--warning[Deprecated]:off"}
-if ${nim:-nim} c $w /dev/null 2>&1 | grep -q 'unknown warning:'; then
+if ${nim:-nim} c $w /dev/null 2>&1 | grep -aq 'unknown warning:'; then
   w=""
 fi
 for n in test/[A-Z]*.nim; do
