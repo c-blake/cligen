@@ -149,6 +149,8 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
       allNorm.add(norm)
       crbt[norm] = (e, canon)
   var ks: seq[string]; var es: seq[T]
+  if valNorm in crbt:
+    dst = crbt[valNorm].e; return true
   for v in crbt.valuesWithPrefix(valNorm):
     ks.add(v.canon)
     es.add(v.e)
