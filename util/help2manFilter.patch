@@ -1,0 +1,37 @@
+--- help2man	2021-08-08 09:29:49.336704349 -0400
++++ help2man	2021-08-08 09:37:40.002714046 -0400
+@@ -78,6 +78,7 @@
+  -p, --info-page=TEXT    name of Texinfo manual
+  -N, --no-info           suppress pointer to Texinfo manual
+  -l, --libtool           exclude the `lt-' from the program name
++ -f, --filter=PROGRAM    filter --help output through PROGRAM
+      --help              print this help, then exit
+      --version           print version number, then exit
+ 
+@@ -99,7 +100,7 @@
+ my $version_option = '--version';
+ my $discard_stderr = 1;
+ my ($opt_name, @opt_include, $opt_output, $opt_info, $opt_no_info, $opt_libtool,
+-    $version_text);
++    $opt_filter, $version_text);
+ 
+ my %opt_def = (
+     'n|name=s'		 => \$opt_name,
+@@ -113,6 +114,7 @@
+     'p|info-page=s'	 => \$opt_info,
+     'N|no-info'		 => \$opt_no_info,
+     'l|libtool'		 => \$opt_libtool,
++    'f|filter=s'	 => \$opt_filter,
+     'help'		 => sub { print $help_info; exit },
+     'version'		 => sub { print $version_info; exit },
+     'h|help-option=s'	 => \$help_option,
+@@ -726,6 +728,9 @@
+ sub get_option_value
+ {
+     my ($prog, $opt) = @_;
++    if (length($opt_filter) > 0) {
++        $opt = $opt . "|" . $opt_filter;
++    }
+     my $stderr = $discard_stderr ? '/dev/null' : '&1';
+     my $value = join '',
+ 	map { s/ +$//; expand $_ }

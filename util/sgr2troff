@@ -1,0 +1,37 @@
+#!/bin/sed -f
+# A sed filter to replace ANSI SGR escape sequences with near equivalent troff.
+# It strips any other unrecognized escape sequences.  You will want your cligen
+# config file to specifically use "bold ; -bold" and similar for all SGR specs
+# so that a *specific* closing escape is used rather than `plain` = "\e[m".
+#
+# Example usage (with help2man patched via accompanying `help2manFilter.patch`):
+#   help2man -Nf sgr2troff dirq | sed 's/\\ef/\\f/g' > dirq.1
+#
+# After this, you must hand translate any \fU (underline) & \fV (inverse) font
+# switches into something troff-ish (and also to format more nicely - help2man
+# is like c2nim - not *quite* good enough to be fully automated).
+
+# SGR BOLD-ITALIC XXX \f(BI?
+s/\[1;3m/\\f(BI/g
+s/\[22;23m/\\fP/g
+s/\[3;1m/\\f(BI/g
+s/\[23;22m/\\fP/g
+
+# SGR BOLD
+s/\[1m/\\fB/g
+s/\[22m/\\fP/g
+
+# SGR ITALIC
+s/\[3m/\\fI/g
+s/\[23m/\\fP/g
+
+# SGR UNDERLINE; no \fU -- WTF
+s/\[4m/\\fU/g
+s/\[24m/\\fP/g
+
+# SGR INVERSE; no real analogue
+s/\[7m/\\fV/g
+s/\[27m/\\fP/g
+
+# JUST REMOVE ALL OTHER SGR OTHER ESCAPES
+s/\[[^m]*m//g
