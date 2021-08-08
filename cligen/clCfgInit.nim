@@ -74,24 +74,34 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
             "Expecting: requireseparator separatorchars\n"
       of "color":
-        case e.key.optionNormalize
-        of "optkeys", "options", "switches", "optkey", "option", "switch":
-          if not plain: c.helpAttr["clOptKeys"] = textAttrOn(e.value.split)
-        of "valtypes", "valuetypes", "types", "valtype", "valuetype", "type":
-          if not plain: c.helpAttr["clValType"] = textAttrOn(e.value.split)
-        of "dflvals", "defaultvalues", "dflval", "defaultvalue":
-          if not plain: c.helpAttr["clDflVal"]  = textAttrOn(e.value.split)
-        of "descrips", "descriptions", "paramdescriptions", "descrip", "description", "paramdescription":
-          if not plain: c.helpAttr["clDescrip"] = textAttrOn(e.value.split)
-        of "cmd", "command", "cmdname", "commandname":
-          if not plain: c.helpAttr["cmd"] = textAttrOn(e.value.split)
-        of "doc", "documentation", "overalldocumentation":
-          if not plain: c.helpAttr["doc"] = textAttrOn(e.value.split)
-        of "args", "arguments", "argsonlinewithcmd":
-          if not plain: c.helpAttr["args"] = textAttrOn(e.value.split)
-        else:
-          stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: options types defaultvalues descriptions command documentation arguments\n"
+        if not plain:
+          var on = ""; var off = textAttrOff
+          if ';' in e.value:
+            let c = e.value.split(';')
+            if c.len != 2:
+              stderr.write "[color] values ';' must separate on/off pairs\n"
+            on  = textAttrOn(c[0].strip.split, plain)
+            off = textAttrOn(c[1].strip.split, plain)
+          else:
+            on = textAttrOn(e.value.split, plain)
+          case e.key.optionNormalize
+          of "optkeys", "options", "switches", "optkey", "option", "switch":
+            c.helpAttr["clOptKeys"] = on; c.helpAttrOff["clOptKeys"] = off
+          of "valtypes", "valuetypes", "types", "valtype", "valuetype", "type":
+            c.helpAttr["clValType"] = on; c.helpAttrOff["clValType"] = off
+          of "dflvals", "defaultvalues", "dflval", "defaultvalue":
+            c.helpAttr["clDflVal"]  = on; c.helpAttrOff["clDflVal"]  = off
+          of "descrips", "descriptions", "paramdescriptions", "descrip", "description", "paramdescription":
+            c.helpAttr["clDescrip"] = on; c.helpAttrOff["clDescrip"] = off
+          of "cmd", "command", "cmdname", "commandname":
+            c.helpAttr["cmd"] = on; c.helpAttrOff["cmd"] = off
+          of "doc", "documentation", "overalldocumentation":
+            c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
+          of "args", "arguments", "argsonlinewithcmd":
+            c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
+          else:
+            stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
+              "Expecting: options types defaultvalues descriptions command documentation arguments\n"
       of "render":
         case e.key.optionNormalize
         of "singlestar": rendOpts["singlestar"] = e.value

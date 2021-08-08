@@ -29,7 +29,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           for k3, v3 in v2.getTable().pairs:
             # echo &"    {k1}.{k2}.{k3} = {v3} "
             textAttrAlias(k3, v3.getStr().strip())
-        of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](e.value.optionNormalize)
+        of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](v2.getStr.optionNormalize)
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "layout":
@@ -57,25 +57,34 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "color":
+      stderr.write "toml parsing\n"
       if not plain:
         for k2, v2 in v1.getTable().pairs:
-          let
-            colorStr = textAttrOn(v2.getElems().mapIt(it.getStr()))
+          let val = textAttrOn(v2.getElems().mapIt(it.getStr()))
+          var on = ""; var off = textAttrOff
+          if ';' in val:
+            let c = val.split(';')
+            if c.len != 2:
+              stderr.write "[color] values ';' must separate on/off pairs\n"
+            on  = textAttrOn(c[0].strip.split, plain)
+            off = textAttrOn(c[1].strip.split, plain)
+          else:
+            on = textAttrOn(val.split, plain)
           case k2.toLowerAscii()
           of "optkeys", "options", "switches", "optkey", "option", "switch":
-            c.helpAttr["clOptKeys"] = colorStr
+            c.helpAttr["clOptKeys"] = on; c.helpAttrOff["clOptKeys"] = off
           of "valtypes", "valuetypes", "types", "valtype", "valuetype", "type":
-            c.helpAttr["clValType"] = colorStr
+            c.helpAttr["clValType"] = on; c.helpAttrOff["clValType"] = off
           of "dflvals", "defaultvalues", "dflval", "defaultvalue":
-            c.helpAttr["clDflVal"] = colorStr
+            c.helpAttr["clDflVal"] = on; c.helpAttrOff["clDflVal"] = off
           of "descrips", "descriptions", "paramdescriptions", "descrip", "description", "paramdescription":
-            c.helpAttr["clDescrip"] = colorStr
+            c.helpAttr["clDescrip"] = on; c.helpAttrOff["clDescrip"] = off
           of "cmd", "command", "cmdname", "commandname":
-            c.helpAttr["cmd"] = colorStr
+            c.helpAttr["cmd"] = on; c.helpAttrOff["cmd"] = off
           of "doc", "documentation", "overalldocumentation":
-            c.helpAttr["doc"] = colorStr
+            c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
           of "args", "arguments", "argsonlinewithcmd":
-            c.helpAttr["args"] = colorStr
+            c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
           else:
             stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "render":

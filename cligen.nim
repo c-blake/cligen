@@ -35,6 +35,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
+    helpAttrOff*: Table[string, string] ## Text attr offs for each help area
     useHdr*:      string         ## Override of const usage header template
     use*:         string         ## Override of const usage template
     useMulti*:    string         ## Override of const subcmd table template
@@ -63,6 +64,7 @@ var clCfg* = ClCfg(
   stopPfxOk:   true,
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
+  helpAttrOff: initTable[string,string](),
   helpSyntax:  syntaxHelp,
   render:      nil,   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
   widthEnv:    "CLIGEN_WIDTH",
@@ -90,7 +92,7 @@ proc onCols*(c: ClCfg): seq[string] =
 proc offCols*(c: ClCfg): seq[string] =
   ##Internal routine to map help table color specs to strings for `alignTable`.
   for e in ClHelpCol.low..ClHelpCol.high:
-    result.add(if $e in c.helpAttr: textAttrOff else: "")
+    result.add c.helpAttrOff.getOrDefault($e, "")
 
 type    #Utility types/code for generated parser/dispatchers for parseOnly mode
   ClStatus* = enum clBadKey,                        ## Unknown long key
@@ -534,7 +536,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                                                  prefixLen=`prefixId`.len))
       proc hl(tag, val: string): string =
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
-         (if tag in `cf`.helpAttr: textAttrOff else: ""))
+         `cf`.helpAttrOff.getOrDefault(tag, ""))
 
       let use = if `noHdrId`:
                   if `cf`.use.len > 0: `cf`.use  else: `usageId`
@@ -865,8 +867,8 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
               else: ""
   let on = @[ clCfg.helpAttr.getOrDefault("cmd", ""),
               clCfg.helpAttr.getOrDefault("doc", "") ]
-  let off = @[ (if "cmd" in clCfg.helpAttr: textAttrOff else: ""),
-               (if "doc" in clCfg.helpAttr: textAttrOff else: "") ]
+  let off= @[ clCfg.helpAttrOff.getOrDefault("cmd", ""),
+              clCfg.helpAttrOff.getOrDefault("doc", "") ]
   let ww = wrapWidth(clCfg.widthEnv)
   let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), ww)
                else: wrap(doc, ww)
