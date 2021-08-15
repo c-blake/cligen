@@ -320,3 +320,24 @@ proc pclose*(f: File, cmd: string): cint =
   when defined(Windows):
     proc pclose(a: File): File {.importc: "_pclose".}
   if cmd.len > 0: f.pclose else: (f.close; 0.cint) # WEXITSTATUS(result)
+
+proc fileNewerThan*(a, b: string): bool =
+  ## True if both path `a` & `b` exist and `a` is newer
+  try: result = getLastModificationTime(b) < getLastModificationTime(a)
+  except: discard
+
+proc fileOlderThan*(a, b: string): bool =
+  ## True if both path `a` & `b` exist and `a` is older
+  try: result = getLastModificationTime(a) < getLastModificationTime(b)
+  except: discard
+
+proc clearDir*(dir: string) =
+  ## Best effort removal of the *contents* of `dir`, but not `dir` itself.
+  for path in walkPattern(dir/"*"): removeDir path
+
+import algorithm
+proc walkPatSorted*(pattern: string): seq[string] =
+  ## This is a glob/filename generation operation but returning a sorted `seq`
+  ## the way most Unix shells would.
+  for path in walkPattern(pattern): result.add path
+  result.sort
