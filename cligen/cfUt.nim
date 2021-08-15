@@ -39,10 +39,10 @@ proc cfToCL*(path: string, subCmdName="", quiet=false,
   close(p)
 
 proc envToCL*(evarName: string): seq[string] =
-  var e = os.getEnv(evarName)
+  let e = os.getEnv(evarName)
   if e.len == 0:
     return
-  let sp = e.parseCmdLine               #See os.parseCmdLine for details
-  result = result & sp
+  try: result.add e.parseCmdLine        # See os.parseCmdLine for details
+  except: stderr.write "ignoring bad evarName $", evarName, "\n"
   when defined(debugEnvToCL):
-    echo "parsed $", varNm, " into: ", sp
+    echo "parsed $", varNm, " into: ", result
