@@ -333,7 +333,9 @@ proc fileOlderThan*(a, b: string): bool =
 
 proc clearDir*(dir: string) =
   ## Best effort removal of the *contents* of `dir`, but not `dir` itself.
-  for path in walkPattern(dir/"*"): removeDir path
+  for path in walkPattern(dir/"*"):
+    try: removeFile path
+    except: removeDir path
 
 import algorithm
 proc walkPatSorted*(pattern: string): seq[string] =
