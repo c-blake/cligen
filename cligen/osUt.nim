@@ -343,3 +343,12 @@ proc walkPatSorted*(pattern: string): seq[string] =
   ## the way most Unix shells would.
   for path in walkPattern(pattern): result.add path
   result.sort
+
+proc touch*(path: string) =
+  ## Create `path` or update its timestamp to the present - if possible.
+  let tm = now().toTime
+  if not fileExists(path):
+    try: close(open(path, fmWrite))
+    except: erru "could not create ", path; return
+  try: setLastModificationTime path, tm
+  except: erru "could not update time for ", path
