@@ -205,9 +205,9 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
                 if dfd != -1: discard close(dfd)
                 recFail # CLIENT CODE SAYS HOW TO REPORT ERRORS
           dirp.bpos = dirp.nRd       # mark all as done
-        else:
-          let d = dirp.readdir
-          if d == nil: break
+        else:                   #NOTE This block is identical to the next major,
+          let d = dirp.readdir  #     but a mix of recursion & Nim needs blocks
+          if d == nil: break    #     lifting into a template. (e.g. var dfd)
           if d.d_name.dotOrDotDot: continue
           ino = uint64(d.d_ino)
           let m = int(strlen(d.d_name))             # Add d_name to running path
