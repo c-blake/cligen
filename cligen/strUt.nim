@@ -1,4 +1,4 @@
-import std/[strutils, sets]
+import std/[strutils, sets, strformat]
 
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
@@ -123,3 +123,146 @@ proc commentStrip*(s: string): string =
         result = s[0..i]
         break
   else: result = s
+
+from math import floor, log10, isnan  #*** FORMATTING UNCERTAIN NUMBERS ***
+const pmUnicode* = "±"                  ## for re-assign/param passing ease
+const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
+var pmDfl* = " +- "                     ## how plus|minus is spelled
+
+func sciNoteSplits(f: string; d, e: var int) {.inline.} =
+  for i in 0 ..< f.len:         # +-D.DD*e+-NN -> ('.' dec.index, 'e' exp.index)
+    if   f[i] == '.': d = i     # Either d|e == 0 => parse error.
+    elif f[i] == 'e': e = i; break
+
+proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
+  ## Format `err` to `sigDigs` (in ffScientific mode); then format `val` such
+  ## that the final decimal place of the two always matches.  E.g., (3141.5..,
+  ## 34.56..) => ("3.142e+03", "3.5e+01").  While useful on its own to suppress
+  ## noise digits, it is also a building block for nicer formats.  This is the
+  ## only rounding guaranteeing numbers re-parse into floats.
+  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
+  if abs(err) == 0.0 or err.isnan:      # cannot do much here
+    result[0].formatValue(val, ".016e")
+    result[1].formatValue(err, ".016e"); return
+  let sigDigs = sigDigs - 1             # adjust to number after '.' in sciNote
+  result[1].formatValue(err, ".0" & $sigDigs & "e")
+  var d, e: int
+  result[1].sciNoteSplits d, e
+  if e == 0:                            # [+-]inf err => 0|self if val infinite
+    if abs(val / err) < 1e-6: result[0] = "0.e0"
+    else: result[0].formatValue(val, ".016e")
+    return
+  var places = val.abs.log10.floor.int - (parseInt(result[1][e+1..^1])-(e-d-1))
+  if places < 0:  # statistical 0 ->explict
+    if val.isnan or val*0.5 == val: result[0].formatValue(val, ".016e")
+    else: result[0] = "0.e0"
+  else:
+    result[0].formatValue(val, ".0" & $places & "e")
+# Trickiness here is that `val` may be rounded up to next O(magnitude) as part
+# of ffScientific, shifting by 1 place.  Bumping `places` might BLOCK round up,
+# BUT when this happens we can just add a '0' if val is being rounded UP.
+    result[0].sciNoteSplits d, e
+    if d > 0 and e > 0:
+      if abs(parseFloat(result[0])) > abs(val) and result[0][e-1] in {'.', '0'}:
+        result[0] = result[0][0..<e] & "0" & result[0][e..^1]
+
+proc addShifted(result: var string; sciNum: string; shift,decPtIx,expIx: int) =
+  if shift < 0:     # NOTE: This only adds a shifted mantissa, not the exponent
+    if sciNum[0] in {'+', '-'}:
+      result.add sciNum[0]
+    result.add "0." & '0'.repeat(-shift - 1)    # zeros; adj for always present
+    result.add sciNum[decPtIx - 1] & sciNum[decPtIx + 1 ..< expIx]
+  elif shift > 0:                   # X.YYYeN->XYYY000 w/new '.' maybe in there
+    result.add sciNum[0..<decPtIx]
+    let newDecIx = decPtIx + shift
+    if shift < expIx - decPtIx:     # internal decimal
+      result.add sciNum[decPtIx + 1 ..< newDecIx + 1]
+      result.add '.'
+      result.add sciNum[newDecIx + 1 ..< expIx]
+    else:                           # All dig before decimal; maybe zeros at end
+      result.add sciNum[decPtIx + 1 ..< expIx]
+      result.add '0'.repeat(newDecIx - expIx + 1)
+      result.add '.'
+  else:
+    result.add sciNum[0..<expIx]
+
+proc fmtUncertainSci(val, err: string, sigDigs=2, pm=pmDfl, exp=true): string =
+  var dV, eV, dU, eU: int       # (Value, Uncertainty)*(decPtIx, expIx)
+  val.sciNoteSplits dV, eV      # diff of exponent *positions* is decimal shift
+  err.sciNoteSplits dU, eU      # up to leading - in `val`.
+  if dV == 0 or eV == 0 or dU == 0 or eU == 0:    # nan|inf in val|err
+    return "(" & val & pm & err & ")"
+  let negAdj = if val[0] == '-': 1 else: 0
+  result = newStringOfCap(val.len*2 + pm.len - 2) # maybe 1 extra if val < 0
+  result.add "(" & val[0..<eV] & pm
+  result.addShifted err, eU - eV + negAdj, dU, eU # neg/right shift|no shift
+  result.add ")"
+  if exp: result.add val[eV..^1]
+
+proc fmtUncertainSci*(val, err: float, sigDigs=2, pm=pmDfl): string =
+  ## format as (val +- err)e+NN with err to `sigDigs` and same final decimal.
+  let (val, err) = fmtUncertainRound(val, err, sigDigs)
+  fmtUncertainSci(val, err, sigDigs, pm)
+
+proc fmtUncertain*(val, err: float, sigDigs=3, pm=pmDfl,
+                   eLow = -2, eHigh = 3): string =
+  ## This is printf-%g/gcvt-esque but allows callers to customize how near 0 the
+  ## *uncertainty-rounded val exponent* must be to get non-scientific notation
+  ## (& also formats both a number & its uncertainty like `fmtUncertainSci`).
+  let (val, err) = fmtUncertainRound(val, err, sigDigs)
+  var dV, eV, dU, eU: int               # (Value, Uncertainty)*(decPtIx, expIx)
+  val.sciNoteSplits dV, eV              # duplicative, but (relatively) cheap
+  if dV == 0 or eV == 0:
+    return "(" & val & pm & err & ")"
+  let exp = parseInt(val[eV+1..^1])     # order-of-magnitude of val
+  let negAdj = if val[0] == '-': 1 else: 0
+  if exp == 0:                          # no shift; drop zero exp & strip parens
+    result = fmtUncertainSci(val, err, sigDigs, pm, exp=false)[1..^2]
+  elif eLow <= exp and exp <= eHigh:    # shift right | left
+    result.addShifted val, exp, dV, eV
+    if result[^1] == '.': result.setLen result.len - 1
+    result.add pm
+    err.sciNoteSplits dU, eU            # duplicative, but (relatively) cheap
+    let shift = exp - (eV - negAdj - eU)
+    result.addShifted err, shift, dU, eU
+    if result[^1] == '.': result.setLen result.len - 1
+  else:                                 # too small/too big: sci notation
+    result = fmtUncertainSci(val, err, sigDigs, pm)
+
+when isMainModule:
+  from math import sqrt                 # for -nan; dup import is ok
+  proc rnd(v, e: float; sig=2): string =  # Create 3 identical signature procs
+    let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
+  proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
+  proc aut(v, e: float; sig=2): string = fmtUncertain(v, e, sig)
+
+  for k, nmFmt in [("ROUND", rnd), ("SCI", sci), ("AUTO", aut)]:
+    let fmt = nmFmt[1]
+    if k != 0: echo ""
+    echo nmFmt[0]
+    for j, p in [2, 3]:           # This all works with/without dragonbox
+      if j != 0: echo ""; echo ""
+      for i, sd in [ 1.23456e-6, 9.9996543, 1234.56, 99996.543 ]:
+        if i != 0: echo ""
+        echo "+1.2345678e-5 ", sd, "\t\t", fmt(+1.2345678e-5, sd, p)
+        echo "+12.34567890  ", sd, "\t\t", fmt(+12.34567890 , sd, p)
+        echo "+123.4567890  ", sd, "\t\t", fmt(+123.4567890 , sd, p)
+        echo "+9.432101234  ", sd, "\t\t", fmt(+9.432101234 , sd, p)
+        echo "+9.987654321  ", sd, "\t\t", fmt(+9.987654321 , sd, p)
+        echo "-1.2345678e-5 ", sd, "\t\t", fmt(-1.2345678e-5, sd, p)
+        echo "-12.34567890  ", sd, "\t\t", fmt(-12.34567890 , sd, p)
+        echo "-123.4567890  ", sd, "\t\t", fmt(-123.4567890 , sd, p)
+        echo "-9.432101234  ", sd, "\t\t", fmt(-9.432101234 , sd, p)
+        echo "-9.987654321  ", sd, "\t\t", fmt(-9.987654321 , sd, p)
+  echo "\nSPECIALS FP VALUES:"
+  let minf = -1.0/0.0
+  let pinf = +1.0/0.0
+  let mnan = sqrt(-1.0)
+  let pnan = log10(-1.0)
+  for i, nmFmt in [("ROUND", rnd), ("SCI", sci), ("AUTO", aut)]:
+    let fmt = nmFmt[1]
+    if i != 0: echo ""
+    echo nmFmt[0]
+    for v in [minf, pinf, mnan, pnan, 1.0]:
+      for e in [minf, pinf, mnan, pnan, 1.0]:
+        echo v, " ", e, "\t\t", fmt(v, e, 2)
