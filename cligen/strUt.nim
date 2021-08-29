@@ -114,6 +114,13 @@ proc joins*[T](sst: seq[seq[T]], delim: T): seq[T] =
     if i != last:
       result.add delim
 
+proc joinS*(sep=" ", a: varargs[string, `$`]): string =
+  ## Join after `$`.  `S` is intended to suggest `$`. `echo " ".joinS(a, b, c)`
+  ## is more ceremony than `print` but may also have broader utility.
+  for i, x in pairs(a):
+    if i != 0: result.add sep
+    result.add $x
+
 proc commentStrip*(s: string): string =
   ## return string with any pre-'#' whitespace and any post-'#' text removed.
   if s.startsWith("#"): return          # implicit ""
@@ -123,13 +130,6 @@ proc commentStrip*(s: string): string =
         result = s[0..i]
         break
   else: result = s
-
-proc joinS*(sep=" ", a: varargs[string, `$`]): string =
-  ## Join after `$`.  `S` is intended to suggest `$`. `echo " ".joinS(a, b, c)`
-  ## is more ceremony than `print` but may also have broader utility.
-  for i, x in pairs(a):
-    if i != 0: result.add sep
-    result.add $x
 
 from math import floor, log10, isnan  #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
