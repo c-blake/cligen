@@ -594,3 +594,18 @@ proc reapAnyKids*(signo: cint) {.noconv.} =
   ## to avoid zombies when treating all background children the same is ok.
   var status: cint
   while wait4(Pid(-1), status.addr, WNOHANG, nil) > 0: discard
+
+type FileKind* = ## Helper enum for `match` st_mode/stx_mode against file kinds
+  enum fkFile="file", fkDir="dir", fkLink="link", fkBlk="blk", fkChr="chr",
+       fkPipe="pipe", fkSock="sock" # names => abbrevs fdlbcps like find(1)
+
+proc match*(m: Mode|uint16, kinds: set[FileKind]): bool {.inline.} =
+  ## true if file with st_mode or stx_mode `m` is one of `kinds`.
+  let m = Mode(m)
+  if fkFile in kinds and m.S_ISREG:  return true
+  if fkDir  in kinds and m.S_ISDIR:  return true
+  if fkLink in kinds and m.S_ISLNK:  return true
+  if fkBlk  in kinds and m.S_ISBLK:  return true
+  if fkChr  in kinds and m.S_ISCHR:  return true
+  if fkPipe in kinds and m.S_ISFIFO: return true
+  if fkSock in kinds and m.S_ISSOCK: return true
