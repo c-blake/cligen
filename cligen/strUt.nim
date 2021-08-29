@@ -124,6 +124,13 @@ proc commentStrip*(s: string): string =
         break
   else: result = s
 
+proc joinS*(sep=" ", a: varargs[string, `$`]): string =
+  ## Join after `$`.  `S` is intended to suggest `$`. `echo " ".joinS(a, b, c)`
+  ## is more ceremony than `print` but may also have broader utility.
+  for i, x in pairs(a):
+    if i != 0: result.add sep
+    result.add $x
+
 from math import floor, log10, isnan  #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
@@ -266,12 +273,3 @@ when isMainModule:
     for v in [minf, pinf, mnan, pnan, 1.0]:
       for e in [minf, pinf, mnan, pnan, 1.0]:
         echo v, " ", e, "\t\t", fmt(v, e, 2)
-
-template joinS*(sep=" ", a: varargs[string, `$`]): untyped =
-  ## Join after `$`.  `S` is intended to suggest `$`. `echo " ".joinS(a, b, c)`
-  ## is more ceremony than `print` but may also have broader utility.
-  var result: string
-  for i, x in pairs(a):
-    if i != 0: result.add sep
-    result.add $x
-  result
