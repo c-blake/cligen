@@ -193,6 +193,27 @@ proc addShifted(result: var string; sciNum: string; shift,decPtIx,expIx: int) =
   else:
     result.add sciNum[0..<expIx]
 
+proc fmtUncertainMergedSci(val, err: string, sigDigs=2, exp=true): string =
+  var dV, eV, dU, eU: int       # (Value, Uncertainty)*(decPtIx, expIx)
+  val.sciNoteSplits dV, eV      # diff of exponent *positions* is decimal shift
+  err.sciNoteSplits dU, eU      # up to leading - in `val`.
+  if dV == 0 or eV == 0 or dU == 0 or eU == 0:    # nan|inf in val|err
+    return val & "(" & err & ")"
+  result = newStringOfCap(val.len + sigDigs + 2)
+  result.add val[0..<eV]
+  if result[^1] == '.': result.setLen result.len - 1
+  result.add '('
+  result.add err[0..<dU] & err[dU+1..<eU]
+  result.add ')'
+  if exp: result.add val[eV..^1]
+
+proc fmtUncertainMergedSci*(val, err: float, sigDigs=2): string =
+  ## Format in "Particle Data Group" Style with uncertainty digits merged into
+  ## the value and also in scientific-notation: val(err)e+NN with `sigDigs` of
+  ## error digits.  E.g. "12.34... +- 0.56..." => "1.234(56)e+01" (w/sigDigs=2).
+  let (val, err) = fmtUncertainRound(val, err, sigDigs)
+  fmtUncertainMergedSci(val, err, sigDigs)
+
 proc fmtUncertainSci(val, err: string, sigDigs=2, pm=pmDfl, exp=true): string =
   var dV, eV, dU, eU: int       # (Value, Uncertainty)*(decPtIx, expIx)
   val.sciNoteSplits dV, eV      # diff of exponent *positions* is decimal shift
@@ -207,15 +228,15 @@ proc fmtUncertainSci(val, err: string, sigDigs=2, pm=pmDfl, exp=true): string =
   if exp: result.add val[eV..^1]
 
 proc fmtUncertainSci*(val, err: float, sigDigs=2, pm=pmDfl): string =
-  ## format as (val +- err)e+NN with err to `sigDigs` and same final decimal.
+  ## Format as (val +- err)e+NN with err to `sigDigs` and same final decimal.
   let (val, err) = fmtUncertainRound(val, err, sigDigs)
   fmtUncertainSci(val, err, sigDigs, pm)
 
 proc fmtUncertain*(val, err: float, sigDigs=3, pm=pmDfl,
                    eLow = -2, eHigh = 3): string =
-  ## This is printf-%g/gcvt-esque but allows callers to customize how near 0 the
-  ## *uncertainty-rounded val exponent* must be to get non-scientific notation
-  ## (& also formats both a number & its uncertainty like `fmtUncertainSci`).
+  ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
+  ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
+  ## notation & formats a number & its uncertainty like `fmtUncertainSci`.
   let (val, err) = fmtUncertainRound(val, err, sigDigs)
   var dV, eV, dU, eU: int               # (Value, Uncertainty)*(decPtIx, expIx)
   val.sciNoteSplits dV, eV              # duplicative, but (relatively) cheap
@@ -236,14 +257,40 @@ proc fmtUncertain*(val, err: float, sigDigs=3, pm=pmDfl,
   else:                                 # too small/too big: sci notation
     result = fmtUncertainSci(val, err, sigDigs, pm)
 
+proc fmtUncertainMerged*(val,err: float, sigDigs=3, eLow = -2, eHigh=3): string=
+  ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
+  ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
+  ## notation & formats a number & its uncertainty like `fmtUncertainMergedSci`.
+  let (val, err) = fmtUncertainRound(val, err, sigDigs)
+  var dV, eV, dU, eU: int               # (Value, Uncertainty)*(decPtIx, expIx)
+  val.sciNoteSplits dV, eV              # duplicative, but (relatively) cheap
+  if dV == 0 or eV == 0:
+    return val & "(" & err & ")"
+  let exp = parseInt(val[eV+1..^1])     # order-of-magnitude of val
+  let negAdj = if val[0] == '-': 1 else: 0
+  if exp == 0:                          # no shift; drop zero exp
+    result = fmtUncertainMergedSci(val, err, sigDigs, exp=false)
+  elif eLow <= exp and exp <= eHigh:    # shift right | left
+    result.addShifted val, exp, dV, eV
+    if result[^1] == '.': result.setLen result.len - 1
+    result.add '('
+    err.sciNoteSplits dU, eU            # duplicative, but (relatively) cheap
+    result.add err[0..<dU] & err[dU+1..<eU]
+    result.add ')'
+  else:                                 # too small/too big: sci notation
+    result = fmtUncertainMergedSci(val, err, sigDigs)
+
 when isMainModule:
   from math import sqrt                 # for -nan; dup import is ok
-  proc rnd(v, e: float; sig=2): string =  # Create 3 identical signature procs
+  proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
   proc aut(v, e: float; sig=2): string = fmtUncertain(v, e, sig)
+  proc msc(v, e: float; sig=2): string = fmtUncertainMergedSci(v, e, sig)
+  proc mau(v, e: float; sig=2): string = fmtUncertainMerged(v, e, sig)
 
-  for k, nmFmt in [("ROUND", rnd), ("SCI", sci), ("AUTO", aut)]:
+  for k, nmFmt in [("ROUND", rnd), ("SCI", sci), ("AUTO", aut),
+                   ("MRGSCI", msc), ("MRGAUTO", mau)]:
     let fmt = nmFmt[1]
     if k != 0: echo ""
     echo nmFmt[0]
