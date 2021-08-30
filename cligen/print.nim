@@ -15,10 +15,9 @@
 ## well do a `strformat &"thing"`.  Feel free to disgree with me and write your
 ## own.  If you are porting a bunch of Python code nimpylib may be more useful.
 ##
-## Both auto-line ending and the target `File` and do vary, though.  For these
-## we just use more function names/entry points since there are only like 3*2
-## total and they lean upon pre-established naming conventions like `echo -n` on
-## Unix and fprintf in C making them (maybe) easy to remember (IMO).
+## Auto-line ending & target `File` s do vary, though.  For these we just use
+## more proc names (there are only 3*2).  These lean upon pre-established naming
+## conventions like `echo -n` on Unix & fprintf in C for (maybe) easier recall.
 
 var printsFlush* = false ## fprint flush behavior
 var printsSep* = " "     ## fprint separation string
