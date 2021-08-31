@@ -452,6 +452,95 @@ proc nSplit*(n: int, data: MSlice, sep = '\n'): seq[MSlice] =
       eos = result[^1].eos              # update End Of Slice
     result[^1].len = data.len - (result[^1].mem -! data.mem)
 
+import strutils
+
+proc makeDigits(): array[256, char] =
+  for i in 0..255: result[i] = chr(255)
+  for i in {'0'..'9'}: result[ord(i)] = chr(ord(i) - ord('0'))
+const digits10 = makeDigits()
+
+proc parseInt*(s: MSlice; eoNum: ptr int=nil): int =
+  ## parse `MSlice` as an integer without first creating a string; error => 0.
+  ## Passing some `eoNum.addr` & checking `eoNum==s.len` tests this condition.
+  var neg = false
+  var i = 0; var x = 0
+  if s.len > 0:
+    if   s[0] == '-': neg = true; inc i
+    elif s[0] == '+': inc i
+  while i < s.len:
+    let dig = digits10[ord(s[i])].int
+    if dig >= 10: break
+    x *= 10
+    x += dig
+    inc i
+  if not eoNum.isNil: eoNum[] = i
+  result = if i == s.len: x else: 0
+
+proc pow10(e: int64): float {.inline.} =
+  const p10 = [1e-22, 1e-21, 1e-20, 1e-19, 1e-18, 1e-17, 1e-16, 1e-15, 1e-14,
+               1e-13, 1e-12, 1e-11, 1e-10, 1e-09, 1e-08, 1e-07, 1e-06, 1e-05,
+               1e-4, 1e-3, 1e-2, 1e-1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7,
+               1e8, 1e9]                        # 4*64B cache lines = 32 slots
+  if -22 <= e and e <= 9:
+    return p10[e + 22]                          # common case=small table lookup
+  result = 1.0
+  var base = 10.0
+  var e = e
+  if e < 0:
+    e = -e
+    base = 0.1
+  while e != 0:
+    if (e and 1) != 0:
+      result *= base
+    e = e shr 1
+    base *= base
+
+proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
+  template doReturn(j,x) = (if not eoNum.isNil: eoNum[] = j; return x)
+  var decimal = 0'u64
+  var j = 0
+  if s.len < 1 or s.mem.isNil: doReturn(0, 0.0)
+  var sgn = 1.0; var esgn = 1
+  var exp, po10: int
+  var nDig {.noInit}, ixPt {.noInit}: int     # index(decPoint)
+  case s[j]                                   # Process 1st byte
+  of '-': sgn = -1.0; inc j
+  of '+': inc j
+  of 'N': (if s.len > 2 and s[1]=='A' and s[2]=='N': doReturn(s.len, NAN))
+  of 'n': (if s.len > 2 and s[1]=='a' and s[2]=='n': doReturn(s.len, NAN))
+  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, INF))
+  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, INF))
+  else: discard
+  case s[j]
+  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, sgn*INF))
+  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, sgn*INF))
+  else: discard
+  ixPt = -1                                   # Done w/+-inf,NAN,just,[-+nNiI]
+  nDig = 0                                    # Find radix; process digits
+  while j < s.len:                            #   build scale factor
+    if s[j] < '0' or s[j] > '9':              #   a non-decimal digit
+      if s[j] != '.' or ixPt >= 0: break      #   check for [Ee] directly?
+      dec nDig; ixPt = nDig                   #   reverse loop's inc nDig
+    elif nDig < 19:                           #   Room4more digits in decimal
+      let dig = digits10[ord(s[j])].uint64    #   (2**64=1.84e19=>19 digits ok)
+      decimal = 10*decimal + dig              #   CORE ASCII->BINARY TRANSFORM
+    else:
+      inc po10
+    inc j
+    inc nDig
+  if ixPt < 0: ixPt = nDig                    # no radix; set to eoNum
+  elif nDig == 1: doReturn(0, 0.0)            # was *only* a radix.
+  if j < s.len and (s[j] == 'E' or s[j] == 'e'):
+    inc j
+    if   s[j] == '+': inc j
+    elif s[j] == '-': inc j; esgn = -1
+    while j < s.len and s[j] >= '0' and s[j] <= '9':
+      exp = 10*exp + ord(s[j]) - ord('0')     # decimal exponent
+      inc j
+  exp = (ixPt - nDig + po10) + esgn * exp     # Combine implicit&explicit exp
+  if not eoNum.isNil: eoNum[] = s.len
+  result = sgn * decimal.float * pow10(exp)   # Assemble result
+
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   let s = "1_2__3"
   let m = s.toMSlice
