@@ -352,3 +352,18 @@ proc touch*(path: string) =
     except: erru "could not create ", path; return
   try: setLastModificationTime path, tm
   except: erru "could not update time for ", path
+
+import tables
+var outs: Table[string, File]
+
+proc autoOpen*(path: string, mode=fmWrite, bufSize = -1): File =
+  ## For callers in expressional situations to open files on-demand.
+  proc up(f: var File; path: string): File =
+    if f == nil: f = mkdirOpen(path, mode, bufSize)
+    f
+  outs.mgetOrPut(path, nil).up(path)
+
+proc autoClose* =
+  ## Close all files opened so far by autoOpen.
+  for path, f in outs: (if f != nil: f.close)
+  outs.clear
