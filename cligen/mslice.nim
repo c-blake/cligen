@@ -452,8 +452,6 @@ proc nSplit*(n: int, data: MSlice, sep = '\n'): seq[MSlice] =
       eos = result[^1].eos              # update End Of Slice
     result[^1].len = data.len - (result[^1].mem -! data.mem)
 
-import strutils
-
 proc makeDigits(): array[256, char] =
   for i in 0..255: result[i] = chr(255)
   for i in {'0'..'9'}: result[ord(i)] = chr(ord(i) - ord('0'))
