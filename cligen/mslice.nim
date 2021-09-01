@@ -521,7 +521,7 @@ proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
       dec nDig; ixPt = nDig                   #   reverse loop's inc nDig
     elif nDig < 19:                           #   Room4more digits in decimal
       let dig = digits10[ord(s[j])].uint64    #   (2**64=1.84e19=>19 digits ok)
-      decimal = 10*decimal + dig              #   CORE ASCII->BINARY TRANSFORM
+      decimal = 10'u64 * decimal + dig        #   CORE ASCII->BINARY TRANSFORM
     else:
       inc po10
     inc j
