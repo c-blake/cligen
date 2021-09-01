@@ -1,48 +1,69 @@
-import std/[strutils, os, hashes], cligen/osUt # `%`, execShellCmd, hash(string)
+import std/[strutils,os,hashes,sets],cligen/[osUt,mslice] #% exec* mdOpen split
+from cligen/parseopt3 import optionNormalize
 
-# Order of params is: generation, compilation, running.
-proc rx(prelude="", begin="", test="true", stmts: seq[string], epilog="",
-        nim="", run=true, args="", verbose=0, outp="/tmp/rxXXX",
-        input="/dev/stdin", delim="white", maxSplit=0): int =
-  ## Merge *prelude*, *begin*, *test*, *stmts*, *epilog* sections into a Nim row
-  ## processer.  Compile & if *run* also run against *input*.  Defined within
+proc toDef(fields, delim, genF: string): string =
+  result.add "const rxNmFieldB {.used.} = \"" & fields & "\"\n"
+  result.add "let   rxNmFields {.used.} = rxNmFieldB.toMSlice\n"
+  let sep = initSep(delim)
+  let row = fields.toMSlice
+  var s: seq[MSlice]
+  var nms: HashSet[string]
+  sep.split(row, s) # No maxSplit - define every field; Could infer it from the
+  for j, f in s:    #..highest referenced field with a `test` & `stmts` parse.
+    let nm = optionNormalize(genF % [ $f ])   # Prevent duplicate def errors..
+    if nm notin nms:                          #..and warn users about collision.
+      result.add "const " & nm & " {.used.} = " & $j & "\n" #XXX strop, too?
+      nms.incl nm
+    else:
+      stderr.write "rx: WARNING: ", nm, " collides with earlier field\n"
+
+proc rx(prelude="", begin="", test="true", stmts:seq[string], epilog="",
+        fields="",genF="$1",nim="",run=true,args="",verbose=0,outp="/tmp/rxXXX",
+        input="/dev/stdin", delim="white", uncheck=false, maxSplit=0): int =
+  ## Merge *prelude*,*fields*,*begin*,*test*,*stmts*,*epilog* into Nim row
+  ## processor.  Compile & if *run* also run against *input*.  Defined within
   ## *test* & every *stmt* are:
-  ##   *s[fieldIdx]* giving an MSlice (*$* that to get a Nim *string*)
-  ##   *i(fieldIdx)* to get a Nim int, *f(fieldIdx)* for a Nim float.
-  ##   *o* for `stdout`; *e* for `stderr`.
-  ##   *nf* & *nr* (like awk, but **0-origin** & lowercase).
+  ##   *s[fieldIdx]* & *row* give `MSlice` (*$* to get a Nim *string*)
+  ##   *i(fieldIdx)* gives a Nim int, *f(fieldIdx)* a Nim float.
+  ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
-  ## If you know awk & Nim, you can learn this in ~2 minutes; Our data loop
-  ## language is just typed Nim.  Examples:
-  ##   **rx 'echo s[1]'**                              # Print 2nd field
+  ## If you know *AWK* & Nim, you can learn this PRONTO.  Examples (need data):
+  ##   **rx 'echo s[1]," ",s[0]'**                     # Swap field order
   ##   **rx -t'nr mod 100==0' 'echo row'**             # Print each 100th row
-  ##   **rx -b'var t=0' t+=nf -e'echo t'**             # Print total fields
+  ##   **rx -b'var t=0' t+=nf -e'echo t'**             # Print total field count
   ##   **rx -b'var t=0' -t'i(0)>0' t+=0.i -e'echo t'** # Total >0 field0 ints
   ##   **rx -p'import stats' -b'var r: RunningStat' 'r.push 0.f' -e'echo r'**
   ##   **rx 'let x=f(0)' 'echo (1+x)/x'**              # cache field 0 parse
+  ##   **rx -d, -fa,b,c 'echo s[a],f(b)+i(c).float'**  # named fields (CSV)
+  ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rx.
+  let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
+  let check  = if fields.len == 0: "    " elif not uncheck: """
+    if nr == 0:
+      if row == rxNmFields: inc nr; continue # {fields} {!uncheck}
+      else: stderr.write "row0 \"",row,"\" != \"",rxNmFields,"\"\n"; quit 1
+    """ else: "    "
   var program = """import cligen/[mfile, mslice]
 $1 # {prelude}
-
+# {fields}
+$2 
 proc main() =
-  var  s: seq[MSlice] # CREATE TERSE NOTATION: s/i/f/o/e/nr
-  proc i(j: int): int   {.used.} = parseInt(s[j])
-  proc f(j: int): float {.used.} = parseFloat(s[j])
-  let  o {.used.} = stdout
-  let  e {.used.} = stderr
-  var  nr = 0
-
-  let sep = initSep("$2") # {delim}
-$3 # {begin}
-  for row in mSlices("$4", eat='\0'): # {input} mmap|slices from stdio
-    sep.split(row, s, $5) # {maxSplit}
+  var s: seq[MSlice] # CREATE TERSE NOTATION: row/s/i/f/nr/nf
+  func i(j: int): int   {.used.} = parseInt(s[j])
+  func f(j: int): float {.used.} = parseFloat(s[j])
+  var nr = 0
+  let rxNmSepOb = initSep("$3") # {delim}
+$4 # {begin}
+  for row in mSlices("$5", eat='\0'): # {input} mmap|slices from stdio
+${6}rxNmSepOb.split(row, s, $7) # {maxSplit}
     let nf {.used.} = s.len
-    if $6: # {test} auto ()s?
-""" % [prelude, delim, indent(begin, 2), input, $maxSplit, test]
+    if $8: # {test} auto ()s?
+""" % [prelude, fields, delim, indent(begin, 2), input, check, $maxSplit, test]
   for i, stmt in stmts:
     program.add "      " & stmt & " # {stmt" & $i & "}\n"
+  if stmts.len == 0: program.add "      discard\n"
   program.add "    inc nr\n"
   program.add indent(epilog, 2)
-  program.add " # {epilogue}\nmain()"
+  program.add " # {epilogue}\n\nmain()\n"
   let bke  = if run: "r" else: "c"
   let args = if args.len > 0: args else: "-d:danger --gc:arc"
   let verb = "--verbosity:" & $verbose
@@ -63,6 +84,8 @@ when isMainModule:
                      "test"    : "Nim code for row inclusion",
                      "stmts"   : "Nim stmts to run under test",
                      "epilog"  : "Nim code for epilog/end loop section",
+                     "fields"  : "`delim`-sep field names (match row0)",
+                     "genF"    : "make field names from this fmt; eg c$1",
                      "nim"     : "\"\" => nim {if run: r else: c} {args}",
                      "run"     : "Run at once using nim r .. < input",
                      "args"    : "\"\" => -d:danger --gc:arc",
@@ -70,10 +93,5 @@ when isMainModule:
                      "outp"    : "output executable; .nim NOT REMOVED",
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
-                     "maxSplit": "max split to; 0 => unbounded"}
-# TODO: One can make this nicer by optionally parsing optional header row (as
-# from DSV) & rewriting user references to such headers into field indices.
-# The only gotcha is maybe name collisions between headers & our auto-idents
-# {[sifoe], row, nr, nf, & sep }; Can just error out on such rare cases.
-# Another nice(-ish) feature of awk is autoOpen via its "print foo > path".
-# Could add that via `path.F.fprint` where F wraps `Table[string, File]`.
+                     "uncheck" : "do not check&skip header row vs fields",
+                     "maxSplit": "max split; 0 => unbounded"}, cmdName="rx"
