@@ -519,7 +519,7 @@ proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
   while j < s.len:                            #   build scale factor
     if s[j] < '0' or s[j] > '9':              #   a non-decimal digit
       if s[j] != '.' or ixPt >= 0: break      #   check for [Ee] directly?
-      dec nDig; ixPt = nDig                   #   reverse loop's inc nDig
+      ixPt = nDig; dec nDig                   #   reverse loop's inc nDig
     elif nDig < 19:                           #   Room4more digits in decimal
       let dig = digits10[ord(s[j])].uint64    #   (2**64=1.84e19=>19 digits ok)
       decimal = 10'u64 * decimal + dig        #   CORE ASCII->BINARY TRANSFORM
