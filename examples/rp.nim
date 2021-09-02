@@ -59,7 +59,8 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
 """ % [prelude, fields, delim, indent(begin, 2), input, check, $maxSplit, test]
   for i, stmt in stmts:
     program.add "      " & stmt & " # {stmt" & $i & "}\n"
-  if stmts.len == 0: program.add "      discard\n"
+  if stmts.len == 0:
+    program.add "      discard\n"
   program.add "    inc nr\n"
   program.add indent(epilog, 2)
   program.add " # {epilogue}\n\nmain()\n"
