@@ -500,11 +500,11 @@ proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
   var j = 0
   if s.len < 1 or s.mem.isNil: doReturn(0, 0.0)
   var sgn = 1.0; var esgn = 1
-  var exp, po10: int
-  var nDig {.noInit}, ixPt {.noInit}: int     # index(decPoint)
+  var exp, po10, nDig: int
+  var ixPt = -1                               # index(decPoint)
   case s[j]                                   # Process 1st byte
   of '-': sgn = -1.0; inc j
-  of '+': inc j
+  of '+': inc j                               # 1st do w/+-inf,NAN,just,[-+nNiI]
   of 'N': (if s.len > 2 and s[1]=='A' and s[2]=='N': doReturn(s.len, NAN))
   of 'n': (if s.len > 2 and s[1]=='a' and s[2]=='n': doReturn(s.len, NAN))
   of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, INF))
@@ -514,9 +514,7 @@ proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
   of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, sgn*INF))
   of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, sgn*INF))
   else: discard
-  ixPt = -1                                   # Done w/+-inf,NAN,just,[-+nNiI]
-  nDig = 0                                    # Find radix; process digits
-  while j < s.len:                            #   build scale factor
+  while j < s.len:                            #Find '.'; process dig build scale
     if s[j] < '0' or s[j] > '9':              #   a non-decimal digit
       if s[j] != '.' or ixPt >= 0: break      #   check for [Ee] directly?
       ixPt = nDig; dec nDig                   #   reverse loop's inc nDig
@@ -562,3 +560,19 @@ when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
   echo "___".splitr('_', repeat=true)
   echo "___1".splitr('_', repeat=true)
   echo "1___".splitr('_', repeat=true)
+
+  template tflt(s, expect) =
+    let o  = $s.toMSlice.parseFloat
+    if o != expect: echo "FAIL: ", s, "\t\t", o
+  let testPairs = [
+    ("0042"     , "42.0"  ), ("42"        , "42.0"  ), ("42e-01"    , "4.2"   ),
+    ("42e+01"   , "420.0" ), ("42e-1"     , "4.2"   ), ("42e1"      , "420.0" ),
+    ("682.2"    , "682.2" ), ("682.2e1"   , "6822.0"), ("682.2e01"  , "6822.0"),
+    ("682.2e+01", "6822.0"), ("682.2e-01" , "68.22" ), ("682.2e-1"  , "68.22" ),
+  # ("0042.5"   , "42.5"  ), ("0042.5e-01", "4.2"   ), ("0042.5e+01", "425.0" ),
+  # ("0042.5e-1", "4.25"  ), ("0042.5e1"  , "425.0" ), ("0042e-01"  , "4.2"   ),
+  # ("0042e+01" , "420.0" ), ("0042e-1"   , "4.2"   ), ("0042e1"    , "420.0" ),
+  ]
+  for pair in testPairs: tflt       pair[0],       pair[1]
+  for pair in testPairs: tflt "+" & pair[0],       pair[1]
+  for pair in testPairs: tflt "-" & pair[0], "-" & pair[1]
