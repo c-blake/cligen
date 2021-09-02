@@ -2,8 +2,8 @@ import std/[strutils,os,hashes,sets],cligen/[osUt,mslice] #% exec* mdOpen split
 from cligen/parseopt3 import optionNormalize
 
 proc toDef(fields, delim, genF: string): string =
-  result.add "const rxNmFieldB {.used.} = \"" & fields & "\"\n"
-  result.add "let   rxNmFields {.used.} = rxNmFieldB.toMSlice\n"
+  result.add "const rpNmFieldB {.used.} = \"" & fields & "\"\n"
+  result.add "let   rpNmFields {.used.} = rpNmFieldB.toMSlice\n"
   let sep = initSep(delim)
   let row = fields.toMSlice
   var s: seq[MSlice]
@@ -15,32 +15,31 @@ proc toDef(fields, delim, genF: string): string =
       result.add "const " & nm & " {.used.} = " & $j & "\n" #XXX strop, too?
       nms.incl nm
     else:
-      stderr.write "rx: WARNING: ", nm, " collides with earlier field\n"
+      stderr.write "rp: WARNING: ", nm, " collides with earlier field\n"
 
-proc rx(prelude="", begin="", test="true", stmts:seq[string], epilog="",
-        fields="",genF="$1",nim="",run=true,args="",verbose=0,outp="/tmp/rxXXX",
+proc rp(prelude="", begin="", test="true", stmts:seq[string], epilog="",
+        fields="",genF="$1",nim="",run=true,args="",verbose=0,outp="/tmp/rpXXX",
         input="/dev/stdin", delim="white", uncheck=false, maxSplit=0): int =
-  ## Merge *prelude*,*fields*,*begin*,*test*,*stmts*,*epilog* into Nim row
-  ## processor.  Compile & if *run* also run against *input*.  Defined within
-  ## *test* & every *stmt* are:
+  ## Gen+Run *prelude*,*fields*,*begin*,*test*,*stmts*,*epilog* row processor
+  ## against *input*.  Defined within *test* & every *stmt* are:
   ##   *s[fieldIdx]* & *row* give `MSlice` (*$* to get a Nim *string*)
   ##   *i(fieldIdx)* gives a Nim int, *f(fieldIdx)* a Nim float.
   ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
-  ## If you know *AWK* & Nim, you can learn this PRONTO.  Examples (need data):
-  ##   **rx 'echo s[1]," ",s[0]'**                     # Swap field order
-  ##   **rx -t'nr mod 100==0' 'echo row'**             # Print each 100th row
-  ##   **rx -b'var t=0' t+=nf -e'echo t'**             # Print total field count
-  ##   **rx -b'var t=0' -t'i(0)>0' t+=0.i -e'echo t'** # Total >0 field0 ints
-  ##   **rx -p'import stats' -b'var r: RunningStat' 'r.push 0.f' -e'echo r'**
-  ##   **rx 'let x=f(0)' 'echo (1+x)/x'**              # cache field 0 parse
-  ##   **rx -d, -fa,b,c 'echo s[a],f(b)+i(c).float'**  # named fields (CSV)
-  ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rx.
+  ## If you know *AWK* & Nim, you can learn *rp* PRONTO.  Examples (need data):
+  ##   **rp 'echo s[1]," ",s[0]'**                     # Swap field order
+  ##   **rp -t'nr mod 100==0' 'echo row'**             # Print each 100th row
+  ##   **rp -b'var t=0' t+=nf -e'echo t'**             # Print total field count
+  ##   **rp -b'var t=0' -t'i(0)>0' t+=0.i -e'echo t'** # Total >0 field0 ints
+  ##   **rp -p'import stats' -b'var r: RunningStat' 'r.push 0.f' -e'echo r'**
+  ##   **rp 'let x=f(0)' 'echo (1+x)/x'**              # cache field 0 parse
+  ##   **rp -d, -fa,b,c 'echo s[a],f(b)+i(c).float'**  # named fields (CSV)
+  ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
   let check  = if fields.len == 0: "    " elif not uncheck: """
     if nr == 0:
-      if row == rxNmFields: inc nr; continue # {fields} {!uncheck}
-      else: stderr.write "row0 \"",row,"\" != \"",rxNmFields,"\"\n"; quit 1
+      if row == rpNmFields: inc nr; continue # {fields} {!uncheck}
+      else: stderr.write "row0 \"",row,"\" != \"",rpNmFields,"\"\n"; quit 1
     """ else: "    "
   var program = """import cligen/[mfile, mslice]
 $1 # {prelude}
@@ -51,10 +50,10 @@ proc main() =
   func i(j: int): int   {.used.} = parseInt(s[j])
   func f(j: int): float {.used.} = parseFloat(s[j])
   var nr = 0
-  let rxNmSepOb = initSep("$3") # {delim}
+  let rpNmSepOb = initSep("$3") # {delim}
 $4 # {begin}
   for row in mSlices("$5", eat='\0'): # {input} mmap|slices from stdio
-${6}rxNmSepOb.split(row, s, $7) # {maxSplit}
+${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
     let nf {.used.} = s.len
     if $8: # {test} auto ()s?
 """ % [prelude, fields, delim, indent(begin, 2), input, check, $maxSplit, test]
@@ -79,7 +78,7 @@ ${6}rxNmSepOb.split(row, s, $7) # {maxSplit}
 
 when isMainModule:
   import cligen; include cligen/mergeCfgEnv
-  dispatch rx, help={"prelude" : "Nim code for prelude/imports section",
+  dispatch rp, help={"prelude" : "Nim code for prelude/imports section",
                      "begin"   : "Nim code for begin/pre-loop section",
                      "test"    : "Nim code for row inclusion",
                      "stmts"   : "Nim stmts to run under test",
@@ -94,4 +93,4 @@ when isMainModule:
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
                      "uncheck" : "do not check&skip header row vs fields",
-                     "maxSplit": "max split; 0 => unbounded"}, cmdName="rx"
+                     "maxSplit": "max split; 0 => unbounded"}, cmdName="rp"
