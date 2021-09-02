@@ -472,7 +472,8 @@ proc parseInt*(s: MSlice; eoNum: ptr int=nil): int =
     x += dig
     inc i
   if not eoNum.isNil: eoNum[] = i
-  result = if i == s.len: x else: 0
+  result = if i == s.len: (if neg: -x else: x)
+           else: 0
 
 proc pow10(e: int64): float {.inline.} =
   const p10 = [1e-22, 1e-21, 1e-20, 1e-19, 1e-18, 1e-17, 1e-16, 1e-15, 1e-14,
