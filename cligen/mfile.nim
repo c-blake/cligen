@@ -4,7 +4,7 @@
 ## layered differently, has non-system.open-colliding type constructors, and
 ## uses ``.len`` instead of ``.size`` for constency with other Nim things.
 
-import std/posix, ./osUt, ./mslice # perror cMemCmp mSlices
+import std/[posix, os], ./mslice # cMemCmp mSlices
 export PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_POPULATE
 
 type
@@ -19,6 +19,15 @@ type
 
 proc getpagesize(): cint {. importc: "getpagesize", header: "<unistd.h>" .}
 let pagesize = getpagesize()
+
+proc perror(x: cstring, len: int, err=stderr) =
+  if err == nil: return
+  proc strlen(a: cstring): uint {.header: "string.h".}
+  proc strerror(n: cint): cstring {.header: "string.h".}
+  let errstr = strerror(cint(osLastError()))
+  let errlen = strlen(errstr)
+  discard err.writeBuffer(pointer(x), len); err.write ": "
+  discard err.writeBuffer(errstr, errlen); err.write "\n"
 
 proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
             a=0.Off, b = Off(-1), allowRemap=false, noShrink=false): MFile =
@@ -195,6 +204,14 @@ iterator rows*(f: File, s: Sep, n=0): seq[string] =
   ## Exactly like ``rows(File, Sep)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[string](n)
   for row in rows(f, s, sq, n): yield sq
+
+iterator getDelims(f: File, dlm: char='\n'): (cstring, int) =
+  proc getdelim(p: ptr cstring, n: ptr uint, dlm: cint, f: File): int {.header: "stdio.h".}
+  proc free(pointr: cstring) {.header: "stdlib.h".}
+  var s: cstring
+  var room: csize
+  while (let n=getdelim(s.addr, room.addr, cint(dlm), f); n)+1 > 0: yield (s, n)
+  s.free
 
 iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
