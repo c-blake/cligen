@@ -23,7 +23,7 @@ proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
 
 type MSlice* = object
   ## Represent a memory slice, such as a delimited record in an ``MFile``.
-  ## Care is required to access ``MSlice`` data (think C mem* not str*).
+  ## Care is required to access ``MSlice`` data (think C mem\* not str\*).
   ## toString to some (reusable?) string buffer for safer/compatible work.
   mem*: pointer
   len*: int
