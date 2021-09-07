@@ -232,8 +232,8 @@ proc fmtUncertainSci*(val, err: float, sigDigs=2, pm=pmDfl): string =
   let (val, err) = fmtUncertainRound(val, err, sigDigs)
   fmtUncertainSci(val, err, sigDigs, pm)
 
-proc fmtUncertain*(val, err: float, sigDigs=3, pm=pmDfl,
-                   eLow = -2, eHigh = 3): string =
+proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl,
+                   eLow = -2, eHigh = 4): string =
   ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
   ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
   ## notation & formats a number & its uncertainty like `fmtUncertainSci`.
@@ -257,7 +257,7 @@ proc fmtUncertain*(val, err: float, sigDigs=3, pm=pmDfl,
   else:                                 # too small/too big: sci notation
     result = fmtUncertainSci(val, err, sigDigs, pm)
 
-proc fmtUncertainMerged*(val,err: float, sigDigs=3, eLow = -2, eHigh=3): string=
+proc fmtUncertainMerged*(val,err: float, sigDigs=2, eLow = -2, eHigh=4): string=
   ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
   ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
   ## notation & formats a number & its uncertainty like `fmtUncertainMergedSci`.
