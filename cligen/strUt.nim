@@ -356,9 +356,9 @@ proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
     else: result[0] = "0.e0"
   else:
     result[0].ecvt val, places, fcOpts
-# Trickiness here is that `val` may be rounded up to next O(magnitude) as part
-# of ffScientific, shifting by 1 place.  Bumping `places` might BLOCK round up,
-# BUT when this happens we can just add a '0' if val is being rounded UP.
+# Trickiness here is that `val` may be rounded up to next O(magnitude) by ecvt,
+# shifting by 1 place.  Bumping `places` might BLOCK round up, BUT when this
+# happens we can just add a '0' if val is being rounded UP.
     result[0].sciNoteSplits d, e
     if d > 0 and e > 0:
       if abs(parseFloat(result[0])) > abs(val) and result[0][e-1] in {'.', '0'}:
