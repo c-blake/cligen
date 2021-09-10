@@ -267,7 +267,6 @@ proc fmtUncertainMerged*(val,err: float, sigDigs=2, eLow = -2, eHigh=4): string=
   if dV == 0 or eV == 0:
     return val & "(" & err & ")"
   let exp = parseInt(val[eV+1..^1])     # order-of-magnitude of val
-  let negAdj = if val[0] == '-': 1 else: 0
   if exp == 0:                          # no shift; drop zero exp
     result = fmtUncertainMergedSci(val, err, sigDigs, exp=false)
   elif eLow <= exp and exp <= eHigh:    # shift right | left
@@ -281,7 +280,7 @@ proc fmtUncertainMerged*(val,err: float, sigDigs=2, eLow = -2, eHigh=4): string=
     result = fmtUncertainMergedSci(val, err, sigDigs)
 
 when isMainModule:
-  from math import sqrt                 # for -nan; dup import is ok
+  from math as m3 import sqrt           # for -nan; dup import is ok
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
