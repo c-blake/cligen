@@ -339,23 +339,23 @@ proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
   ## noise digits, it is also a building block for nicer formats.  This is the
   ## only rounding guaranteeing numbers re-parse into floats.
   when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
+  let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
   if abs(err) == 0.0 or err.isnan:      # cannot do much here
-    result[0].formatValue(val, ".016e")
-    result[1].formatValue(err, ".016e"); return
+    result[0].ecvt val, 16, fcOpts; result[1].ecvt err, 16, fcOpts; return
   let sigDigs = sigDigs - 1             # adjust to number after '.' in sciNote
-  result[1].formatValue(err, ".0" & $sigDigs & "e")
+  result[1].ecvt err, sigDigs, fcOpts
   var d, e: int
   result[1].sciNoteSplits d, e
   if e == 0:                            # [+-]inf err => 0|self if val infinite
     if abs(val / err) < 1e-6: result[0] = "0.e0"
-    else: result[0].formatValue(val, ".016e")
+    else: result[0].ecvt val, 16, fcOpts
     return
   var places = val.abs.log10.floor.int - (parseInt(result[1][e+1..^1])-(e-d-1))
-  if places < 0:  # statistical 0 ->explict
-    if val.isnan or val*0.5 == val: result[0].formatValue(val, ".016e")
+  if places < 0:  # statistical 0 -> explicit 0
+    if val.isnan or val*0.5 == val: result[0].ecvt val, 16, fcOpts
     else: result[0] = "0.e0"
   else:
-    result[0].formatValue(val, ".0" & $places & "e")
+    result[0].ecvt val, places, fcOpts
 # Trickiness here is that `val` may be rounded up to next O(magnitude) as part
 # of ffScientific, shifting by 1 place.  Bumping `places` might BLOCK round up,
 # BUT when this happens we can just add a '0' if val is being rounded UP.
