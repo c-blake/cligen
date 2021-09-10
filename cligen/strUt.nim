@@ -131,7 +131,198 @@ proc commentStrip*(s: string): string =
         break
   else: result = s
 
-from math import floor, log10, isnan  #*** FORMATTING UNCERTAIN NUMBERS ***
+from cligen/mslice import pow10
+from math import isNaN, `^`, floor, log10, isnan
+type f8s {.packed.} = object
+  frac {.bitsize: 52}: uint64
+  expo {.bitsize: 11}: uint16
+  sign {.bitsize:  1}: uint8
+
+func abs(x: float): float {.inline.} =
+  var x: f8s = cast[ptr f8s](x.unsafeAddr)[]
+  x.sign = 0
+  cast[ptr float](x.addr)[]
+
+func expo(x: float): int {.inline.} =
+  int(cast[ptr f8s](x.unsafeAddr)[].expo) - 1023
+
+func ceilLog10(x: float): int {.inline.} =
+  # Give arg to pow10 such that `abs(x)*pow10[1-arg]` is on half-open `[1,10)`.
+  if x == 0: return 0           # FPUs basically take ceil(log_2(x)) for us.
+  result = int(0.30102999566398119521 * float(x.expo + 1))
+  if x > 1: inc result          # Already done here like 86% of the time
+  let leadingDig = int(x * pow10[1 - result])
+  if leadingDig == 0:           # Want leading digit on [1,10)
+    dec result
+  if x == pow10[result - 1]:    # Exact powers of 10 need 1 more `dec result`..
+    dec result                  #..BUT also get leadingDig == 1.  So, cmp
+
+let zeros = repeat('0', 308)
+
+func decimalDigitTuples*(n=2): string =
+  for i in 0 ..< 10^n:
+    let iStr = $i
+    result.add repeat('0', n - iStr.len)
+    result.add iStr
+
+const d3 = decimalDigitTuples(3)        # Global so usable by ecvt for exponents
+func uint64toDecimal*(res: var openArray[char], x: uint64): int =
+  ## Flexible oA[char] inp; Fast 3B outp at a time; Answer is `res[result..^1]`.
+  var num = x                           # On AMD/Intel perf d3 ~same as `d2`
+  result = res.len - 1                  #.. (PGO moving either +-1.2x); d3 is
+  while num >= 1000:                    #.. consistently faster on ARM & also
+    let originNum = num                 #.. simplifies handling exponents.  L1
+    num = num div 1000                  #.. more likely to grow than faster div
+    let index = 3*(originNum - 1000*num)
+    res[result    ] = d3[index + 2]
+    res[result - 1] = d3[index + 1]
+    res[result - 2] = d3[index    ]
+    dec result, 3
+  if num < 10:          # process last 1 digit
+    res[result] = chr(ord('0') + num)
+  elif num < 100:       # process last 2 digits
+    let index = num * 3
+    res[result    ] = d3[index + 2]
+    res[result - 1] = d3[index + 1]
+    dec result
+  else:                 # process last 3 digits
+    let index = num * 3
+    res[result    ] = d3[index + 2]
+    res[result - 1] = d3[index + 1]
+    res[result - 2] = d3[index    ]
+    dec result, 2
+
+## DragonBox is fast & accurate but sadly has no output format flexibility.
+## Someday that may improve.  For now the below routines maintain speed but fill
+## the flexibility gap at a tiny loss of accuracy.  This is not so bad if your
+## mindset is that output (&parsing) is just another calculation on floats like
+## transcendentals.  1 ULP is often considered ok for those.  Rel.err. < ~2^-52
+## for me.  Binary|C99 hex float are cheaper marshaling & Javascript should just
+## learn C99 hex floats already, especially since every number is `float`!
+## `ecvt`/`fcvt` can be ~2X faster than DragonBox when asking for rounded
+## results/fewer digits which for me is a common case.
+type
+  FloatCvtOptions* =  ## The many options of binary -> string float conversion.
+    enum fcPad0,      ## Pad with '0' to the right (based upon precision `p`)
+         fcCapital,   ## Use E|INF|NAN not default e|inf|nan
+         fcPlus,      ## Leading '+' for positive numbers, not default ""
+         fcTrailDot,  ## Trailing '.' for round integers (to signify "FP")
+         fcTrailDot0, ## Trailing ".0" for round integers; overrides fcTrailDot
+         fcExp23,     ## 2|3 digit exp; 1e03 or 1e103 not 1e3; only for ecvt
+         fcExp3,      ## 3 digit exp; 1e003 not 1e3; only for ecvt
+         fcExpPlus    ## '+' on positive exponents; 1e+3 not 1e3; only for ecvt
+
+template efCvtNaNinf(s, x, xs, opts) =
+  s.setLen 0
+  var xs: f8s = cast[ptr f8s](x.unsafeAddr)[]
+  if xs.sign == 1: s.add '-'
+  elif fcPlus in opts: s.add '+'
+  xs.sign = 0
+  if isNaN(x):                      # First deal with +-(NaN|Inf)
+    s.add (if fcCapital in opts: "NAN" else: "nan")
+    return
+  let x = cast[ptr float](xs.addr)[]
+  if x > 1.7976931348623157e308:    # -ffast-math may need -fno-finite-math-only
+    s.add (if fcCapital in opts: "INF" else: "inf")
+    return                          # Ok; Now finite numbers
+
+proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
+  ## ANSI C/Unix ecvt: float -> D.PPPPe+EE; Most conversion in int arithmetic.
+  ## Accurate to ~52 bits with p=17.
+  efCvtNaNinf(s, x, xs, opts)           # `return`s for non-finite numbers
+  var i = s.len
+  s.setLen i + p + 70                   # easy bound: D.Pe-EEE=2+p+5 = p+7 B
+  var decs {.noinit.}: array[24, char]
+  var e = int(0.30102999566398119521 * float(x.expo + 1))
+  if x == 0: e = 0
+  if x > 1: inc e
+  var dig = uint64(x*pow10[1 - e])      # leading digit D
+  if dig == 0:                          # Want leading digit on [1,10)
+    dec e; dig = uint64(x*pow10[1 - e]) # ceilLog10 inline avoids ~85% re-do's
+  if x == pow10[e - 1]:                 # Exact pows of 10 need 1 more `dec e`..
+    dec e                               #..BUT also get leadingDig==1.  So, cmp
+  let scl = x*pow10[1 - e]
+  var n0R = 0; var i0 = 0; var nDec = 0
+  var p = p
+  if p > 18:                            # clip precision to 18
+    n0R = p - 18
+    p   = 18                            # 64 bits==19 decs but sgn & round trick
+  let frac = uint64((scl - dig.float)*pow10[p] + 0.5)
+  if frac.float >= pow10[p]:            # 9.99 with prec 1 rounding up
+    inc dig
+  elif frac != 0:                       # post decimal digits to convert
+    i0 = uint64toDecimal(decs, frac)
+    nDec = 24 - i0
+  if dig > 9: dig = 1; inc e            # perfect 10.0 scl can occur; adjust
+  s[i] = chr(ord('0') + dig); inc i     # format D
+  if p > 0:                             # format .PPP => '.'&lead0&digits&trail0
+    s[i] = '.'; inc i
+    copyMem s[i].addr, zeros[0].unsafeAddr, min(zeros.len, p - nDec)
+    copyMem s[i + p - nDec].addr, decs[i0].addr, nDec
+    if fcPad0 in opts: inc i, p
+    else: s.setLen i + p; i = 1 + s.rfind({'1'..'9', '.'}); s.setLen i + 5
+  elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
+  elif fcTrailDot in opts: s[i] = '.'; inc i
+  s[i] = (if fcCapital in opts: 'E' else: 'e'); inc i
+  dec e                                 # adjust for first digit on [1,10)
+  template eSign =
+    if e < 0: s[i] = '-'; e = -e; inc i
+    elif fcExpPlus in opts: s[i] = '+'; inc i
+  if fcExp23 in opts:                   # Nums with >2 dig exps can be rare
+    eSign
+    if   e < 10 : s[i] = '0'      ; s[i+1] = chr(ord('0') + e); inc i, 2
+    elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
+    else      : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]; inc i, 3
+  elif fcExp3 in opts:                  # Folks can want same .len guarantees
+    eSign
+    if   e < 10 : s[i] = '0'    ; s[i+1] = '0'      ; s[i+2] = chr(ord('0') + e)
+    elif e < 100: s[i] = '0'    ; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e + 2]
+    else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]
+    inc i, 3
+  else:                                 # but many times 1e-9..1e9 is fine
+    eSign
+    if   e < 10 : s[i] = chr(ord('0') + e); inc i
+    elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
+    else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]; inc i, 3
+  s.setLen i
+
+proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
+  ## ANSI C/Unix fcvt: float -> DDD.PPPP; Most conversion in integer arithmetic.
+  ## Accurate to ~52 bits with p=17.
+  efCvtNaNinf(s, x, xs, opts)           # `return`s for non-finite numbers
+  var decs {.noinit.}: array[24, char]
+  let clX = ceilLog10(x)                # already +1 over C nDecimals
+  var p10 = p
+  var nI  = max(0, clX)                 # integer/pre-decimal digits
+  var n0R = 0
+  if clX + p > 18:                      # Need 0-fill in integer part
+    n0R = clX + p - 18
+    dec p10, n0R
+  let round = uint64(x*pow10[p10] + 0.5)
+  let i0 = uint64toDecimal(decs, round) # All non-0 decimal digits in the answer
+  let nDec = 24 - i0
+  if round == 0: n0R = p                # 0.p0s
+  var n0 = min(-clX, p - 1)
+  if nDec > clX + p:                    # 999.9 -> 1000
+    inc n0R
+    if clX > -1: inc nI
+    else       : dec n0
+  var i = s.len
+  s.setLen 4 + max(0, n0) + 24 - i0 + n0R
+  copyMem s[i].addr, decs[i0].addr, nI; inc i, nI
+  if p > 0:
+    if nI == 0: s[i] = '0'; inc i       # leading '0.' for pure fractions
+    s[i] = '.'; inc i
+    if n0 > 0:
+      copyMem s[i].addr, zeros[0].unsafeAddr, min(zeros.len, n0); inc i, n0
+    copyMem s[i].addr, decs[i0 + nI].addr, 24 - (i0 + nI)
+    inc i, 24 - (i0 + nI)
+    if fcPad0 in opts: copyMem s[i].addr,zeros[0].unsafeAddr, n0R; inc i,n0R
+    else: s.setLen i; i = 1 + s.rfind({'1'..'9', '.'})
+  elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
+  elif fcTrailDot in opts: s[i] = '.'; inc i
+  s.setLen i
+                                      #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
 var pmDfl* = " +- "                     ## how plus|minus is spelled
@@ -319,3 +510,59 @@ when isMainModule:
     for v in [minf, pinf, mnan, pnan, 1.0]:
       for e in [minf, pinf, mnan, pnan, 1.0]:
         echo v, " ", e, "\t\t", fmt(v, e, 2)
+
+  var s: string # test drive float formatting
+  template doEchD(cvt, x, p) = cvt s, x, p; echo s
+  template doEcho(cvt, x, p, opts) = cvt s, x, p, opts; echo s
+  echo "\e[7mdefault fcvt; p = 10\e[m"
+  doEchD fcvt, 1.234, 10
+  doEchD fcvt,-4.25 , 10
+  doEchD fcvt, 8.5  , 10
+  echo "\n\e[7mempty fcvt opts (p=17, no Pad0)\e[m"
+  doEcho fcvt, 1.1  , 17, {}
+  doEcho fcvt,-4.25 , 17, {}
+  doEcho fcvt, 8.5  , 17, {}
+  echo "\n\e[7m0 prec trailDot*\e[m"
+  doEcho fcvt, 8.0  ,  0, {}
+  doEcho fcvt, 8.0  ,  0, {fcTrailDot}
+  doEcho fcvt, 8.0  ,  0, {fcTrailDot0}
+  echo "\n\e[7mfcPlus, p=9\e[m"
+  doEcho fcvt, 1.234,  9, {fcPlus}
+  doEcho fcvt,-4.25 ,  9, {fcPlus}
+  doEcho fcvt, 8.5  ,  9, {fcPlus}
+  echo "\n\e[7mdefault ecvt\e[m"
+  doEchD ecvt, 1.234e101, 15
+  doEchD ecvt,-4.25e10  , 15
+  doEchD ecvt, 8.5e1    , 15
+  echo "\n\e[7mempty ecvt opts (no Pad0)\e[m"
+  doEcho ecvt, 1.234e101, 15, {}
+  doEcho ecvt,-4.25e10  , 15, {}
+  doEcho ecvt, 8.5e1    , 15, {}
+  echo "\n\e[7mExp23\e[m"
+  doEcho ecvt, 1.234e101, 15, {fcExp23}
+  doEcho ecvt,-4.25e10  , 15, {fcExp23}
+  doEcho ecvt, 8.5e1    , 15, {fcExp23}
+  echo "\n\e[7mExp23+\e[m"
+  doEcho ecvt, 1.234e101, 15, {fcExp23, fcExpPlus}
+  doEcho ecvt,-4.25e10  , 15, {fcExp23, fcExpPlus}
+  doEcho ecvt, 8.5e1    , 15, {fcExp23, fcExpPlus}
+  echo "\n\e[7mExp3+, overall +\e[m"
+  doEcho ecvt, 1.234e101, 15, {fcPlus, fcExp3, fcExpPlus}
+  doEcho ecvt,-4.25e10  , 15, {fcPlus, fcExp3, fcExpPlus}
+  doEcho ecvt, 8.5e1    , 15, {fcPlus, fcExp3, fcExpPlus}
+  echo "\n\e[7mExp3+, overall +, Pad0 - always same strlen\e[m"
+  doEcho ecvt, 1.234e101, 15, {fcPlus, fcPad0, fcExp3, fcExpPlus}
+  doEcho ecvt,-4.25e10  , 15, {fcPlus, fcPad0, fcExp3, fcExpPlus}
+  doEcho ecvt, 8.5e1    , 15, {fcPlus, fcPad0, fcExp3, fcExpPlus}
+  echo "\n\e[7mecvt 0prec\e[m"
+  doEcho ecvt, 1.234e101, 0, {}
+  doEcho ecvt,-4.25e10  , 0, {}
+  doEcho ecvt, 8.5e1    , 0, {}
+  echo "\n\e[7mecvt 0prec TrailDot0\e[m"
+  doEcho ecvt, 1.234e101, 0, {fcTrailDot0}
+  doEcho ecvt,-4.25e10  , 0, {fcTrailDot0}
+  doEcho ecvt, 8.5e1    , 0, {fcTrailDot0}
+  echo "\n\e[7mecvt 0prec TrailDot\e[m"
+  doEcho ecvt, 1.234e101, 0, {fcTrailDot}
+  doEcho ecvt,-4.25e10  , 0, {fcTrailDot}
+  doEcho ecvt, 8.5e1    , 0, {fcTrailDot}
