@@ -9,8 +9,15 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import std/[os, terminal, strutils, dynlib, times, stats, math]
+import std/[os, strutils, dynlib, times, stats, math]
 type csize = uint
+
+proc isatty(f: File): bool =
+  when defined(posix):
+    proc isatty(fildes: FileHandle): cint {.importc:"isatty",header:"unistd.h".}
+  else:
+    proc isatty(fildes: FileHandle): cint {.importc:"_isatty",header:"io.h".}
+  result = isatty(getFileHandle(f)) != 0'i32
 
 proc perror*(x: cstring, len: int, err=stderr) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
