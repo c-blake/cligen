@@ -132,7 +132,17 @@ proc commentStrip*(s: string): string =
   else: result = s
 
 from cligen/mslice import pow10
-from math import isNaN, `^`, floor, log10, isnan
+import math # isNaN, `^`, floor, log10
+when not declared(isNaN):
+  when defined(c) or defined(cpp):
+    proc c_isnan(x: float): bool {.importc: "isnan", header: "<math.h>".}
+  func isNaN(x: SomeFloat): bool {.inline.} =
+    template fn: untyped = result = x != x
+    when nimvm: fn()
+    else:
+      when defined(js): fn()
+      else: result = c_isnan(x)
+
 type f8s {.packed.} = object
   frac {.bitsize: 52}: uint64
   expo {.bitsize: 11}: uint16
@@ -340,7 +350,7 @@ proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
   ## only rounding guaranteeing numbers re-parse into floats.
   when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
-  if abs(err) == 0.0 or err.isnan:      # cannot do much here
+  if abs(err) == 0.0 or err.isNaN:      # cannot do much here
     result[0].ecvt val, 16, fcOpts; result[1].ecvt err, 16, fcOpts; return
   let sigDigs = sigDigs - 1             # adjust to number after '.' in sciNote
   result[1].ecvt err, sigDigs, fcOpts
@@ -352,7 +362,7 @@ proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
     return
   var places = val.abs.log10.floor.int - (parseInt(result[1][e+1..^1])-(e-d-1))
   if places < 0:  # statistical 0 -> explicit 0
-    if val.isnan or val*0.5 == val: result[0].ecvt val, 16, fcOpts
+    if val.isNaN or val*0.5 == val: result[0].ecvt val, 16, fcOpts
     else: result[0] = "0.e0"
   else:
     result[0].ecvt val, places, fcOpts
