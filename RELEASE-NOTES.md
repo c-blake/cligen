@@ -1,5 +1,103 @@
 RELEASE NOTES
 =============
+
+Version: 1.5.19
+---------------
+  Add fast `ecvt`, `fcvt`, and pretty `fmtUncertain`.
+
+Version: 1.5.18
+---------------
+  Speed-up compilation time for some use cases like `rp`.
+
+Version: 1.5.17
+---------------
+  `parseInt` didn't do negatives; `parseFloat` was quite hosed. All better now
+  and with a test suite.
+
+Version: 1.5.16
+---------------
+  Avoid regular expr abbreviation connotations of `rx` by renaming to `rp`.
+
+Version: 1.5.15
+---------------
+  Sorry for the slight 10 vs 10'u64 hiccup.
+
+Version: 1.5.14
+---------------
+      
+  Add `fmtUncertainMerged` - The Particle Data Group's neatly terse uncertainty
+  notation { 12.34(56) = 12.34 +- 0.56 - 2 significant figures in the error and
+  aligned digits.}. This scales to high & low exponents quite well. { One might
+  argue a '/' could be clearer & shorter, as in 12.34/56, but this is non-std. }
+
+  Add fast `MSlice` number parsers for `int` & `float`.  These do NOT need to
+  first convert to a Nim `string`.
+
+  Add `rx` - a row executor/row processer program generator that allows a work
+  flow like "awk one-liners" but for Nim programs..So, a delay to compile, but
+  then static typing & much better (fully compiled/optimized) performance on
+  meso-scale data like a few 100 million records.
+
+Version: 1.5.13
+---------------
+  Add a connected components module `conncomp`; tweak a strUt/joins
+
+Version: 1.5.12
+---------------
+  Add cligen/print module to satisfy forum requests.  While a bit out of place
+  this addition got multiple hearts.
+
+Version: 1.5.11
+---------------
+  Add some utility code to `cligen/strUt` to suppress meaningless digits "the
+  smart way" (or at least the way particle physicists have been doing it for >30
+  years). { `fmtUncertain` scales fabulously to "precise" values, but is about
+  as clunky as +- for values very uncertain relative to their mean. }
+
+Version: 1.5.10
+---------------
+  Both start & stop ANSI SGR sequences can be included in all the emitted help.
+  This can make it easier to automate translation to troff for man page
+  contexts. Also add a few new `osUt` utility APIs (`file(Older|Newer)Than`,
+  `touch`, `walkPatSorted`, `clearDir`, `autoOpen`, `autoClose`, `isatty(fd)`}
+
+Version: 1.5.9
+--------------
+    Fix bug in `cligen/argcvt` parsing enums where one could not prefix another
+    (e.g. `blue` & `bluegreen` could not be in the same enum set).
+
+Version: 1.5.8
+--------------
+  As Nim-1.6 approaches, tweak code to no longer generate warnings for the
+  library itself or for example programs. Might be one or two not very hot code
+  paths lingering.
+
+Version: 1.5.7
+--------------
+  Better support CLuser-written config files via both `cligen`-included
+  `cligen/clCfg(Init|Toml)` and CLauthor included `cligen/mergeCfgEnv` checking
+  decls before import to block compiler issued duplicate import warnings.
+
+  Also, update `cligen/clCfg(Init|Toml)` to find a simple `~/.config/cligen`
+  file as opposed to only finding `~/.config/cligen/` directories. (Might be
+  helpfully simpler for conscientious objectors to `LC_THEME` complexity.)
+
+Version: 1.5.6
+--------------
+  Get most warnings suppressed in preparation for hopefully soon Nim-1.6.0.
+  (`TaintedString` deprecations will probably warn until removed and then just
+  go away since I try to support back to Nim-0.19.2).
+
+  Also add some very easy to use time queries in `cligen/posixUt` and warn if
+  `int` is not 64-bits.
+
+Version: 1.5.5
+--------------
+  Mostly `procpool.noop` to ease life when there is no result to write back and
+  then inside `osUt` we grew `popenr`, `popenw` & `pclose` and also `mkdirTo` &
+  `mkdirOpen`, and `replacingUrite` (for `nio/lp2term`) and finally an ARM64
+  portability thing for `cligen/magic`. (A few doc clean-ups, too.) 
+
 Version: 1.5.4
 --------------
   Fix a bug in mfile.mSlices; Add splitPathName for the *longest* extension
