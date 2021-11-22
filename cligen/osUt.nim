@@ -325,7 +325,7 @@ proc popenw*(cmd, path: string, bufSize = -1): File =
 proc pclose*(f: File, cmd: string): cint =
   ## Clean-up for `popen[rw]`.  Returns exit status of popen()d command.
   when defined(Windows):
-    proc pclose(a: File): File {.importc: "_pclose".}
+    proc pclose(a: File): cint {.importc: "_pclose".}
   if cmd.len > 0: f.pclose else: (f.close; 0.cint) # WEXITSTATUS(result)
 
 proc fileNewerThan*(a, b: string): bool =
