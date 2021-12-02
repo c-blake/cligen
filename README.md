@@ -28,16 +28,17 @@ Options:
   -v, --verb     bool    false  set verb
 ```
 That's it!  No specification language/complex arg parsing API/Nim pragma tags
-to learn.  If you aren't sold already, here is more
-[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+to learn.  Installing can be as simple as `git clone <thisRepo>` and `nim c
+--path:whereYouClonedTo myProgram.nim`.  If you aren't sold already, here is
+more [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 
 The `help` column is filled with generic `set foo` placeholders by default, but
 you can override it using parameter-keyed association-list literals:
 ```nim
 dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
 ```
-The same goes for the `short` versions of the CLI arguments.  More on that in the
-"Common Overrides" section below.
+The same goes for the `short` versions of the CLI arguments.  More on that in
+the "Common Overrides" section below.
 
 Other invocations (`./fun --foo 2 -b=2.7 --baz:"ho"...`) work as expected.
 
