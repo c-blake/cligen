@@ -34,6 +34,10 @@ proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
 proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
        newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
 
+template impConstAs*(T: untyped; path: string; name, nimName): untyped{.dirty.}=
+  var `loc name` {.header: path, importc: astToStr(name) .}: `T`
+  let nimName* {.inject.} = `loc name`
+
 template impConst*(T: untyped, path: string, name: untyped): untyped {.dirty.} =
   var `loc name` {.header: path, importc: astToStr(name) .}: `T`
   let name* {.inject.} = `loc name`
@@ -609,3 +613,13 @@ proc match*(m: Mode|uint16, kinds: set[FileKind]): bool {.inline.} =
   if fkChr  in kinds and m.S_ISCHR:  return true
   if fkPipe in kinds and m.S_ISFIFO: return true
   if fkSock in kinds and m.S_ISSOCK: return true
+
+impConstAs(cint, "sys/mman.h", POSIX_MADV_NORMAL    , MADV_NORMAL    )
+impConstAs(cint, "sys/mman.h", POSIX_MADV_SEQUENTIAL, MADV_SEQUENTIAL)
+impConstAs(cint, "sys/mman.h", POSIX_MADV_RANDOM    , MADV_RANDOM    )
+impConstAs(cint, "sys/mman.h", POSIX_MADV_WILLNEED  , MADV_WILLNEED  )
+impConstAs(cint, "sys/mman.h", POSIX_MADV_DONTNEED  , MADV_DONTNEED  )
+proc madvise*(mem: pointer, len: int, advice: cint): int =
+  ## Define briefer/old school `madvise` in terms of the more portable
+  ## `(posix|POSIX)_` constructs.
+  int(posix_madvise(mem, len, advice))
