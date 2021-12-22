@@ -55,6 +55,10 @@ proc toString*(ms: MSlice, s: var string) {.inline.} =
   if ms.len > 0:
     copyMem(addr(s[0]), ms.mem, ms.len)
 
+template toOpenArray*[T](ms: MSlice): untyped =
+  ## Allow easy conversion `mySlice.toOpenArray[char]`
+  toOpenArray[T](cast[ptr UncheckedArray[T]](ms.mem), 0, ms.len - 1)
+
 proc `$`*(ms: MSlice): string {.inline.} =
   ## Return a Nim string built from an MSlice.
   ms.toString(result)
@@ -142,6 +146,16 @@ proc msplit*(mslc: MSlice, fs: var seq[MSlice], sep=' ', eat='\0') =
     inc(n)
   fs.setLen(n)
 
+proc firstN*(ms: MSlice, n=1, term='\n'): MSlice =
+  ## Return the first `n` `term`-terminated records, including all terminators.
+  result.mem = ms.mem
+  var i = 1
+  for s in ms.mSlices(term):
+    if i >= n:
+      result.len = s.mem +! s.len +! 1 -! ms.mem
+      break
+    inc i
+
 const wspace* = {' ', '\t', '\v', '\r', '\l', '\f'}  ## == strutils.Whitespace
 
 proc charEq(x, c: char): bool {.inline.} = x == c
@@ -151,6 +165,14 @@ proc charIn(x: char, c: set[char]): bool {.inline.} = x in c
 proc mempbrk*(s: pointer, accept: set[char], n: csize): pointer {.inline.} =
   for i in 0 ..< int(n):  #Like cstrpbrk or cmemchr but for mem
     if (cast[cstring](s))[i] in accept: return s +! i
+
+proc strip*(s: MSlice, cset=wspace): MSlice {.inline.} =
+  result = s
+  while result.len > 0 and cast[cstring](result.mem)[0] in cset:
+    result.mem = result.mem +! 1
+    result.len -= 1
+  while result.len > 0 and cast[cstring](result.mem)[result.len-1] in cset:
+    result.len -= 1
 
 proc mem(s: string): pointer = cast[pointer](cstring(s))
 
