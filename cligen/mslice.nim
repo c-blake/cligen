@@ -474,28 +474,52 @@ proc nSplit*(n: int, data: MSlice, sep = '\n'): seq[MSlice] =
       eos = result[^1].eos              # update End Of Slice
     result[^1].len = data.len - (result[^1].mem -! data.mem)
 
-proc makeDigits(): array[256, char] =
+proc toSeq(sset: set[uint8]): seq[uint8] =
+  for s in sset: result.add s
+proc makeDigits(cset: set[char], vals: seq[uint8]): array[256, char] =
   for i in 0..255: result[i] = chr(255)
-  for i in {'0'..'9'}: result[ord(i)] = chr(ord(i) - ord('0'))
-const digits10 = makeDigits()
-
-proc parseInt*(s: MSlice; eoNum: ptr int=nil): int =
-  ## parse `MSlice` as an integer without first creating a string; error => 0.
-  ## Passing some `eoNum.addr` & checking `eoNum==s.len` tests this condition.
+  var i = 0
+  for c in cset: result[ord(c)] = char(vals[i]); inc i
+const digits2  = makeDigits({'0', '1'}, {0'u8, 1'u8}.toSeq)
+const digits8  = makeDigits({'0'..'7'}, {0'u8..7'u8}.toSeq)
+const digits10 = makeDigits({'0'..'9'}, {0'u8..9'u8}.toSeq)
+const digits16 = makeDigits({'0'..'9', 'A'..'F', 'a'..'f'},
+                      {0'u8..9'u8, 10'u8..15'u8}.toSeq & {10'u8..15'u8}.toSeq)
+var dummyInt: int
+template parseInts(s, base, digits, eoNum): untyped =
   var neg = false
-  var i = 0; var x = 0
+  var i = 0; var x = 0'u
   if s.len > 0:
     if   s[0] == '-': neg = true; inc i
     elif s[0] == '+': inc i
   while i < s.len:
-    let dig = digits10[ord(s[i])].int
-    if dig >= 10: break
-    x *= 10
+    let dig = digits[ord(s[i])].uint
+    if dig >= base: break
+    x *= base
     x += dig
-    inc i
-  if not eoNum.isNil: eoNum[] = i
-  result = if i == s.len: (if neg: -x else: x)
-           else: 0
+    inc i                               # below `not` assumes 2's complement..
+  eoNum = i                             #..&does not handle overflow gracefully.
+  cast[int](if i == s.len: (if neg: 1'u + not x else: x) else: 0'u)
+
+proc parseBin*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+  ## Parse `s` as a binary int without first creating a string; error => 0.
+  ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
+  result = parseInts(s, 2'u, digits2, eoNum)
+
+proc parseOct*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+  ## Parse `s` as an octal int without first creating a string; error => 0.
+  ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
+  result = parseInts(s, 8'u, digits8, eoNum)
+
+proc parseInt*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+  ## Parse `s` as a decimal int without first creating a string; error => 0.
+  ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
+  result = parseInts(s, 10'u, digits10, eoNum)
+
+proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+  ## Parse `s` as a hexadecimal int without first creating a string; error => 0.
+  ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
+  result = parseInts(s, 16'u, digits16, eoNum)
 
 # May seem big, BUT <15% of L1 & real life cache line usage light (sim OOMags).
 const pow10*: array[-308..308, float] = [
