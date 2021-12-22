@@ -55,9 +55,8 @@ proc toString*(ms: MSlice, s: var string) {.inline.} =
   if ms.len > 0:
     copyMem(addr(s[0]), ms.mem, ms.len)
 
-template toOpenArray*[T](ms: MSlice): untyped =
-  ## Allow easy conversion `mySlice.toOpenArray[char]`
-  toOpenArray[T](cast[ptr UncheckedArray[T]](ms.mem), 0, ms.len - 1)
+template toOpenArrayChar*(ms: MSlice): untyped =
+  toOpenArray(cast[ptr UncheckedArray[char]](ms.mem), 0, ms.len - 1)
 
 proc `$`*(ms: MSlice): string {.inline.} =
   ## Return a Nim string built from an MSlice.
@@ -439,9 +438,6 @@ proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
   for i in int(start)..last:
     if s[i] notin chars: return i
   return -1
-
-template toOpenArrayChar*(ms: MSlice): untyped =
-  toOpenArray(cast[ptr UncheckedArray[char]](ms.mem), 0, ms.len - 1)
 
 proc eos*(ms: MSlice): pointer {.inline.} = ms.mem +! ms.len
   ## Address 1 past last valid byte in slice
