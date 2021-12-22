@@ -557,11 +557,9 @@ const pow10*: array[-308..308, float] = [
 1e295, 1e296, 1e297, 1e298, 1e299, 1e300, 1e301, 1e302, 1e303, 1e304, 1e305,
 1e306, 1e307, 1e308] ## pow10[i] = 10^i as a float
 
-proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
+proc parseFloat*(s: MSlice; eoNum: var int = dummyInt): float =
   proc copysign(x, y: cdouble): cdouble {.importc, header: "<math.h>".}
-  template doReturn(j, x) =
-    if not eoNum.isNil: eoNum[] = j
-    return x
+  template doReturn(j, x) = eoNum = j; return x
   var decimal = 0'u64
   var j = 0
   if s.len < 1 or s.mem.isNil: doReturn(0, 0.0)
@@ -601,7 +599,7 @@ proc parseFloat*(s: MSlice; eoNum: ptr int=nil): float =
       exp = 10*exp + ord(s[j]) - ord('0')     # decimal exponent
       inc j
   exp = (ixPt - nDig + po10) + esgn * exp     # Combine implicit&explicit exp
-  if not eoNum.isNil: eoNum[] = s.len
+  eoNum = s.len
   copysign(decimal.float * pow10[exp], sgn)   # Assemble result
 
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
