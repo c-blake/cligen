@@ -577,7 +577,7 @@ const pow10*: array[-308..308, float] = [
 1e295, 1e296, 1e297, 1e298, 1e299, 1e300, 1e301, 1e302, 1e303, 1e304, 1e305,
 1e306, 1e307, 1e308] ## pow10[i] = 10^i as a float
 
-proc parseFloat*(s: MSlice; eoNum: var int = dummyInt): float =
+proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): float =
   proc copysign(x, y: cdouble): cdouble {.importc, header: "<math.h>".}
   template doReturn(j, x) = eoNum = j; return x
   var decimal = 0'u64
