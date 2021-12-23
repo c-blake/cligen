@@ -150,3 +150,14 @@ macro with*(ob: typed, fields: untyped, body: untyped): untyped =
       template `name`(): untyped {.used.} = `ob`.`name`
   result.add body
   result = nnkBlockStmt.newTree(newEmptyNode(), result)
+
+macro callsOn*(routineFirstsRest: varargs[untyped]) =
+  ## `callsOn f, [a, b,..], y, z, ..` generates `f(a,y,z,..); f(b,y,z,..); ..`.
+  ## You can use (), [], or {} for the list of first arguments.
+  if routineFirstsRest.len < 2 or
+     routineFirstsRest[1].kind notin {nnkTupleConstr, nnkBracket, nnkCurly}:
+    error "expecting routine, ()/[]/{}-list & however many routine args"
+  result = newStmtList()
+  for e in routineFirstsRest[1]:
+    result.add newCall(routineFirstsRest[0], e)
+    for a in routineFirstsRest[2..^1]: result[^1].add a
