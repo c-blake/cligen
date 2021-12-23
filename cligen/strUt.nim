@@ -167,7 +167,9 @@ func ceilLog10(x: float): int {.inline.} =
   if x == pow10[result - 1]:    # Exact powers of 10 need 1 more `dec result`..
     dec result                  #..BUT also get leadingDig == 1.  So, cmp
 
-let zeros = repeat('0', 308)
+proc initZeros(): array[308, char] =
+  for i in 0..<308: result[i] = '0'
+let zeros = initZeros()
 
 func decimalDigitTuples*(n=2): string =
   for i in 0 ..< 10^n:
