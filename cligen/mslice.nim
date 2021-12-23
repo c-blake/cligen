@@ -481,7 +481,7 @@ const digits8  = makeDigits({'0'..'7'}, {0'u8..7'u8}.toSeq)
 const digits10 = makeDigits({'0'..'9'}, {0'u8..9'u8}.toSeq)
 const digits16 = makeDigits({'0'..'9', 'A'..'F', 'a'..'f'},
                       {0'u8..9'u8, 10'u8..15'u8}.toSeq & {10'u8..15'u8}.toSeq)
-var doNotUse: int                       # Never use this! Need {.writeOnly.}?
+var doNotUse: int # Only for default value; Callers must provide `eoNum`.
 template parseInts(s, base, digits, eoNum): untyped =
   var neg = false
   var i = 0; var x = 0'u
