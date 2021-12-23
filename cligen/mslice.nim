@@ -481,7 +481,7 @@ const digits8  = makeDigits({'0'..'7'}, {0'u8..7'u8}.toSeq)
 const digits10 = makeDigits({'0'..'9'}, {0'u8..9'u8}.toSeq)
 const digits16 = makeDigits({'0'..'9', 'A'..'F', 'a'..'f'},
                       {0'u8..9'u8, 10'u8..15'u8}.toSeq & {10'u8..15'u8}.toSeq)
-var dummyInt: int
+var doNotUse: int                       # Never use this! Need {.writeOnly.}?
 template parseInts(s, base, digits, eoNum): untyped =
   var neg = false
   var i = 0; var x = 0'u
@@ -497,22 +497,22 @@ template parseInts(s, base, digits, eoNum): untyped =
   eoNum = i                             #..&does not handle overflow gracefully.
   cast[int](if i == s.len: (if neg: 1'u + not x else: x) else: 0'u)
 
-proc parseBin*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+proc parseBin*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a binary int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
   result = parseInts(s, 2'u, digits2, eoNum)
 
-proc parseOct*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+proc parseOct*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as an octal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
   result = parseInts(s, 8'u, digits8, eoNum)
 
-proc parseInt*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+proc parseInt*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a decimal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
   result = parseInts(s, 10'u, digits10, eoNum)
 
-proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): int =
+proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a hexadecimal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
   result = parseInts(s, 16'u, digits16, eoNum)
@@ -577,7 +577,7 @@ const pow10*: array[-308..308, float] = [
  1e295, 1e296, 1e297, 1e298, 1e299, 1e300, 1e301, 1e302, 1e303, 1e304, 1e305,
  1e306, 1e307, 1e308] ## pow10[i] = 10^i as a float
 
-proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = dummyInt): float =
+proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): float =
   proc copysign(x, y: cdouble): cdouble {.importc, header: "<math.h>".}
   template doReturn(j, x) = eoNum = j; return x
   var decimal = 0'u64
