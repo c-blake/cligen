@@ -35,6 +35,7 @@ proc rp(prelude="", begin="", test="true", stmts:seq[string], epilog="",
   ##   **rp 'let x=f(0)' 'echo (1+x)/x'**              # cache field 0 parse
   ##   **rp -d, -fa,b,c 'echo s[a],f(b)+i(c).float'**  # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
+  if stmts.len == 0: stderr.write "rp -h for help\n"; return 1
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
   let check  = if fields.len == 0: "    " elif not uncheck: """
     if nr == 0:
@@ -94,4 +95,4 @@ when isMainModule:
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
                      "uncheck" : "do not check&skip header row vs fields",
-                     "maxSplit": "max split; 0 => unbounded"}, cmdName="rp"
+                     "maxSplit": "max split; 0 => unbounded"}
