@@ -20,8 +20,8 @@ proc doStat(dfd: cint, path: string; nmAt: int, st: var Statx; Deref,
   if not quiet: stderr.write "newest: \"", path, "\" ", strerror(errno), '\n'
 
 proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
-                  quiet=false, xdev=false, outEnd="\n", file="", delim='\n',
-                  eof0=false, paths: seq[string]) =
+                  kinds={fkFile}, quiet=false, xdev=false, outEnd="\n",
+                  file="", delim='\n', eof0=false, paths: seq[string]) =
   ## Echo ended by *outEnd* <= *n* newest files in file *time* order
   ## `{-}[bamcv]` for Birth, Access, Mod, Ctime, Version=max(MC); { `-` | CAPITAL
   ## means ***oldest*** }.  Examined files = UNION of *paths* + optional
@@ -40,9 +40,10 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
       if dt != DT_UNKNOWN:                      # unknown here => disappeared
         if (dt==DT_LNK and Deref and doStat(dfd,path,nmAt,lst,Deref,quiet)) or
            lst.stx_nlink != 0 or doStat(dfd,path,nmAt,lst,Deref,quiet):
-          let tp = (timeStamp(lst, tO.tim, tO.dir), path)
-          if q.len < n  : q.push(tp)
-          elif tp > q[0]: discard q.replace(tp)
+          if lst.stx_mode.match(kinds):
+            let tp = (timeStamp(lst, tO.tim, tO.dir), path)
+            if q.len < n  : q.push(tp)
+            elif tp > q[0]: discard q.replace(tp)
     do: discard
     do: discard
     do: recFailDefault("newest", path)
@@ -57,6 +58,7 @@ when isMainModule:  # Exercise this with an actually useful CLI wrapper.
                     "chase"  : "chase symlinks to dirs in recursion",
                     "xdev"   : "block recursion across device boundaries",
                     "Deref"  : "dereference symlinks for file times",
+                    "kinds"  : "i-node type like find(1): [fdlbcps]",
                     "quiet"  : "suppress file access errors",
                     "outEnd" : "output record terminator",
                     "file"   : "optional input (\"-\"|!tty=stdin)",
