@@ -48,8 +48,8 @@ $1 # {prelude}
 $2 
 proc main() =
   var s: seq[MSlice] # CREATE TERSE NOTATION: row/s/i/f/nr/nf
-  func i(j: int): int   {.used.} = parseInt(s[j])
-  func f(j: int): float {.used.} = parseFloat(s[j])
+  proc i(j: int): int   {.used.} = parseInt(s[j])
+  proc f(j: int): float {.used.} = parseFloat(s[j])
   var nr = 0
   let rpNmSepOb = initSep("$3") # {delim}
 $4 # {begin}
