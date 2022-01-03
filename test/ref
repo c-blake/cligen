@@ -871,9 +871,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(825, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(812, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(273, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(829, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(816, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(274, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [required&optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -922,6 +922,20 @@ Options:
   -u=, --usage=    int     1           set usage
   -c=, --cmdline=  string  "bad name"  set cmdline
   -g=, --getopt=   string  "ho"        set getopt
+
+==> test/UserError.out <==
+Usage:
+  demo [optional-params] [args: string...]
+demo entry point with varied, meaningless parameters.  A Nim invocation might
+be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
+--alpha=2 hi ho" (assuming executable gets named demo).
+Options:
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -a=, --al-pha=  int     1      set al_pha
+  -b=, --be-ta=   float   2.0    set be_ta
+  -v, --verb      bool    false  set verb
+  -i=, --item=    string  ""     set item
 
 ==> test/Version.out <==
 Usage:

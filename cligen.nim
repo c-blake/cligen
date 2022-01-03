@@ -44,9 +44,10 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     widthEnv*:    string         ## name of environment var for width override
     sigPIPE*:     ClSIGPIPE      ## `dispatch` use allows end-user SIGPIPE ctrl
 
-  HelpOnly*    = object of CatchableError
-  VersionOnly* = object of CatchableError
-  ParseError*  = object of CatchableError
+  HelpOnly*    = object of CatchableError ## Ok Ctl Flow Only For --help
+  VersionOnly* = object of CatchableError ## Ok Ctl Flow Only For --version
+  ParseError*  = object of CatchableError ## CL-Syntax Err from generated code
+  HelpError*   = object of CatchableError ## User-Syntax/Semantic Err; ${HELP}
 
 {.push hint[GlobalVar]: off.}
 var clCfg* = ClCfg(
@@ -764,7 +765,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       if `prsOnlyId` or (cast[pointer](`setByParseId`) != cgSetByParseNil and
           `setByParseId`[].numOfStatus(ClNoCall) > 0):
         return
-      `callIt`
+      try: `callIt`
+      except HelpError as e:
+        stderr.write e.msg % ["HELP", `apId`.help]
+        raise newException(ParseError, "Bad parameter user-syntax/semantics")
   when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 template discarder[T](a: T): void = # discard if possible, else identity;  Name
