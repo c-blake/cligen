@@ -299,13 +299,13 @@ proc initSep*(seps: string): Sep =
   ## repeats, separators fold while value diversity implies char set separation.
   ## A magic val `"white"` = folding white space chars.  E.g.: `","` = strict
   ## CSV, `"<SPC><SPC>"` = folding spaces `" "` = strict spaces.
-  if seps == "white":           #User can use other permutation if cset needed
+  if seps.len == 0:
+    raise newException(ValueError, "Empty seps disallowed")
+  elif seps[0] == 'w':          #User can use other permutation if cset needed
     result.repeat = true
     result.chrDlm = ' '
     result.setDlm = wspace
     result.n      = wspace.card #=6 unless wspace defn changes
-  elif seps.len == 0:
-    raise newException(ValueError, "Empty seps disallowed")
   else:
     for d in seps: result.setDlm.incl d
     result.n = result.setDlm.card
