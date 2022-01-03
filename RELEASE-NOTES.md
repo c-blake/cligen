@@ -1,6 +1,34 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.20
+---------------
+
+  Began a scope discussion: https://github.com/c-blake/cligen/discussions/201
+
+  Add a new exception type for the main CLI generation framework that allows
+  raising user syntax/semantic errors when the CLauthor controls (or explicitly
+  wraps) an API.  Either a terse message or the full help string interpolated in
+  is possible (via ${HELP}).  See `test/UserError.nim` for how to use.  This
+  feature vaguely relates to these issues:
+    https://github.com/c-blake/cligen/issues/160
+    https://github.com/c-blake/cligen/issues/180
+    https://github.com/c-blake/cligen/issues/135
+
+  Add `madvise` API to `posixUt`.
+
+  Add `strip(MSlice)`, `firstN(MSlice)` to `mslice`;  Make w\* abbreviate
+  "white" in mslice.initSep; Have `cligen/mslice.parseFloat`/ints take sum type
+  including `openArray[char]` for more flexible deployment.
+
+  Make cligen/strUt.(ecvt|fcvt) thread safety analyzer-safe with a compile-time
+  proc to init `zeros` instead of using `strutils.repeat`.
+
+  Add a convenience first param broadcaster macro `macUt.callsOn`.
+
+  Rename `rp --test` to `where` and fix a few bugs (`pclose` on Windows, `isNan`
+  for Nim<1.6, `textAttrRegisterAliases`, `tcc`-compat `osUt`).
+
 Version: 1.5.19
 ---------------
   Add fast `ecvt`, `fcvt`, and pretty `fmtUncertain`.
