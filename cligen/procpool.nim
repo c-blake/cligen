@@ -88,7 +88,7 @@ proc initFilter(work: proc(), bufSz: int): Filter {.inline.} =
     discard close(fds1[1])
 
 proc initProcPool*(work: proc(); frames = frames0; jobs = 0;
-                   bufSize = 16384): ProcPool {.noInit.} =
+                   bufSize = 16384): ProcPool {.noinit.} =
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdset
   for i in 0 ..< result.len:                          # Create Filter kids

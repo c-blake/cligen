@@ -589,14 +589,14 @@ proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): float =
   case s[j]                                   # Process 1st byte
   of '-': sgn = -1.0; inc j
   of '+': inc j                               # 1st do w/+-inf,NAN,just,[-+nNiI]
-  of 'N': (if s.len > 2 and s[1]=='A' and s[2]=='N': doReturn(s.len, NAN))
-  of 'n': (if s.len > 2 and s[1]=='a' and s[2]=='n': doReturn(s.len, NAN))
-  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, INF))
-  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, INF))
+  of 'N': (if s.len > 2 and s[1]=='A' and s[2]=='N': doReturn(s.len, NaN))
+  of 'n': (if s.len > 2 and s[1]=='a' and s[2]=='n': doReturn(s.len, NaN))
+  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, Inf))
+  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, Inf))
   else: discard
   case s[j]
-  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, sgn*INF))
-  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, sgn*INF))
+  of 'I': (if s.len > 2 and s[1]=='N' and s[2]=='F': doReturn(s.len, sgn*Inf))
+  of 'i': (if s.len > 2 and s[1]=='n' and s[2]=='f': doReturn(s.len, sgn*Inf))
   else: discard
   while j < s.len:                            #Find '.'; process dig build scale
     if s[j] < '0' or s[j] > '9':              #   a non-decimal digit

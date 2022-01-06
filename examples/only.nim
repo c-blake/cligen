@@ -8,7 +8,7 @@ const e2Flag = {  # CSV & json missing; Maybe cligen/magic needs updating?
   elf     : MAGIC_NO_CHECK_ELF     , soft    : MAGIC_NO_CHECK_SOFT    ,
   tar     : MAGIC_NO_CHECK_TAR     , text    : MAGIC_NO_CHECK_TEXT    }.toTable
 
-var gPats: seq[RegEx]
+var gPats: seq[Regex]
 var gFlags = cint(0)
 var gAll, gNo: bool                           # Support Boolean AND/OR/NOT
 

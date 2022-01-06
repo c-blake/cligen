@@ -483,7 +483,7 @@ iterator recEntries*(dir: string; st: ptr Stat=nil; dt: ptr int8=nil,
   var id: DevIno                                      #Local full identity
   if statOk(dir,st,err) and S_ISDIR(st[].st_mode) or  #Ensure target is a dir
      (follow and S_ISLNK(st[].st_mode)):
-    var did {.noInit.}: HashSet[DevIno]               #..and also init `did`
+    var did {.noinit.}: HashSet[DevIno]               #..and also init `did`
     if follow:                                        #..with its dev,ino.
       when (NimMajor,NimMinor,NimPatch) < (0,20,0): did = initSet[DevIno](8)
       else: did = initHashSet[DevIno](8)              #Did means "put in stack"

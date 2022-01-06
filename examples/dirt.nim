@@ -28,7 +28,7 @@ proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
   for root in roots:
     var dirs = @[initHeapQueue[int64]()]      # HeapQueue.pop is *MINIMUM*
     forPath(root, 0, lstats=true, false, xdev, false, err,
-            depth, path, nmAt, ino, dt, lst, dfd, dst, did):
+            depth, path, nmAt, ino, dt, lSt, dfd, dst, did):
       if dt != DT_LNK:                        # Always:
         dirs[^1].push -toInt64(lSt.stx_mtime) #   Track max age
     do:                                       # Pre-recurse:
