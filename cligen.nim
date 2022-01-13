@@ -495,8 +495,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parNm = `aliasRefL`; `apId`.parSh = `aliasRefS`
         `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
         `tabId`.add(argHelp("", `apId`) & `aliasRefH`) )
-    let argStart = if mandatory.len > 0: "[required&optional-params]" else:
-                                         "[optional-params]"
     let posHelp = if posIx != -1:
                     let posNm = optionNormalize($fpars[posIx][0])
                     if posNm in helps: helps[posNm][1]
@@ -504,7 +502,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                       let typeName = fpars[posIx][1][1].strVal
                       "[" & $(fpars[posIx][0]) & ": " & typeName & "...]"
                   else: ""
-    var args = argStart & " " & posHelp
     for i in 1 ..< len(fpars):
       let idef = fpars[i]
       let sdef = spars[i]
@@ -544,9 +541,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                 else:
                   (if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr) &
                     (if `cf`.use.len > 0: `cf`.use else: `usageId`)
+      let argStart = "[" & (if `mandatory`.len>0: `apId`.val4req&"," else: "") &
+                     "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
                            "command", hl("cmd", `cName`),
-                           "args",    hl("args", `args`),
+                           "args",    hl("args", argStart & " " & `posHelp`),
                            "options", addPrefix(`prefixId` & "  ",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
@@ -758,7 +757,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           for m in `mandId`:
             `setByParseId`[].add((m, "", "Missing " & m, clMissing))
         if not `prsOnlyId`:
-          stderr.write "Missing these required parameters:\n"
+          stderr.write "Missing these " & `apId`.val4req & " parameters:\n"
           for m in `mandId`: stderr.write "  ", m, "\n"
           stderr.write "Run command with --help for more details.\n"
           raise newException(ParseError, "Missing one/some mandatory args")

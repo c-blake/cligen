@@ -1,6 +1,18 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.21
+---------------
+  - add "required" to [layout] section of ~/.config/cligen[/config]; Use val4req
+    consistently in its three places - error message, initial command summary,
+    and the help table.  This is useful since consistency eases learning, and
+    also nice for more rapid end-user understanding of unexpected program
+    failures (maybe when barely awake/etc.)  E.g., some can put ANSI SGR color
+    escapes in their config files to bold/red/blink/whatever while others can
+    not as per personal preference.  Meanwhile others can shrink "REQUIRED" to
+    the half-as-long "NEED" which could narrow help tables avoiding word wraps
+    and terminal size is also personal.
+
 Version: 1.5.20
 ---------------
 

@@ -52,10 +52,11 @@ proc apply(c: var ClCfg, path: string, plain=false) =
                        "Can only be \"colors\"\n"
       of "layout":
         case e.key.optionNormalize
-        of "widthenv": c.widthEnv = e.value
-        of "rowsep", "rowseparator": c.hTabRowSep = e.value
-        of "colgap", "columngap":    c.hTabColGap = parseInt(e.value)
+        of "widthenv":               c.widthEnv    = e.value
+        of "rowsep", "rowseparator": c.hTabRowSep  = e.value
+        of "colgap", "columngap":    c.hTabColGap  = parseInt(e.value)
         of "minlast", "leastfinal":  c.hTabMinLast = parseInt(e.value)
+        of "required", "val4req":    c.hTabVal4req = e.value
         of "cols", "columns":
           c.hTabCols.setLen 0
           for tok in e.value.split: c.hTabCols.add parseEnum[ClHelpCol](tok)
@@ -114,7 +115,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             "Expecting: singlestar, doublestar, triplestar, singlebquo, doublebquo\n"
       of "templates":
         case e.key.optionNormalize
-        of "usehdr", "usageheader" :  c.useHdr    = hl(e.value)
+        of "usehdr", "usageheader" : c.useHdr     = hl(e.value)
         of "use", "usage"          : c.use        = hl(e.value)
         of "usemulti", "usagemulti": c.useMulti   = hl(e.value)
         of "helpsyntax"            : c.helpSyntax = hl(e.value)

@@ -131,7 +131,7 @@ Options:
 
 ==> test/DistinctInt.out <==
 Usage:
-  main [required&optional-params] 
+  main [REQUIRED,optional-params] 
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
@@ -167,7 +167,7 @@ Options:
 
 ==> test/EchoResult.out <==
 Usage:
-  editDistanceAscii [required&optional-params] 
+  editDistanceAscii [REQUIRED,optional-params] 
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear memory
@@ -180,7 +180,7 @@ Options:
 
 ==> test/Enums.out <==
 Usage:
-  demo [required&optional-params] [args: string...]
+  demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
 Options:
   -h, --help                           print this cligen-erated help
@@ -327,7 +327,7 @@ Options:
 
 ==> test/ImplicitDefault.out <==
 Usage:
-  demo [required&optional-params] [args: string...]
+  demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
 be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
@@ -381,7 +381,7 @@ Options:
 
 ==> test/ListDecl.out <==
 Usage:
-  demo [required&optional-params] [args: int...]
+  demo [REQUIRED,optional-params] [args: int...]
 demo entry point with varied, meaningless parameters.
 Options:
   -h, --help                      print this cligen-erated help
@@ -392,7 +392,7 @@ Options:
 
 ==> test/Mandatory.out <==
 Usage:
-  demo [required&optional-params] [args: string...]
+  demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.  A Nim invocation might
 be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
@@ -406,7 +406,7 @@ Options:
 
 ==> test/MandatoryNoPos.out <==
 Usage:
-  demo [required&optional-params] 
+  demo [REQUIRED,optional-params] 
 demo entry point with varied, meaningless parameters.  A Nim invocation might
 be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 --alpha=2 hi ho" (assuming executable gets named demo).
@@ -589,12 +589,12 @@ Options:
 
 ==> test/ParseOnly.out <==
 fooParse:
-  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [required&optional-params] [rest: int...]\nOptions:\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [REQUIRED,optional-params] [rest: int...]\nOptions:\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
   (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
 would not have called foo
 User requested help.  Here you go
 Usage:
-  foo [required&optional-params] [rest: int...]
+  foo [REQUIRED,optional-params] [rest: int...]
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
@@ -704,7 +704,7 @@ where subcommand syntaxes are as follows:
 
 ==> test/ResultInt.out <==
 Usage:
-  editDistanceAscii [required&optional-params] 
+  editDistanceAscii [REQUIRED,optional-params] 
 Returns the edit distance between `a` and `b`.
 
 This uses the `Levenshtein`:idx: distance algorithm with only a linear memory
@@ -871,11 +871,11 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(829, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(816, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(828, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(815, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(274, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
-  demo [required&optional-params] [args: string...]
+  demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
 Options:
   -h, --help                        print this cligen-erated help
@@ -886,7 +886,7 @@ Options:
 
 ==> test/TwoNondefaultedSeqSwap.out <==
 Usage:
-  demo [required&optional-params] [ stuff (0 or more strings) ]
+  demo [REQUIRED,optional-params] [ stuff (0 or more strings) ]
 demo entry point with varied, meaningless parameters.
 Options:
   -h, --help                        print this cligen-erated help
