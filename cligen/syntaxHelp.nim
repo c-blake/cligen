@@ -15,10 +15,10 @@ BASIC CHEAT SHEET:
      synonyms for "true":  "on",  "yes", "t", "y", and "1"
      synonyms for "false": "off", "no",  "f", "n", and "0"
  * Multiple bool flags can combine: "-bfgVAL" means "-b -f -gVAL"
- * Non-option numeric values < 0 are ok but must be distinguished from options
-   by leading white space (usually requiring command shell quoting).
+ * Non-option numbers < 0 are ok but must be distinguished from options by
+   leading white space (usually needing command shell escaping or quotes).
 
-Unlike most CLI frameworks, cligen directly supports managing plural types like
+Unlike most CLI frameworks, cligen directly supports managing PLURAL TYPES like
 "strings" with UPDATING OPERATIONS: prepend ("^="), subtract/delete ("-="), as
 well as the usual append ("+=", "=", or repetition, as in "cc -Ipath1 -Ipath2").
  * Plural "strings" values for array[string] option "foo" with "A,B" default:
@@ -41,7 +41,7 @@ in ONE COMMAND PARAMETER.  DPSV is like regex substitution (eg., "/old/new" or
 Delimiting is strict (a trailing delimiter means an empty slot).  No delimiter
 ("--foo,=") clears while ",@=" works like a clear followed by append.
  * Example multi-value updates for strings option "foo" defaulting to "A,B":
-   --foo,=       => {}       ; clears
+   --foo,=       => {}       ; clears the collection
    --foo,=,C,D   => A,B,C,D  ; append multi
    --foo,=/C/    => A,B,C,"" ; ditto (note trailing delimiter effect)
    --foo,=,      => A,B,""   ; ditto
