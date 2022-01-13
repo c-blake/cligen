@@ -13,6 +13,9 @@ Version: 1.5.21
     the half-as-long "NEED" which could narrow help tables avoiding word wraps
     and terminal size is also personal.
 
+  - Build clean with `--styleCheck:hint --styleCheck:usages` (after @xflywind's
+    stdlib work).
+
 Version: 1.5.20
 ---------------
 
