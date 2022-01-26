@@ -224,7 +224,7 @@ type
          fcExp3,      ## 3 digit exp; 1e003 not 1e3; only for ecvt
          fcExpPlus    ## '+' on positive exponents; 1e+3 not 1e3; only for ecvt
 
-template efCvtNaNinf(s, x, xs, opts) =
+template fcSignNonFin(s, x, xs, opts) = # clear,add sign,deal w/maybe non-finite
   s.setLen 0
   var xs: f8s = cast[ptr f8s](x.unsafeAddr)[]
   if xs.sign == 1: s.add '-'
@@ -238,14 +238,12 @@ template efCvtNaNinf(s, x, xs, opts) =
     s.add (if fcCapital in opts: "INF" else: "inf")
     return                          # Ok; Now finite numbers
 
-proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
-  ## ANSI C/Unix ecvt: float -> D.PPPPe+EE; Most conversion in int arithmetic.
-  ## Accurate to ~52 bits with p=17.
-  efCvtNaNinf(s, x, xs, opts)           # `return`s for non-finite numbers
-  var i = s.len
+proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
+           opts={fcPad0}) {.inline.} =
+  i = s.len                             # MANTISSA
   s.setLen i + p + 70                   # easy bound: D.Pe-EEE=2+p+5 = p+7 B
   var decs {.noinit.}: array[24, char]
-  var e = int(0.30102999566398119521 * float(x.expo + 1))
+  e = int(0.30102999566398119521 * float(x.expo + 1))
   if x == 0: e = 0
   if x > 1: inc e
   var dig = uint64(x*pow10[1 - e])      # leading digit D
@@ -261,7 +259,7 @@ proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
     p   = 18                            # 64 bits==19 decs but sgn & round trick
   let frac = uint64((scl - dig.float)*pow10[p] + 0.5)
   if frac.float >= pow10[p]:            # 9.99 with prec 1 rounding up
-    inc dig
+    inc dig; bumped = true
   elif frac != 0:                       # post decimal digits to convert
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
@@ -275,6 +273,8 @@ proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
     else: s.setLen i + p; i = 1 + s.rfind({'1'..'9', '.'}); s.setLen i + 5
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
   elif fcTrailDot in opts: s[i] = '.'; inc i
+
+proc ecvtE(s: var string; i, e: var int; opts={fcPad0}) {.inline.} = # EXPONENT
   s[i] = (if fcCapital in opts: 'E' else: 'e'); inc i
   dec e                                 # adjust for first digit on [1,10)
   template eSign =
@@ -296,12 +296,32 @@ proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
     if   e < 10 : s[i] = chr(ord('0') + e); inc i
     elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
     else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]; inc i, 3
+
+proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
+  ## ANSI C/Unix ecvt: float -> D.PPPPe+EE; Most conversion in int arithmetic.
+  ## Accurate to ~52 bits with p=17.
+  s.fcSignNonFin x, xs, opts            # `return`s for non-finite numbers
+  var i, e: int; var bumped = false
+  s.ecvtM x, i, e, bumped, p, opts
+  s.ecvtE i, e, opts
   s.setLen i
+
+var doNotUseB = false
+var doNotUseI = 0
+proc ecvt2*(man, exp: var string; x: float; p=17, opts={fcPad0};
+            bumped: var bool=doNotUseB, expon: var int=doNotUseI) {.inline.} =
+  ## ANSI C/Unix ecvt: float -> D.PPPPe+EE; Most conversion in int arithmetic.
+  ## Accurate to ~52 bits with p=17.
+  man.fcSignNonFin x, xs, opts            # `return`s for non-finite numbers
+  var i, e: int
+  man.ecvtM x, i, e, bumped, p, opts; man.setLen i
+  i = 0; exp.setLen 6
+  exp.ecvtE i, e, opts; exp.setLen i; expon = if exp[1]=='-': -e else: e
 
 proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   ## ANSI C/Unix fcvt: float -> DDD.PPPP; Most conversion in integer arithmetic.
   ## Accurate to ~52 bits with p=17.
-  efCvtNaNinf(s, x, xs, opts)           # `return`s for non-finite numbers
+  fcSignNonFin(s, x, xs, opts)          # `return`s for non-finite numbers
   var decs {.noinit.}: array[24, char]
   let clX = ceilLog10(x)                # already +1 over C nDecimals
   var p10 = p
@@ -344,37 +364,40 @@ func sciNoteSplits(f: string; d, e: var int) {.inline.} =
     if   f[i] == '.': d = i     # Either d|e == 0 => parse error.
     elif f[i] == 'e': e = i; break
 
-proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
-  ## Format `err` to `sigDigs` (in ffScientific mode); then format `val` such
-  ## that the final decimal place of the two always matches.  E.g., (3141.5..,
-  ## 34.56..) => ("3.142e+03", "3.5e+01").  While useful on its own to suppress
-  ## noise digits, it is also a building block for nicer formats.  This is the
-  ## only rounding guaranteeing numbers re-parse into floats.
-  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
+proc fmtUncertainParts*(val, err: float,
+                        sigDigs=2): (string, string, string, string) =
+  ## This is a helper for nice formats.  ffScientific format `err` to `sigDigs`.
+  ## Then fmt `val` so that the final decimal place of both *always* aligns.
+  ## Eg., (3141.5.., 45.6..) => ("3.142", "e+03", "4.6", "e+01").  Alignment
+  ## means the difference in exponents should always be `sigDigs`.
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
-  if abs(err) == 0.0 or err.isNaN:      # cannot do much here
-    result[0].ecvt val, 16, fcOpts; result[1].ecvt err, 16, fcOpts; return
-  let sigDigs = sigDigs - 1             # adjust to number after '.' in sciNote
-  result[1].ecvt err, sigDigs, fcOpts
-  var d, e: int
-  result[1].sciNoteSplits d, e
-  if e == 0:                            # [+-]inf err => 0|self if val infinite
-    if abs(val / err) < 1e-6: result[0] = "0.e0"
-    else: result[0].ecvt val, 16, fcOpts
+  if abs(err) == 0.0 or err.isNaN:      # cannot do much here format & return
+    ecvt2 result[0], result[1], val, 16, fcOpts
+    ecvt2 result[2], result[3], err, 16, fcOpts
+    return                              # BELOW, note sigDigs=1+places past '.'
+  var expon: int
+  ecvt2 result[2], result[3], err, sigDigs-1, fcOpts, expon=expon
+  if result[3].len == 0:                # [+-]inf err => 0|self if val infinite
+    if abs(val/err) < 1e-6: result[0] = "0."; result[1] = "e0" # <=6 sigDigs
+    else: ecvt2 result[0], result[1], val, 16, fcOpts
     return
-  var places = val.abs.log10.floor.int - (parseInt(result[1][e+1..^1])-(e-d-1))
-  if places < 0:  # statistical 0 -> explicit 0
-    if val.isNaN or val*0.5 == val: result[0].ecvt val, 16, fcOpts
-    else: result[0] = "0.e0"
+  let places = val.abs.log10.floor.int - (expon - (sigDigs-1))
+  if places < 0:                        # statistical 0 -> explicit 0
+    if val.isNaN or val*0.5 == val: ecvt2 result[0], result[1], val, 16, fcOpts
+    else: result[0] = "0."; result[1] = "e0"
   else:
-    result[0].ecvt val, places, fcOpts
-# Trickiness here is that `val` may be rounded up to next O(magnitude) by ecvt,
-# shifting by 1 place.  Bumping `places` might BLOCK round up, BUT when this
-# happens we can just add a '0' if val is being rounded UP.
-    result[0].sciNoteSplits d, e
-    if d > 0 and e > 0:
-      if abs(parseFloat(result[0])) > abs(val) and result[0][e-1] in {'.', '0'}:
-        result[0] = result[0][0..<e] & "0" & result[0][e..^1]
+    var bumped = false
+    ecvt2 result[0], result[1], val, places, fcOpts, bumped=bumped
+    if bumped and result[1].len > 0: result[0].add '0' # Q: Chk for [1|2]=='.'?
+
+proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
+  ## Format `err` to `sigDigs` (in scientific notation); then format `val` such
+  ## that the final decimal place of both *always* aligns. Eg., (3141.5, 45.6)
+  ## => ("3.142e+03", "4.6e+01").
+  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
+  let (vm, ve, um, ue) = fmtUncertainParts(val, err, sigDigs)
+  result[0] = vm & ve
+  result[1] = um & ue
 
 proc addShifted(result: var string; sciNum: string; shift,decPtIx,expIx: int) =
   if shift < 0:     # NOTE: This only adds a shifted mantissa, not the exponent
