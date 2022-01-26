@@ -334,7 +334,7 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
   elif fcTrailDot in opts: s[i] = '.'; inc i
   s.setLen i
-                                      #*** FORMATTING UNCERTAIN NUMBERS ***
+                                        #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
 var pmDfl* = " +- "                     ## how plus|minus is spelled
@@ -439,7 +439,7 @@ proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl,
                    eLow = -2, eHigh = 4): string =
   ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
   ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
-  ## notation & formats a number & its uncertainty like `fmtUncertainSci`.
+  ## notation & formats a value & its uncertainty like `fmtUncertainSci`.
   let (val, err) = fmtUncertainRound(val, err, sigDigs)
   var dV, eV, dU, eU: int               # (Value, Uncertainty)*(decPtIx, expIx)
   val.sciNoteSplits dV, eV              # duplicative, but (relatively) cheap
@@ -463,7 +463,7 @@ proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl,
 proc fmtUncertainMerged*(val,err: float, sigDigs=2, eLow = -2, eHigh=4): string=
   ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
   ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
-  ## notation & formats a number & its uncertainty like `fmtUncertainMergedSci`.
+  ## notation & formats a value & its uncertainty like `fmtUncertainMergedSci`.
   let (val, err) = fmtUncertainRound(val, err, sigDigs)
   var dV, eV, dU, eU: int               # (Value, Uncertainty)*(decPtIx, expIx)
   val.sciNoteSplits dV, eV              # duplicative, but (relatively) cheap
