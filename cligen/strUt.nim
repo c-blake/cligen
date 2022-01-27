@@ -428,8 +428,8 @@ proc fmtUncertainMergedSci(vm, ve, um, ue: string, sigDigs=2, exp=true): string 
   if exp: result.add ve
 
 proc fmtUncertainMergedSci*(val, err: float, sigDigs=2): string =
-  ## Format in "Particle Data Group" Style with uncertainty digits merged into
-  ## the value and also in scientific-notation: val(err)e+NN with `sigDigs` of
+  ## Format in "Particle Data Group" Style with uncertainty digits merged after
+  ## the value and always in scientific-notation: val(err)e+NN with `sigDigs` of
   ## error digits.  E.g. "12.34... +- 0.56..." => "1.234(56)e+01" (w/sigDigs=2).
   let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
   fmtUncertainMergedSci(vm, ve, um, ue, sigDigs)
@@ -449,18 +449,16 @@ proc fmtUncertainSci*(val, err: float, sigDigs=2, pm=pmDfl): string =
   let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
   fmtUncertainSci(vm, ve, um, ue, sigDigs, pm)
 
-proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl,
-                   eLow = -2, eHigh = 4): string =
-  ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
-  ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
-  ## notation & formats a value & its uncertainty like `fmtUncertainSci`.
+proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl, e0 = -2..4): string =
+  ## Allow callers to tune exponent range near 0, `e0`, for non-sci notation
+  ## with maybe shifted digits and otherwise use `fmtUncertainSci` style.
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
   if ve.len == 0:
     return "(" & vm & ve & pm & um & ue & ")"
   let negAdj = if vm[0] == '-': 1 else: 0
   if exp == 0:                          # no shift; drop zero exp & strip parens
     result = fmtUncertainSci(vm, ve, um, ue, sigDigs, pm, exp=false)[1..^2]
-  elif eLow <= exp and exp <= eHigh:    # shift right | left
+  elif e0.a <= exp and exp <= e0.b:     # shift right | left
     result.addShiftPt vm, exp
     if result[^1] == '.': result.setLen result.len - 1
     result.add pm
@@ -470,15 +468,14 @@ proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl,
   else:                                 # too small/too big: sci notation
     result = fmtUncertainSci(val, err, sigDigs, pm)
 
-proc fmtUncertainMerged*(val,err: float, sigDigs=2, eLow = -2, eHigh=4): string=
-  ## This is printf-%g/gcvt-ish but allows callers to customize (eLow,eHigh) how
-  ## near 0 an *uncertainty-rounded val exponent* can be to get non-scientific
-  ## notation & formats a value & its uncertainty like `fmtUncertainMergedSci`.
+proc fmtUncertainMerged*(val,err: float, sigDigs=2, e0 = -2..4): string =
+  ## Allow callers to tune exponent range near 0, `e0`, for non-sci merged style
+  ## with maybe shifted digits and otherwise use `fmtUncertainMergedSci` style.
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
   if ve.len == 0: return vm & ve & "(" & um & ue & ")"
   if exp == 0:                          # no shift; drop zero exp
     result = fmtUncertainMergedSci(vm, ve, um, ue, sigDigs, exp=false)
-  elif eLow <= exp and exp <= eHigh:    # shift right | left
+  elif e0.a <= exp and exp <= e0.b:     # shift right | left
     result.addShiftPt vm, exp
     if result[^1] == '.': result.setLen result.len - 1
     result.add '('
