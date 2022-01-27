@@ -450,6 +450,16 @@ proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl, e0 = -2..4): string =
   else:                                 # too small/too big: sci notation
     result = fmtUncertainSci(val, err, sigDigs, pm)
 
+proc fmtUncertainVal*(val,err: float, sigDigs=2, e0 = -2..4): string =
+  ## Format like `fmtUncertain`, but only the value part.
+  let (vm, ve, _, _, exp) = fmtUncertainParts(val, err, sigDigs)
+  if ve.len == 0: return vm & ve
+  if exp == 0: result = vm              # no shift; drop zero exp
+  elif e0.a <= exp and exp <= e0.b:     # shift right | left
+    result.addShiftPt vm, exp
+    if result[^1] == '.': result.setLen result.len - 1
+  else: result = vm & ve                # too small/too big: sci notation
+
 # Now Particle Data Group styles
 proc fmtUncertainMergedSci(vm, ve, um, ue: string, sigDigs=2, exp=true): string =
   if ve.len == 0 or ue.len == 0:        # nan|inf in val|err
