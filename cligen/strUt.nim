@@ -409,14 +409,12 @@ proc addShiftPt(result: var string; sciNum: string; shift: int) =
   else:
     result.add sciNum
 
-proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
-  ## Format `err` to `sigDigs` (in scientific notation); then format `val` such
-  ## that the final decimal place of both *always* aligns. Eg., (3141.5, 45.6)
-  ## => ("3.142e+03", "4.6e+01").
+proc fmtUncertainRound*(val,err: float, sigDigs=2): (string,string){.deprecated:
+       "use ident(fmtUncertainParts)".} =
+  ## Format like (3141.5, 45.6) => ("3.142e+03", "4.6e+01").
   when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
   let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
-  result[0] = vm & ve
-  result[1] = um & ue
+  result[0] = vm & ve; result[1] = um & ue
 
 proc fmtUncertainMergedSci(vm, ve, um, ue: string, sigDigs=2, exp=true): string =
   if ve.len == 0 or ue.len == 0:        # nan|inf in val|err
