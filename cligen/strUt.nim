@@ -387,15 +387,6 @@ proc fmtUncertainParts*(val, err: float,
     ecvt2 result[0],result[1], val,places, fcOpts, bumped=bumped,expon=result[4]
     if bumped and result[1].len > 0: result[0].add '0' # Q: Chk for [1|2]=='.'?
 
-proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
-  ## Format `err` to `sigDigs` (in scientific notation); then format `val` such
-  ## that the final decimal place of both *always* aligns. Eg., (3141.5, 45.6)
-  ## => ("3.142e+03", "4.6e+01").
-  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
-  let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
-  result[0] = vm & ve
-  result[1] = um & ue
-
 proc addShiftPt(result: var string; sciNum: string; shift: int) =
   let decPtIx = sciNum.find('.')              # First [-+]X.YYY -> [-+]0.00XYYY
   let expIx   = sciNum.len
@@ -417,6 +408,15 @@ proc addShiftPt(result: var string; sciNum: string; shift: int) =
       result.add '.'
   else:
     result.add sciNum
+
+proc fmtUncertainRound*(val, err: float, sigDigs=2): (string, string) =
+  ## Format `err` to `sigDigs` (in scientific notation); then format `val` such
+  ## that the final decimal place of both *always* aligns. Eg., (3141.5, 45.6)
+  ## => ("3.142e+03", "4.6e+01").
+  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
+  let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
+  result[0] = vm & ve
+  result[1] = um & ue
 
 proc fmtUncertainMergedSci(vm, ve, um, ue: string, sigDigs=2, exp=true): string =
   if ve.len == 0 or ue.len == 0:        # nan|inf in val|err
