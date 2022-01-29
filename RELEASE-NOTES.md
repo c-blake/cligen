@@ -1,9 +1,19 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.22
+---------------
+  - Add text template string interpolation/macro expander-processor framework
+    as strUt.tmplParse with `examples/tmpl.nim` showing a simple usage.
+
+  - Overhaul / generalize `strUt.fmtUncertain` system to use new `tmplParse`
+    to allow format-string-based whatever you like feature and (accordingly)
+    drop the `pm` parameter to some old API calls that are much simpler and
+    otherwise do not need to go away.
+
 Version: 1.5.21
 ---------------
-  - Re-factor `fmtUncertain` &friends to be less format & re-parse stupid and
+  - Re-factor `fmtUncertain` & friends to be less format & re-parse stupid and
     add fmtUncertainVal for just the value, but rounded as per error.
 
   - add "required" to [layout] section of ~/.config/cligen[/config]; Use val4req
