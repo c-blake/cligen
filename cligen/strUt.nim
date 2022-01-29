@@ -453,7 +453,8 @@ proc fmtUncertainParts*(val, err: float,
   ## means the difference in exponents should always be `sigDigs`.
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
   result[4] = if abs(val) == 0: 0 else: val.abs.log10.floor.int
-  if abs(err) == 0.0 or err.isNaN:      # cannot do much here format & return
+  let err = abs(err)
+  if err == 0.0 or err.isNaN:           # cannot do much here format & return
     ecvt2 result[0], result[1], val, 16, fcOpts
     ecvt2 result[2], result[3], err, 16, fcOpts
     return                              # BELOW, note sigDigs=1+places past '.'
@@ -502,87 +503,90 @@ proc fmtUncertainRound*(val,err: float, sigDigs=2): (string,string){.deprecated:
   let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
   result[0] = vm & ve; result[1] = um & ue
 
-proc fmtUncertainSci(vm, ve, um, ue: string, sigDigs=2, pm=pmDfl, exp=true): string =
-  if ve.len == 0 or ue.len == 0:                  # nan|inf in val|err
-    return "(" & vm & ve & pm & um & ue & ")"
-  let negAdj = if vm[0] == '-': 1 else: 0
-  result = newStringOfCap(vm.len + 2 + um.len + pm.len + ve.len)
-  result.add "(" & vm & pm
-  result.addShiftPt um, um.len - vm.len + negAdj  # neg/right shift|no shift
-  result.add ")"
-  if exp: result.add ve
+proc fmtUncertainRender*(vm, ve, um, ue: string; exp: int, fmt: string,
+                         parse: seq[MacroCall]): string =
+  ## Expand interpolates:
+  ##  - valMan valExp errMan errExp: val & err rounded to sigDigs places of err.
+  ##  - val0 err0: val & err with decimal mantissas shifted such that expon==0
+  ##  - errV: err shifted so decimal aligns with val0
+  ##  - errD: unpunctuated `sigDigs` digits of err
+  ##  - pm: a single `strUt.pmDfl`. You can change from "+-" to pmUnicode('±').
+  template noDot = (if result[^1] == '.': result.setLen result.len - 1)
+  for (id, arg, call) in parse:
+    if id == 0..0: result.add fmt[arg]
+    else:
+      let negAdj = if vm[0] == '-': 1 else: 0
+      case fmt[id].toString
+      of "valMan": result.add vm; noDot()       # enforce no trailing '.'
+      of "valExp": result.add ve
+      of "errMan": result.add um; noDot()
+      of "errExp": result.add ue
+      of "val0"  :
+        if ve.len == 0: result.add vm
+        else: result.addShiftPt vm, exp; noDot()
+      of "err0"  :
+        if ue.len == 0: result.add um
+        else: result.addShiftPt um, exp - (vm.len - um.len - negAdj); noDot()
+      of "errV"  :
+        if ue.len == 0: result.add um
+        else: result.addShiftPt um, um.len - vm.len + negAdj; noDot()
+      of "errD"  : result.add um[0]; result.add um[2..^1]
+      of "pm"    : result.add pmDfl
+      else: result.add fmt[call]
 
-proc fmtUncertainSci*(val, err: float, sigDigs=2, pm=pmDfl): string =
-  ## Format as (val +- err)e+NN with err to `sigDigs` and same final decimal.
-  let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
-  fmtUncertainSci(vm, ve, um, ue, sigDigs, pm)
-
-proc fmtUncertain*(val, err: float, sigDigs=2, pm=pmDfl, e0 = -2..4): string =
-  ## Allow callers to tune exponent range near 0, `e0`, for non-sci notation
-  ## with maybe shifted digits and otherwise use `fmtUncertainSci` style.
+proc fmtUncertainRender*(val, err: float; fmt0, fmtE: string; parse0, parseE:
+                         seq[MacroCall], e0 = -2..4, sigDigs=2): string =
+  ## Co-round `val` & `err` to `sigDigs` of `err`; `fmtUncertainRender` with
+  ## `fmt0` for valExp in exponent range near the origin, `e0`, else `fmtE`.
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
-  if ve.len == 0:
-    return "(" & vm & ve & pm & um & ue & ")"
-  let negAdj = if vm[0] == '-': 1 else: 0
-  if exp == 0:                          # no shift; drop zero exp & strip parens
-    result = fmtUncertainSci(vm, ve, um, ue, sigDigs, pm, exp=false)[1..^2]
-  elif e0.a <= exp and exp <= e0.b:     # shift right | left
-    result.addShiftPt vm, exp
-    if result[^1] == '.': result.setLen result.len - 1
-    result.add pm
-    let shift = exp - (vm.len - negAdj - um.len)
-    result.addShiftPt um, shift
-    if result[^1] == '.': result.setLen result.len - 1
+  if e0.a <= exp and exp <= e0.b:       # near e+00: shift right | left
+    fmtUncertainRender(vm, ve, um, ue, exp, fmt0, parse0)
   else:                                 # too small/too big: sci notation
-    result = fmtUncertainSci(val, err, sigDigs, pm)
+    fmtUncertainRender(vm, ve, um, ue, exp, fmtE, parseE)
 
-proc fmtUncertainVal*(val,err: float, sigDigs=2, e0 = -2..4): string =
-  ## Format like `fmtUncertain`, but only the value part.
-  let (vm, ve, _, _, exp) = fmtUncertainParts(val, err, sigDigs)
-  if ve.len == 0: return vm & ve
-  if exp == 0: result = vm              # no shift; drop zero exp
-  elif e0.a <= exp and exp <= e0.b:     # shift right | left
-    result.addShiftPt vm, exp
-    if result[^1] == '.': result.setLen result.len - 1
-  else: result = vm & ve                # too small/too big: sci notation
+const fmtUncertain0 = "$val0 $pm $err0"
+const fmtUncertainE = "($valMan $pm $errV)$valExp"
+proc fmtUncertain*(val, err: float; fmt0=fmtUncertain0, fmtE=fmtUncertainE,
+                   e0 = -2..4, sigDigs=2): string =
+  ## Driver for `fmtUncertainRender` which can do most desired formats.
+  const p0 = tmplParse(fmtUncertain0)
+  const pE = tmplParse(fmtUncertainE)
+  let parse0 = if fmt0 == fmtUncertain0: p0 else: tmplParse(fmt0)
+  let parseE = if fmtE == fmtUncertainE: pE else: tmplParse(fmtE)
+  fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
-# Now Particle Data Group styles
-proc fmtUncertainMergedSci(vm, ve, um, ue: string, sigDigs=2, exp=true): string =
-  if ve.len == 0 or ue.len == 0:        # nan|inf in val|err
-    return vm & ve & "(" & um & ue & ")"
-  result = newStringOfCap(vm.len + ve.len + sigDigs + 2)  # +() == 3 - '.'
-  result.add vm
-  if result[^1] == '.': result.setLen result.len - 1
-  result.add '('; result.add um[0]; result.add um[2..^1]; result.add ')'
-  if exp: result.add ve
+proc fmtUncertainSci*(val, err: float, sigDigs=2): string =
+  ## Format co-rounded (val $pm err)e+NN with err to `sigDigs`.
+  const fmt = "($valMan $pm $errV)$valExp"; const parse = tmplParse(fmt)
+  let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
+  fmtUncertainRender vm, ve, um, ue, exp, fmt, parse
+
+proc fmtUncertainVal*(val, err: float, sigDigs=2, e0 = -2..4): string =
+  ## Format like `fmtUncertain` default, but only the value part.
+  const fmt0 = "$val0"         ; const parse0 = tmplParse(fmt0)
+  const fmtE = "$valMan$valExp"; const parseE = tmplParse(fmtE)
+  fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 proc fmtUncertainMergedSci*(val, err: float, sigDigs=2): string =
   ## Format in "Particle Data Group" Style with uncertainty digits merged after
   ## the value and always in scientific-notation: val(err)e+NN with `sigDigs` of
   ## error digits.  E.g. "12.34... +- 0.56..." => "1.234(56)e+01" (w/sigDigs=2).
-  let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
-  fmtUncertainMergedSci(vm, ve, um, ue, sigDigs)
-
-proc fmtUncertainMerged*(val,err: float, sigDigs=2, e0 = -2..4): string =
-  ## Allow callers to tune exponent range near 0, `e0`, for non-sci merged style
-  ## with maybe shifted digits and otherwise use `fmtUncertainMergedSci` style.
+  const fmt = "$valMan($errD)$valExp"; const parse = tmplParse(fmt)
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
-  if ve.len == 0: return vm & ve & "(" & um & ue & ")"
-  if exp == 0:                          # no shift; drop zero exp
-    result = fmtUncertainMergedSci(vm, ve, um, ue, sigDigs, exp=false)
-  elif e0.a <= exp and exp <= e0.b:     # shift right | left
-    result.addShiftPt vm, exp
-    if result[^1] == '.': result.setLen result.len - 1
-    result.add '('; result.add um[0]; result.add um[2..^1]; result.add ')'
-  else:                                 # too small/too big: sci notation
-    result = fmtUncertainMergedSci(vm, ve, um, ue, sigDigs)
+  fmtUncertainRender vm, ve, um, ue, exp, fmt, parse
+
+proc fmtUncertainMerged*(val, err: float, sigDigs=2, e0 = -2..4): string =
+  ## `fmtUncertainMergedSci` w/digit shift not e+NN for exp range near 0, `e0`.
+  const fmt0 = "$val0($errD)"         ; const parse0 = tmplParse(fmt0)
+  const fmtE = "$valMan($errD)$valExp"; const parseE = tmplParse(fmtE)
+  fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 when isMainModule:
   from math as m3 import sqrt           # for -nan; dup import is ok
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
-  proc aut(v, e: float; sig=2): string = fmtUncertain(v, e, sig)
+  proc aut(v, e: float; sig=2): string = fmtUncertain(v, e, sigDigs=sig)
   proc msc(v, e: float; sig=2): string = fmtUncertainMergedSci(v, e, sig)
   proc mau(v, e: float; sig=2): string = fmtUncertainMerged(v, e, sig)
 
