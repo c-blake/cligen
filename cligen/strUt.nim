@@ -354,6 +354,92 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
   elif fcTrailDot in opts: s[i] = '.'; inc i
   s.setLen i
+
+when not (defined(js) or defined(nimdoc) or defined(nimscript)):
+  func cmemchr(x: pointer, c: char, n: csize_t): pointer {.importc: "memchr",
+                                                           header: "string.h".}
+  const hasCStringBuiltin = true        # Unsure there's any good reason that
+else:                                   #..`std/strutils.find` only does
+  const hasCStringBuiltin = false       #..`string` but not `s: openArray`.
+func find*(s: openArray[char], sub: char, start: Natural = 0, last = 0): int =
+  let last = if last == 0: s.high else: last
+  when nimvm: (for i in int(start)..last: (if sub == s[i]: return i))
+  else:
+    when hasCStringBuiltin:
+      if (let L = last - start + 1; L > 0) and  # memory to search && found
+         (let p=cmemchr(s[start].unsafeAddr, sub, cast[csize_t](L)); p != nil):
+          return cast[ByteAddress](p) -% cast[ByteAddress](s[0].unsafeAddr)
+    else: (for i in int(start)..last: (if sub == s[i]: return i))
+  -1
+
+proc toString*(s: openArray[char]): string =
+  result.setLen s.len
+  for i, c in s: result[i] = c
+
+proc add*(result: var string; a: openArray[char]) = (for c in a: result.add c)
+
+proc makeOther(): array[256, char] =    # make a little pairing table
+  for i in 0 ..< 256: result[i] = chr(i)          # identity for "'`..
+  result[ord('(')] = ')'; result[ord(')')] = '('  # paired like ()
+  result[ord('[')] = ']'; result[ord(']')] = '['
+  result[ord('{')] = '}'; result[ord('}')] = '{'
+  result[ord('<')] = '>'; result[ord('>')] = '<'
+const other = makeOther() # Any ASCII bracketing/punctuation can be brace|quote
+const alpha_Num* = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\128'..'\255'}
+
+type MacroCall* = (HSlice[int,int], HSlice[int,int], HSlice[int,int]) ## id,a,c
+proc tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall] =
+  ## A text template parser converting `fmt` into a list of macro calls encoded
+  ## as `fmt`-relative slices.  Callers resolve calls in rendering.  Macro call
+  ## syntax is $ID, %[ID], ${(ID)ARG} with any non-ids valid braces|quotes. This
+  ## generalizes most escape-free format string interpolation styles.
+  ##
+  ## Specifically, if "[X]" => OPTIONAL X & "<Y>" => NEEDED Y, then a call is:
+  ##  - M[B][Q]<ID>[very next q][ARGUMENT STRING][very next b]
+  ## where
+  ##  - M is the so-called self-escaping warning meta char, like '$', '%', ..
+  ##  - B is an optional opening brace|quote (any NON-alpha_numeric)
+  ##  - b=other[B] is the matching closer (other[c]==c, except for bracey chars)
+  ##  - Q is a macro id brace|quote (IF non-alpha_numeric); q=other[Q] closes
+  ## No B => calls stop at the next NON-alpha_numeric char (eg. ':' in "$ID:x")
+  ## and the macro gets an empty ARG.  No Q => ID stops at next non-`ids` char,
+  ## eg. ${ID ARG}.  The only escape is M self-escaping (MM -> M) {only outside
+  ## calls}. `fmt` writers must pick non-colliding brace|quotes.
+  ##
+  ## RETURN VALUE is intended to be assigned like: `let (id,arg,call)=sq[i]`
+  ## where `fmt[each]` is the thing and id==0..0 encodes a special unnamed
+  ## macro with no correspondence in `fmt` intended to pass through `fmt[arg]`.
+  ## This is intended to make it easy to write `std/strutils.%` or C/Python
+  ## `printf`-like string interpolation with one standard, but flexible syntax.
+  var i0,i1, a0,a1, c0, c1: int         # 0-start/1-end offsets: Id,Arg,Call
+  let eos = fmt.len                     # End Of String (fmt string)
+  c0 = fmt.find(meta, c1)               # `find` should ~~> fast C memchr
+  while c1 < eos and c0 != -1:          #NOTE: c1 starts as end of prior call
+    if c0 == eos - 1: break             # M @EOS; No room for id; Emit tail
+    result.add (0..0, c1..<c0, 0..0)    # Emit leading text [c1,c0)
+    if fmt[c0+1] == meta:               # M self-escapes: MM => M
+      result.add (0..0, c0..<c0+1, 0..0) # Emit [a,b] (incl M!); skip *2nd* M
+      c1 = c0 + 2; c0 = fmt.find(meta, start=c1); continue
+    i0 = c0 + 1; i1 = i0                # Frame call, then id, then arg
+    while i1 < eos and fmt[i1] in ids: inc i1
+    if i1 == i0:                        # Nowhere => no ids => Braced call
+      # 1+ ensures we include the close brace in the whole c0..<c1 range.
+      if (c1 = 1+fmt.find(other[ord(fmt[c0+1])], start=c0+2); c1 == 0):
+        c1 = c0; break                  # Unterminated brace; reset & break
+      inc i0
+      if i0 == eos: c1 = c0; break      # EOStr looking for any id data
+      if fmt[i0] in ids or i0 == c1:    # nonId|close => Unquoted id => all id
+        i1 = c1-1; a0 = i1; a1 = i1     #..and with an empty arg.
+      else:                             # Quoted id; find other/closing
+        inc i0                          # Skip needed open brace
+        if (i1 = fmt.find(other[ord(fmt[i0-1])], start=i0); i1 == -1):
+          c1 = c0; break                # Unterminated id quote
+        a0 = i1 + 1                     # Argument starts after closer
+    else:                               # Unbraced call: ID=[i0,i1)
+      a0 = i1; a1 = i1; c1 = i1         #..and (a0,a1,c1) -> i1
+    result.add (i0..<i1, a0..<a1, c0..<c1) # ADD THE MACRO APPLY|FALLBACK
+    c0 = fmt.find(meta, start=c1)
+  if c1 < eos: result.add (0..0,c1..<eos,0..0) # Maybe emit tail
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
