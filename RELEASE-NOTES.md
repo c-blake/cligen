@@ -3,6 +3,9 @@ RELEASE NOTES
 
 Version: 1.5.21
 ---------------
+  - Re-factor `fmtUncertain` &friends to be less format & re-parse stupid and
+    add fmtUncertainVal for just the value, but rounded as per error.
+
   - add "required" to [layout] section of ~/.config/cligen[/config]; Use val4req
     consistently in its three places - error message, initial command summary,
     and the help table.  This is useful since consistency eases learning, and
