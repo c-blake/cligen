@@ -132,16 +132,13 @@ proc commentStrip*(s: string): string =
   else: result = s
 
 from cligen/mslice import pow10
-import math # isNaN, `^`, floor, log10
-when not declared(isNaN):
-  when defined(c) or defined(cpp):
-    proc c_isnan(x: float): bool {.importc: "isnan", header: "<math.h>".}
-  func isNaN(x: SomeFloat): bool {.inline.} =
-    template fn: untyped = result = x != x
-    when nimvm: fn()
+func isNaN(x: SomeFloat): bool {.inline.} = # added to std/math pretty late
+  when nimvm: result = x != x
+  else:
+    when defined(js): result = x != x
     else:
-      when defined(js): fn()
-      else: result = c_isnan(x)
+      proc c_isnan(x: float): bool {.importc: "isnan", header: "math.h".}
+      result = c_isnan(x)
 
 type f8s {.packed.} = object
   frac {.bitsize: 52}: uint64
@@ -158,26 +155,34 @@ func expo(x: float): int {.inline.} =
 
 func ceilLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
   # Give arg to pow10 such that `abs(x)*pow10[1-arg]` is on half-open `[1,10)`.
-  if x == 0: return 0           # FPUs basically take ceil(log_2(x)) for us.
+  if x == 0: return 0           # FPUs basically put int(log_2(x)) in exponent
   result = int(0.30102999566398119521 * float(x.expo + 1))
   if x > 1: inc result          # All but log10(2)/2=~ 0.301/2=~ 0.1505 of cases
-  let leadingDig = int(x * pow10[1 - result])
-  if leadingDig == 0:           # Want leading digit on [1,10)
-    dec result
+  if int(x * pow10[1 - result]) == 0:
+    dec result                  # Want leading digit on [1,10)
   if x == pow10[result - 1]:    # Exact powers of 10 need 1 more `dec result`..
     dec result                  #..BUT also get leadingDig == 1.  So, cmp
+    
+func floorLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
+  if x == 0: return 0           # FPUs basically put int(log_2(x)) in exponent
+  result = int(0.30102999566398119521 * float(x.expo + 1))
+  if x >= 1: inc result         # All but log10(2)/2=~ 0.301/2=~ 0.1505 of cases
+  if int(x * pow10[1 - result]) == 0:
+    dec result                  # Want leading digit on [1,10)
+  dec result
+  if x == 1e11: inc result      # 1e11*1e-11 == (0.15 9s) != 1.0; Yuck
 
 proc initZeros(): array[308, char] =
   for i in 0..<308: result[i] = '0'
 let zeros = initZeros()
 
-func decimalDigitTuples*(n=2): string =
-  for i in 0 ..< 10^n:
+func decimalDigitTuples(p10, n: int): string =
+  for i in 0 ..< n:
     let iStr = $i
-    result.add repeat('0', n - iStr.len)
+    result.add repeat('0', p10 - iStr.len)
     result.add iStr
 
-const d3 = decimalDigitTuples(3)        # Global so usable by ecvt for exponents
+const d3 = decimalDigitTuples(3, 1000)  # Global so usable by ecvt for exponents
 func uint64toDecimal*(res: var openArray[char], x: uint64): int =
   ## Flexible oA[char] inp; Fast 3B outp at a time; Answer is `res[result..^1]`.
   var num = x                           # On AMD/Intel perf d3 ~same as `d2`
@@ -453,25 +458,24 @@ proc fmtUncertainParts*(val, err: float,
   ## means the difference in exponents should always be `sigDigs`.
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
   let abs_val = abs(val)
-  result[4] = if abs_val == 0.0: 0 else: abs_val.log10.floor.int
   let err = abs(err)
   if err == 0.0 or err.isNaN:           # cannot do much here format & return
-    ecvt2 result[0], result[1], val, 16, fcOpts
+    ecvt2 result[0], result[1], val, 16, fcOpts, expon=result[4]
     ecvt2 result[2], result[3], err, 16, fcOpts
     return                              # BELOW, note sigDigs=1+places past '.'
   var expon: int
   ecvt2 result[2], result[3], err, sigDigs-1, fcOpts, expon=expon
   if result[3].len == 0:                # [+-]inf err => 0|self if val infinite
     if abs_val < 1e-6 * err:
-      result[0] = "0."; result[1] = "e0" # <=6 sigDigs
+      result[0] = "0."; result[1] = "e0" # <=6 sigDigs; auto result[4] = 0
     else: ecvt2 result[0], result[1], val, 16, fcOpts, expon=result[4]
     return
-  let places = result[4] - expon + sigDigs - 1
+  let places = abs_val.floorLog10 - expon + sigDigs - 1
   if places < 0:                        # statistical 0 -> explicit 0
     if val.isNaN or val*0.5 == val: ecvt2 result[0], result[1], val, 16, fcOpts
     else: result[0] = "0."; result[1] = "e0"; result[4] = 0
-  else:
-    var bumped = false
+  else: # floorLog10 ~ less reliable than ceilLog10.  Catch expon & maybe re-do?
+    var bumped = false #..That @least ensures consistency w/any ceilLog10 issue.
     ecvt2 result[0],result[1], val,places, fcOpts, bumped=bumped,expon=result[4]
     if bumped and result[1].len > 0: result[0].add '0' # Q: Chk for [1|2]=='.'?
 
@@ -583,7 +587,7 @@ proc fmtUncertainMerged*(val, err: float, sigDigs=2, e0 = -2..4): string =
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 when isMainModule:
-  from math as m3 import sqrt           # for -nan; dup import is ok
+  from math as m3 import sqrt, log10    # for -nan; dup import is ok
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
