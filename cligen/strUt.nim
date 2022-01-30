@@ -156,11 +156,11 @@ func abs(x: float): float {.inline.} =
 func expo(x: float): int {.inline.} =
   int(cast[ptr f8s](x.unsafeAddr)[].expo) - 1023
 
-func ceilLog10(x: float): int {.inline.} =
+func ceilLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
   # Give arg to pow10 such that `abs(x)*pow10[1-arg]` is on half-open `[1,10)`.
   if x == 0: return 0           # FPUs basically take ceil(log_2(x)) for us.
   result = int(0.30102999566398119521 * float(x.expo + 1))
-  if x > 1: inc result          # Already done here like 86% of the time
+  if x > 1: inc result          # All but log10(2)/2=~ 0.301/2=~ 0.1505 of cases
   let leadingDig = int(x * pow10[1 - result])
   if leadingDig == 0:           # Want leading digit on [1,10)
     dec result
@@ -452,7 +452,8 @@ proc fmtUncertainParts*(val, err: float,
   ## Eg., (3141.5.., 45.6..) => ("3.142", "e+03", "4.6", "e+01").  Alignment
   ## means the difference in exponents should always be `sigDigs`.
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
-  result[4] = if abs(val) == 0: 0 else: val.abs.log10.floor.int
+  let abs_val = abs(val)
+  result[4] = if abs_val == 0.0: 0 else: abs_val.log10.floor.int
   let err = abs(err)
   if err == 0.0 or err.isNaN:           # cannot do much here format & return
     ecvt2 result[0], result[1], val, 16, fcOpts
@@ -461,7 +462,7 @@ proc fmtUncertainParts*(val, err: float,
   var expon: int
   ecvt2 result[2], result[3], err, sigDigs-1, fcOpts, expon=expon
   if result[3].len == 0:                # [+-]inf err => 0|self if val infinite
-    if abs(val/err) < 1e-6:
+    if abs_val < 1e-6 * err:
       result[0] = "0."; result[1] = "e0" # <=6 sigDigs
     else: ecvt2 result[0], result[1], val, 16, fcOpts, expon=result[4]
     return
