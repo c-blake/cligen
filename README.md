@@ -195,7 +195,7 @@ as the value for its short key.  To suppress _all_ short options, give
 To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
 To suppress presence only in the help message use `help = { "apiParam":
 "CLIGEN-NOHELP" }`.  Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper
-default API parameter values with no explicit initilization to the Nim default
+default API parameter values with no explicit initialization to the Nim default
 for a type.
 
 ---
