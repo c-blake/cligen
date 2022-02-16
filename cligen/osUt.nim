@@ -311,13 +311,13 @@ template popent(cmd, path, bufSize, mode, modeStr, dfl, dflStr): untyped =
     result = dfl
   else: result = open(path, mode, bufSize)
 
-proc popenr*(cmd, path: string, bufSize = -1): File =
+proc popenr*(cmd: string, path="", bufSize = -1): File =
   ## If `cmd.len==0` this is like regular `open(mode=fmRead)` except that "" or
   ## "/dev/stdin" are in-line translated to return `stdin`.  It otherwise wraps
   ## `popen(cmd % path, "rb")`.  So, $1 is how users place `path` in `cmd`.
   popent cmd, path, bufSize, fmRead, "r", stdin, "in"
 
-proc popenw*(cmd, path: string, bufSize = -1): File =
+proc popenw*(cmd: string, path="", bufSize = -1): File =
   ## If `cmd.len==0` this is like regular `open(mode=fmWrite)` except that "" or
   ## "/dev/stdout" are in-line translated to return `stdout`. It otherwise wraps
   ## `popen(cmd % path,"wb")`.  So, $1 is how users place `path` in `cmd`.
