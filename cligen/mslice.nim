@@ -21,12 +21,15 @@ proc `+!`*(p: pointer, i: int): pointer {.inline.} =
 proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
   cast[pointer](cast[uint64](p) + i)
 
-type MSlice* = object
-  ## Represent a memory slice, such as a delimited record in an ``MFile``.
-  ## Care is required to access ``MSlice`` data (think C mem\* not str\*).
-  ## toString to some (reusable?) string buffer for safer/compatible work.
-  mem*: pointer
-  len*: int
+type
+  MSlice* = object
+    ## Represent a memory slice, such as a delimited record in an `MFile`.
+    ## Care is required to access `MSlice` data (think C mem\* not str\*).
+    ## Use `toString` to a (reusable?) buffer for safer/compatible work.
+    mem*: pointer
+    len*: int
+
+  SomeString* = string | openArray[char] | MSlice
 
 proc toMSlice*(a: string, keep=false): MSlice =
   ## Convert string to an MSlice.  If ``keep`` is true, a copy is allocated
@@ -57,6 +60,10 @@ proc toString*(ms: MSlice, s: var string) {.inline.} =
 
 template toOpenArrayChar*(ms: MSlice): untyped =
   toOpenArray(cast[ptr UncheckedArray[char]](ms.mem), 0, ms.len - 1)
+
+template toOpenArrayChar*(s: string): untyped =
+  ## This is so you can call `toOpenArrayChar` on a `SomeString` parameter.
+  toOpenArray(cast[ptr UncheckedArray[char]](s[0].addr), 0, s.len - 1)
 
 proc `$`*(ms: MSlice): string {.inline.} =
   ## Return a Nim string built from an MSlice.
