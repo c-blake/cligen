@@ -392,8 +392,8 @@ proc makeOther(): array[256, char] =    # make a little pairing table
 const other = makeOther() # Any ASCII bracketing/punctuation can be brace|quote
 const alpha_Num* = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\128'..'\255'}
 
-type MacroCall* = (HSlice[int,int], HSlice[int,int], HSlice[int,int]) ## id,a,c
-proc tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall] =
+type MacroCall* = (Slice[int], Slice[int], Slice[int]) ## id,a,c
+iterator tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): MacroCall =
   ## A text template parser converting `fmt` into a list of macro calls encoded
   ## as `fmt`-relative slices.  Callers resolve calls in rendering.  Macro call
   ## syntax is $ID, %[ID], ${(ID)ARG} with any non-ids valid braces|quotes. This
@@ -421,9 +421,9 @@ proc tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall] =
   c0 = fmt.find(meta, c1)               # `find` should ~~> fast C memchr
   while c1 < eos and c0 != -1:          #NOTE: c1 starts as end of prior call
     if c0 == eos - 1: break             # M @EOS; No room for id; Emit tail
-    result.add (0..0, c1..<c0, 0..0)    # Emit leading text [c1,c0)
+    yield (0..0, c1..<c0, 0..0)         # Emit leading text [c1,c0)
     if fmt[c0+1] == meta:               # M self-escapes: MM => M
-      result.add (0..0, c0..<c0+1, 0..0) # Emit [a,b] (incl M!); skip *2nd* M
+      yield (0..0, c0..<c0+1, 0..0)     # Emit [a,b] (incl M!); skip *2nd* M
       c1 = c0 + 2; c0 = fmt.find(meta, start=c1); continue
     i0 = c0 + 1; i1 = i0                # Frame call, then id, then arg
     while i1 < eos and fmt[i1] in ids: inc i1
@@ -442,9 +442,12 @@ proc tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall] =
         a0 = i1 + 1                     # Argument starts after closer
     else:                               # Unbraced call: ID=[i0,i1)
       a0 = i1; a1 = i1; c1 = i1         #..and (a0,a1,c1) -> i1
-    result.add (i0..<i1, a0..<a1, c0..<c1) # ADD THE MACRO APPLY|FALLBACK
+    yield (i0..<i1, a0..<a1, c0..<c1)   # ADD THE MACRO APPLY|FALLBACK
     c0 = fmt.find(meta, start=c1)
-  if c1 < eos: result.add (0..0,c1..<eos,0..0) # Maybe emit tail
+  if c1 < eos: yield (0..0,c1..<eos,0..0) # Maybe emit tail
+
+proc tmplParsed*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall]=
+  for macCall in tmplParse(fmt, meta, ids): result.add macCall
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
@@ -554,36 +557,36 @@ const fmtUncertainE = "($valMan $pm $errV)$valExp"
 proc fmtUncertain*(val, err: float; fmt0=fmtUncertain0, fmtE=fmtUncertainE,
                    e0 = -2..4, sigDigs=2): string =
   ## Driver for `fmtUncertainRender` which can do most desired formats.
-  const p0 = tmplParse(fmtUncertain0)
-  const pE = tmplParse(fmtUncertainE)
-  let parse0 = if fmt0 == fmtUncertain0: p0 else: tmplParse(fmt0)
-  let parseE = if fmtE == fmtUncertainE: pE else: tmplParse(fmtE)
+  const p0 = tmplParsed(fmtUncertain0)
+  const pE = tmplParsed(fmtUncertainE)
+  let parse0 = if fmt0 == fmtUncertain0: p0 else: tmplParsed(fmt0)
+  let parseE = if fmtE == fmtUncertainE: pE else: tmplParsed(fmtE)
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 proc fmtUncertainSci*(val, err: float, sigDigs=2): string =
   ## Format co-rounded (val $pm err)e+NN with err to `sigDigs`.
-  const fmt = "($valMan $pm $errV)$valExp"; const parse = tmplParse(fmt)
+  const fmt = "($valMan $pm $errV)$valExp"; const parse = tmplParsed(fmt)
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
   fmtUncertainRender vm, ve, um, ue, exp, fmt, parse
 
 proc fmtUncertainVal*(val, err: float, sigDigs=2, e0 = -2..4): string =
   ## Format like `fmtUncertain` default, but only the value part.
-  const fmt0 = "$val0"         ; const parse0 = tmplParse(fmt0)
-  const fmtE = "$valMan$valExp"; const parseE = tmplParse(fmtE)
+  const fmt0 = "$val0"         ; const parse0 = tmplParsed(fmt0)
+  const fmtE = "$valMan$valExp"; const parseE = tmplParsed(fmtE)
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 proc fmtUncertainMergedSci*(val, err: float, sigDigs=2): string =
   ## Format in "Particle Data Group" Style with uncertainty digits merged after
   ## the value and always in scientific-notation: val(err)e+NN with `sigDigs` of
   ## error digits.  E.g. "12.34... +- 0.56..." => "1.234(56)e+01" (w/sigDigs=2).
-  const fmt = "$valMan($errD)$valExp"; const parse = tmplParse(fmt)
+  const fmt = "$valMan($errD)$valExp"; const parse = tmplParsed(fmt)
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
   fmtUncertainRender vm, ve, um, ue, exp, fmt, parse
 
 proc fmtUncertainMerged*(val, err: float, sigDigs=2, e0 = -2..4): string =
   ## `fmtUncertainMergedSci` w/digit shift not e+NN for exp range near 0, `e0`.
-  const fmt0 = "$val0($errD)"         ; const parse0 = tmplParse(fmt0)
-  const fmtE = "$valMan($errD)$valExp"; const parseE = tmplParse(fmtE)
+  const fmt0 = "$val0($errD)"         ; const parse0 = tmplParsed(fmt0)
+  const fmtE = "$valMan($errD)$valExp"; const parseE = tmplParsed(fmtE)
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 when isMainModule:
