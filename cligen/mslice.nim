@@ -495,27 +495,27 @@ template parseInts(s, base, digits, eoNum): untyped =
     x += dig
     inc i                               # below `not` assumes 2's complement..
   eoNum = i                             #..&does not handle overflow gracefully.
-  cast[int](if i == s.len: (if neg: 1'u + not x else: x) else: 0'u)
+  cast[int](if neg: 1'u + not x else: x)
 
 proc parseBin*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a binary int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
-  result = parseInts(s, 2'u, digits2, eoNum)
+  parseInts(s, 2'u, digits2, eoNum)
 
 proc parseOct*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as an octal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
-  result = parseInts(s, 8'u, digits8, eoNum)
+  parseInts(s, 8'u, digits8, eoNum)
 
 proc parseInt*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a decimal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
-  result = parseInts(s, 10'u, digits10, eoNum)
+  parseInts(s, 10'u, digits10, eoNum)
 
 proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Parse `s` as a hexadecimal int without first creating a string; error => 0.
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
-  result = parseInts(s, 16'u, digits16, eoNum)
+  parseInts(s, 16'u, digits16, eoNum)
 
 # May seem big, BUT <15% of L1 & real life cache line usage light (sim OOMags).
 const pow10*: array[-308..308, float] = [
