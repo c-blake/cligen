@@ -19,7 +19,7 @@ proc toDef(fields, delim, genF: string): string =
 
 proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
         fields="",genF="$1",nim="",run=true,args="",verbose=0,outp="/tmp/rpXXX",
-        input="/dev/stdin", delim="white", uncheck=false, maxSplit=0): int =
+        src=false, input="/dev/stdin", delim="white", uncheck=false, maxSplit=0): int =
   ## Gen+Run *prelude*,*fields*,*begin*,*where*,*stmts*,*epilog* row processor
   ## against *input*.  Defined within *where* & every *stmt* are:
   ##   *s[fieldIdx]* & *row* give `MSlice` (*$* to get a Nim *string*)
@@ -76,6 +76,7 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
   let f = mkdirOpen(outp & ".nim", fmWrite)
   f.write program
   f.close
+  if src: stderr.write program
   execShellCmd(nim & (if run: " < " & input else: ""))
 
 when isMainModule:
@@ -92,6 +93,7 @@ when isMainModule:
                      "args"    : "\"\" => -d:danger --gc:arc",
                      "verbose" : "Nim compile verbosity level",
                      "outp"    : "output executable; .nim NOT REMOVED",
+                     "src"     : "dump generated Nim program to stderr",
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
                      "uncheck" : "do not check&skip header row vs fields",
