@@ -30,10 +30,10 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   **rp 'echo s[1]," ",s[0]'**                     # Swap field order
   ##   **rp -w'nr mod 100==0' 'echo row'**             # Print each 100th row
   ##   **rp -b'var t=0' t+=nf -e'echo t'**             # Print total field count
-  ##   **rp -b'var t=0' -w'i(0)>0' t+=0.i -e'echo t'** # Total >0 field0 ints
+  ##   **rp -b'var t=0' -w'0.i>0' t+=0.i -e'echo t'**  # Total >0 field0 ints
   ##   **rp -p'import stats' -b'var r: RunningStat' 'r.push 0.f' -e'echo r'**
-  ##   **rp 'let x=f(0)' 'echo (1+x)/x'**              # cache field 0 parse
-  ##   **rp -d, -fa,b,c 'echo s[a],f(b)+i(c).float'**  # named fields (CSV)
+  ##   **rp 'let x=0.f' 'echo (1+x)/x'**               # cache field 0 parse
+  ##   **rp -d, -fa,b,c 'echo s[a],b.f+c.i.float'**    # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
   if stmts.len == 0: stderr.write "rp -h for help\n"; return 1
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
