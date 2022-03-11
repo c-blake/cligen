@@ -51,7 +51,7 @@ when (NimMajor,NimMinor,NimPatch) >= (0,20,0):
     for v in x[0 .. x.len-3]: tree.add v  # for v1,...
     tree.add(nnkCall.newTree(itr), x[^1]) # for v1,... in itr(): body
     result = quote do:
-      block:
+      if true:
         let `itr` {.inject.} = `call`
         `tree`
 

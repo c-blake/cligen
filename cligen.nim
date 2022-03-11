@@ -1056,7 +1056,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   result.add(newCall("dispatchMultiGen", copyNimTree(procBrackets)))
   result.add(newCall("dispatchMultiDG", copyNimTree(procBrackets)))
   result.add(quote do:
-    block:
+    if true:
      {.push hint[GlobalVar]: off.}
      {.push warning[ProveField]: off.}
      let ps  = cast[seq[string]](mergeParams(@["multi"]))
