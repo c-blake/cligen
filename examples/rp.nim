@@ -27,7 +27,7 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ## Gen+Run *prelude*,*fields*,*begin*,*where*,*stmts*,*epilog* row processor
   ## against *input*.  Defined within *where* & every *stmt* are:
   ##   *s[fieldIdx]* & *row* give `MSlice` (*$* to get a Nim *string*)
-  ##   *i(fieldIdx)* gives a Nim int, *f(fieldIdx)* a Nim float.
+  ##   *fieldIdx.i* gives a Nim *int*, *fieldIdx.f* a Nim *float*.
   ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
   ## If you know *AWK* & Nim, you can learn *rp* PRONTO.  Examples (need data):
