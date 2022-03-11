@@ -17,9 +17,13 @@ proc toDef(fields, delim, genF: string): string =
     else:
       stderr.write "rp: WARNING: ", nm, " collides with earlier field\n"
 
+proc orD(s, default: string): string =  # little helper for accumulating params
+  if s.startsWith("+"): default & s[1..^1] elif s.len > 0: s else: default
+
 proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
-        fields="",genF="$1",nim="",run=true,args="",verbose=0,outp="/tmp/rpXXX",
-        src=false, input="/dev/stdin", delim="white", uncheck=false, maxSplit=0): int =
+        fields="", genF="$1", nim="", run=true, args="", cache="", verbose=0,
+        outp="/tmp/rpXXX", src=false, input="/dev/stdin", delim="white",
+        uncheck=false, maxSplit=0, Warn=""): int =
   ## Gen+Run *prelude*,*fields*,*begin*,*where*,*stmts*,*epilog* row processor
   ## against *input*.  Defined within *where* & every *stmt* are:
   ##   *s[fieldIdx]* & *row* give `MSlice` (*$* to get a Nim *string*)
@@ -66,7 +70,8 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
   program.add indent(epilog, 2)
   program.add " # {epilogue}\n\nmain()\n"
   let bke  = if run: "r" else: "c"
-  let args = if args.len > 0: args else: "-d:danger --gc:arc"
+  let args = args.orD("-d:danger ") & " " & cache.orD("--nimcache:/tmp/rp ") &
+             " " & Warn.orD("--warning[CannotOpenFile]=off ")
   let verb = "--verbosity:" & $verbose
   let digs = count(outp, 'X')
   let hsh  = toHex(program.hash and ((1 shl 16*digs) - 1), digs)
@@ -88,13 +93,15 @@ when isMainModule:
                      "epilog"  : "Nim code for epilog/end loop section",
                      "fields"  : "`delim`-sep field names (match row0)",
                      "genF"    : "make field names from this fmt; eg c$1",
-                     "nim"     : "\"\" => nim {if run: r else: c} {args}",
+                     "nim"     : "\"\": nim {if run: r else: c} {args}",
                      "run"     : "Run at once using nim r .. < input",
-                     "args"    : "\"\" => -d:danger --gc:arc",
+                     "args"    : "\"\": -d:danger; '+' prefix appends",
+                     "cache"   : "\"\": --nimcache:/tmp/rp (--incr:on?)",
                      "verbose" : "Nim compile verbosity level",
                      "outp"    : "output executable; .nim NOT REMOVED",
                      "src"     : "dump generated Nim program to stderr",
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
                      "uncheck" : "do not check&skip header row vs fields",
-                     "maxSplit": "max split; 0 => unbounded"}
+                     "maxSplit": "max split; 0 => unbounded",
+                     "Warn"    : "\"\": --warning[CannotOpenFile]=off"}
