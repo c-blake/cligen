@@ -801,7 +801,8 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
                      pro: untyped, echoResult: bool, noAutoEcho: bool,
                      mergeNames: seq[string] = @[]): untyped =
   let disNm = dispatchId(dispatchName.toString, cmdName.toString, repr(pro))
-  let mergeNms = toStrSeq(mergeNames) & cmdName.strVal
+  let cName = if cmdName.toString.len == 0: $pro else: cmdName.toString
+  let mergeNms = toStrSeq(mergeNames) & cName
   quote do: cligenQuit(`disNm`(mergeParams(`mergeNms`, `cmdLine`)),
                        `echoResult`, `noAutoEcho`)
 

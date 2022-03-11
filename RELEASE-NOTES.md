@@ -11,6 +11,11 @@ Version: 1.5.22
     drop the `pm` parameter to some old API calls that are much simpler and
     otherwise do not need to go away.
 
+  - Fix 3 year old annoyance having `mergeParams` not default to `@[cmdName]`.
+    It is now often no longer necessary to do that to pull from env.vars/cfgs
+    if the desired names match the default conventions (and if they don't then
+    you probably want `mergeNames` or your own `mergeParams`).
+
 Version: 1.5.21
 ---------------
   - Re-factor `fmtUncertain` & friends to be less format & re-parse stupid and
