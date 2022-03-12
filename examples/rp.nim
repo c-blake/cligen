@@ -1,5 +1,5 @@
-import std/[strutils,os,hashes,sets],cligen/[osUt,mslice] #% exec* mdOpen split
-from cligen/parseopt3 import optionNormalize
+import std/[strutils, os, hashes, sets, terminal] # % exec* hash HashSet isatty
+import cligen,cligen/[osUt, mslice, parseopt3] # mkdirOpen split optionNormalize
 
 proc toDef(fields, delim, genF: string): string =
   result.add "const rpNmFieldB {.used.} = \"" & fields & "\"\n"
@@ -40,7 +40,9 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   **rp -d, -fa,b,c 'echo s[a],b.f+c.i.float'**    # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
   if stmts.len + begin.len + epilog.len == 0:
-    stderr.write "rp -h for help\n"; return 1
+    raise newException(HelpError, "Too few args; Full ${HELP}")
+  let null   = when defined(windows): "NUL:" else: "/dev/null"
+  let input  = if input=="/dev/stdin" and stdin.isatty: null else: input
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
   let check  = if fields.len == 0: "    " elif not uncheck: """
     if nr == 0:
@@ -86,7 +88,7 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
   execShellCmd(nim & (if run: " < " & input else: ""))
 
 when isMainModule:
-  import cligen; include cligen/mergeCfgEnv
+  include cligen/mergeCfgEnv
   dispatch rp, help={"prelude" : "Nim code for prelude/imports section",
                      "begin"   : "Nim code for begin/pre-loop section",
                      "where"   : "Nim code for row inclusion",
