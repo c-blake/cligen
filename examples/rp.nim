@@ -31,8 +31,8 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
   ## If you know *AWK* & Nim, you can learn *rp* PRONTO.  Examples (need data):
+  ##   **seq 0 1000|rp -w'nr mod 100==0' 'echo row'**  # Print each 100th row
   ##   **rp 'echo s[1]," ",s[0]'**                     # Swap field order
-  ##   **rp -w'nr mod 100==0' 'echo row'**             # Print each 100th row
   ##   **rp -b'var t=0' t+=nf -e'echo t'**             # Print total field count
   ##   **rp -b'var t=0' -w'0.i>0' t+=0.i -e'echo t'**  # Total >0 field0 ints
   ##   **rp -p'import stats' -b'var r: RunningStat' 'r.push 0.f' -e'echo r'**
