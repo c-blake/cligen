@@ -3,6 +3,11 @@ RELEASE NOTES
 
 Version: 1.5.22
 ---------------
+  - Fix 3 year old annoyance having `mergeParams` not default to `@[cmdName]`.
+    It is now often no longer necessary to do that to pull from env.vars/cfgs
+    if the desired names match the default conventions (and if they don't then
+    you probably want `mergeNames` or your own `mergeParams`).
+
   - Add text template string interpolation/macro expander-processor framework
     as strUt.tmplParse with `examples/tmpl.nim` showing a simple usage.
 
@@ -11,15 +16,12 @@ Version: 1.5.22
     drop the `pm` parameter to some old API calls that are much simpler and
     otherwise do not need to go away.
 
-  - Fix 3 year old annoyance having `mergeParams` not default to `@[cmdName]`.
-    It is now often no longer necessary to do that to pull from env.vars/cfgs
-    if the desired names match the default conventions (and if they don't then
-    you probably want `mergeNames` or your own `mergeParams`).
-
   - `rp` is easier on newbie users & can leverage incremental compilation (when
     IC does not SEGV compiler) for ~150..350 ms start-up times w/tcc..gcc -O0.
-    gcc -O3 is still under 1 second, but very first compile is 2-3X longer than
-    without IC, though (i.e. notable 1st-time uncached v. cached trade-off.)
+    Put `cache = "+--incremental:on"` into `~/.config/rp` to use by default.
+    `gcc -O3` is under 1 second, but very first compile is 2-3X longer than
+    with no IC, though (i.e. notable 1st-time uncached v. cached trade-off.)
+    The derived https://github.com/benhoyt/prig & article may be of interest.
 
 Version: 1.5.21
 ---------------
