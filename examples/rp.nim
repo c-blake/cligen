@@ -39,7 +39,8 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   **rp 'let x=0.f' 'echo (1+x)/x'**               # cache field 0 parse
   ##   **rp -d, -fa,b,c 'echo s[a],b.f+c.i.float'**    # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
-  if stmts.len == 0: stderr.write "rp -h for help\n"; return 1
+  if stmts.len + begin.len + epilog.len == 0:
+    stderr.write "rp -h for help\n"; return 1
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
   let check  = if fields.len == 0: "    " elif not uncheck: """
     if nr == 0:
