@@ -100,7 +100,7 @@ when isMainModule:
                      "cache"   : "\"\": --nimcache:/tmp/rp (--incr:on?)",
                      "verbose" : "Nim compile verbosity level",
                      "outp"    : "output executable; .nim NOT REMOVED",
-                     "src"     : "dump generated Nim program to stderr",
+                     "src"     : "show generated Nim source on stderr",
                      "input"   : "path to mmap|read as input",
                      "delim"   : "inp delim chars; Any repeats => fold",
                      "uncheck" : "do not check&skip header row vs fields",
