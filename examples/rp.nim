@@ -30,7 +30,7 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   *fieldIdx.i* gives a Nim *int*, *fieldIdx.f* a Nim *float*.
   ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
-  ## If you know *AWK* & Nim, you can learn *rp* PRONTO.  Examples (need data):
+  ## If you know AWK & Nim, you can learn *rp* FAST.  Examples (most need data):
   ##   **seq 0 1000|rp -w'nr mod 100==0' 'echo row'**  # Print each 100th row
   ##   **rp 'echo s[1]," ",s[0]'**                     # Swap field order
   ##   **rp -b'var t=0' t+=nf -e'echo t'**             # Print total field count
