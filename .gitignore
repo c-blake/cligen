@@ -66,6 +66,7 @@ test/StroppedParams
 test/PassValues
 test/PassValuesMulti
 test/SpecifiedOverload
+test/UserError
 cligen/abbrev
 cligen/dents
 examples/chom
