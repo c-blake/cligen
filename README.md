@@ -28,9 +28,10 @@ Options:
   -v, --verb     bool    false  set verb
 ```
 That's it!  No specification language/complex arg parsing API/Nim pragma tags
-to learn.  Installing can be as simple as `git clone <thisRepo>` and `nim c
---path:whereYouClonedTo myProgram.nim`.  If you aren't sold already, here is
-more [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
+to learn.  Installing can be as simple as `nimble install cligen` or even just
+`git clone <thisRepo>` and `nim c --path:whereYouClonedTo myProgram.nim`.  If
+you aren't sold already, here is more
+[MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 
 The `help` column is filled with generic `set foo` placeholders by default, but
 you can override it using parameter-keyed association-list literals:
@@ -253,10 +254,11 @@ help templates.
 
 ### Even More Controls and Details
 
-After many feature requests `cligen` grew many knobs & levers.  A good starting
-point for various advanced usages is the many examples in my automated test
-suite:
-  [test/](https://github.com/c-blake/cligen/tree/master/test/).
+After many feature requests `cligen` grew many knobs & levers.  Look at the
+many examples (which I tried to name suggestively) in the automated test suite:
+  [test/](https://github.com/c-blake/cligen/tree/master/test/)
+for starting points of various advanced usages.
+
 Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and generated
 documentation for the three main modules:
   [parseopt3](http://c-blake.github.io/cligen/cligen/parseopt3.html)
