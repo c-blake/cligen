@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.23
+---------------
+  - Slightly more terse default `enum` help messages
+
+  - Made default `argParse`/`argHelp` work for `Slice[float]`
+
 Version: 1.5.22
 ---------------
   - Fix 3 year old annoyance having `mergeParams` not default to `@[cmdName]`.
