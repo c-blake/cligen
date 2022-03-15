@@ -253,7 +253,7 @@ proc argParse*[T,U](dst: var HSlice[T,U], dfl: HSlice[T,U],
     if fieldX[1].len > 0:
       a.val = fieldX[1]
       if not argParse(dst.b, dfl.b, a): return
-      dst.b.dec                         # make exclusive
+      dst.b -= 1                        # make exclusive
     else: dst.b = 0
   elif fieldI.len > 1:
     if fieldI[0].len > 0:
