@@ -1,8 +1,8 @@
 ## This module provides a facility like Python's multiprocessing module but is
 ## less automagic & little error handling is done.  `MSlice` is used as a reply
 ## type to avoid copy in case replies are large.  Auto-pack/unpack logic could
-## mimic Python's `for x in p.imap_unordered` more closely.  This is only at the
-## Proof Of Concept stage.  Another idea would be channels wrapping processes.
+## mimic Python's `for x in p.imap_unordered` more closely.  While only at Proof
+## Of Concept stage, the example `(frames|eval)(0term|LenPfx)` programs work ok.
 
 import std/[cpuinfo, posix], ./mslice, ./sysUt
 type
@@ -32,7 +32,7 @@ proc close*(pp: ProcPool, kid: int) =
 
 # `frames*` are early in the module to default `frames` in `initProcPool`, but
 # they logically pair with `eval*` at the end of the module.
-proc frames0*(f: var Filter): iterator(): MSlice =
+proc frames0term*(f: var Filter): iterator(): MSlice =
   ## An output frames iterator for workers writing '\0'-terminated results.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice = # NOTE: results must be <= bufSz
@@ -87,7 +87,7 @@ proc initFilter(work: proc(), bufSz: int): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc initProcPool*(work: proc(); frames = frames0; jobs = 0;
+proc initProcPool*(work: proc(); frames = frames0term; jobs = 0;
                    bufSize = 16384): ProcPool {.noinit.} =
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdset
@@ -127,10 +127,10 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
             discard waitpid(pp.kids[i].pid, st, 0)    # Accum CPU to par;No zomb
             n.dec
 
-template eval*(pp, reqGen, onReply: untyped) =
+template eval0term*(pp, reqGen, onReply: untyped) =
   ## Use `pp=initProcPool(wrk)` & this to send Nim strings made by `reqGen` (any
-  ## iterator expr) to `wrk` stdin as 0-terminated and pass any stdout-emitted
-  ## framed replies to `onReply`.  `examples/only.nim` has a full demo.
+  ## iterator expr) to `wrk` stdin as 0-terminated & pass stdout-emitted framed
+  ## replies to `onReply`.  `examples/only.nim` is a full demo.
   var i = 0
   for req in reqGen:
     pp.request(i, cstring(req), req.len + 1)    # keep NUL; Let full pipe block
@@ -140,10 +140,10 @@ template eval*(pp, reqGen, onReply: untyped) =
   for i in 0 ..< pp.len: pp.close(i)            # Send EOFs
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
 
-template evalp*(pp, reqGen, onReply: untyped) =
+template evalLenPfx*(pp, reqGen, onReply: untyped) =
   ## Use `pp=initProcPool(wrk)` & this to send strings made by `reqGen` (any
-  ## iterator expr) to `wrk` stdin as length,val pairs and pass any stdout-
-  ## emitted reply strings to `onReply`.  `examples/grl.nim` has a full demo.
+  ## iterator expr) to `wrk` stdin as (P)refixed length,val pairs & pass stdout-
+  ## emitted framed replies to `onReply`.  `examples/grl.nim` is a full demo.
   var i = 0; var n: int
   for req in reqGen:
     n = req.len
@@ -156,4 +156,11 @@ template evalp*(pp, reqGen, onReply: untyped) =
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
 
 proc noop*(s: MSlice) = discard
-  ## A convenience noop which does nothing with a `rep` for `eval` or `evalp`.
+  ## A convenience no-op which does nothing with a `rep` for `eval0|evalp`.
+
+proc frames0*(f: var Filter): (iterator(): MSlice) {.deprecated:
+  "use `frames0term`".} = frames0term(f)
+template eval*(pp, reqGen, onReply: untyped) {.deprecated: "use `eval0`".} =
+  eval0term(pp, reqGen, onReply)
+template evalp*(pp, reqGen, onReply: untyped) {.deprecated: "use `eval0`".} =
+  evalLenPfx(pp, reqGen, onReply)

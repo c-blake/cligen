@@ -25,6 +25,6 @@ proc grl(jobs=0, eor='\n', sub: string, paths: seq[string]) =
   ## print each path (& `eor`) containing string `sub` with parallelism `jobs`.
   gSub = sub
   var pp = initProcPool(inFile, framesLenPfx, jobs) # Start&drive kid pool
-  pp.evalp(paths, eor.print)
+  pp.evalLenPfx(paths, eor.print)
 
 when isMainModule: dispatch(grl)

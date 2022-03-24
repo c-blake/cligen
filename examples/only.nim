@@ -67,8 +67,8 @@ proc only*(gen="find $1 -print0", dlr1=".", trim="./", eor='\n',
     gFlags = gFlags or cint(e2Flag[e])
   let inp = popen(cstring(gen % dlr1), "r".cstring) # Fire input path generator
   # Any reply is an `okPath`; `pp.unord` doesn't need a request to have a reply.
-  var pp = initProcPool(classifyAndMatch, frames0, jobs) # Start&drive kid pool
-  pp.eval(inp.getNoPfx('\0', trim), eor.print)
+  var pp = initProcPool(classifyAndMatch, frames0term, jobs) # Start&drive kids
+  pp.eval0term(inp.getNoPfx('\0', trim), eor.print)
   discard inp.pclose
 
 when isMainModule:
