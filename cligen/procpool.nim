@@ -3,6 +3,31 @@
 ## type to avoid copy in case replies are large.  Auto-pack/unpack logic could
 ## mimic Python's `for x in p.imap_unordered` more closely.  While only at Proof
 ## Of Concept stage, the example `(frames|eval)(0term|LenPfx)` programs work ok.
+##
+## In more detail, this module abstracts the orchestration activity of a parent
+## striping work over a pool of classic kid coprocesses { i.e. a double-pipe to
+## each kid; How classic?  Ksh88 had `coproc`. }  Kids are the user code here &
+## are basically just stdin-stdout filters needing only request-reply framing.
+## The parent just loops over work generation passed in `initProcPool`, writing
+## request frames to each kid, reading & framing whatever replies until the work
+## & replies are done.  The core of this is under 90 lines of code.  This set up
+## is least awkward when inputs & outputs are both small and there is an easy
+## message protocol, as with the example programs.
+##
+## Many prog.lang people seem unaware that processes & threads are distinguished
+## mostly by safe vs. unsafe defaults { see Linux `clone` after Plan9 `rfork` }.
+## Memory can be opt-in-shared via `memfiles` & RAM files can avoid device IO &
+## copying (other than short paths) to reduce differences to the awkwardness of
+## pointers becoming relative to named files.  Opt-into-risk designs are always
+## "more work on-purpose" for client code.  Additional benefits are bought here:
+## seamless persistent data, well separated resource limits/state/etc. Procs are
+## about as fast, esp. in pre-spawned pools.  YMMV, but shared-all can cost more
+## than it saves.  Procs can be slower to build sharing *OR* faster from removed
+## contention { e.g. if kids do memfiles IO, thread-sibs block each others' VM
+## edits in fast (un)map cycles, but proc-sibs have private, uncontended VM }.
+## Since one situation's "awkward" is another's "expressing vital constraints",
+## good ecosystems should have libs for both (and for files as named arenas).
+## This module is only a baby step in that direction that perhaps can inspire.
 
 import std/[cpuinfo, posix], ./mslice, ./sysUt
 type
