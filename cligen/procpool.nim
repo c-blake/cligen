@@ -147,7 +147,7 @@ proc frames0term*(f: var Filter): iterator(): MSlice =
     else: f.done = true
 
 proc framesLines*(f: var Filter): iterator(): MSlice =
-  ## A reply frames iterator for workers writing '\0'-terminated results.
+  ## A reply frames iterator for workers writing '\n'-terminated results.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice =
     if (let nRd = rdRecs(f.fd1, f.buf, '\n', B); nRd > 0):
