@@ -375,3 +375,30 @@ proc autoClose* =
   ## Close all files opened so far by autoOpen.
   for path, f in outs: (if f != nil: f.close)
   outs.clear
+
+proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
+  ## Like read but loop if `end!=eor` (growing `buf` to multiples of `n`).  In
+  ## effect, this reads an integral number of recs - which must still be split!
+  var o, nR: int
+  while (nR = read(fd, buf[o].addr, buf.len - o); nR>0 and buf[o+nR-1] != eor):
+    o += nR
+    buf.setLen buf.len + n                      # Keeps total len multiple of n,
+  result = if nR <= 0: nR else: o+nR            #..but `buf` gets trailing junk.
+
+proc wr0term*(fd: cint, buf: string): int =
+  ## Write `buf` as a NUL-terminated string to `fd`.
+  fd.write(buf[0].addr.cstring, buf.len + 1)
+
+proc wrLine*(fd: cint, buf: string): int =
+  ## Write `buf` & then a single newline atomically (`writev` on Linux).
+  let nl = '\n'
+  let iov = [ IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.uint),
+              IOVec(iov_base: nl.unsafeAddr    , iov_len: 1) ]
+  writev(fd, iov[0].unsafeAddr, 2)
+
+proc wrLenBuf*(fd: cint, buf: string): int =
+  ## Write `int` length prefix & `buf` data atomically (`writev` on Linux).
+  let n = buf.len
+  let iov = [ IOVec(iov_base: n.unsafeAddr     , iov_len: n.sizeof.uint),
+              IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.uint) ]
+  writev(fd, iov[0].unsafeAddr, 2)
