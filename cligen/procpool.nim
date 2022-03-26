@@ -51,6 +51,7 @@ type
     fd0, fd1*: cint ## request|input & reply|output file descriptors/handles
     buf*: string    ## current read buffer
     done*: bool     ## flag indicating completion
+    aux*: int       ## general purpose int-sized client data, e.g. obsz
 
   Frames* = proc(f: var Filter): iterator(): MSlice
 
@@ -64,7 +65,8 @@ proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
 proc close*(pp: ProcPool, kid: int) = discard pp.kids[kid].fd0.close
 
-proc initFilter(work: proc()): Filter {.inline.} =
+proc initFilter(work: proc(), aux: int): Filter {.inline.} =
+  result.aux = aux
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
   discard fds1.pipe         # pipe for data flowing from kid -> parent
@@ -88,11 +90,11 @@ proc initFilter(work: proc()): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc initProcPool*(work: proc(); frames: Frames; jobs=0): ProcPool {.noinit.} =
+proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0): ProcPool {.noinit.} =
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
-    result.kids[i] = initFilter(work)
+    result.kids[i] = initFilter(work, aux)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
         discard result.kids[j].fd1.close              #   close fd to kid
@@ -128,6 +130,15 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
             discard pp.kids[i].fd1.close              # Reclaim fd
             discard waitpid(pp.kids[i].pid, st, 0)    # Accum CPU to par;No zomb
             n.dec
+
+proc framesOb*(f: var Filter): iterator(): MSlice =
+  ## A reply frames iterator for wrk procs writing flat, binary object results.
+  let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
+  result = iterator(): MSlice = # NOTE: must cp to other mem before next call.
+    let obsz = f.aux
+    if (let nRd = read(f.fd1, f.buf[0].addr, obsz); nRd > 0):
+      yield MSlice(mem: f.buf[0].addr, len: obsz)
+    else: f.done = true
 
 proc framesLenPfx*(f: var Filter): iterator(): MSlice =
   ## A reply frames iterator for wrk procs writing [int, value] results.
@@ -177,6 +188,7 @@ template wrReqs(pp, reqGen, wr, onReply: untyped) =
 
 proc noop*(s: MSlice) = discard ## convenience no-op for `eval*`.
 
+template evalOb*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wr, onReply)
 template evalLenPfx*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrLenBuf,onReply)
 template eval0term*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wr0term, onReply)
 template evalLines*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrLine, onReply)

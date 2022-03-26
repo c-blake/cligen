@@ -385,6 +385,17 @@ proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
     buf.setLen buf.len + n                      # Keeps total len multiple of n,
   result = if nR <= 0: nR else: o+nR            #..but `buf` gets trailing junk.
 
+proc uRd*[T](f: File, ob: var T): bool =
+  ## Unlocked read flat object `ob` from `File`.
+  f.ureadBuffer(ob.addr, ob.sizeof) == ob.sizeof
+
+proc uWr*[T](f: File, ob: var T): bool =
+  ## Unlocked write flat object `ob` to `File`.
+  f.uriteBuffer(ob.addr, ob.sizeof) == ob.sizeof
+
+proc wr*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
+  ## Write flat object `ob` to file handle/descriptor `fd`.
+
 proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
   fd.write(buf[0].addr.cstring, buf.len + 1)
