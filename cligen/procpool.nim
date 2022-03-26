@@ -56,8 +56,8 @@ type
 
   ProcPool* = object  ## A process pool to do work on multiple cores
     kids: seq[Filter]
-    fdset: TFdSet
-    fdMax: cint
+    fdsetR, fdsetW: TFdSet
+    fdMaxR, fdMaxW: cint
     frames: Frames
 
 proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
@@ -84,12 +84,13 @@ proc initFilter(work: proc()): Filter {.inline.} =
     result.pid = pid
     result.fd0 = fds0[1]    # Parent writes to fd0 & reads from fd1;  Those are
     result.fd1 = fds1[0]    #..like the fd nums in the kid, but with RW/swapped.
+    discard fcntl(result.fd0, F_SETFL, O_NONBLOCK)
     discard close(fds0[0])
     discard close(fds1[1])
 
 proc initProcPool*(work: proc(); frames: Frames; jobs=0): ProcPool {.noinit.} =
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
-  FD_ZERO result.fdset
+  FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
     result.kids[i] = initFilter(work)
     if result.kids[i].pid == -1:                      # -1 => fork failed
@@ -97,26 +98,28 @@ proc initProcPool*(work: proc(); frames: Frames; jobs=0): ProcPool {.noinit.} =
         discard result.kids[j].fd1.close              #   close fd to kid
         discard kill(result.kids[j].pid, SIGKILL)     #   and kill it.
         raise newException(OSError, "fork") # vague chance trying again may work
-    FD_SET result.kids[i].fd1, result.fdset
-    result.fdMax = max(result.fdMax, result.kids[i].fd1)
-  result.fdMax.inc                                    # select takes fdMax + 1
+    FD_SET result.kids[i].fd0, result.fdsetW
+    FD_SET result.kids[i].fd1, result.fdsetR
+    result.fdMaxW = max(result.fdMaxW, result.kids[i].fd0)
+    result.fdMaxR = max(result.fdMaxR, result.kids[i].fd1)
+  result.fdMaxW.inc; result.fdMaxR.inc                # select takes fdMax + 1
   result.frames = frames
 
 iterator readyReplies*(pp: var ProcPool): MSlice =
   var noTO: Timeval                                   # Zero timeout => no block
-  var fdset = pp.fdset
-  if select(pp.fdMax, fdset.addr, nil, nil, noTO.addr) > 0:
+  var fdsetR = pp.fdsetR
+  if select(pp.fdMaxR, fdsetR.addr, nil, nil, noTO.addr) > 0:
     for i in 0 ..< pp.len:
-      if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
+      if FD_ISSET(pp.kids[i].fd1, fdsetR) != 0:
         for rep in toItr(pp.frames(pp.kids[i])): yield rep
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
   var st: cint
   var n = pp.len                                      # Do final answers
-  var fdset0 = pp.fdset
+  var fdset0 = pp.fdsetR
   while n > 0:
     var fdset = fdset0                                # nil timeout => block
-    if select(pp.fdMax, fdset.addr, nil, nil, nil) > 0:
+    if select(pp.fdMaxR, fdset.addr, nil, nil, nil) > 0:
       for i in 0 ..< pp.len:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
           for rep in toItr(pp.frames(pp.kids[i])): yield rep
@@ -154,12 +157,20 @@ proc framesLines*(f: var Filter): iterator(): MSlice =
       for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\n'): yield s
     else: f.done = true
 
-template wrReqs(pp, reqGen, send, onReply: untyped) =
-  var i = 0                          #Send round-robin letting full pipes block.
-  for rq in reqGen:                  #..Blocking write-select on non-block fds
-    discard send(pp.kids[i].fd0, rq) #..w/writev & EWOULDBLOCK is better to not
-    i = (i + 1) mod pp.len           #..allow one kid block progress.
-    if i + 1 == pp.len:                         # At the end of each req cycle
+proc getKid*(pp: var ProcPool, i0: int): int {.inline.} =
+  ## Return index of first kid starting from `i0` with space in its pipe buffer.
+  var fdsetW = pp.fdsetW
+  if select(pp.fdMaxW, nil, fdsetW.addr, nil, nil) > 0:
+    for i in i0 ..< pp.len: (if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: return i)
+    for i in 0  ..< i0    : (if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: return i)
+
+template wrReqs(pp, reqGen, wr, onReply: untyped) =
+  var k, i0 = 0     # Infinite loops if `rq.len` > OS pipe buffer; If you cannot
+  for rq in reqGen: #..be sure that won't happen then pass indices, paths, etc.
+    while(k = pp.getKid(i0); wr(pp.kids[k].fd0, rq) < 0 and errno==EWOULDBLOCK):
+      i0 = (i0 + 1) mod pp.len
+    i0 = (i0 + 1) mod pp.len
+    if i0 + 1 == pp.len:                        # At the end of each req cycle
       for rep in pp.readyReplies: onReply(rep)  #..handle ready replies.
   for i in 0 ..< pp.len: pp.close(i)            # Send EOFs
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
