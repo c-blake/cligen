@@ -43,7 +43,7 @@
 ## Since one situation's "awkward" is another's "expressing vital constraints",
 ## good ecosystems should have libs for both (and for files as named arenas).
 ## This module is only a baby step in that direction that perhaps can inspire.
-const B = 1
+
 import std/[cpuinfo, posix], cligen/[mslice, sysUt, osUt]
 type
   Filter* = object ## Abstract coprocess filter reading|writing its stdin|stdout
@@ -80,7 +80,7 @@ proc initFilter(work: proc()): Filter {.inline.} =
     work()
     quit(0)
   else:
-    result.buf = newString(B) # allocate, setLen, but no-init
+    result.buf = newString(8192) # allocate, setLen, but no-init
     result.pid = pid
     result.fd0 = fds0[1]    # Parent writes to fd0 & reads from fd1;  Those are
     result.fd1 = fds1[0]    #..like the fd nums in the kid, but with RW/swapped.
@@ -142,7 +142,7 @@ proc frames0term*(f: var Filter): iterator(): MSlice =
   ## A reply frames iterator for workers writing '\0'-terminated results.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice =
-    if (let nRd = rdRecs(f.fd1, f.buf, '\0', B); nRd > 0):
+    if (let nRd = rdRecs(f.fd1, f.buf, '\0', 8192); nRd > 0):
       for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\0'): yield s
     else: f.done = true
 
@@ -150,7 +150,7 @@ proc framesLines*(f: var Filter): iterator(): MSlice =
   ## A reply frames iterator for workers writing '\n'-terminated results.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice =
-    if (let nRd = rdRecs(f.fd1, f.buf, '\n', B); nRd > 0):
+    if (let nRd = rdRecs(f.fd1, f.buf, '\n', 8192); nRd > 0):
       for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\n'): yield s
     else: f.done = true
 
