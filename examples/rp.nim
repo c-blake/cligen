@@ -21,7 +21,7 @@ proc orD(s, default: string): string =  # little helper for accumulating params
   if s.startsWith("+"): default & s[1..^1] elif s.len > 0: s else: default
 
 proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
-        fields="", genF="$1", nim="", run=true, args="", cache="", verbose=0,
+        fields="", genF="$1", nim="nim", run=true, args="", cache="", verbose=0,
         outp="/tmp/rpXXX", src=false, input="/dev/stdin", delim="white",
         uncheck=false, maxSplit=0, Warn=""): int =
   ## Gen+Run *prelude*,*fields*,*begin*,*where*,*stmts*,*epilog* row processor
@@ -79,8 +79,7 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
   let digs = count(outp, 'X')
   let hsh  = toHex(program.hash and ((1 shl 16*digs) - 1), digs)
   let outp = if digs > 0: outp[0 ..< ^digs] & hsh else: outp
-  let nim  = if nim.len > 0: nim else: "nim $1 $2 $3 -o:$4 $5" % [
-                                       bke, args, verb, outp, outp]
+  let nim  = "$1 $2 $3 $4 -o:$5 $6" % [nim, bke, args, verb, outp, outp]
   let f = mkdirOpen(outp & ".nim", fmWrite)
   f.write program
   f.close
@@ -96,7 +95,7 @@ when isMainModule:
                      "epilog"  : "Nim code for epilog/end loop section",
                      "fields"  : "`delim`-sep field names (match row0)",
                      "genF"    : "make field names from this fmt; eg c$1",
-                     "nim"     : "\"\": nim {if run: r else: c} {args}",
+                     "nim"     : "path to a nim compiler (>=v1.4)",
                      "run"     : "Run at once using nim r .. < input",
                      "args"    : "\"\": -d:danger; '+' prefix appends",
                      "cache"   : "\"\": --nimcache:/tmp/rp (--incr:on?)",
