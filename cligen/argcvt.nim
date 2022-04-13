@@ -379,8 +379,10 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     elif a.sep == "^=": dst = argAggSplit[T](a, false) & move(dst)
     elif a.sep == "-=":                     # Delete Mode
       let parsed = argAggSplit[T](a, false)[0]
-      for i, e in dst:                      # Slow algo,..
-        if e == parsed: dst.delete(i)       # ..but preserves order
+      var dstNew: seq[T]
+      for e in dst:                         # Slow algo,..
+        if e != parsed: dstNew.add e        # ..but preserves order
+      dst = dstNew
     elif a.val == "" and a.sep == ",=":     # just clobber
       dst.setLen(0)
     elif a.sep == ",@=":                    # split-clobber-assign
