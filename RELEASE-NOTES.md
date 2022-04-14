@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.24
+---------------
+  - Fix long-standing bug in `--long-=foo` for `long: seq[T]` params.
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages
