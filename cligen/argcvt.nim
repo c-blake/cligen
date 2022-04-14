@@ -393,8 +393,10 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
       dst = argAggSplit[T](a) & move(dst)
     elif a.sep == ",-=":                    # split-delete
       let parsed = argAggSplit[T](a)
-      for i, e in dst:                      # Slow algo,..
-        if e in parsed: dst.delete(i)       # ..but preserves order
+      var dstNew: seq[T]
+      for e in dst:                         # Slow algo,..
+        if e notin parsed: dstNew.add e     # ..but preserves order
+      dst = dstNew
     else:
       a.msg = "Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key]
       raise newException(ElementError, "Bad operator")
