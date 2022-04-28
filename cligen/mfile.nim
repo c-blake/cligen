@@ -13,9 +13,11 @@ type
     st*   : Stat    ## File metadata at time of open
     prot* : cint    ## Map Protection
     flags*: cint    ## Map Flags (-1 => not open)
-    mem*  : pointer ## First addr to use
-    len*  : int     ## Length of file (in bytes) or to unmap
+    mslc* : MSlice  ## (mem, len) of file
   csize = uint
+
+proc mem*(mf: MFile): pointer = mf.mslc.mem ## accessor to use MFile like MSlice
+proc len*(mf: MFile): int     = mf.mslc.len ## accessor to use MFile like MSlice
 
 proc getpagesize(): cint {. importc: "getpagesize", header: "<unistd.h>" .}
 let pagesize = getpagesize()
@@ -50,11 +52,11 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   b0 = min(b0, Off(result.st.st_size))      #Do not exceed file sz
   if b0 > a:                                #Leave .mem nil & .len==0 if empty
     let prot = if flags == MAP_PRIVATE: (PROT_READ or PROT_WRITE) else: prot
-    result.len = int(b0 - a)
-    result.mem = mmap(nil, result.len, prot, flags, fd, Off(a))
-    if result.mem == cast[pointer](MAP_FAILED):
+    result.mslc.len = int(b0 - a)
+    result.mslc.mem = mmap(nil, result.mslc.len, prot, flags, fd, Off(a))
+    if result.mslc.mem == cast[pointer](MAP_FAILED):
       perror cstring("mmap"), 4
-      result.mem = nil
+      result.mslc.mem = nil
       return
 
 proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
@@ -96,9 +98,9 @@ proc close*(mf: var MFile) =
   if mf.fd != -1:
     if close(mf.fd) == -1: perror cstring("close"), 5
     mf.fd = -1
-  if mf.mem != nil and munmap(mf.mem, mf.len) == -1:
+  if mf.mslc.mem != nil and munmap(mf.mslc.mem, mf.mslc.len) == -1:
     perror cstring("munmap"), 6
-  mf.mem = nil
+  mf.mslc.mem = nil
 
 proc close*(mf: MFile) =
   ## Release memory acquired by MFile mopen()s; Allows let mf = mopen()
@@ -131,8 +133,8 @@ proc resize*(mf: var MFile, newFileSize: int): int =
     if newAddr == cast[pointer](MAP_FAILED):
       perror cstring("mmap"), 4
       return -1
-  mf.mem = newAddr
-  mf.len = newFileSize
+  mf.mslc.mem = newAddr
+  mf.mslc.len = newFileSize
 
 proc inCore*(mf: MFile): tuple[resident, total: int] =
   proc mincore(adr: pointer, length: csize, vec: cstring): cint {.
@@ -149,9 +151,8 @@ proc `==`*(a,b: MFile): bool = a.len==b.len and cMemCmp(a.mem,b.mem,a.len.csize)
 
 proc `==`*(a: MFile, p: pointer): bool = a.mem==p
 
-proc toMSlice*(mf: MFile): MSlice =  #I'd prefer to call this MSlice, but if I
-  result.mem = mf.mem                #do, import'rs of [mfile,mslice] must
-  result.len = mf.len                #qualify MSlice,but only in generic param.
+proc toMSlice*(mf: MFile): MSlice = mf.mslc
+  ## MSlice field accessor for consistency with toMSlice(string)
 
 iterator mSlices*(mf: MFile, sep='\l', eat='\r'): MSlice =
   for ms in mSlices(mf.toMSlice, sep, eat):
