@@ -18,6 +18,8 @@ type
 
 proc mem*(mf: MFile): pointer = mf.mslc.mem ## accessor to use MFile like MSlice
 proc len*(mf: MFile): int     = mf.mslc.len ## accessor to use MFile like MSlice
+proc `mem=`*(mf: MFile, m: pointer) = mf.mslc.mem = m ## accessor to use MFile like MSlice
+proc `len=`*(mf: MFile, n: int)     = mf.mslc.len = n ## accessor to use MFile like MSlice
 
 proc getpagesize(): cint {. importc: "getpagesize", header: "<unistd.h>" .}
 let pagesize = getpagesize()

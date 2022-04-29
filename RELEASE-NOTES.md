@@ -5,6 +5,8 @@ Version: 1.5.24
 ---------------
   - Fix long-standing bug in `--long-=foo` for `long: seq[T]` params.
 
+  - Change mfile/MFile.(mem|len) to be an `MSlice` w/back compat. accessors.
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages
