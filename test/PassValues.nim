@@ -9,10 +9,14 @@ when isMainModule:
   const cmdName         = "myCmd"     #These are all tested via --help
   const doc             = "The" & " " & "doc"
   const usage           = "$command $args\n${doc}Options:\n$options"
-  const help            = { "al-pha" : "growth constant",
-                            "be-ta"  : "shrink target" }.toTable
-  const short           = { "a-lpha" : 'z',
-                            "b-eta" : '\0' }.toTable
+  const helpA           = "growth " & "constant"
+  const paramB1         = "be-" & "ta"
+  const paramB2         = "b-" & "eta"
+  const help            = { "al-pha" : helpA,
+                            paramB1  : "shrink target" }.toTable
+  const shortA          = chr(ord('y') + 1) # == 'z'
+  const short           = { "a-lpha" : shortA,
+                            paramB2 : '\0' }.toTable
   const echoResult      = false
   const noAutoEcho      = true
   const positional      = "a1"

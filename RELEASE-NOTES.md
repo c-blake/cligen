@@ -7,6 +7,9 @@ Version: 1.5.24
 
   - Change mfile/MFile.(mem|len) to be an `MSlice` w/back compat. accessors.
 
+  - Fix a long-standing bug in const/static value passing
+    (https://github.com/c-blake/cligen/issues/209)
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages

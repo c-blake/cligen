@@ -188,7 +188,8 @@ proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
 
 proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
     Table[string, (string, string)] =
-  template setCk(k, p, h: untyped) {.dirty.} =   #set & check result entries
+  template setCk(p, h: untyped) {.dirty.} =      #set & check result entries
+    let k = p.optionNormalize
     result[k] = (p, h)
     if not fpars.containsParam(ident(k)) and k notin builtinOptions:
       error $proNm & " has no param matching `help` key \"" & p & "\""
@@ -196,11 +197,9 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
   result = initTable[string, (string, string)]() #help key & text for any param
   if helps.kind == nnkSym:
     for i, tup in helps.getImpl[1][1]:
-      if tup[0].intVal != 0:
-        setCk(tup[1].strVal.optionNormalize, tup[1].strVal, tup[2].strVal)
+      if tup[0].intVal != 0: setCk(tup[1].toString, tup[2].toString)
   else:
-    for ph in helps:
-      setCk(ph[1][0].strVal.optionNormalize, ph[1][0].strVal, ph[1][1].strVal)
+    for ph in helps: setCk(ph[1][0].toString, ph[1][1].toString)
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   template setCk(lo, sh: untyped) {.dirty.} =    #set & check result entries
@@ -213,12 +212,12 @@ proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
   if shorts.kind == nnkSym:
     for i, tup in shorts.getImpl[1][1]:
       if tup[0].intVal != 0:
-        setCk(tup[1].strVal.optionNormalize, tup[2].intVal.char)
+        setCk(tup[1].toString.optionNormalize, tup[2].toInt.char)
   else:
     for losh in shorts:
       if losh[1][1].kind == nnkCharLit:
-        setCk(losh[1][0].strVal.optionNormalize, losh[1][1].intVal.char)
-      else: error "`short` value for \"" & losh[1][0].strVal & "\" not a `char`"
+        setCk(losh[1][0].toString.optionNormalize, losh[1][1].intVal.char)
+      else: error "`short` value for \""&losh[1][0].strVal&"\" not a `char` lit"
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
      Table[string, char] =      # Table giving short[param] avoiding collisions

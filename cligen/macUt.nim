@@ -35,6 +35,10 @@ proc toString*(n: NimNode): string =
   ## Get compile-time string from a symbol or literal.
   if n.kind == nnkSym: n.getImpl.strVal else: $n
 
+proc toInt*(n: NimNode): int =
+  ## Get compile-time int from a symbol or literal.
+  if n.kind == nnkSym: n.getImpl.intVal.int else: n.intVal.int
+
 proc toStrIni*(c: range[0 .. 255]): NimNode =
   ## Transform a literal 'x' into string literal initializer "x"
   newStrLitNode($chr(c))
