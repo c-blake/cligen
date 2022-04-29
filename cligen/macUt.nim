@@ -159,7 +159,8 @@ macro with*(ob: typed, fields: untyped, body: untyped): untyped =
   result.add body
   result = nnkBlockStmt.newTree(newEmptyNode(), result)
 
-macro callsOn*(routineFirstsRest: varargs[untyped]) =
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
+ macro callsOn*(routineFirstsRest: varargs[untyped]): untyped =
   ## `callsOn f, [a, b,..], y, z, ..` generates `f(a,y,z,..); f(b,y,z,..); ..`.
   ## You can use (), [], or {} for the list of first arguments.
   if routineFirstsRest.len < 2 or
