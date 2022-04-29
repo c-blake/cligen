@@ -196,7 +196,10 @@ proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
 
   result = initTable[string, (string, string)]() #help key & text for any param
   if helps.kind == nnkSym:
-    for i, tup in helps.getImpl[1][1]:
+    let imp = helps.getImpl
+    if imp.len < 2 or imp[1].len < 2:   # This condition should be more precise
+      error "`help` initializer must be a static/const {}.toTable construct"
+    for i, tup in imp[1][1]:
       if tup[0].intVal != 0: setCk(tup[1].toString, tup[2].toString)
   else:
     for ph in helps: setCk(ph[1][0].toString, ph[1][1].toString)
