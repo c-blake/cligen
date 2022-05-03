@@ -4,7 +4,7 @@
 ## layered differently, has non-system.open-colliding type constructors, and
 ## uses ``.len`` instead of ``.size`` for constency with other Nim things.
 
-import std/[posix, os], ./mslice # cMemCmp mSlices
+import std/[posix, os], ./mslice # cmemcmp mSlices
 export PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_POPULATE
 
 type
@@ -147,9 +147,9 @@ proc inCore*(mf: MFile): tuple[resident, total: int] =
     for page in resident:
       if (page.int8 and 1) != 0: result.resident.inc
 
-proc `<`*(a,b: MFile): bool = cMemCmp(a.mem, b.mem, min(a.len, b.len).csize) < 0
+proc `<`*(a,b: MFile): bool = cmemcmp(a.mem, b.mem, min(a.len, b.len).csize) < 0
 
-proc `==`*(a,b: MFile): bool = a.len==b.len and cMemCmp(a.mem,b.mem,a.len.csize)==0
+proc `==`*(a,b: MFile): bool = a.len==b.len and cmemcmp(a.mem,b.mem,a.len.csize)==0
 
 proc `==`*(a: MFile, p: pointer): bool = a.mem==p
 

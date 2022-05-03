@@ -8,7 +8,7 @@ clCfg.version = "1.0"
 dispatchGen(editDistanceAscii)
 
 try:
-  echo "edit distance is ", dispatchEditDistanceAscii()
+  echo "edit distance is ", dispatcheditDistanceAscii()
 except HelpOnly, VersionOnly:
   quit(0)
 except ParseError:

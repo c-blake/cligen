@@ -26,7 +26,7 @@ proc foo(alpha: int, beta: int=2, rest: seq[int]) =
   echo "beta: ", beta
 
 dispatchGen(foo, setByParse=addr fooParse)
-dispatchFoo(parseOnly=true)   #cmdLine=os.commandLineParams() by default
+dispatchfoo(parseOnly=true)   #cmdLine=os.commandLineParams() by default
 
 echo "fooParse:"
 for e in fooParse: echo "  ", e

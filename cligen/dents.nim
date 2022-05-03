@@ -414,7 +414,7 @@ proc initDEnt*(path: string; nmAt: int; lst: Statx): DEnt {.inline.} =
 
 proc showLong*(label: string, dir: seq[DEnt], wrote: var bool) {.inline.} =
   if wrote: stdout.urite "\n"
-  if label.len > 0: stdout.urite label.dirName, ":\n"
+  if label.len > 0: stdout.urite label.dirname, ":\n"
   var tot = 0'u64
   for e in dir: tot += e.lst.stx_blocks
   echo "total ", tot shr 1

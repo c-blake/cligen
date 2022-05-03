@@ -15,4 +15,4 @@ proc foo(alpha = 1.0, beta = 2, rest: seq[int]) =
   echo "fooParse: ", fooParse
 
 dispatchGen(foo, setByParse = fooParse.addr)
-cligenQuit(dispatchFoo())
+cligenQuit(dispatchfoo())

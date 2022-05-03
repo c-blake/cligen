@@ -6,7 +6,7 @@
 import std/posix, cligen/posixUt
 
 const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
-{.passC: "-D_GNU_SOURCE".}
+{.passc: "-D_GNU_SOURCE".}
 when not haveStatx:
   type
     StatxTs* {.final, pure.} = object

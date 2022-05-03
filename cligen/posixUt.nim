@@ -226,7 +226,7 @@ proc getDents*(fd: cint, st: Stat, dts: ptr seq[int8] = nil,
   var dir = fdopendir(fd)
   if dir == nil: return
   defer: discard closedir(dir)
-  var d: ptr DirEnt
+  var d: ptr Dirent
   while (d := dir.readdir) != nil:
     if (d.d_name[0] == '.' and d.d_name[1] == '\0') or
        (d.d_name[0] == '.' and d.d_name[1] == '.' and d.d_name[2] == '\0'):

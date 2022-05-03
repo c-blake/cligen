@@ -228,7 +228,7 @@ proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
 
 when defined(linux):
-  when defined(tcc): {.passC: "-D_GNU_SOURCE".}
+  when defined(tcc): {.passc: "-D_GNU_SOURCE".}
   import posix
   type CPUSet*{.importc: "cpu_set_t", header: "<sched.h>", final,pure.} = object
     discard # Need impl, but it is ignored; CPUSet=cpu_set_t, including sizeof
