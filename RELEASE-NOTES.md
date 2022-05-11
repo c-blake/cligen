@@ -10,6 +10,10 @@ Version: 1.5.24
   - Fix a long-standing bug in const/static value passing
     (https://github.com/c-blake/cligen/issues/209)
 
+  - Add `err=stderr` override in `cligen/mfile` & add ability to capture
+    `MFile` object from `mSlices` iterator and a couple `cligen/mslice` procs
+    to make it easier to use an `MSlice` like a `string`.
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages

@@ -33,8 +33,8 @@ proc perror(x: cstring, len: int, err=stderr) =
   discard err.writeBuffer(pointer(x), len); err.write ": "
   discard err.writeBuffer(errstr, errlen); err.write "\n"
 
-proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
-            a=0.Off, b = Off(-1), allowRemap=false, noShrink=false): MFile =
+proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED, a=0.Off,
+            b = Off(-1), allowRemap=false, noShrink=false, err=stderr): MFile =
   ## mmap(2) wrapper to simplify life.  Byte range [a,b) of the file pointed to
   ## by 'fd' translates to [result.mem ..< .len).
   var b0 = Off(b)                           #Will be adjusting this, pre-map
@@ -46,7 +46,7 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
   if (prot and PROT_WRITE) != 0 and Off(st.st_size) != b and b != Off(-1):
     if (b > Off(st.st_size) or not noShrink) and flags != MAP_PRIVATE:
       if ftruncate(fd, b) == -1:            #Writable & too small => grow
-        perror cstring("ftruncate"), 9
+        perror cstring("ftruncate"), 9, err
         return                              #Likely passed non-writable fd
       discard fstat(fd, result.st)          #Refresh st data ftrunc; Cannot fail
   elif b == Off(-1):                        #Do special whole file mode
@@ -57,24 +57,24 @@ proc mopen*(fd: cint; st: Stat, prot=PROT_READ, flags=MAP_SHARED,
     result.mslc.len = int(b0 - a)
     result.mslc.mem = mmap(nil, result.mslc.len, prot, flags, fd, Off(a))
     if result.mslc.mem == cast[pointer](MAP_FAILED):
-      perror cstring("mmap"), 4
+      perror cstring("mmap"), 4, err
       result.mslc.mem = nil
       return
 
-proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED,
-            a=0, b = Off(-1), allowRemap=false, noShrink=false): MFile =
+proc mopen*(fd: cint, prot=PROT_READ, flags=MAP_SHARED, a=0, b = Off(-1),
+            allowRemap=false, noShrink=false, err=stderr): MFile =
   ## Init map for already open ``fd``.  See ``mopen(cint,Stat)`` for details.
   if fd == -1:
     return
   if fstat(fd, result.st) == -1:
-    perror cstring("fstat"), 5
+    perror cstring("fstat"), 5, err
     return
   if not S_ISREG(result.st.st_mode):  #Even symlns should fstat to ISREG. Quiet
     return                            #error in case client trying /dev/stdin.
-  result = mopen(fd, result.st, prot, flags, a, b, allowRemap, noShrink)
+  result = mopen(fd, result.st, prot, flags, a, b, allowRemap, noShrink, err)
 
 proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
-            allowRemap=false, noShrink=false, perMask=0o666): MFile =
+            allowRemap=false, noShrink=false, perMask=0o666, err=stderr): MFile=
   ## Init map for ``path``.  ``See mopen(cint,Stat)`` for mapping details.
   ## This proc also creates a file, if necessary, with permission ``perMask``.
   var oflags: cint
@@ -89,51 +89,51 @@ proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
     oflags = O_WRONLY or O_CREAT or O_NONBLOCK
   let fd = open(path, oflags, perMask.cint)
   if fd == -1:
-    perror cstring("open"), 4; return
+    perror cstring("open"), 4, err; return
   result = mopen(fd, prot, flags, a, b, allowRemap, noShrink)
   if not allowRemap:
-    if close(fd) == -1: perror cstring("close"), 5
+    if close(fd) == -1: perror cstring("close"), 5, err
     result.fd = -1
 
-proc close*(mf: var MFile) =
+proc close*(mf: var MFile, err=stderr) =
   ## Release memory acquired by MFile mopen()s
   if mf.fd != -1:
-    if close(mf.fd) == -1: perror cstring("close"), 5
+    if close(mf.fd) == -1: perror cstring("close"), 5, err
     mf.fd = -1
   if mf.mslc.mem != nil and munmap(mf.mslc.mem, mf.mslc.len) == -1:
-    perror cstring("munmap"), 6
+    perror cstring("munmap"), 6, err
   mf.mslc.mem = nil
 
-proc close*(mf: MFile) =
+proc close*(mf: MFile, err=stderr) =
   ## Release memory acquired by MFile mopen()s; Allows let mf = mopen()
   if mf.fd != -1:
-    if close(mf.fd) == -1: perror cstring("close"), 5
+    if close(mf.fd) == -1: perror cstring("close"), 5, err
   if mf.mem != nil and munmap(mf.mem, mf.len) == -1:
-    perror cstring("munmap"), 6
+    perror cstring("munmap"), 6, err
 
-proc resize*(mf: var MFile, newFileSize: int): int =
+proc resize*(mf: var MFile, newFileSize: int, err=stderr): int =
   ## Resize & re-map file underlying an ``allowRemap MFile``. ``.mem`` will
   ## likely change.  **Note**: this assumes entire file is mapped @off=0.
   if mf.fd == -1:
-    perror cstring("mopen needs allowRemap"), 22
+    perror cstring("mopen needs allowRemap"), 22, err
     return -1
   if ftruncate(mf.fd, newFileSize) == -1:
-    perror cstring("ftruncate"), 9
+    perror cstring("ftruncate"), 9, err
     return -1
   when defined(linux):                          #Maybe NetBSD, too?
     proc mremap(old: pointer; oldSize, newSize: csize; flags: cint): pointer {.
       importc: "mremap", header: "<sys/mman.h>" .}
     let newAddr = mremap(mf.mem, csize(mf.len), csize(newFileSize), cint(1))
     if newAddr == cast[pointer](MAP_FAILED):
-      perror cstring("mremap"), 6
+      perror cstring("mremap"), 6, err
       return -1
   else: #On Linux mremap can be over 100X faster than this munmap+mmap cycle.
     if munmap(mf.mem, mf.len) != 0:
-      perror cstring("munmap"), 6
+      perror cstring("munmap"), 6, err
       return -1
     let newAddr = mmap(nil, newFileSize, mf.prot, mf.flags, mf.fd, 0)
     if newAddr == cast[pointer](MAP_FAILED):
-      perror cstring("mmap"), 4
+      perror cstring("mmap"), 4, err
       return -1
   mf.mslc.mem = newAddr
   mf.mslc.len = newFileSize
@@ -216,24 +216,31 @@ iterator getDelims(f: File, dlm: char='\n'): (cstring, int) =
   while (let n=getdelim(s.addr, room.addr, cint(dlm), f); n)+1 > 0: yield (s, n)
   s.free
 
-iterator mSlices*(path:string, sep='\l', eat='\r', keep=false): MSlice =
+var doNotUse: MFile
+iterator mSlices*(path:string, sep='\l', eat='\r', keep=false,
+                  err=stderr, mf: var MFile=doNotUse): MSlice =
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
-  ##means MFile or strings backing MSlice's are kept alive for life of program.
-  let mf = mopen(path)
-  if mf.mem != nil:
-    for ms in mSlices(mf.toMSlice, sep, eat):
+  ##means MFile or strings backing MSlice's are kept alive for life of program
+  ##unless you also pass `mf` which returns the `MFile` to close when unneeded.
+  let mfl = mopen(path, err=err)    # MT-safety means cannot just use `mf`
+  if mfl.mem != nil:
+    for ms in mSlices(mfl.toMSlice, sep, eat):
       yield ms
-    if not keep: mf.close()
+    if mf.addr == doNotUse.addr:
+      if not keep: mfl.close(err=err)
+    else: mf = mfl
   else:
-    let f = if path == "/dev/stdin": stdin else: open(path)
-    for (cs, n) in f.getDelims:
-      if n > 0 and cs[n-1] == '\n':
-        cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
-        yield MSlice(mem: cs, len: n - 1)
-      else:
-        yield MSlice(mem: cs, len: n)
-    if f != stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
+    try:
+      let f = if path == "/dev/stdin": stdin else: open(path)
+      for (cs, n) in f.getDelims:
+        if n > 0 and cs[n-1] == '\n':
+          cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
+          yield MSlice(mem: cs, len: n - 1)
+        else:
+          yield MSlice(mem: cs, len: n)
+      if f!=stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
+    except IOError: perror "fopen", 5, err
 
 proc findPathPattern*(pathPattern: string): string =
   ## Search directory containing pathPattern (or ".") for *first* matching name.
