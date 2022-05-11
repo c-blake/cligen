@@ -1,8 +1,8 @@
 ## Module similar to stdlib memfiles but (at the moment) posix only, and with
 ## exception-free interface which can help with multi-thread safety inside `||`
-## blocks. Also adds a ``noShrink`` safeguard, supports write-only memory, is
+## blocks. Also adds a `noShrink` safeguard, supports write-only memory, is
 ## layered differently, has non-system.open-colliding type constructors, and
-## uses ``.len`` instead of ``.size`` for constency with other Nim things.
+## uses `.len` instead of `.size` for consistency with other Nim things.
 
 import std/[posix, os], ./mslice # cmemcmp mSlices
 export PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_POPULATE
