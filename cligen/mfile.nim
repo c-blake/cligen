@@ -217,7 +217,7 @@ iterator getDelims(f: File, dlm: char='\n'): (cstring, int) =
   s.free
 
 var doNotUse: MFile
-iterator mSlices*(path:string, sep='\l', eat='\r', keep=false,
+iterator mSlices*(path: string, sep='\l', eat='\r', keep=false,
                   err=stderr, mf: var MFile=doNotUse): MSlice =
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
@@ -231,6 +231,7 @@ iterator mSlices*(path:string, sep='\l', eat='\r', keep=false,
       if not keep: mfl.close(err=err)
     else: mf = mfl
   else:
+    if mf.addr != doNotUse.addr: mf.mslc.mem = nil; mf.fd = -1 # close => no-op
     try:
       let f = if path == "/dev/stdin": stdin else: open(path)
       for (cs, n) in f.getDelims:
