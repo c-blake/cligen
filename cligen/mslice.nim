@@ -52,8 +52,9 @@ proc `[]`*(ms: MSlice, i: int): char {.inline.} =
 proc `[]=`*(ms: MSlice, i: int, c: char) {.inline.} =
   cast[ptr char](ms.mem +! i)[] = c
 
-proc mem*(s: string|openArray[char]): pointer = cast[pointer](s[0].addr)
-  ## Make it easy to write a `SomeString` proc; MUST FIRST CHECK s.len > 0.
+proc mem*(s: openArray[char]): pointer =
+  ## Make it easy to write a `SomeString` proc
+  if s.len > 0: cast[pointer](s[0].unsafeAddr) else: nil
 
 proc startsWith*(s: MSlice, pfx: SomeString): bool =
   ## Like `strutils.startsWith`.
