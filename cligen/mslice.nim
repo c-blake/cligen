@@ -52,6 +52,13 @@ proc `[]`*(ms: MSlice, i: int): char {.inline.} =
 proc `[]=`*(ms: MSlice, i: int, c: char) {.inline.} =
   cast[ptr char](ms.mem +! i)[] = c
 
+proc mem*(s: string|openArray[char]): pointer = cast[pointer](s[0].addr)
+  ## Make it easy to write a `SomeString` proc; MUST FIRST CHECK s.len > 0.
+
+proc startsWith*(s: MSlice, pfx: SomeString): bool =
+  ## Like `strutils.startsWith`.
+  pfx.len > 0 and s.len > pfx.len and cmemcmp(s.mem, pfx.mem, pfx.len.csize_t) == 0
+
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
   s.setLen(ms.len)
@@ -179,8 +186,6 @@ proc strip*(s: MSlice, cset=wspace): MSlice {.inline.} =
     result.len -= 1
   while result.len > 0 and cast[cstring](result.mem)[result.len-1] in cset:
     result.len -= 1
-
-proc mem(s: string): pointer = cast[pointer](cstring(s))
 
 template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
                      sep: untyped, nextSep: untyped, isSep: untyped) {.dirty.} =
