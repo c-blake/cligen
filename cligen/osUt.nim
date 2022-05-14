@@ -399,7 +399,7 @@ proc wr*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
 
 proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
-  fd.write(buf[0].addr.cstring, buf.len + 1)
+  fd.write(buf[0].unsafeAddr.cstring, buf.len + 1)
 
 proc wrLine*(fd: cint, buf: string): int =
   ## Write `buf` & then a single newline atomically (`writev` on Linux).
