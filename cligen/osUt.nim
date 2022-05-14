@@ -227,9 +227,10 @@ let IONBF* = vIONBF
 proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
 
+when defined(linux) or defined(macosx) or defined(freebsd) or defined(openbsd):
+  import posix
 when defined(linux):
   when defined(tcc): {.passc: "-D_GNU_SOURCE".}
-  import posix
   type CPUSet*{.importc: "cpu_set_t", header: "<sched.h>", final,pure.} = object
     discard # Need impl, but it is ignored; CPUSet=cpu_set_t, including sizeof
   proc cpu_zero*(set: ptr CPUSet) {.importc: "CPU_ZERO", header: "<sched.h>".}
