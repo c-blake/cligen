@@ -14,6 +14,8 @@ Version: 1.5.24
     `MFile` object from `mSlices` iterator and a couple `cligen/mslice` procs
     to make it easier to use an `MSlice` like a `string`.
 
+  - Fix some OSX & old Nim portability issues only manifesting in client code.
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages
