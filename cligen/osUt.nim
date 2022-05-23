@@ -9,7 +9,7 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import std/[os, strutils, dynlib, times, stats, math]
+import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
 type csize = uint
 
 proc isatty(f: File): bool =
@@ -414,3 +414,19 @@ proc wrLenBuf*(fd: cint, buf: string): int =
   let iov = [ IOVec(iov_base: n.unsafeAddr     , iov_len: n.sizeof.uint),
               IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.uint) ]
   writev(fd, iov[0].unsafeAddr, 2)
+
+proc lgBold*(f: File, s: string) = f.write "\e[1m", s, "\e[22m"
+  ## Log to a `File`, `f` with ANSI SGR bold.
+
+proc lgInv*(f: File, s: string) = f.write "\e[7m", s, "\e[27m"
+  ## Log to a `File`, `f` with ANSI SGR inverse.
+
+proc run*(cmd: openArray[string], env: StringTableRef=nil, opts={poEchoCmd,
+          poUsePath}, dryRun=false, logFile=stderr, logWrite=lgBold): int =
+  ## Wrap a sync(`waitForExit`) `os.startProcess` BUT only print (if `dryRun`),
+  ## default to use PATH & echo & allow log destination/embellishment overrides.
+  if poEchoCmd in opts and logFile != nil:
+    logFile.logWrite cmd.join(" "); logFile.write '\n'
+  if not dryRun:
+    startProcess(cmd[0], "", cmd[1..^1], env, opts - {poEchoCmd}).waitForExit
+  else: 0

@@ -80,3 +80,9 @@ proc seekable*(f: File): bool =
   ## True if Nim `File` is bound to an OS file pointing at a seekable device.
   proc ftell(f: File): int64 {.importc, header: "stdio.h".}
   f.ftell != -1
+
+proc `&`*[T](x: openArray[T], y: openArray[T]): seq[T] =
+  ## Allow `[1] & [2]` exprs; `system/` has only `add var seq openArray`.
+  result.setLen x.len + y.len
+  for i, e in x: result[i] = e
+  for i, e in y: result[x.len + i] = e
