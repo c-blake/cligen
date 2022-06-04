@@ -27,7 +27,7 @@
 ## Instead of `*Lines`, you likely want to use `*0term` like `examples/only.nim`
 ## or more generally `*LenPfx` like `examples/grl.nim`.  Interleaved output is
 ## not a problem since reply processing (`prn` above) is all in the parent.
-## There is no need for locking unless `work` set up & uses shared resources.
+## There is no need for locking unless `work` sets up & uses shared resources.
 ##
 ## Many prog.lang people seem unaware that processes & threads are distinguished
 ## mostly by safe vs. unsafe defaults { see Linux `clone` after Plan9 `rfork` }.
