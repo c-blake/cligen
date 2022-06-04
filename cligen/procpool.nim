@@ -194,7 +194,7 @@ template eval0term*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wr0term, onReply)
 template evalLines*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrLine, onReply)
 proc frames0*(f: var Filter): (iterator(): MSlice) {.deprecated:
   "use `frames0term`".} = frames0term(f)
-template eval*(pp, reqGen, onReply: untyped) {.deprecated: "use `eval0`".} =
+template eval*(pp, reqGen, onReply: untyped) {.deprecated: "use `eval0term`".} =
   eval0term(pp, reqGen, onReply)
 template evalp*(pp, reqGen, onReply: untyped) {.deprecated:"use `evalLenPfx`".}=
   evalLenPfx(pp, reqGen, onReply)
