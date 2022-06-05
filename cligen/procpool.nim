@@ -44,7 +44,7 @@
 ## good ecosystems should have libs for both (and for files as named arenas).
 ## This module is only a baby step in that direction that perhaps can inspire.
 
-import std/[cpuinfo, posix], cligen/[mslice, sysUt, osUt]
+import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
 type
   Filter* = object ## Abstract coprocess filter reading|writing its stdin|stdout
     pid: Pid        # parent uses this to control => hidden
@@ -59,6 +59,7 @@ type
     kids: seq[Filter]
     fdsetR, fdsetW: TFdSet
     fdMaxR, fdMaxW: cint
+    toR, toW: Timeval
     frames: Frames
 
 proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
@@ -90,7 +91,9 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0): ProcPool {.noinit.} =
+const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
+proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
+                   toR=to0, toW=to0): ProcPool {.noinit.} =
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
@@ -108,9 +111,9 @@ proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0): ProcPool {.noin
   result.frames = frames
 
 iterator readyReplies*(pp: var ProcPool): MSlice =
-  var noTO: Timeval                                   # Zero timeout => no block
+  var to = pp.toR                                     # Block for <= 1 ms
   var fdsetR = pp.fdsetR
-  if select(pp.fdMaxR, fdsetR.addr, nil, nil, noTO.addr) > 0:
+  if select(pp.fdMaxR, fdsetR.addr, nil, nil, to.addr) > 0:
     for i in 0 ..< pp.len:
       if FD_ISSET(pp.kids[i].fd1, fdsetR) != 0:
         for rep in toItr(pp.frames(pp.kids[i])): yield rep
@@ -168,21 +171,27 @@ proc framesLines*(f: var Filter): iterator(): MSlice =
       for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\n'): yield s
     else: f.done = true
 
-proc getKid*(pp: var ProcPool, i0: int): int {.inline.} =
-  ## Return index of first kid starting from `i0` with space in its pipe buffer.
+template wrReq*(fds, pp, wr, rq): untyped =
+  ## Internal to `wrReqs`, this evaluates to true if a request was written.
+  var to = pp.toW                               # Block for <= 1 ms
   var fdsetW = pp.fdsetW
-  if select(pp.fdMaxW, nil, fdsetW.addr, nil, nil) > 0:
-    for i in i0 ..< pp.len: (if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: return i)
-    for i in 0  ..< i0    : (if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: return i)
+  if select(pp.fdMaxW, nil, fdsetW.addr, nil, to.addr) > 0:
+    fds.setLen 0
+    for i in 0 ..< pp.len:
+      if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: fds.add pp.kids[i].fd0
+    fds.shuffle         # Might be nice/faster to re-jigger this logic to..
+    var value = false   #..use full set of fds before doing select again.
+    for fd in fds:
+      if wr(fd, rq) > 0: value = true; break
+    value
+  else: false
 
+# Must have `rq.len` < OS pipe buffer; Pass indices, paths, etc. to ensure this.
 template wrReqs(pp, reqGen, wr, onReply: untyped) =
-  var k, i0 = 0     # Infinite loops if `rq.len` > OS pipe buffer; If you cannot
-  for rq in reqGen: #..be sure that won't happen then pass indices, paths, etc.
-    while(k = pp.getKid(i0); wr(pp.kids[k].fd0, rq) < 0 and errno==EWOULDBLOCK):
-      i0 = (i0 + 1) mod pp.len
-    i0 = (i0 + 1) mod pp.len
-    if i0 + 1 == pp.len:                        # At the end of each req cycle
-      for rep in pp.readyReplies: onReply(rep)  #..handle ready replies.
+  var fds: seq[cint]
+  for rq in reqGen:
+    while not wrReq(fds, pp, wr, rq):           # possible all writers block
+      for rep in pp.readyReplies: onReply(rep)  # reaping answers should unblock
   for i in 0 ..< pp.len: pp.close(i)            # Send EOFs
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
 
