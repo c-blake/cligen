@@ -91,9 +91,11 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
+proc ctrlC() {.noconv.} = quit 130
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
 proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
-                   toR=to0, toW=to0): ProcPool {.noinit.} =
+                   toR=to0, toW=to0, raiseCtrlC=false): ProcPool {.noinit.} =
+  if not raiseCtrlC: setControlCHook ctrlC
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
