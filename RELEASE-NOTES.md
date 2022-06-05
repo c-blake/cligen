@@ -16,6 +16,10 @@ Version: 1.5.24
 
   - Fix some OSX & old Nim portability issues only manifesting in client code.
 
+  - Fix chance deadlock possibility in cligen/procpool and add:
+    - `examples/ppBench.nim` to measure amortized dispatch overhead
+    - `examples/fkindc.nim` "overview" variant of `only` using diff req-reply framing
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages
