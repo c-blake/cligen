@@ -394,8 +394,10 @@ proc uWr*[T](f: File, ob: var T): bool =
   ## Unlocked write flat object `ob` to `File`.
   f.uriteBuffer(ob.addr, ob.sizeof) == ob.sizeof
 
-proc wr*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
+proc wrOb*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
   ## Write flat object `ob` to file handle/descriptor `fd`.
+
+proc wr*[T](fd: cint, ob: T): int {.deprecated: "use `wrOb`".} = fd.wrOb ob
 
 proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.

@@ -137,7 +137,7 @@ iterator finalReplies*(pp: var ProcPool): MSlice =
             n.dec
 
 proc framesOb*(f: var Filter): iterator(): MSlice =
-  ## A reply frames iterator for wrk procs writing flat, binary object results.
+  ## A reply frames iterator for wrk procs writing fixed-size binary objects.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice = # NOTE: must cp to other mem before next call.
     let obsz = f.aux
@@ -199,7 +199,7 @@ template wrReqs(pp, reqGen, wr, onReply: untyped) =
 
 proc noop*(s: MSlice) = discard ## convenience no-op for `eval*`.
 
-template evalOb*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wr, onReply)
+template evalOb*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrOb, onReply)
 template evalLenPfx*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrLenBuf,onReply)
 template eval0term*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wr0term, onReply)
 template evalLines*(pp, reqGen, onReply) = wrReqs(pp, reqGen, wrLine, onReply)
