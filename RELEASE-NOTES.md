@@ -24,6 +24,9 @@ Version: 1.5.24
   - For convenience, add `raiseCtrlC` to `initProcPool`, defaulting to silence
     (by default) dozens of duplicate stack traces upon user-interrupt.
 
+  - `examples/dups.nim` no longer needs the OpenMP `||` iterator (although
+    parallelism was always mostly unhelpful there anyway).
+
 Version: 1.5.23
 ---------------
   - Slightly more terse default `enum` help messages

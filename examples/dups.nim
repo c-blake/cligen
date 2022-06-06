@@ -1,5 +1,5 @@
 import std/[os, posix, strutils, sets, tables, hashes, sha1, algorithm],
-  cligen, cligen/[mfile,fileUt,strUt, osUt,posixUt,sysUt, dents,statx]
+  cligen/[procpool,mfile,mslice,fileUt,strUt, osUt,posixUt,sysUt, dents,statx]
 
 type Lg* = enum osErr, summ                     #A tiny logging system
 var dupsLog* = { osErr }
@@ -79,9 +79,8 @@ proc digest(wkit: var WorkItem, d: Digest, slice: string) =
   of Sha1: hashAndCpy(secureHash)
   if d != size: wkit.m.close()
 
-{.passc: "-fopenmp", passl: "-fopenmp".}
 iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
-                  hash=wy, par=false, cmp=false): seq[string] =
+                  hash=wy, jobs=1, cmp=false): seq[string] =
   ## Yield paths to sets of duplicate files as seq[string].  See ``proc dups``.
   var m: MFile                                  #Files/size usually < CPU cores
   var wkls: seq[WorkItem]                       #..=>WorkList for files&digests
@@ -93,8 +92,21 @@ iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
       continue                            #Triples inline does not help.
     for p in paths:                       #Build worklist for par mode.
       wkls.add((sz, p, newString(8 + digSize[hash]), m))
-  for i in maybePar(par, 0, wkls.len-1):  #hashWY runs@6B/cyc~30GB/s >>IObw =>
-    digest(wkls[i], hash, slice)          #..par will help rarely||w/SHA1&!cmp
+  if jobs == 1:
+    for i in 0 ..< wkls.len: digest(wkls[i], hash, slice)
+  else: # hashWY runs@6B/cyc~30GB/s >>IObw => par will help rarely||w/SHA1&!cmp
+    flushFile stdout # SUBTLE! Kids use stdout buffer; Flush pre-fork to clear.
+    var pp = initProcPool((proc =
+                            var i: int
+                            while stdin.uRd(i):
+                              digest(wkls[i], hash, slice)
+                              discard stdout.uWr(i); stdout.urite(wkls[i].dig)
+                              flushFile stdout),
+                          framesOb, jobs, aux=int.sizeof + 8 + digSize[hash])
+    proc copyBack(s: MSlice) =
+      let i = int(cast[ptr int](s.mem)[])
+      copyMem wkls[i].dig[0].addr, s.mem +! int.sizeof, 8 + digSize[hash]
+    pp.evalOb 0 ..< wkls.len, copyBack    #Send indices, assign digests
   let sizeGuess = wkls.len div 2          #pretty good guess if <set.len> =~ 2
   var answer = initTable[string, seq[string]](sizeGuess)
   for i in 0 ..< wkls.len:
@@ -108,7 +120,7 @@ iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
 
 when isMainModule:                        #Provide a useful CLI wrapper.
   proc dups(file="", delim='\n', recurse=1, follow=false, xdev=false,
-            Deref=false, minLen=1, slice="", Hash=wy, cmp=false, par=false,
+            Deref=false, minLen=1, slice="", Hash=wy, cmp=false, jobs=1,
             log={osErr}, brief=false, time="",outDlm="\t", endOut="\n",
             paths: seq[string]): int =
     ## Print sets of files with duplicate contents. Examined files are UNION of
@@ -123,7 +135,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
     for s in dupSets(getMeta(paths, file, delim, recurse, minLen, follow, xdev,
-                             Deref), slice, Hash, par, cmp):
+                             Deref), slice, Hash, jobs, cmp):
       inc(nSet)
       if brief and summ notin log:
         break                         #Done once we know there is any duplicate
@@ -148,7 +160,7 @@ when isMainModule:                        #Provide a useful CLI wrapper.
       stderr.write tot," extra bytes in ",nSet," sets of ",nFile," files\n"
     return if nSet > 0: 1 else: 0     #Exit with appropriate status
 
-  dispatch(dups, help = {
+  import cligen; dispatch dups, short={"follow": 'F'}, help={
              "file"  : "optional input ( `\"-\"` | !tty = ``stdin`` )",
              "delim" : "input file delimiter; `\\\\0` -> NUL",
              "recurse": "recurse n-levels on dirs; `0`: unlimited",
@@ -159,9 +171,9 @@ when isMainModule:                        #Provide a useful CLI wrapper.
              "slice" : "file slice (float|%:frac; <0:tailRel)",
              "Hash"  : "hash function `[size|wy|nim|SHA1]`",
              "cmp"   : "compare; do not trust hash",
-             "par"   : "Use parallelism ``$OMP_NUM_THREADS``",
+             "jobs"  : "Use this much parallelism",
              "log"   : ">stderr{ `osErr`, `summ` }",
              "brief" : "do NOT print sets of dups",
              "time"  : "sort each set by file time: `{-}[bamcv].\\*`",
              "outDlm": "output internal delimiter",
-             "endOut": "output record terminator" }, short = { "follow": 'F' })
+             "endOut": "output record terminator"}
