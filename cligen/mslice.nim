@@ -111,11 +111,11 @@ proc mrite*(f: File, mses: varargs[MSlice]) {.inline.} =
   ## unlocked write all ``mses`` to file ``f``; Be careful of many fwrite()s.
   for ms in items(mses): f.urite ms
 
-proc read*[T](m: MSlice, ob: var T) =
+proc toOb*[T](m: MSlice, ob: var T) =
   ## Assumes `m` starts at beginning of object `ob`! Reads data in slice
   ## into object `ob` using `copyMem`.
   doAssert m.len >= ob.sizeof
-  copyMem(m.mem, ob.addr, ob.sizeof)
+  copyMem ob.addr, m.mem, ob.sizeof
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
