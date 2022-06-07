@@ -19,8 +19,8 @@
 ## .. code-block:: nim
 ##    import cligen/[procpool, mslice, osUt], os
 ##    proc work(r, w: cint) =
-##      let w = w.open(fmWrite, IOLBF)
-##      for s in r.open(fmRead, IOLBF).lines: w.write $s.len & "\n"
+##      let o = w.open(fmWrite, IOLBF)
+##      for s in r.open(fmRead, IOLBF).lines: o.write $s.len & "\n"
 ##    var pp = initProcPool(work, framesLines)
 ##    pp.evalLines commandLineParams(), echo
 ##
