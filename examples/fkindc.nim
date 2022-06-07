@@ -11,14 +11,14 @@ const e2Flag = {  # CSV & json missing; Maybe cligen/magic needs updating?
 var gFlags = 0.cint
 proc count(histo: var CountTable[string], s: MSlice) = histo.inc $s
 
-proc classify = # Reply with same path as input if it passes filter.
+proc classify(r, w: cint) = # Reply with same path as input if it passes filter.
   var m = magic_open(gFlags)
   if m == nil or magic_load(m, nil) != 0:
     stderr.write "cannot load magic DB: %s\n\t", m.magic_error, "\n"
     quit 1
-  for path in stdin.getDelim('\0'):
+  for path in r.open.getDelim('\0'):
     let fileType = $m.magic_file(path.cstring)
-    discard wrLenBuf(1, fileType)
+    discard wrLenBuf(w, fileType)
 
 proc fkindc*(gen="find $1 -print0", dlr1=".", excl: set[Excl]={}, jobs=0) =
   ## Use ``gen`` and ``dlr1`` to generate paths and histogram by `file(1)` type.

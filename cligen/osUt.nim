@@ -227,6 +227,12 @@ let IONBF* = vIONBF
 proc c_setvbuf*(f: File, buf: pointer, mode: cint, size: csize): cint {.
   importc: "setvbuf", header: "<stdio.h>", tags: [].}
 
+proc open*(fd: cint, mode=fmRead, bufMode=IOFBF, bufSize=4096): File =
+  ## Make File from OS-level handle `fd` w/specific mode, buffer mode & size.
+  if not result.open(fd, mode):
+    raise newException(IOError, "cannot open fd " & $fd & " for mode " & $mode)
+  discard c_setvbuf(stdout, nil, bufMode, bufSize.csize)
+
 when defined(linux) or defined(macosx) or defined(freebsd) or defined(openbsd):
   import posix
 when defined(linux):

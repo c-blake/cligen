@@ -14,11 +14,12 @@ proc inFile(sub, path: string, mmAlways: bool): bool =
 
 proc gl(jobs=0, eor='\n', mmAlways=false, sub: string, paths: seq[string]) =
   ## print each path (& `eor`) containing string `sub` with parallelism `jobs`.
-  var pp = initProcPool((proc() =
-    var i: uint32                 # Reply w/same path index only if `sub` found
-    while stdin.uRd(i):
-      if sub.inFile(paths[i.int], mmAlways):
-        discard stdout.uWr(i)),
+  var pp = initProcPool((proc(r, w: cint) =
+    var ix: uint32                # Reply w/same path index only if `sub` found
+    let o = open(w, fmWrite)
+    let i = open(r)
+    while i.uRd(ix):
+      if sub.inFile(paths[ix.int], mmAlways): discard o.uWr(ix)),
     framesOb, jobs, aux=uint32.sizeof)
   proc prn(s: MSlice) = echo paths[int(cast[ptr uint32](s.mem)[])]
   pp.evalOb 0u32 ..< paths.len.uint32, prn   # Send `paths`, print replies

@@ -19,13 +19,23 @@ Version: 1.5.24
   - Fix chance deadlock possibility in cligen/procpool and add:
     - `select` timeouts to `initProcPool`
     - `examples/ppBench.nim` to measure amortized dispatch overhead
-    - `examples/fkindc.nim` "overview" variant of `only` using diff req-reply framing
+    - `examples/fkindc.nim` "overview" variant of `only` using differing
+       request-reply framing
 
   - For convenience, add `raiseCtrlC` to `initProcPool`, defaulting to silence
     (by default) dozens of duplicate stack traces upon user-interrupt.
 
   - `examples/dups.nim` no longer needs the OpenMP `||` iterator (although
     parallelism was always mostly unhelpful there anyway).
+
+  - BREAKING CHANGE: Alter interface for procpool work() procs to receive the
+    (r)ead aka request fd and (w)rite aka reply fd.  The former approach to
+    assume fd 0, fd 1 was too error prone (while having the nice-ish property of
+    making kids conceptually stdin-stdout filters).  Also, be careful with stdio
+    buffers across forks and add simpler to use `open(cint)` to `cligen/osUt` to
+    make this setup only slightly less usable than before, but with users giving
+    buffering modes/sizes which can matter.  See commit logs for examples/[only,
+    fkindc, dups, grl, gl, ppBench] for guidance to adjust your usage.
 
 Version: 1.5.23
 ---------------

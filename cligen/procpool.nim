@@ -14,15 +14,15 @@
 ## is least awkward when inputs & outputs are both small and there is an easy
 ## message protocol, as with the example programs.
 ##
-## Concretely this snippet computes line lengths and binary->ASCII said lengths
-## in 4 parallel kids,
+## Concretely this snippet computes & formats line lengths in parallel kids,
 ##
 ## .. code-block:: nim
-##  proc paraLens(strings: openArray[string]) =
-##    proc work = (for s in stdin.lines: echo s.len)
-##    proc prn(s: MSlice) = echo s
-##    var pp = initProcPool(work, framesLines, jobs=4)
-##    pp.evalLines strings, prn
+##    import cligen/[procpool, mslice, osUt], os
+##    proc work(r, w: cint) =
+##      let w = w.open(fmWrite, IOLBF)
+##      for s in r.open(fmRead, IOLBF).lines: w.write $s.len & "\n"
+##    var pp = initProcPool(work, framesLines)
+##    pp.evalLines commandLineParams(), echo
 ##
 ## Instead of `*Lines`, you likely want to use `*0term` like `examples/only.nim`
 ## or more generally `*LenPfx` like `examples/grl.nim`.  Interleaved output is
@@ -46,12 +46,12 @@
 
 import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
 type
-  Filter* = object ## Abstract coprocess filter reading|writing its stdin|stdout
-    pid: Pid        # parent uses this to control => hidden
-    fd0, fd1*: cint ## request|input & reply|output file descriptors/handles
-    buf*: string    ## current read buffer
-    done*: bool     ## flag indicating completion
-    aux*: int       ## general purpose int-sized client data, e.g. obsz
+  Filter* = object   ## Abstract coprocess filter read|writing req|rep fd's
+    pid: Pid         # parent uses this to control => hidden
+    fd0*, fd1*: cint ## PARENT VIEW of request|input & reply|output file handles
+    buf*: string     ## current read buffer
+    done*: bool      ## flag indicating completion
+    aux*: int        ## general purpose int-sized client data, e.g. obsz
 
   Frames* = proc(f: var Filter): iterator(): MSlice
 
@@ -66,7 +66,7 @@ proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
 proc close*(pp: ProcPool, kid: int) = discard pp.kids[kid].fd0.close
 
-proc initFilter(work: proc(), aux: int): Filter {.inline.} =
+proc initFilter(work: proc(r, w: cint), aux: int): Filter {.inline.} =
   result.aux = aux
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
@@ -74,13 +74,10 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
   case (let pid = fork(); pid):
   of -1: result.pid = -1    #NOTE: A when(Windows) PR with CreatePipe,
   of 0:                     #      CreateProcess is very welcome.
-    discard dup2(fds0[0], 0)
-    discard dup2(fds1[1], 1)
-    discard close(fds0[0])
+    flushFile stdin
     discard close(fds0[1])
     discard close(fds1[0])
-    discard close(fds1[1])
-    work()
+    work(fds0[0], fds1[1])
     quit(0)
   else:
     result.buf = newString(8192) # allocate, setLen, but no-init
@@ -93,11 +90,13 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
 
 proc ctrlC() {.noconv.} = quit 130
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
-proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
+proc initProcPool*(work: proc(r, w: cint); frames: Frames; jobs=0; aux=0,
                    toR=to0, toW=to0, raiseCtrlC=false): ProcPool {.noinit.} =
   if not raiseCtrlC: setControlCHook ctrlC
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
+  flushFile stdout                      # Do not want to inherit unwritten bufs
+  flushFile stderr                      # Usually empty; Possible user setvbuf.
   for i in 0 ..< result.len:                          # Create Filter kids
     result.kids[i] = initFilter(work, aux)
     if result.kids[i].pid == -1:                      # -1 => fork failed

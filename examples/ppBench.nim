@@ -2,11 +2,13 @@ import std/posix, cligen/[procpool, osUt, posixUt], cligen
 
 var ibuf, obuf: string
 
-proc doSin() =
+proc doIt(r, w: cint) =
   var buf: string
   buf.setLen ibuf.len + 1
-  while stdin.ureadBuffer(buf[0].addr, ibuf.len) == ibuf.len:
-    discard stdout.uriteBuffer(obuf[0].addr, obuf.len)
+  let i = r.open(fmRead)
+  let o = w.open(fmWrite)
+  while i.ureadBuffer(buf[0].addr, ibuf.len) == ibuf.len:
+    discard o.uriteBuffer(obuf[0].addr, obuf.len)
 
 proc ppBench(input=1, output=1, n=500000, jobs=1, rTOms=0, wTOms=0): int =
   ## Measure procpool overhead vs input-output sizes & jobs as specified.
@@ -17,7 +19,7 @@ proc ppBench(input=1, output=1, n=500000, jobs=1, rTOms=0, wTOms=0): int =
   obuf.add '\0'
   iterator genWork: string = (for i in 1..n: yield ibuf)
   let t0 = getTmNs()                            # Time starting kids and..
-  var pp = initProcPool(doSin, frames0term, jobs, toR=rT, toW=wT)
+  var pp = initProcPool(doIt, frames0term, jobs, toR=rT, toW=wT)
   pp.eval0term(genWork(), noop)                 #..then generate & run work.
   echo "amortized dispatch overhead/job (ns): ", int(dtNs(t0).float / n.float)
 

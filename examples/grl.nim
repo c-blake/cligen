@@ -18,12 +18,13 @@ proc print(eor: char, s: MSlice) {.inline.} =
 
 proc grl(jobs=0, eor='\n', mmAlways=false, sub: string, paths: seq[string]) =
   ## print each path (& `eor`) containing string `sub` with parallelism `jobs`.
-  var pp = initProcPool((proc() =
-    for path in getLenPfx[int](stdin):
+  var pp = initProcPool((proc(r, w: cint) =
+    let o = open(w, fmWrite)
+    for path in getLenPfx[int](r.open):
       var n = path.len            # Reply w/same path only if `sub` is found
       if sub.inFile(path, mmAlways):
-        discard stdout.uriteBuffer(cast[cstring](n.addr), n.sizeof)
-        stdout.urite path),
+        discard o.uriteBuffer(cast[cstring](n.addr), n.sizeof)
+        o.urite path),
     framesLenPfx, jobs)
   pp.evalLenPfx paths, eor.print  # Feed the pool `paths` & print any results
 

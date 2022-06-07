@@ -21,21 +21,23 @@ proc all(fileType: string): bool {.inline.} = # Support Boolean AND
     if fileType.find(pat) == -1: return false
   result = true
 
-proc classifyAndMatch() = # Reply with same path as input if it passes filter.
+proc classifyAndMatch(r, w: cint) = # Reply with same path as input if matches
   var m = magic_open(gFlags)
   if m == nil or magic_load(m, nil) != 0:
     stderr.write "cannot load magic DB: %s\x0A", m.magic_error, "\n"
     quit(1)
-  for path in stdin.getDelim('\0'):
+  let i = open(r)
+  let o = open(w, fmWrite)
+  for path in i.getDelim('\0'):
     let fileType = $m.magic_file(path.cstring)
     if fileType.len == 0:
       stderr.write "UNCLASSIFIABLE: ", path, "\n"
     if gAll:                                    # Handle all 4 Boolean cases
-      if gNo: (if not all(fileType): stdout.urite path, '\0')
-      else  : (if     all(fileType): stdout.urite path, '\0')
+      if gNo: (if not all(fileType): o.urite path, '\0')
+      else  : (if     all(fileType): o.urite path, '\0')
     else:
-      if gNo: (if not any(fileType): stdout.urite path, '\0')
-      else  : (if     any(fileType): stdout.urite path, '\0')
+      if gNo: (if not any(fileType): o.urite path, '\0')
+      else  : (if     any(fileType): o.urite path, '\0')
 
 proc print(eor: char, s: MSlice) {.inline.} =
   let eos = cast[uint](s.mem) + cast[uint](s.len)   # Hijack end of string here.

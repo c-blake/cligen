@@ -94,14 +94,14 @@ iterator dupSets*(sz2paths: Table[int, seq[string]], slice="",
       wkls.add((sz, p, newString(8 + digSize[hash]), m))
   if jobs == 1:
     for i in 0 ..< wkls.len: digest(wkls[i], hash, slice)
-  else: # hashWY runs@6B/cyc~30GB/s >>IObw => par will help rarely||w/SHA1&!cmp
-    flushFile stdout # SUBTLE! Kids use stdout buffer; Flush pre-fork to clear.
-    var pp = initProcPool((proc =
-                            var i: int
-                            while stdin.uRd(i):
-                              digest(wkls[i], hash, slice)
-                              discard stdout.uWr(i); stdout.urite(wkls[i].dig)
-                              flushFile stdout),
+  else: # hashWY runs@6B/cyc~30GB/s >>IObw => par helps rarely | w/SHA1&!cmp
+    var pp = initProcPool((proc(r, w: cint) =
+                             let i = r.open(fmRead, osUt.IONBF)
+                             let o = w.open(fmWrite, osUt.IOFBF)
+                             var ix: int
+                             while i.uRd ix:
+                               digest wkls[ix], hash, slice
+                               discard o.uWr ix; o.urite wkls[ix].dig),
                           framesOb, jobs, aux=int.sizeof + 8 + digSize[hash])
     proc copyBack(s: MSlice) =
       let i = int(cast[ptr int](s.mem)[])
