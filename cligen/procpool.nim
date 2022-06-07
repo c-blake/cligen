@@ -93,7 +93,8 @@ proc initFilter(work: proc(), aux: int, fd0, fd1: cint): Filter {.inline.} =
 
 proc ctrlC() {.noconv.} = quit 130
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
-proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
+proc initProcPool*(work: proc(); frames: Frames; jobs=0;
+                   auxIn=0, auxOut=0,
                    toR=to0, toW=to0, raiseCtrlC=false,
                    stdreq=stdin.getFileHandle(),
                    stdrep=stdout.getFileHandle()): ProcPool {.noinit.} =
@@ -101,7 +102,7 @@ proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
-    result.kids[i] = initFilter(work, aux, fd0=stdreq, fd1=stdrep)
+    result.kids[i] = initFilter(work, auxOut, fd0=stdreq, fd1=stdrep)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
         discard result.kids[j].fd1.close              #   close fd to kid
