@@ -66,7 +66,7 @@ proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
 proc close*(pp: ProcPool, kid: int) = discard pp.kids[kid].fd0.close
 
-proc initFilter(work: proc(), aux: int): Filter {.inline.} =
+proc initFilter(work: proc(), aux: int, fd0, fd1: cint): Filter {.inline.} =
   result.aux = aux
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
@@ -74,8 +74,8 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
   case (let pid = fork(); pid):
   of -1: result.pid = -1    #NOTE: A when(Windows) PR with CreatePipe,
   of 0:                     #      CreateProcess is very welcome.
-    discard dup2(fds0[0], 0)
-    discard dup2(fds1[1], 1)
+    discard dup2(fds0[0], fd0)
+    discard dup2(fds1[1], fd1)
     discard close(fds0[0])
     discard close(fds0[1])
     discard close(fds1[0])
@@ -94,12 +94,14 @@ proc initFilter(work: proc(), aux: int): Filter {.inline.} =
 proc ctrlC() {.noconv.} = quit 130
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
 proc initProcPool*(work: proc(); frames: Frames; jobs=0; aux=0,
-                   toR=to0, toW=to0, raiseCtrlC=false): ProcPool {.noinit.} =
+                   toR=to0, toW=to0, raiseCtrlC=false,
+                   stdreq=stdin.getFileHandle(),
+                   stdrep=stdout.getFileHandle()): ProcPool {.noinit.} =
   if not raiseCtrlC: setControlCHook ctrlC
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   for i in 0 ..< result.len:                          # Create Filter kids
-    result.kids[i] = initFilter(work, aux)
+    result.kids[i] = initFilter(work, aux, fd0=stdreq, fd1=stdrep)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
         discard result.kids[j].fd1.close              #   close fd to kid
