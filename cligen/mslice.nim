@@ -5,6 +5,7 @@
 ## styles can also be bounded by a number of splits/number of outputs and accept
 ## either ``MSlice`` or ``string`` as inputs to produce the ``seq[MSlice]``.
 
+from std/typetraits import supportsCopyMem
 type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
@@ -115,7 +116,10 @@ proc toOb*[T](m: MSlice, ob: var T) =
   ## Assumes `m` starts at beginning of object `ob`! Reads data in slice
   ## into object `ob` using `copyMem`.
   doAssert m.len >= ob.sizeof
-  copyMem ob.addr, m.mem, ob.sizeof
+  when supportsCopyMem(T):
+    copyMem ob.addr, m.mem, ob.sizeof
+  else:
+    {.error: "`ob` type does not support copyMem".}
 
 proc toSeq*[T](m: MSlice, s: var seq[T]) =
   ## Reads data in slice `s` into object `seq[T]` using `copyMem`.
