@@ -129,7 +129,10 @@ proc toSeq*[T](m: MSlice, s: var seq[T]) =
   let size = m.len div sizeof(T)
   s = newSeq[T](size)
   doAssert m.len >= size
-  copyMem s[0].addr, m.mem, m.len
+  when supportsCopyMem(T):
+    copyMem s[0].addr, m.mem, m.len
+  else:
+    {.error: "`ob` type does not support copyMem".}
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
