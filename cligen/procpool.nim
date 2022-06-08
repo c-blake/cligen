@@ -172,27 +172,31 @@ proc framesLines*(f: var Filter): iterator(): MSlice =
       for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\n'): yield s
     else: f.done = true
 
-template wrReq*(fds, pp, wr, rq): untyped =
-  ## Internal to `wrReqs`, this evaluates to true if a request was written.
-  var to = pp.toW                               # Block for <= 1 ms
-  var fdsetW = pp.fdsetW
-  if select(pp.fdMaxW, nil, fdsetW.addr, nil, to.addr) > 0:
-    fds.setLen 0
-    for i in 0 ..< pp.len:
-      if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: fds.add pp.kids[i].fd0
-    fds.shuffle         # Might be nice/faster to re-jigger this logic to..
-    var value = false   #..use full set of fds before doing select again.
-    for fd in fds:
-      if wr(fd, rq) > 0: value = true; break
-    value
-  else: false
+template wrReq*(fds, i0, pp, wr, rq): untyped =
+  ## Internal to `eval*`; Use those.  Evaluates to true if request was written.
+  var wrote = false
+  for i in i0 ..< fds.len:                      # Try fds from last select
+    if wr(fds[i], rq) > 0: wrote = true; i0 = i + 1; break
+  if not wrote:                                 # If none worked, do new select
+    var toW    = pp.toW                         # Block for `toW`
+    var fdsetW = pp.fdsetW
+    if select(pp.fdMaxW, nil, fdsetW.addr, nil, toW.addr) > 0:
+      fds.setLen 0                              # select mask -> fd seq
+      for i in 0 ..< pp.len:
+        if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: fds.add pp.kids[i].fd0
+      fds.shuffle                               # Visit in random order
+      i0 = 0
+      for i in 0 ..< fds.len:
+        if wr(fds[i], rq) > 0: wrote = true; i0 = i + 1; break
+  wrote
 
 # Must have `rq.len` < OS pipe buffer; Pass indices, paths, etc. to ensure this.
 template wrReqs(pp, reqGen, wr, onReply: untyped) =
   var fds: seq[cint]
+  var i0: int
   for rq in reqGen:
-    while not wrReq(fds, pp, wr, rq):           # possible all writers block
-      for rep in pp.readyReplies: onReply(rep)  # reaping answers should unblock
+    while not wrReq(fds, i0, pp, wr, rq):       # Possible all writers block
+      for rep in pp.readyReplies: onReply(rep)  # Reaping answers should unblock
   for i in 0 ..< pp.len: pp.close(i)            # Send EOFs
   for rep in pp.finalReplies: onReply(rep)      # Handle final replies
 
