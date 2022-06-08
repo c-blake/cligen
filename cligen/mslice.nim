@@ -117,6 +117,16 @@ proc toOb*[T](m: MSlice, ob: var T) =
   doAssert m.len >= ob.sizeof
   copyMem ob.addr, m.mem, ob.sizeof
 
+proc toSeq*[T](m: MSlice, s: var seq[T]) =
+  ## Reads data in slice `s` into object `seq[T]` using `copyMem`.
+  ##
+  ## Assumes `m` starts at beginning of seq `s`! `T` must either be a flat
+  ## object type or tuple of flat objects (no indirections allowed).
+  let size = m.len div sizeof(T)
+  s = newSeq[T](size)
+  doAssert m.len >= size
+  copyMem s[0].addr, m.mem, m.len
+
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
 proc `==`*(ms: MSlice, b: string): bool {.inline.} = b == ms
