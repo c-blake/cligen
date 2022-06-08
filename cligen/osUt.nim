@@ -423,6 +423,15 @@ proc wrLenBuf*(fd: cint, buf: string): int =
               IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.csize_t) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
+proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
+  ## Write `int` length prefixed data of a `seq[T]` atomically (`writev` on Linux),
+  ## where `T` are either flat objects or tuples of flat objects (no indirections
+  ## allowed).
+  let n = s.len * sizeof(T)
+  let iov = [ IOVec(iov_base: n.unsafeAddr   , iov_len: n.sizeof.csize_t),
+              IOVec(iov_base: s[0].unsafeAddr, iov_len: n.csize_t) ]
+  writev(fd, iov[0].unsafeAddr, 2)
+
 proc lgBold*(f: File, s: string) = f.write "\e[1m", s, "\e[22m"
   ## Log to a `File`, `f` with ANSI SGR bold.
 
