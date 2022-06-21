@@ -86,3 +86,6 @@ proc `&`*[T](x: openArray[T], y: openArray[T]): seq[T] =
   result.setLen x.len + y.len
   for i, e in x: result[i] = e
   for i, e in y: result[x.len + i] = e
+
+proc echoQuit130*() {.noconv.} = echo ""; quit 130
+  ## Intended for `setControlCHook(echoQuit130)` to achieve quieter exits.

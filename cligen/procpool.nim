@@ -88,7 +88,7 @@ proc initFilter(work: proc(r, w: cint), aux: int): Filter {.inline.} =
     discard close(fds0[0])
     discard close(fds1[1])
 
-proc ctrlC() {.noconv.} = quit 130
+proc ctrlC() {.noconv.} = quit 130 # Cannot leave only 1 \n; So, do zero.
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
 proc initProcPool*(work: proc(r, w: cint); frames: Frames; jobs=0; aux=0,
                    toR=to0, toW=to0, raiseCtrlC=false): ProcPool {.noinit.} =
