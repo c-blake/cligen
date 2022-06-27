@@ -116,7 +116,7 @@ when isMainModule:
 
   dispatch foo, help={"i": "favorite number", "d": "birthday"}
 ```
-These two "argument IO" procs take a shared coodination parameter for argument
+These two "argument IO" procs take a shared coordination parameter for argument
 metadata (more fully documented in `cligen/argcvt.nim`).  As just one simple
 e.g., `a.parNm` is the name of the parameter being parsed.  While not useful
 ordinarily, this can be used to parse the same Nim type differently (based on
