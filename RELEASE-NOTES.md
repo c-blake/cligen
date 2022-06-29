@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.25
+---------------
+
+  - Add docCommentAdd (courtesy of @Vindaar private communication).
+
 Version: 1.5.24
 ---------------
   - Fix long-standing bug in `--long-=foo` for `long: seq[T]` params.

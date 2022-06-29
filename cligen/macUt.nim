@@ -170,3 +170,11 @@ when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   for e in routineFirstsRest[1]:
     result.add newCall(routineFirstsRest[0], e)
     for a in routineFirstsRest[2..^1]: result[^1].add a
+
+macro docCommentAdd*(s: static string): untyped =
+  ## This can be used to add doc comment nodes from compile-time computations.
+  ## E.g., if `const vsn=staticExec("git describe --tags HEAD")` somewhere then
+  ## you can say `docCommentAdd(vsn)` before|after the top-of-proc doc comment
+  ## to get a version string into the main help text for a cligen-wrapped proc.
+  result = newNimNode(nnkCommentStmt)
+  result.strVal = s
