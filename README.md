@@ -163,7 +163,7 @@ has the same keyword parameters as the most salient features of `dispatch`:
 type App* = object
   srcFile*: string
   show*: bool
-const dfl* = App(srcFile: "junk")  # set defaults!=default for type
+const dfl* = App(srcFile: "junk") # set defaults!=default for type
 
 proc logic*(a: var App) = echo "app is: ", a
 
@@ -208,7 +208,7 @@ or (echo $result or discard; quit(0))`.  If `echoResult==true`, it's just
 (discard; quit(0))`.  The `or`s above are based on whether the wrapped proc has
 a return type or `$` defined on the type.  So,
 ```nim
-import editdistance, cligen   # gen CLI for Nim stdlib editDistance
+import editdistance, cligen # gen CLI for Nim stdlib editDistance
 dispatch(editDistanceASCII, echoResult=true)
 ```
 makes a program to print edit distance between two required parameters while
