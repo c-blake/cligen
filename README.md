@@ -39,7 +39,7 @@ You can override that using parameter-keyed association-list literals:
 dispatch fun, help={"foo": "the beginning", "bar": "the rate"}
 ```
 The same goes for `short` versions of the CLI arguments.  More on that
-[below](#common-overrides-exit-protocol-config-fileenvironment-vars).
+[below](#common-overrides-program-exit-config-fileenvironment-vars).
 
 Other invocations (`./fun --foo 2 -b=2.7 --baz:"ho"...`) work as expected.
 
@@ -174,7 +174,7 @@ when isMainModule:
   app.logic() # Only --help/--version/parse errors cause early exit
 ```
 
-### Common Overrides, Exit Protocol, Config File/Environment Vars
+### Common Overrides, Program Exit, Config File/Environment Vars
 
 You can manually control the short option for any parameter via the `short`
 macro parameter:
@@ -187,21 +187,20 @@ call, you need an explicit conversion to a `Table`:
 import cligen
 from std/tables import toTable
 const
-  Help =  { "foo": "the beginning", "bar": "the rate" }.toTable()
+  Help  = { "foo": "the beginning", "bar": "the rate" }.toTable()
   Short = { "foo": 'f', "bar": 'r'}.toTable()
 proc fun(foo = 1, bar = 2, baz = "hi") = discard
 dispatch(fun, help = Help, short = Short)
 ```
-With that `"bar"` gets `'r'` while `"baz"` gets `'b'` as short options.
-To suppress some long option getting *any* short option, specify `'\0'`
-as the value for its short key.  To suppress _all_ short options, give 
-`short` a key of `""`.
+With that `"bar"` gets `'r'` while `"baz"` gets `'b'` as short options.  To
+suppress a long option getting *any* short option, specify a short key `'\0'`.
+To suppress _all_ short options, give `short` a key of `""`.
 
 To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
-To suppress presence only in the help message use `help = { "apiParam":
-"CLIGEN-NOHELP" }`.  Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper
-default API parameter values with no explicit initialization to the Nim default
-for a type.
+(For object init, "ALL AFTER field" stops fieldPairs iteration.)  To suppress
+presence only in help messages use `help = { "apiParam": "CLIGEN-NOHELP" }`.
+Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper default API
+parameter values with no explicit initialization to the Nim default for a type.
 
 ---
 
