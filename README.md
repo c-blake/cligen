@@ -170,7 +170,7 @@ proc logic*(a: var App) = echo "app is: ", a
 when isMainModule:
   import cligen
   var app = initFromCL(dfl, help = { "srcFile": "yadda yadda" })
-  app.logic() # Only --help/--version/parse errors cause early exit
+  app.logic # Only --help/--version/parse errors cause early exit
 ```
 
 ### Common Overrides, Program Exit, Config File/Environment Vars
