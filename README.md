@@ -1,30 +1,30 @@
 # cligen: A Native API-Inferred Command-Line Interface Generator For Nim
 
 This approach to CLIs was inspired by Andrey Mikhaylenko's Python
-[argh](https://pythonhosted.org/argh/) (
-[Click](https://github.com/pallets/click/) became more popular).
-The core idea is that proc signatures encode almost everything needed to
+[argh](https://pythonhosted.org/argh/)
+([Click](https://github.com/pallets/click/) became more popular).
+The key observation is that proc signatures already encode what you need to
 generate CLIs - names, types, and default values.  Reflection then suffices to
 generate parser-dispatchers translating `seq[string]` command input into calls
-to a wrapped proc.  In Nim, adding a CLI can be as easy as:
+to a wrapped proc.  In Nim, adding a CLI can be 1-line of code:
 ```nim
-proc fun(foo=1,bar=2.0,baz="hi",verb=false,paths: seq[string]):int=
+proc fun(foo=1,bar=2.0,baz="x",verb=false,args: seq[string]): int=
   ## An API call doc comment
   result = 1      # Of course, real code would have real work here
-import cligen; dispatch(fun) # Whoa..Just 1 line??
+import cligen; dispatch fun # Whoa..Just 1 line??
 ```
 Compile it to `fun` (e.g., `nim c fun.nim`) and then run `./fun --help`
 to get a minimal (but not so useless!) help message:
 ```
 Usage:
-  fun [optional-params] [paths: string...]
+  fun [optional-params] [args: string...]
 An API call doc comment
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
   -f=, --foo=    int     1      set foo
   -b=, --bar=    float   2.0    set bar
-  --baz=         string  "hi"   set baz
+  --baz=         string  "x"    set baz
   -v, --verb     bool    false  set verb
 ```
 That's it!  No specification language/complex arg parsing API/Nim pragma tags
