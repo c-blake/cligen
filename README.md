@@ -33,18 +33,19 @@ to learn.  Installing can be as simple as `nimble install cligen` or even just
 you aren't sold already, here is more
 [MOTIVATION](https://github.com/c-blake/cligen/tree/master/MOTIVATION.md).
 
-The `help` column is filled with generic `set foo` placeholders by default, but
-you can override it using parameter-keyed association-list literals:
+The `help` column is filled with generic `set foo` placeholders by default.
+You can override that using parameter-keyed association-list literals:
 ```nim
-dispatch(fun, help = { "foo": "the beginning", "bar": "the rate" })
+dispatch fun, help={"foo": "the beginning", "bar": "the rate"}
 ```
-The same goes for the `short` versions of the CLI arguments.  More on that in
-the "Common Overrides" section below.
+The same goes for `short` versions of the CLI arguments.  More on that in
+[Common Overrides](#common-overrides-exit-protocol-config-fileenvironment-vars)
+below.
 
 Other invocations (`./fun --foo 2 -b=2.7 --baz:"ho"...`) work as expected.
 
 Default help tables work with automated "help to X" tools such as `complete -F
-_longopt` in bash, `compdef _gnu_generic` in zsh, or the GNU `help2man` (e.g.
+_longopt` in bash, `compdef _gnu_generic` in Zsh, or the GNU `help2man` (e.g.
 `help2man -N ./fun|man /dev/stdin`).
 
 Nim CLI authors who have understood things this far can mostly use `cligen`
