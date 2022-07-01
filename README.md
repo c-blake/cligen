@@ -235,7 +235,7 @@ proc mergeParams(cmdNames: seq[string], cmdLine =
   if e.len>0: e.parseCmdLine & cmdLine else: cmdLine # os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
-You can `include cligen/mergeCfgEnv` between `import cligen` and `dispatch` to
+You can `include cligen/mergeCfgEnv` between `import cligen` & `dispatch` to
 merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with Nim stdlib's
 `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
 
