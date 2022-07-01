@@ -229,10 +229,10 @@ config file and/or `$CMD` environment variable, then you can redefine
 `mergeParams()` after `import cligen` but before `dispatch`/`dispatchMulti`:
 ```nim
 import cligen, os, strutils # multi foo/multi bar are like subcommand example
-proc mergeParams(cmdNames: seq[string],
-                 cmdLine=commandLineParams()): seq[string] =
-  let e = os.getEnv(toUpperAscii(join(cmdNames, "_")))  # $MULTI_(FOO|BAR)
-  if e.len > 0: parseCmdLine(e) & cmdLine else: cmdLine # See os.parseCmdLine
+proc mergeParams(cmdNames: seq[string], cmdLine =
+                 commandLineParams()): seq[string] =
+  let e = cmdNames.join("_").toUpperAscii.getEnv # $MULTI_(FOO|BAR)
+  if e.len>0: e.parseCmdLine & cmdLine else: cmdLine # os.parseCmdLine
 dispatchMulti([foo, short={"verb": 'v'}], [bar])
 ```
 You can also just `include cligen/mergeCfgEnv` between `import cligen` and
