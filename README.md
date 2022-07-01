@@ -38,9 +38,8 @@ You can override that using parameter-keyed association-list literals:
 ```nim
 dispatch fun, help={"foo": "the beginning", "bar": "the rate"}
 ```
-The same goes for `short` versions of the CLI arguments.  More on that in
-[Common Overrides](#common-overrides-exit-protocol-config-fileenvironment-vars)
-below.
+The same goes for `short` versions of the CLI arguments.  More on that
+[below](#common-overrides-exit-protocol-config-fileenvironment-vars).
 
 Other invocations (`./fun --foo 2 -b=2.7 --baz:"ho"...`) work as expected.
 
@@ -48,13 +47,13 @@ Default help tables work with automated "help to X" tools such as `complete -F
 _longopt` in bash, `compdef _gnu_generic` in Zsh, or the GNU `help2man` (e.g.
 `help2man -N ./fun|man /dev/stdin`).
 
-Nim CLI authors who have understood things this far can mostly use `cligen`
-already.  Enter illegal commands or `--help` to get help messages to exhibit
-the mappings or `--help-syntax`/`--helps` to see more on that.  Out of the box,
-`cligen` supports string-to-native conversion for most elementary Nim types
-(ints, floats, enums, etc.), as well as `seq`s, `set`s, `HashSet`s of them.
+Nim CLI authors who have read this far can mostly use `cligen` already.  Enter
+`--help`, `--help-syntax`/`--helps`, or illegal commands to get help messages,
+syntax, exhibit mappings, etc.  Out of the box, `cligen` supports conversion for
+most basic Nim types (`int`s, `float`s, `enum`s, `seq`s, `set`s, `HashSet`s of
+them, ranges, etc.) [but can be extended](#custom-parameter-types-or-parsing).
 
-### CLusage: Token Match, Render, Trailing Args, Required Params
+### CLusage: Param Match/Help Render, Trailing & Required Args
 
 `cligen`-erated parsers accept **any unambiguous prefix** for long options.
 In other words, long options can be as short as possible.  In yet other words,
@@ -62,18 +61,20 @@ hitting the TAB key to complete is unnecessary **if** the completion is unique.
 This is patterned after, e.g. gnuplot, gdb, Vim ex-commands, etc.  Long options
 can also be **spelled flexibly**, e.g. `--dry-run`|`--dryRun`, like Nim's
 style-insensitive identifiers, but with extra "kebab-case-insensitivity".
-(The exact spelling of the key in `help` controls the look of printed help.
+The exact spelling of the key in `help` controls the look of printed help.
+
 Layout details like column spacing and help colorization are controlled [by a
 CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
-Here are screenshots of an example
-[night-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dirqHelpNight.png)
+Here are screenshots of example
+[night](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dirqHelpNight.png)
 and
-[day-theme](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dupsHelpDay.png)).
+[day](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dupsHelpDay.png)
+themes.)
 
 ---
 
 Most commands have some trailing variable length sequence of arguments like
-the `paths` in the above example.  `cligen` automatically treats the first
+`args` in the first example.  `cligen` automatically treats the first
 non-defaulted `seq[T]` proc parameter as such an optional sequence.  `cligen`
 applies the same basic string-to-native type converters/parsers used for option
 values to such parameters.
@@ -81,24 +82,25 @@ values to such parameters.
 ---
 
 If a proc parameter has no **explicit** default value (via `=`) then it becomes
-required, but the input syntax is the same as for optional values.  So, in
+required.  The input syntax is the same as for optional values.  So, in
 ```nim
-proc fun(myRequired: float, mynums: seq[int], foo=1, verb=false) =
-  discard          # Of course, real code would have real work here
+proc fun(myRequired: float, mynums: seq[int], foo=1) = discard
 when isMainModule: # Preserve ability to `import api`/call from Nim
-  import cligen; dispatch(fun)
+  import cligen; dispatch fun
 ```
-the command-line user must give `--myRequired=something` somewhere to avoid an
-error.  Non-option arguments must be parsable as `int` with whitespace stripped,
-e.g. `./fun --myRequired=2.0 1 2 " -3"`.
+the command-line user must give `--myRequired=something` somewhere.  Non-option
+arguments must be parsable as `int` with whitespace stripped, e.g. `./fun
+--myRequired=2.0 1 2 " -3" -- -4`.
+
+More general user semantics for argument validation (required-ness, length,
+"sub-parsing", etc.) can be done like
+[UserError.nim](https://github.com/c-blake/cligen/blob/master/test/UserError.nim).
 
 ### Custom Parameter Types or Parsing
 
-While `cligen` supports basic Nim types out of the box (strings, numbers, enums,
-sequences and sets of such, etc.), the parsing/printing system is *extensible*.
-This is done via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
-(These could almost be `parseType` & `$`; CLusers!=CLauthors & other integration
- requirements motivate two separate names.)  A simple example:
+While `cligen/argcvt` supports basic Nim types, the parsing/printing system is
+*extensible* via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
+A simple example:
 ```nim
 import std/times
 proc foo(i = 42, d = now()): void = echo d
@@ -118,14 +120,15 @@ when isMainModule:
   dispatch foo, help={"i": "favorite number", "d": "birthday"}
 ```
 These two "argument IO" procs take a shared coordination parameter for argument
-metadata (more fully documented in `cligen/argcvt.nim`).  As just one simple
-e.g., `a.parNm` is the name of the parameter being parsed.  While not useful
-ordinarily, this can be used to parse the same Nim type differently (based on
-the name), detect when CLusers alter parameters from defaults, count uses, etc.
+metadata (more fully documented in `cligen/argcvt.nim`).  As just a simple e.g.,
+`a.parNm` is the name of the parameter being parsed.  While not usually useful,
+this can be used to parse the same Nim type differently (based on the name),
+detect when CLusers alter parameters from defaults, count uses, etc.
 
-This same mechanism can ***override existing*** `cligen/argcvt` parser/helpers if
-the built-ins are not what you want.  Consulting `cligen/argcvt` for examples is
-a good idea.
+This same mechanism can ***override existing*** `cligen/argcvt` parser/helpers
+if the built-ins are not what you want.  Consulting `cligen/argcvt` for examples
+is a good idea.  Ambitious CLauthors can re-define *all* conversions by creating
+their own private `cligen/argcvt.nim` in their project directories.
 
 ### Subcommands, dispatch to object init
 
@@ -148,7 +151,7 @@ With the above in `cmd.nim`, CLI users can run `./cmd foo -m1` or
 while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
 or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
-Like long option keys or enum value names, subcommand names can also be ***any
+Like long option keys or `enum` value names, subcommand names can also be ***any
 unambiguous prefix and are case-kebab-insensitive***.  So, `./cmd f-O -m1` would
 also work above.
 
