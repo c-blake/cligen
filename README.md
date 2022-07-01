@@ -137,9 +137,8 @@ their own private `cligen/argcvt.nim` in their project directories.
 sub-`dispatch`.  Tune command syntax and help strings in the same way as
 `dispatch` as in:
 ```nim
-proc foo(myRequired: int, mynums: seq[int], foo=1, verb=false) =
+proc foo(myRequired: int, mynums: seq[int], foo=1) = discard
   ## Some API call
-  discard
 proc bar(yippee: int, myFlts: seq[float], verb=false) = discard
   ## Some other API call
 when isMainModule:
@@ -176,13 +175,12 @@ when isMainModule:
 
 ### Common Overrides, Program Exit, Config File/Environment Vars
 
-You can manually control the short option for any parameter via the `short`
-macro parameter:
+You can manually control the short option for any parameter via `short`:
 ```nim
-dispatch(fun, short = { "bar" : 'r' })
+dispatch fun, short={"bar" : 'r'}
 ```
 If you'd like to define `short` or `help` parameters outside of a `dispatch`
-call, you need an explicit conversion to a `Table`:
+call, you need an explicit conversion to a `Table` symbol:
 ```nim
 import cligen
 from std/tables import toTable
@@ -196,10 +194,10 @@ With that `"bar"` gets `'r'` while `"baz"` gets `'b'` as short options.  To
 suppress a long option getting *any* short option, specify a short key `'\0'`.
 To suppress _all_ short options, give `short` a key of `""`.
 
-To suppress API parameters in the CLI, pass `suppress = @[ "apiParam", ... ]`.
+To suppress API parameters in the CLI, pass `suppress = @["apiParam", ...]`.
 (For object init, "ALL AFTER field" stops fieldPairs iteration.)  To suppress
-presence only in help messages use `help = { "apiParam": "CLIGEN-NOHELP" }`.
-Pass `implicitDefault=@["apiParam",...]` to let the CLI wrapper default API
+presence only in help messages use `help={"apiParam": "CLIGEN-NOHELP"}`.  Pass
+`implicitDefault = @["apiParam",...]` to let the CLI wrapper default API
 parameter values with no explicit initialization to the Nim default for a type.
 
 ---
