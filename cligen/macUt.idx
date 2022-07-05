@@ -1,9 +1,12 @@
+maybeDestrop	cligen/macUt.html#maybeDestrop,NimNode	macUt: maybeDestrop(id: NimNode): NimNode	
 findByName	cligen/macUt.html#findByName,NimNode,NimNode	macUt: findByName(parId: NimNode; fpars: NimNode): int	
 collectComments	cligen/macUt.html#collectComments,string,NimNode,int	macUt: collectComments(buf: var string; n: NimNode; depth: int = 0)	
 toString	cligen/macUt.html#toString,NimNode	macUt: toString(n: NimNode): string	
+toInt	cligen/macUt.html#toInt,NimNode	macUt: toInt(n: NimNode): int	
 toStrIni	cligen/macUt.html#toStrIni,range[]	macUt: toStrIni(c: range[0 .. 255]): NimNode	
 toStrSeq	cligen/macUt.html#toStrSeq,NimNode	macUt: toStrSeq(strSeqInitializer: NimNode): seq[string]	
 toIdSeq	cligen/macUt.html#toIdSeq,NimNode	macUt: toIdSeq(strSeqInitializer: NimNode): seq[NimNode]	
+has	cligen/macUt.html#has,seq[NimNode],NimNode	macUt: has(ns: seq[NimNode]; n: NimNode): bool	
 srcPath	cligen/macUt.html#srcPath,NimNode	macUt: srcPath(n: NimNode): string	
 srcBaseName	cligen/macUt.html#srcBaseName,NimNode,string	macUt: srcBaseName(n: NimNode; sfx = &quot;.nim&quot;): NimNode	
 srcData	cligen/macUt.html#srcData,NimNode	macUt: srcData(n: NimNode): string	
@@ -16,5 +19,6 @@ summaryOfModule	cligen/macUt.html#summaryOfModule,string	macUt: summaryOfModule(
 summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	macUt: summaryOfModule(n: NimNode): string	
 docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macUt: docFromModuleOf(sym: typed{nkSym}): untyped	
 docFromProc	cligen/macUt.html#docFromProc.m	macUt: docFromProc(sym: typed{nkSym}): untyped	
-maybeDestrop	cligen/macUt.html#maybeDestrop,NimNode	macUt: maybeDestrop(id: NimNode): NimNode	
 with	cligen/macUt.html#with.m,typed,untyped,untyped	macUt: with(ob: typed; fields: untyped; body: untyped): untyped	
+callsOn	cligen/macUt.html#callsOn.m,varargs[untyped]	macUt: callsOn(routineFirstsRest: varargs[untyped]): untyped	
+docCommentAdd	cligen/macUt.html#docCommentAdd.m,staticstring	macUt: docCommentAdd(s: static string): untyped	

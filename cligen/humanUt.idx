@@ -7,5 +7,9 @@ textAttrRegisterAliases	cligen/humanUt.html#textAttrRegisterAliases,seq[string]	
 textAttrParse	cligen/humanUt.html#textAttrParse,string	humanUt: textAttrParse(s: string): string	
 textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	humanUt: textAttrOn(spec: seq[string]; plain = false): string	
 textAttrOff	cligen/humanUt.html#textAttrOff	humanUt: textAttrOff	
-specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	humanUt: specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = &apos;%&apos;;\n                   openBkt = &quot;([{&quot;; closeBkt = &quot;)]}&quot;; keepPct = true; termInAttr = true): string	
+specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	humanUt: specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = &apos;%&apos;;\n                   openBkt = &quot;([{&quot;; closeBkt = &quot;)]}&quot;; keepPct = true;\n                   termInAttr = true): string	
 humanDuration	cligen/humanUt.html#humanDuration,int,string	humanUt: humanDuration(dt: int; fmt: string; plain = false): string	
+rstMdSGRDefault	cligen/humanUt.html#rstMdSGRDefault	humanUt: rstMdSGRDefault	
+rstMdSGR	cligen/humanUt.html#rstMdSGR	humanUt: rstMdSGR	
+initRstMdSGR	cligen/humanUt.html#initRstMdSGR	humanUt: initRstMdSGR(attrs = rstMdSGRDefault; plain = false): rstMdSGR	
+render	cligen/humanUt.html#render,rstMdSGR,string	humanUt: render(r: rstMdSGR; rstOrMd: string): string	

@@ -3,8 +3,12 @@ findUO	cligen/sysUt.html#findUO,string,char	sysUt: findUO(s: string; c: char): i
 delete	cligen/sysUt.html#delete,string,Natural	sysUt: delete(x: var string; i: Natural)	
 maybePar	cligen/sysUt.html#maybePar.i,bool,int,int	sysUt: maybePar(parallel: bool; a, b: int): int	
 enumerate	cligen/sysUt.html#enumerate.m,ForLoopStmt	sysUt: enumerate(x: ForLoopStmt): untyped	
+toItr	cligen/sysUt.html#toItr.m,ForLoopStmt	sysUt: toItr(x: ForLoopStmt): untyped	
 incd	cligen/sysUt.html#incd,T,int	sysUt: incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
 decd	cligen/sysUt.html#decd,T,int	sysUt: decd[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
 postInc	cligen/sysUt.html#postInc,T,int	sysUt: postInc[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
 postDec	cligen/sysUt.html#postDec,T,int	sysUt: postDec[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
 delItem	cligen/sysUt.html#delItem,seq[T],T	sysUt: delItem[T](x: var seq[T]; item: T): int	
+seekable	cligen/sysUt.html#seekable,File	sysUt: seekable(f: File): bool	
+`&amp;`	cligen/sysUt.html#&,openArray[T],openArray[T]	sysUt: `&amp;`[T](x: openArray[T]; y: openArray[T]): seq[T]	
+echoQuit130	cligen/sysUt.html#echoQuit130	sysUt: echoQuit130()	

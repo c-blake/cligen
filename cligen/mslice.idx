@@ -1,0 +1,74 @@
+cmemchr	cligen/mslice.html#cmemchr,pointer,char,csize	mslice: cmemchr(s: pointer; c: char; n: csize): pointer	
+cmemrchr	cligen/mslice.html#cmemrchr,pointer,char,csize	mslice: cmemrchr(s: pointer; c: char; n: csize): pointer	
+cmemcmp	cligen/mslice.html#cmemcmp,pointer,pointer,csize	mslice: cmemcmp(a, b: pointer; n: csize): cint	
+cmemcpy	cligen/mslice.html#cmemcpy,pointer,pointer,csize	mslice: cmemcpy(a, b: pointer; n: csize): cint	
+`-!`	cligen/mslice.html#-!,pointer,pointer	mslice: `-!`(p, q: pointer): int	
+`+!`	cligen/mslice.html#+!,pointer,int	mslice: `+!`(p: pointer; i: int): pointer	
+`+!`	cligen/mslice.html#+!,pointer,uint64	mslice: `+!`(p: pointer; i: uint64): pointer	
+MSlice	cligen/mslice.html#MSlice	mslice: MSlice	
+SomeString	cligen/mslice.html#SomeString	mslice: SomeString	
+toMSlice	cligen/mslice.html#toMSlice,string	mslice: toMSlice(a: string; keep = false): MSlice	
+toCstr	cligen/mslice.html#toCstr,pointer	mslice: toCstr(p: pointer): cstring	
+`[]`	cligen/mslice.html#[],MSlice,int	mslice: `[]`(ms: MSlice; i: int): char	
+`[]=`	cligen/mslice.html#[]=,MSlice,int,char	mslice: `[]=`(ms: MSlice; i: int; c: char)	
+mem	cligen/mslice.html#mem,openArray[char]	mslice: mem(s: openArray[char]): pointer	
+startsWith	cligen/mslice.html#startsWith,MSlice,SomeString	mslice: startsWith(s: MSlice; pfx: SomeString): bool	
+toString	cligen/mslice.html#toString,MSlice,string	mslice: toString(ms: MSlice; s: var string)	
+toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,MSlice	mslice: toOpenArrayChar(ms: MSlice): untyped	
+toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,string	mslice: toOpenArrayChar(s: string): untyped	
+`$`	cligen/mslice.html#$,MSlice	mslice: `$`(ms: MSlice): string	
+add	cligen/mslice.html#add,string,MSlice	mslice: add(s: var string; ms: MSlice)	
+`==`	cligen/mslice.html#==,MSlice,MSlice	mslice: `==`(x, y: MSlice): bool	
+`&lt;`	cligen/mslice.html#<,MSlice,MSlice	mslice: `&lt;`(a, b: MSlice): bool	
+write	cligen/mslice.html#write,File,MSlice	mslice: write(f: File; ms: MSlice)	
+urite	cligen/mslice.html#urite,File,MSlice	mslice: urite(f: File; ms: MSlice)	
+mrite	cligen/mslice.html#mrite,File,varargs[MSlice]	mslice: mrite(f: File; mses: varargs[MSlice])	
+toOb	cligen/mslice.html#toOb,MSlice,T	mslice: toOb[T](m: MSlice; ob: var T)	
+toSeq	cligen/mslice.html#toSeq,MSlice,seq[T]	mslice: toSeq[T](m: MSlice; s: var seq[T])	
+`==`	cligen/mslice.html#==,string,MSlice	mslice: `==`(a: string; ms: MSlice): bool	
+`==`	cligen/mslice.html#==,MSlice,string	mslice: `==`(ms: MSlice; b: string): bool	
+hash	cligen/mslice.html#hash,MSlice	mslice: hash(ms: MSlice): Hash	
+nextSlice	cligen/mslice.html#nextSlice,MSlice,MSlice,char,char	mslice: nextSlice(mslc, ms: var MSlice; sep = &apos;\n&apos;; eat = &apos;\x00&apos;): int	
+mSlices	cligen/mslice.html#mSlices.i,MSlice,char,char	mslice: mSlices(mslc: MSlice; sep = &apos; &apos;; eat = &apos;\x00&apos;): MSlice	
+msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,char	mslice: msplit(mslc: MSlice; fs: var seq[MSlice]; sep = &apos; &apos;; eat = &apos;\x00&apos;)	
+firstN	cligen/mslice.html#firstN,MSlice,int,char	mslice: firstN(ms: MSlice; n = 1; term = &apos;\n&apos;): MSlice	
+wspace	cligen/mslice.html#wspace	mslice: wspace	
+mempbrk	cligen/mslice.html#mempbrk,pointer,set[char],csize	mslice: mempbrk(s: pointer; accept: set[char]; n: csize): pointer	
+strip	cligen/mslice.html#strip,MSlice	mslice: strip(s: MSlice; cset = wspace): MSlice	
+msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,int	mslice: msplit(s: MSlice; fs: var seq[MSlice]; sep = &apos; &apos;; n = 0; repeat = false): int	
+msplit	cligen/mslice.html#msplit,MSlice,char,int	mslice: msplit(s: MSlice; sep = &apos; &apos;; n = 0; repeat = false): seq[MSlice]	
+msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],int	mslice: msplit(s: MSlice; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int	
+msplit	cligen/mslice.html#msplit,MSlice,int	mslice: msplit(s: MSlice; n = 0; seps = wspace; repeat = true): seq[MSlice]	
+msplit	cligen/mslice.html#msplit,string,seq[MSlice],char,int	mslice: msplit(s: string; fs: var seq[MSlice]; sep = &apos; &apos;; n = 0; repeat = false): int	
+msplit	cligen/mslice.html#msplit,string,char,int	mslice: msplit(s: string; sep: char; n = 0; repeat = false): seq[MSlice]	
+msplit	cligen/mslice.html#msplit,string,seq[MSlice],int	mslice: msplit(s: string; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int	
+msplit	cligen/mslice.html#msplit,string,int	mslice: msplit(s: string; seps = wspace; n = 0; repeat = true): seq[MSlice]	
+splitr	cligen/mslice.html#splitr,string,seq[string],char,int,ptr.seq[string]	mslice: splitr(s: string; fs: var seq[string]; sep = &apos; &apos;; n = 0; repeat = false;\n       sp: ptr seq[string] = nil): int	
+splitr	cligen/mslice.html#splitr,string,char,int	mslice: splitr(s: string; sep: char; n = 0; repeat = false): seq[string]	
+splitr	cligen/mslice.html#splitr,string,seq[string],int,ptr.seq[string]	mslice: splitr(s: string; fs: var seq[string]; seps = wspace; n = 0; repeat = true;\n       sp: ptr seq[string] = nil): int	
+splitr	cligen/mslice.html#splitr,string,int	mslice: splitr(s: string; seps = wspace; n = 0; repeat = true): seq[string]	
+Sep	cligen/mslice.html#Sep	mslice: Sep	
+initSep	cligen/mslice.html#initSep,string	mslice: initSep(seps: string): Sep	
+Splitr	cligen/mslice.html#Splitr	mslice: Splitr	
+initSplitr	cligen/mslice.html#initSplitr,string	mslice: initSplitr(seps: string): Sep	
+split	cligen/mslice.html#split,Sep,MSlice,seq[MSlice],int	mslice: split(s: Sep; line: MSlice; cols: var seq[MSlice]; n = 0)	
+split	cligen/mslice.html#split,Sep,string,seq[string],int	mslice: split(s: Sep; line: string; cols: var seq[string]; n = 0)	
+split	cligen/mslice.html#split,Sep,string,int	mslice: split(s: Sep; line: string; n = 0): seq[string]	
+TextFrame	cligen/mslice.html#TextFrame	mslice: TextFrame	
+frame	cligen/mslice.html#frame.i,MSlice,char,int	mslice: frame(s: MSlice; sep: char; repeat = false; n = 0): TextFrame	
+frame	cligen/mslice.html#frame.i,MSlice,set[char],int	mslice: frame(s: MSlice; seps: set[char]; repeat = false; n = 0): TextFrame	
+frame	cligen/mslice.html#frame.i,MSlice,Sep,int	mslice: frame(s: MSlice; sep: Sep; n = 0): TextFrame	
+frame	cligen/mslice.html#frame,MSlice,seq[TextFrame],Sep,int	mslice: frame(s: MSlice; fs: var seq[TextFrame]; sep: Sep; n = 0): int	
+frame	cligen/mslice.html#frame,MSlice,Sep,int	mslice: frame(s: MSlice; sep: Sep; n = 0): seq[TextFrame]	
+items	cligen/mslice.html#items.i,MSlice	mslice: items(a: MSlice): char	
+pairs	cligen/mslice.html#pairs.i,MSlice	mslice: pairs(a: MSlice): tuple[ix: int, c: char]	
+findNot	cligen/mslice.html#findNot,string,set[char],Natural,int	mslice: findNot(s: string; chars: set[char]; start: Natural = 0; last = 0): int	
+eos	cligen/mslice.html#eos,MSlice	mslice: eos(ms: MSlice): pointer	
+extend	cligen/mslice.html#extend,MSlice,int,char	mslice: extend(ms: MSlice; max: int; sep = &apos;\n&apos;): MSlice	
+nSplit	cligen/mslice.html#nSplit,int,MSlice,char	mslice: nSplit(n: int; data: MSlice; sep = &apos;\n&apos;): seq[MSlice]	
+parseBin	cligen/mslice.html#parseBin,,int	mslice: parseBin(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int	
+parseOct	cligen/mslice.html#parseOct,,int	mslice: parseOct(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int	
+parseInt	cligen/mslice.html#parseInt,,int	mslice: parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int	
+parseHex	cligen/mslice.html#parseHex,,int	mslice: parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int	
+pow10	cligen/mslice.html#pow10	mslice: pow10	
+parseFloat	cligen/mslice.html#parseFloat,,int	mslice: parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float	

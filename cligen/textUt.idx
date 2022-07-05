@@ -1,17 +1,21 @@
-wrap	cligen/textUt.html#wrap,string,string	textUt: wrap(prefix: string; s: string; width = tWidth): string	
+stripEsc	cligen/textUt.html#stripEsc,string	textUt: stripEsc(a: string): string	
+stripSGR	cligen/textUt.html#stripSGR,string	textUt: stripSGR(a: string): string	
+printedLen	cligen/textUt.html#printedLen,string	textUt: printedLen(a: string): int	
+paragraphs	cligen/textUt.html#paragraphs.i,string	textUt: paragraphs(s: string; indent = {&apos; &apos;, &apos;\t&apos;}): tuple[pre: bool, para: string]	
+ttyWidth	cligen/textUt.html#ttyWidth	textUt: ttyWidth	
+wrapWidth	cligen/textUt.html#wrapWidth,string	textUt: wrapWidth(envVar: string; defaultWidth = ttyWidth): int	
+wrap	cligen/textUt.html#wrap,string,int,int	textUt: wrap(s: string; maxWidth = ttyWidth; power = 3; prefixLen = 0): string	
 addPrefix	cligen/textUt.html#addPrefix,string,string	textUt: addPrefix(prefix: string; multiline = &quot;&quot;): string	
 TextTab	cligen/textUt.html#TextTab	textUt: TextTab	
-alignTable	cligen/textUt.html#alignTable,TextTab,int,int,int,string	textUt: alignTable(tab: TextTab; prefixLen = 0; colGap = 2; minLast = 16; rowSep = &quot;&quot;;\n           cols = @[0, 1]; attrOn = @[&quot;&quot;, &quot;&quot;]; attrOff = @[&quot;&quot;, &quot;&quot;]; width = tWidth): string	
-distDamerau	cligen/textUt.html#distDamerau,openArray[T],openArray[T],seq[C]	textUt: distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1); xpoC = C(1);\n               dI: var seq[C]): C	
+alignTable	cligen/textUt.html#alignTable,TextTab,int,int,int,string,string	textUt: alignTable(tab: TextTab; prefixLen = 0; colGap = 2; minLast = 16; rowSep = &quot;&quot;;\n           cols = @[0, 1]; attrOn = @[&quot;&quot;, &quot;&quot;]; attrOff = @[&quot;&quot;, &quot;&quot;]; aligns = &quot;&quot;;\n           width = ttyWidth; measure = printedLen): string	
+distDamerau	cligen/textUt.html#distDamerau,openArray[T],openArray[T],seq[C]	textUt: distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);\n               xpoC = C(1); dI: var seq[C]): C	
 initCritBitTree	cligen/textUt.html#initCritBitTree	textUt: initCritBitTree[T](): CritBitTree[T]	
-toCritBitTree	cligen/textUt.html#toCritBitTree,openArray[]	textUt: toCritBitTree[T](pairs: openArray[(string, T)]): CritBitTree[T]	
 keys	cligen/textUt.html#keys,CritBitTree[T]	textUt: keys[T](cb: CritBitTree[T]): seq[string]	
 getAll	cligen/textUt.html#getAll,CritBitTree[T],string	textUt: getAll[T](cb: CritBitTree[T]; key: string): seq[tuple[key: string, val: T]]	
 keys	cligen/textUt.html#keys,seq[tuple[string,T]]	textUt: keys[T](x: seq[tuple[key: string, val: T]]): seq[string]	
 suggestions	cligen/textUt.html#suggestions,string,openArray[T],openArray[T],int	textUt: suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;\n               unrelatedDistance = C(4)): seq[string]	
 match	cligen/textUt.html#match,CritBitTree[T],string,string,string	textUt: match[T](cb: CritBitTree[T]; key, tag: string; msg: var string; suppress = false): tuple[\n    key: string, val: T]	
-match	cligen/textUt.html#match,CritBitTree[T],string,string	textUt: match[T](cb: CritBitTree[T]; key, tag: string; err = stderr): tuple[key: string, val: T]	
-printedLen	cligen/textUt.html#printedLen,string	textUt: printedLen(a: string): int	
+match	cligen/textUt.html#match,CritBitTree[T],string,string	textUt: match[T](cb: CritBitTree[T]; key, tag: string; err = stderr): tuple[key: string,\n    val: T]	
 termAlign	cligen/textUt.html#termAlign,string,Natural,char	textUt: termAlign(s: string; count: Natural; padding = &apos; &apos;): string	
 termAlignLeft	cligen/textUt.html#termAlignLeft,string,Natural,char	textUt: termAlignLeft(s: string; count: Natural; padding = &apos; &apos;): string	
 toSetChar	cligen/textUt.html#toSetChar,string	textUt: toSetChar(s: string): set[char]	
