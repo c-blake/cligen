@@ -143,6 +143,40 @@ proc hash*(ms: MSlice): Hash {.inline.} =
   ## hash MSlice data; With ``==`` all we need to put in a Table/Set
   result = hashData(ms.mem, ms.len)
 
+proc nextSlice*(mslc, ms: var MSlice, sep='\n', eat='\0'): int =
+  ## Stores everything from the start of ``mslc`` up to excluding the next
+  ## ``sep`` in ``ms`` and advances the input slice ``mslc`` to after the next
+  ## separator. Optionally removes ``eat``-suffixed char from the end of the
+  ## resulting slice.
+  ##
+  ## Returns the number of advanced characters.
+  ##
+  ## If no further `sep` is found in the input, the remaining slice is
+  ## in `ms` and `mslc` will be considered empty.
+  ##
+  ## If `mslc` is nil, `ms` remains unchanged.
+  ##
+  ## This procedure is somewhat analogous to reading from a stream, in the
+  ## sense that the input slice is drained.
+  if mslc.mem != nil:
+    var remaining = mslc.len
+    if remaining > 0:
+      let recEnd = cmemchr(mslc.mem, sep, remaining.csize)
+      if recEnd == nil:                             #Unterminated final slice
+        ms.len = remaining                          #Weird case..consult eat?
+        ms.mem = mslc.mem
+        mslc.len = 0                                # empty input slice
+        # set input memory to nil?
+        # mslc.mem = nil
+        return remaining
+      ms.mem = mslc.mem                             # assign output slice
+      ms.len = recEnd -! mslc.mem                   #sep is NOT included
+      if eat != '\0' and ms.len > 0 and ms[ms.len - 1] == eat:
+        dec(ms.len)                                 #trim pre-sep char
+      mslc.mem = recEnd +! 1                        # advance input & skip sep
+      result = mslc.mem -! ms.mem                   # calc number of advanced idxs
+      mslc.len = mslc.len - result                  # and adjust input length
+
 iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
   ## Iterate over [optionally ``eat``-suffixed] ``sep``-delimited slices in
   ## ``mslc``.  Delimiters are NOT part of returned slices.  Pass eat='\\0' to
