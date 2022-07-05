@@ -149,6 +149,8 @@ proc nextSlice*(mslc, ms: var MSlice, sep='\n', eat='\0'): int =
   ## separator. Optionally removes ``eat``-suffixed char from the end of the
   ## resulting slice.
   ##
+  ## Returns the number of advanced characters.
+  ##
   ## If no further `sep` is found in the input, the remaining slice is
   ## in `ms` and `mslc` will be considered empty.
   ##
