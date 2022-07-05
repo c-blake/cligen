@@ -224,7 +224,7 @@ type rstMdSGR* = object
 
 proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
-  ## does *only inline* font markup (single-|double-|triple-)(*|`) since A) that
+  ## does *only inline* font markup (single-|double-|triple-)``(*|`)`` since A) that
   ## is what is most useful displaying to a terminal and B) the whole idea of
   ## these markups is to be readable as-is.  Backslash escape & spacing work as
   ## usual to block adornment interpretation.  This proc inits ``rstMdSGR`` with
