@@ -64,7 +64,8 @@ when not declared(fromHex):
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
-let attrNames = {  #WTF: const compiles but then cannot look anything up
+when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
+ let attrNames = {  #WTF: const compiles but then cannot look anything up
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
   "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9",
   "NONE":   "", "-bold":"22", "-faint": "22", "-italic":"23","-underline":"24",
@@ -77,22 +78,22 @@ let attrNames = {  #WTF: const compiles but then cannot look anything up
   "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
   "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
   "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
-}.toTable
+ }.toTable
 
-var textAttrAliases = initTable[string, string]()
+ var textAttrAliases = initTable[string, string]()
 
-proc textAttrAlias*(name, value: string) =
+ proc textAttrAlias*(name, value: string) =
   textAttrAliases[name] = value
 
-proc textAttrAliasClear*() = textAttrAliases.clear
+ proc textAttrAliasClear*() = textAttrAliases.clear
 
-proc textAttrRegisterAliases*(colors: seq[string]) =
+ proc textAttrRegisterAliases*(colors: seq[string]) =
   for spec in colors:
     let cols = spec.split('=')
     if cols.len == 2:
       textAttrAlias(cols[0].strip, cols[1].strip)
 
-proc textAttrParse*(s: string): string =
+ proc textAttrParse*(s: string): string =
   if s.len == 0: return
   var s = s
   while textAttrAliases.hasKey s:
@@ -115,16 +116,16 @@ proc textAttrParse*(s: string): string =
     if result.len == 0:
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
 
-proc textAttrOn*(spec: seq[string], plain=false): string =
+ proc textAttrOn*(spec: seq[string], plain=false): string =
   if plain: return
   var components: seq[string]          #Build \e[$A;3$F;4$Bm for attr A,colr F,B
   for word in spec: components.add(textAttrParse(word))
   if components.len>0 and "" notin components: "\x1b["&components.join(";")&"m"
   else: ""
 
-const textAttrOff* = "\x1b[m"
+ const textAttrOff* = "\x1b[m"
 
-proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
+ proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
     openBkt="([{", closeBkt=")]}", keepPct=true, termInAttr=true): string =
   ## ".. %X(A1 A2)Ya .." -> ".. ON[A1 A2]%XYaOFF .."
   var term = pctTerm; term.incl pct     #Caller need not enter pct in pctTerm
@@ -168,7 +169,7 @@ proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
     result.add other
     if attrOn.len > 0: result.add attrOff
 
-proc humanDuration*(dt: int, fmt: string, plain=false): string =
+ proc humanDuration*(dt: int, fmt: string, plain=false): string =
   ## fmt is divisor-aka-numerical-unit-in-seconds unit-text [attrs]
   let cols = fmt.splitWhitespace
   let attrOff = if plain: "" else: textAttrOff
@@ -195,34 +196,34 @@ proc humanDuration*(dt: int, fmt: string, plain=false): string =
 #NOTE: \-escape off only inside inline DB literals breaks any parser layering &
 #I think blocks any 1-pass parse.  For now ``lit\eral`` -> <DB0>literal<DB1>.
 #Also, the old parser/substitutor also failed in this same, way.
-iterator descape(s: string, escape='\\'): tuple[c: char; escaped: bool] =
+ iterator descape(s: string, escape='\\'): tuple[c: char; escaped: bool] =
   var escaping = false  # This just yields a char & bool escaped status
   for c in s:
     if escaping: escaping = false; yield (c, true)
     elif c == escape: escaping = true
     else: yield (c, false)
 
-type
+ type
   RstKind = enum rstNil, rstBeg,rstEnd, rstEsc, rstWhite,rstText, rstOpn,rstCls,
                  rstPunc, rstSS,rstDS,rstTS, rstSB,rstDB
   RstToken = tuple[kind: RstKind; text: string; ix: int]
-const rstMarks = { rstSS, rstDS, rstTS, rstSB, rstDB }
-const bktOpn = "([{<\"'"
-const bktCls = ")]}>\"'"
-const punc = { '-', ':', '/', '.', ',', ';', '!', '?' }
+ const rstMarks = { rstSS, rstDS, rstTS, rstSB, rstDB }
+ const bktOpn = "([{<\"'"
+ const bktCls = ")]}>\"'"
+ const punc = { '-', ':', '/', '.', ',', ';', '!', '?' }
 
-let key2tok = { "singlestar": rstSS, "doublestar": rstDS, "triplestar": rstTS,
-                "singlebquo": rstSB, "doublebquo": rstDB }.toTable
+ let key2tok = { "singlestar": rstSS, "doublestar": rstDS, "triplestar": rstTS,
+                 "singlebquo": rstSB, "doublebquo": rstDB }.toTable
 
-let rstMdSGRDefault* = { "singlestar": "italic     ; -italic"       ,
-                         "doublestar": "bold        ; -bold"        ,
-                         "triplestar": "bold italic ; -bold -italic",
-                         "singlebquo": "underline   ; -underline"   ,
-                         "doublebquo": "inverse     ; -inverse"     }.toTable
-type rstMdSGR* = object
-  attr: Table[RstKind, tuple[on, off: string]]
+ let rstMdSGRDefault* = { "singlestar": "italic      ; -italic"      ,
+                          "doublestar": "bold        ; -bold"        ,
+                          "triplestar": "bold italic ; -bold -italic",
+                          "singlebquo": "underline   ; -underline"   ,
+                          "doublebquo": "inverse     ; -inverse"     }.toTable
+ type rstMdSGR* = object
+   attr: Table[RstKind, tuple[on, off: string]]
 
-proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
+ proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
   ## does *only inline* font markup (single-|double-|triple-)``(*|`)`` since A) that
   ## is what is most useful displaying to a terminal and B) the whole idea of
@@ -238,7 +239,7 @@ proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
     result.attr[key2tok[key]] =
       (textAttrOn(c[0].strip.split, plain), textAttrOn(c[1].strip.split, plain))
 
-iterator rstTokens(s: string): RstToken =
+ iterator rstTokens(s: string): RstToken =
   var tok: RstToken = (rstBeg, "", -1)
   yield tok
   tok.kind = rstNil
@@ -286,7 +287,7 @@ iterator rstTokens(s: string): RstToken =
 # OPEN = [({<.. & CLOSE = ])}>..):
 #   BegText|White|OPEN|BegPunc MARK nonWhite|[0]!=MchCLOSE          => Beg font
 #   nonWhite                   MARK EndText|White|CLOSE|Esc|EndPunc => End font
-proc render*(r: rstMdSGR, rstOrMd: string): string =
+ proc render*(r: rstMdSGR, rstOrMd: string): string =
   ## Translate restructuredText inline font markup (extended with triple star)
   ## to ANSI SGR/highlighted text via highlighting ``r``.
   var toks: seq[RstToken]       # Last 2 tokens + current decide what to do
