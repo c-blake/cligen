@@ -82,7 +82,7 @@ proc toInts*(x: seq[ClHelpCol]): seq[int] =
 
 when defined(cgCfgToml):    # An include helpTmpl and syntaxHelp
   include cligen/clCfgToml  # Trade parsetoml dependency for better documention
-else:
+elif not defined(cgCfgNone):
   include cligen/clCfgInit  # Just use stdlib parsecfg
 
 proc onCols*(c: ClCfg): seq[string] =
