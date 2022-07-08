@@ -206,10 +206,10 @@ type
   RstKind = enum rstNil, rstBeg,rstEnd, rstEsc, rstWhite,rstText, rstOpn,rstCls,
                  rstPunc, rstSS,rstDS,rstTS, rstSB,rstDB
   RstToken = tuple[kind: RstKind; text: string; ix: int]
-let rstMarks = { rstSS, rstDS, rstTS, rstSB, rstDB }
-let bktOpn = "([{<\"'"
-let bktCls = ")]}>\"'"
-let punc = { '-', ':', '/', '.', ',', ';', '!', '?' }
+const rstMarks = { rstSS, rstDS, rstTS, rstSB, rstDB }
+const bktOpn = "([{<\"'"
+const bktCls = ")]}>\"'"
+const punc = { '-', ':', '/', '.', ',', ';', '!', '?' }
 
 let key2tok = { "singlestar": rstSS, "doublestar": rstDS, "triplestar": rstTS,
                 "singlebquo": rstSB, "doublebquo": rstDB }.toTable
