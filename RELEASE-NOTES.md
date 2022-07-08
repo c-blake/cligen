@@ -4,7 +4,11 @@ RELEASE NOTES
 Version: 1.5.25
 ---------------
 
-  - Add docCommentAdd (courtesy of @Vindaar private communication).
+  - Add `docCommentAdd` (courtesy of @Vindaar private communication).
+
+  - Add `--define:cgCfgNone` to compile-time disable config file processing.
+    This both saves about 100K on space-optimized binaries and gives CLauthors
+    unquestioned authority on various settings & behaviors.
 
 Version: 1.5.24
 ---------------
