@@ -19,7 +19,8 @@ cc0="--threads:off --cc:gcc"                # Base options, then compile-modes
 for cc in "$cc0 -d:danger --opt:size"               \
           "$cc0 -d:danger --opt:speed"              \
           "$cc0 -d:danger --opt:speed -d:useMalloc" \
-          "$cc0 -d:danger --opt:speed -d:useMalloc --panics:on -d:lto"
+          "$cc0 -d:danger --opt:speed -d:useMalloc --panics:on -d:lto" \
+          "$cc0 -d:danger --opt:size  -d:useMalloc --panics:on -d:lto"
 do
   ( for mm in "--mm:arc" "--mm:orc" ""      # various MMs
     do
