@@ -1,9 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
-import std/[math, strutils, algorithm, sets, tables, parseutils, posix], textUt
-when not declared(initHashSet):
-  proc initHashSet*[T](): HashSet[T] = initSet[T]()
-  proc toHashSet*[T](keys: openArray[T]): HashSet[T] = toSet[T](keys)
+import std/[strutils, parseutils]
 
 proc parseInt*(s: string, valIfNAN: int): int =
   ##A helper function to parse ``s`` into an integer, but default to some value
@@ -58,13 +55,15 @@ proc humanReadable4*(bytes: uint, binary=false): string =
   elif Bytes < 100 * T  : result = "100T"
   else:                   result = ff(Bytes/T, 3) & "T"
 
-when not declared(fromHex):
+when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
+ import std/tables
+
+ when not declared(fromHex):
   proc fromHex[T: SomeInteger](s: string): T =
     let p = parseutils.parseHex(s, result)
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
-when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
  let attrNames = {  #WTF: const compiles but then cannot look anything up
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
   "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9",
