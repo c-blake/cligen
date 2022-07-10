@@ -138,6 +138,18 @@ proc resize*(mf: var MFile, newFileSize: int, err=stderr): int =
   mf.mslc.mem = newAddr
   mf.mslc.len = newFileSize
 
+proc add*[T: SomeInteger](mf: var MFile, ch: char, off: var T) = # -> mfile
+  ## Append `ch` to `mf`, resizing if necessary and updating offset `off`.
+  if off.int + 1 == mf.len: discard mf.resize mf.len * 2
+  cast[ptr char](mf.mem +% off.int)[] = ch
+  inc off
+
+proc add*[T: SomeInteger](mf: var MFile, ms: MSlice, off: var T) = # -> mfile
+  ## Append `ms` to `mf`, resizing if necessary and updating offset `off`.
+  if off.int + ms.len >= mf.len: discard mf.resize mf.len * 2
+  copyMem mf.mem +% off.int, ms.mem, ms.len
+  inc off, ms.len
+
 proc inCore*(mf: MFile): tuple[resident, total: int] =
   proc mincore(adr: pointer, length: csize, vec: cstring): cint {.
          importc: "mincore", header: "<sys/mman.h>" .}
