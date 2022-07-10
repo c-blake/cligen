@@ -9,6 +9,9 @@ Version: 1.5.25
   - Add `--define:cgCfgNone` to compile-time disable config file processing.
     This both saves about 50|100K on space-optimized (danger|not) binaries and
     gives CLauthors unquestioned authority on various settings & behaviors.
+    
+  - Add a couple calls to make mfile behave more like a string, but less
+    automatically in that an external integer "used length" variable is needed.
 
 Version: 1.5.24
 ---------------
