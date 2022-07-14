@@ -4,16 +4,33 @@ RELEASE NOTES
 Version: 1.5.25
 ---------------
 
-  - Add `docCommentAdd` (courtesy of @Vindaar private communication).
-
   - Add `--define:cgCfgNone` to compile-time disable config file processing.
     This both saves about 50|100K on space-optimized (danger|not) binaries and
     gives CLauthors unquestioned authority on various settings & behaviors.
+    Some other size optimization work was done as part of this.  See also
+    discussion/analysis in https://github.com/c-blake/cligen/issues/207
+    cligen space overhead with the new size trimmings is now as small (or as
+    big) as build mode variation for an empty file.
+
+  - BREAKING CHANGE: in the both unlikely *and* unwise case that you relied
+    upon `import cligen/humanUt` exporting `initHashSet`, `toHashSet` - you
+    can no longer.
+
+  - Harden `cligen/procpool` a bit more and add a new `examples/piPar.nim` that
+    runs 1000s of times faster than the perf-buggy tests/parallel/tpi.nim in
+    Nim or the examples/e02_parallel_pi.nim in the status taskpools repo.
+
+  - Add `docCommentAdd` (courtesy of @Vindaar private communication who also
+    added the utility API `nextSlice`).
     
   - Add a couple calls to make mfile behave more like a string, but less
     automatically in that an external integer "used length" variable is needed.
 
-  - Add simpler way to use cligen/tab (Newspaper columns often what you want).
+  - Add simpler way to use `cligen/tab` (Newspaper columns often what you want).
+
+  - Add `sysUt.echoQuit130` proc for `setControlCHook` to ease "making Unix-y".
+
+  - Various documentation updates/fixes/unused import clean-ups.
 
 Version: 1.5.24
 ---------------
