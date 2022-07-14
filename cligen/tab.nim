@@ -123,3 +123,10 @@ proc write*(f: File; strs: seq[string]; lens: seq[int]; ws: seq[int];
         if lens[k] <= 0 and pad > 0 and not (mc == ncMaj - 1 and j == m - 1):
           f.write spaces[0 ..< pad]     #zero/negative => right pad/left align
     f.write '\n'
+
+proc format*(f:File, tw: int, wids: seq[int], strs: seq[string], gap=1, pfx="")=
+  ## A simpler interface to format a table to a File, assuming m=1, 0 widest.
+  var nrow, ncol: int; let m = 1
+  var colWs = layout(wids, tw, gap=gap, 999, m, nrow, ncol)
+  colPad(colWs, tw, 999, m)
+  f.write(strs, wids, colWs, m, nrow, ncol, 0, pfx)
