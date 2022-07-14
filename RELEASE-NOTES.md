@@ -13,6 +13,8 @@ Version: 1.5.25
   - Add a couple calls to make mfile behave more like a string, but less
     automatically in that an external integer "used length" variable is needed.
 
+  - Add simpler way to use cligen/tab (Newspaper columns often what you want).
+
 Version: 1.5.24
 ---------------
   - Fix long-standing bug in `--long-=foo` for `long: seq[T]` params.
