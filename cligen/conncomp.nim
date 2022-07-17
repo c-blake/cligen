@@ -1,5 +1,4 @@
 import tables
-template iniTab[K,V](n: auto): auto = initTable[K,V](n)
 
 proc root(up: var seq[int], x: int): int {.inline.} =
   result = x                            # Find root defined by parent == self
@@ -28,7 +27,7 @@ iterator components*(arcs: openArray[tuple[x, y: int]], nV: int): seq[int] =
   for i in 0 ..< nV: sz[i] = 1          # initial sizes all 1
   for arc in arcs:                      # Incorp arcs via union-find/join-root
     join up, sz, arc.x, arc.y           #  Post loop up.root(i)==component label
-  var cs = iniTab[int, seq[int]](nV)    # component id -> all members
+  var cs = initTable[int, seq[int]](nV) # component id -> all members
   for i in 0 ..< nV:                    # for each unique vertex:
     cs.mgetOrPut(up.root(i), @[]).add i #   update root[id] => members map
   for c in cs.values: yield c           # Then yield blocks of components
@@ -43,7 +42,7 @@ when isMainModule:
 
   proc conncomp(idelim='\t', odelim="\t") =
     ## Print connected components of the graph of arcs/edges on stdin.
-    var vi = iniTab[string, int](4096)  # vertex name -> int id number
+    var vi = initTable[string,int](999) # vertex name -> int id number
     var vn = newSeqOfCap[string](4096)  # vertex int id -> name
     var arcs = newSeqOfCap[tuple[x, y: int]](4096)
     for ln in lines(stdin):             # Parse input, assign vertex ids,
