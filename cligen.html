@@ -51,12 +51,7 @@
     </div>
     <ul class="simple simple-toc" id="toc-list">
   <li>
-  <details open>
-    <summary><a class="reference reference-toplevel" href="#6" id="56">Imports</a></summary>
-    <ul class="simple simple-toc-section">
-      
-    </ul>
-  </details>
+  <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
 </li>
 <li>
   <details open>
@@ -347,12 +342,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   </details>
 </li>
 <li>
-  <details open>
-    <summary><a class="reference reference-toplevel" href="#19" id="69">Exports</a></summary>
-    <ul class="simple simple-toc-section">
-      
-    </ul>
-  </details>
+  <a class="reference reference-toplevel" href="#19" id="69">Exports</a>
 </li>
 
 </ul>
@@ -841,11 +831,10 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
                       <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
-    Create a proc with signature from <tt class="docutils literal"><span class="pre">default</span></tt> that calls <tt class="docutils literal"><span class="pre">initGen</span></tt> and initializes <tt class="docutils literal"><span class="pre">var obName</span></tt> by calling to the generated initializer.  It puts <tt class="docutils literal"><span class="pre">body</span></tt> inside an appropriate <tt class="docutils literal"><span class="pre">try/except</span></tt> so that you can just say:<blockquote><p><pre class="listing"><span class="Identifier">initDispatchGen</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Punctuation">,</span> <span class="Identifier">cfgDfl</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+    Create a proc with signature from <tt class="docutils literal"><span class="pre">default</span></tt> that calls <tt class="docutils literal"><span class="pre">initGen</span></tt> and initializes <tt class="docutils literal"><span class="pre">var obName</span></tt> by calling to the generated initializer.  It puts <tt class="docutils literal"><span class="pre">body</span></tt> inside an appropriate <tt class="docutils literal"><span class="pre">try/except</span></tt> so that you can just say:<pre class="listing"><span class="Identifier">initDispatchGen</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Punctuation">,</span> <span class="Identifier">cfgDfl</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Identifier">cfg</span><span class="Operator">.</span><span class="Identifier">callAPI</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
   <span class="Identifier">quit</span><span class="Punctuation">(</span><span class="Identifier">min</span><span class="Punctuation">(</span><span class="DecNumber">255</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Operator">.</span><span class="Identifier">nError</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
-<span class="Identifier">dispatch</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">)</span></pre></p></blockquote>
-
+<span class="Identifier">dispatch</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">)</span></pre>
     
   </dd>
 </div>
@@ -996,7 +985,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-14 13:03:53 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-24 12:50:08 UTC</small>
       </div>
     </div>
   </div>
