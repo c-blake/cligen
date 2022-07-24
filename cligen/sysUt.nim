@@ -13,7 +13,8 @@ proc findUO*(s: string, c: char): int {.noSideEffect.} =
 proc delete*(x: var string, i: Natural) {.noSideEffect.} =
   ## Just like ``delete(var seq[T], i)`` but for ``string``.
   let xl = x.len
-  for j in i.int .. xl-2: shallowCopy(x[j], x[j+1])
+  for j in i.int .. xl-2:
+    x[j] = move x[j+1]
   setLen(x, xl-1)
 
 iterator maybePar*(parallel: bool, a, b: int): int =
