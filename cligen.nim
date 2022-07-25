@@ -477,8 +477,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
-      proc mayRend(x: string): string =
-        if `cf`.render != nil: `cf`.render(x) else: x)
+      {.push warning[GCUnsafe]: off.} # See github.com/c-blake/cligen/issues/92
+      proc mayRend(x: string): string = # {.gcsafe.} clCfg access
+        if `cf`.render != nil: `cf`.render(x) else: x
+      {.pop.})
     result.add(quote do:
       if `cf`.version.len > 0:
         `allId`.add "version"
@@ -534,7 +536,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let ww = wrapWidth(`cf`.widthEnv)
       let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), ww,
                                                  prefixLen=`prefixId`.len))
-      proc hl(tag, val: string): string =
+      proc hl(tag, val: string): string = # {.gcsafe.} clCfg access
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          `cf`.helpAttrOff.getOrDefault(tag, ""))
 
@@ -732,7 +734,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `initVars`
       `aliases`
       var `keyCountId` {.used.} = initCountTable[string]()
-      proc parser(args=`cmdLineId`, `provideId`=true) =
+      proc parser(args=`cmdLineId`, `provideId`=true) = #{.gcsafe.} clCfg access
         var `posNoId` = 0
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
