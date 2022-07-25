@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.26
+---------------
+
+  - This is a small, almost trivial release mostly just to bump the version
+    number so that @ringabout (formerly xflywind)'s `shallowCopy` removal
+    patch has a tagged version.
+
 Version: 1.5.25
 ---------------
 
