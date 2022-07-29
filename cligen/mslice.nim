@@ -15,6 +15,8 @@ proc cmemcmp*(a, b: pointer, n: csize): cint {. #Exported by system/ansi_c??
   importc: "memcmp", header: "<string.h>", noSideEffect.}
 proc cmemcpy*(a, b: pointer, n: csize): cint {.
   importc: "memcpy", header: "<string.h>", noSideEffect.}
+proc cmemmem*(h: pointer, nH: csize, s: pointer, nS: csize): pointer {.
+  importc: "memmem", header: "string.h".}
 proc `-!`*(p, q: pointer): int {.inline.} =
   (cast[int](p) -% cast[int](q)).int
 proc `+!`*(p: pointer, i: int): pointer {.inline.} =
@@ -47,11 +49,20 @@ proc toCstr*(p: pointer): cstring {.inline.} =
   ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
   cast[cstring](p)
 
+template `^^`(s, i: untyped): untyped =
+  (when i is BackwardsIndex: s.len - int(i) else: int(i))
+
 proc `[]`*(ms: MSlice, i: int): char {.inline.} =
   ms.mem.toCstr[i]
 
 proc `[]=`*(ms: MSlice, i: int, c: char) {.inline.} =
   cast[ptr char](ms.mem +! i)[] = c
+
+proc `[]`*[T, U: Ordinal](s: MSlice, x: HSlice[T, U]): MSlice {.inline.} =
+  ## Return an HSlice of an MSlice
+  let o = s ^^ x.a
+  result.mem = s.mem +! o
+  result.len = (s ^^ x.b) - o + 1
 
 proc mem*(s: openArray[char]): pointer =
   ## Make it easy to write a `SomeString` proc
@@ -59,7 +70,17 @@ proc mem*(s: openArray[char]): pointer =
 
 proc startsWith*(s: MSlice, pfx: SomeString): bool =
   ## Like `strutils.startsWith`.
-  pfx.len > 0 and s.len > pfx.len and cmemcmp(s.mem, pfx.mem, pfx.len.csize_t) == 0
+  pfx.len>0 and s.len>pfx.len and cmemcmp(s.mem, pfx.mem, pfx.len.csize_t) == 0
+
+proc endsWith*(s: MSlice, sfx: SomeString): bool =
+  ## Like `strutils.endsWith`.
+  sfx.len>0 and s.len>sfx.len and
+    cmemcmp(s.mem +! (s.len - sfx.len), sfx.mem, sfx.len.csize_t) == 0
+
+proc find*(s: MSlice, sub: SomeString): int =
+  ## Like `strutils.find`.
+  let p = cmemmem(s.mem, s.len.csize_t, sub.mem, sub.len.csize_t)
+  if p.isNil: -1 else: p -! s.mem
 
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
