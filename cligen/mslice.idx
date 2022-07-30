@@ -2,6 +2,7 @@ cmemchr	cligen/mslice.html#cmemchr,pointer,char,csize	mslice: cmemchr(s: pointer
 cmemrchr	cligen/mslice.html#cmemrchr,pointer,char,csize	mslice: cmemrchr(s: pointer; c: char; n: csize): pointer	
 cmemcmp	cligen/mslice.html#cmemcmp,pointer,pointer,csize	mslice: cmemcmp(a, b: pointer; n: csize): cint	
 cmemcpy	cligen/mslice.html#cmemcpy,pointer,pointer,csize	mslice: cmemcpy(a, b: pointer; n: csize): cint	
+cmemmem	cligen/mslice.html#cmemmem,pointer,csize,pointer,csize	mslice: cmemmem(h: pointer; nH: csize; s: pointer; nS: csize): pointer	
 `-!`	cligen/mslice.html#-!,pointer,pointer	mslice: `-!`(p, q: pointer): int	
 `+!`	cligen/mslice.html#+!,pointer,int	mslice: `+!`(p: pointer; i: int): pointer	
 `+!`	cligen/mslice.html#+!,pointer,uint64	mslice: `+!`(p: pointer; i: uint64): pointer	
@@ -11,8 +12,11 @@ toMSlice	cligen/mslice.html#toMSlice,string	mslice: toMSlice(a: string; keep = f
 toCstr	cligen/mslice.html#toCstr,pointer	mslice: toCstr(p: pointer): cstring	
 `[]`	cligen/mslice.html#[],MSlice,int	mslice: `[]`(ms: MSlice; i: int): char	
 `[]=`	cligen/mslice.html#[]=,MSlice,int,char	mslice: `[]=`(ms: MSlice; i: int; c: char)	
+`[]`	cligen/mslice.html#[],MSlice,HSlice[T: Ordinal,U: Ordinal]	mslice: `[]`[T, U: Ordinal](s: MSlice; x: HSlice[T, U]): MSlice	
 mem	cligen/mslice.html#mem,openArray[char]	mslice: mem(s: openArray[char]): pointer	
 startsWith	cligen/mslice.html#startsWith,MSlice,SomeString	mslice: startsWith(s: MSlice; pfx: SomeString): bool	
+endsWith	cligen/mslice.html#endsWith,MSlice,SomeString	mslice: endsWith(s: MSlice; sfx: SomeString): bool	
+find	cligen/mslice.html#find,MSlice,SomeString	mslice: find(s: MSlice; sub: SomeString): int	
 toString	cligen/mslice.html#toString,MSlice,string	mslice: toString(ms: MSlice; s: var string)	
 toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,MSlice	mslice: toOpenArrayChar(ms: MSlice): untyped	
 toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,string	mslice: toOpenArrayChar(s: string): untyped	
