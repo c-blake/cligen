@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.27
+---------------
+
+  - Fix a possible deadlock with NUL|newline-terminated `procpool` protocols.
+
+  - Add a few more conveniences to ease porting code from string to `MSlice`
+    (slicing an `MSlice` with `HSlice` constructors, `endsWith`, `find`).
+
 Version: 1.5.26
 ---------------
 
