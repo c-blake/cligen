@@ -50,6 +50,7 @@ type
     pid: Pid         # parent uses this to control => hidden
     fd0*, fd1*: cint ## PARENT VIEW of request|input & reply|output file handles
     buf*: string     ## current read buffer
+    off*: int        ## byte offset into `buf` to read new data into
     done*: bool      ## flag indicating completion
     aux*: int        ## general purpose int-sized client data, e.g. obsz
 
@@ -66,7 +67,7 @@ proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
 proc close*(pp: ProcPool, kid: int) = discard pp.kids[kid].fd0.close
 
-proc initFilter(work: proc(r, w: cint), aux: int): Filter {.inline.} =
+proc initFilter(work: proc(r, w: cint), aux, bufSz: int): Filter {.inline.} =
   result.aux = aux
   var fds0, fds1: array[2, cint]
   discard fds0.pipe         # pipe for data flowing from parent -> kid
@@ -80,7 +81,7 @@ proc initFilter(work: proc(r, w: cint), aux: int): Filter {.inline.} =
     work(fds0[0], fds1[1])
     quit(0)
   else:
-    result.buf = newString(8192) # allocate, setLen, but no-init
+    result.buf = newString(bufSz) # allocate, setLen, but no-init
     result.pid = pid
     result.fd0 = fds0[1]    # Parent writes to fd0 & reads from fd1;  Those are
     result.fd1 = fds1[0]    #..like the fd nums in the kid, but with RW/swapped.
@@ -91,14 +92,14 @@ proc initFilter(work: proc(r, w: cint), aux: int): Filter {.inline.} =
 proc ctrlC() {.noconv.} = quit 130 # Cannot leave only 1 \n; So, do zero.
 const to0 = Timeval(tv_sec: Time(0), tv_usec: 0.clong)
 proc initProcPool*(work: proc(r, w: cint); frames: Frames; jobs=0; aux=0,
-                   toR=to0, toW=to0, raiseCtrlC=false): ProcPool {.noinit.} =
+         toR=to0, toW=to0, raiseCtrlC=false, bufSz=8192): ProcPool {.noinit.} =
   if not raiseCtrlC: setControlCHook ctrlC
   result.kids.setLen (if jobs == 0: countProcessors() else: jobs)
   FD_ZERO result.fdsetW; FD_ZERO result.fdsetR        # ABI=>No rely on Nim init
   flushFile stdout                      # Do not want to inherit unwritten bufs
   flushFile stderr                      # Usually empty; Possible user setvbuf.
   for i in 0 ..< result.len:                          # Create Filter kids
-    result.kids[i] = initFilter(work, aux)
+    result.kids[i] = initFilter(work, aux, bufSz)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
         discard result.kids[j].fd1.close              #   close fd to kid
@@ -156,21 +157,29 @@ proc framesLenPfx*(f: var Filter): iterator(): MSlice =
       else: f.done = true
     else: f.done = true
 
-proc frames0term*(f: var Filter): iterator(): MSlice =
-  ## A reply frames iterator for workers writing '\0'-terminated results.
+template framesTerm(f, ch): untyped =
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
-  result = iterator(): MSlice =
-    if (let nRd = rdRecs(f.fd1, f.buf, '\0', 8192); nRd > 0):
-      for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\0'): yield s
-    else: f.done = true
+  result = iterator(): MSlice =         # NOTE: replies cannot be > bufSz
+    let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
+    if nRd > 0:
+      let buf = MSlice(mem: f.buf[0].addr, len: f.off + nRd)
+      let eob = cast[uint](buf.mem) + cast[uint](buf.len)
+      f.off = 0
+      for rep in buf.mSlices(ch):
+        let eor = cast[uint](rep.mem) + cast[uint](rep.len)
+        if eor < eob and cast[ptr char](eor)[] == '\0':
+          yield rep
+        else:
+          moveMem f.buf[0].addr, rep.mem, rep.len
+          f.off = rep.len
+    else:
+      f.done = true
 
-proc framesLines*(f: var Filter): iterator(): MSlice =
+proc frames0term*(f: var Filter): iterator(): MSlice = framesTerm(f, '\0')
+  ## A reply frames iterator for workers writing '\0'-terminated results.
+
+proc framesLines*(f: var Filter): iterator(): MSlice = framesTerm(f, '\n')
   ## A reply frames iterator for workers writing '\n'-terminated results.
-  let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
-  result = iterator(): MSlice =
-    if (let nRd = rdRecs(f.fd1, f.buf, '\n', 8192); nRd > 0):
-      for s in MSlice(mem: f.buf[0].addr, len: nRd).mSlices('\n'): yield s
-    else: f.done = true
 
 template wrReq*(fds, i0, pp, wr, rq): untyped =
   ## Internal to `eval*`; Use those.  Evaluates to true if request was written.
