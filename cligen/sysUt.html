@@ -86,6 +86,10 @@
   <li><a class="reference" href="#incd%2CT%2Cint" title="incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T">incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">newSeqNoInit
+  <li><a class="reference" href="#newSeqNoInit%2CNatural" title="newSeqNoInit[T: Ordinal | SomeFloat](len: Natural): seq[T]">newSeqNoInit[T: Ordinal | SomeFloat](len: Natural): seq[T]</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">postDec
   <li><a class="reference" href="#postDec%2CT%2Cint" title="postDec[T: Ordinal | uint | uint64](x: var T; amt = 1): T">postDec[T: Ordinal | uint | uint64](x: var T; amt = 1): T</a></li>
 
@@ -232,6 +236,17 @@
 </div>
 
 </div>
+<div id="newSeqNoInit-procs-all">
+  <div id="newSeqNoInit,Natural">
+  <dt><pre><span class="Keyword">proc</span> <a href="#newSeqNoInit%2CNatural"><span class="Identifier">newSeqNoInit</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">Ordinal</span> <span class="Operator">|</span> <span class="Identifier">SomeFloat</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">len</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    Make a new <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">T</span><span class="Punctuation">]</span></span></tt> of length <tt class="docutils literal"><span class="pre"><span class="Identifier">len</span></span></tt>, skipping memory clear. (<tt class="docutils literal"><span class="pre"><span class="Identifier">newSeqUninitialized</span></span></tt> overly constrains <tt class="docutils literal"><span class="pre"><span class="Identifier">T</span></span></tt> to disallow <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Identifier">bool</span><span class="Punctuation">]</span></span></tt>, etc.)
+    
+  </dd>
+</div>
+
+</div>
 <div id="postDec-procs-all">
   <div id="postDec,T,int">
   <dt><pre><span class="Keyword">proc</span> <a href="#postDec%2CT%2Cint"><span class="Identifier">postDec</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">Ordinal</span> <span class="Operator">|</span> <span class="Identifier">uint</span> <span class="Operator">|</span> <span class="Identifier">uint64</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">amt</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
@@ -321,7 +336,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-30 17:34:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-08-01 21:23:16 UTC</small>
       </div>
     </div>
   </div>

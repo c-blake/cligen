@@ -12,3 +12,4 @@ delItem	cligen/sysUt.html#delItem,seq[T],T	sysUt: delItem[T](x: var seq[T]; item
 seekable	cligen/sysUt.html#seekable,File	sysUt: seekable(f: File): bool	
 `&amp;`	cligen/sysUt.html#&,openArray[T],openArray[T]	sysUt: `&amp;`[T](x: openArray[T]; y: openArray[T]): seq[T]	
 echoQuit130	cligen/sysUt.html#echoQuit130	sysUt: echoQuit130()	
+newSeqNoInit	cligen/sysUt.html#newSeqNoInit,Natural	sysUt: newSeqNoInit[T: Ordinal | SomeFloat](len: Natural): seq[T]	
