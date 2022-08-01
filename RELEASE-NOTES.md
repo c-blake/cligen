@@ -9,6 +9,9 @@ Version: 1.5.27
   - Add a few more conveniences to ease porting code from string to `MSlice`
     (slicing an `MSlice` with `HSlice` constructors, `endsWith`, `find`).
 
+  - Add `sysUt/newSeqNoInit[T: Ordinal|SomeFloat]` like `newSeqUninitialized[T]`
+    but less constrained on T.
+
 Version: 1.5.26
 ---------------
 
