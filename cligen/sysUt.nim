@@ -90,3 +90,10 @@ proc `&`*[T](x: openArray[T], y: openArray[T]): seq[T] =
 
 proc echoQuit130*() {.noconv.} = echo ""; quit 130
   ## Intended for `setControlCHook(echoQuit130)` to achieve quieter exits.
+
+proc newSeqNoInit*[T: Ordinal|SomeFloat](len: Natural): seq[T] =
+  ## Make a new `seq[T]` of length `len`, skipping memory clear.
+  ## (`newSeqUninitialized` overly constrains `T` to disallow `[bool]`, etc.)
+  result = newSeqOfCap[T](len)
+  when defined(nimSeqsV2): cast[ptr int](addr result)[] = len
+  else: result.setLen len
