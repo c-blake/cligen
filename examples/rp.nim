@@ -31,7 +31,7 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   *nf* & *nr* (like *AWK*);  NOTE: *fieldIdx* is **0-origin**.
   ## A generated program is left at *outp*.nim, easily copied for "utilitizing".
   ## If you know AWK & Nim, you can learn *rp* FAST.  Examples (most need data):
-  ##   **seq 0 1000|rp -w'nr mod 100==0' 'echo row'**  # Print each 100th row
+  ##   **seq 0 1000000|rp -w'row.len<2'**              # Print short rows
   ##   **rp 'echo s[1]," ",s[0]'**                     # Swap field order
   ##   **rp -b'var t=0' t+=nf -e'echo t'**             # Print total field count
   ##   **rp -b'var t=0' -w'0.i>0' t+=0.i -e'echo t'**  # Total >0 field0 ints
@@ -39,8 +39,9 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   **rp 'let x=0.f' 'echo (1+x)/x'**               # cache field 0 parse
   ##   **rp -d, -fa,b,c 'echo s[a],b.f+c.i.float'**    # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
-  if stmts.len + begin.len + epilog.len == 0:
-    raise newException(HelpError, "Too few args; Full ${HELP}")
+  let stmts  = if stmts.len > 0: stmts
+               else: @["discard stdout.writeBuffer(row.mem, row.len); " &
+                       "stdout.write '\\n'"]
   let null   = when defined(windows): "NUL:" else: "/dev/null"
   let input  = if input=="/dev/stdin" and stdin.isatty: null else: input
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
@@ -87,23 +88,23 @@ ${6}rpNmSepOb.split(row, s, $7) # {maxSplit}
   execShellCmd(nim & (if run: " < " & input else: ""))
 
 when isMainModule:
-  include cligen/mergeCfgEnv
-  dispatch rp, help={"prelude" : "Nim code for prelude/imports section",
-                     "begin"   : "Nim code for begin/pre-loop section",
-                     "where"   : "Nim code for row inclusion",
-                     "stmts"   : "Nim stmts to run guarded by `where`",
-                     "epilog"  : "Nim code for epilog/end loop section",
-                     "fields"  : "`delim`-sep field names (match row0)",
-                     "genF"    : "make field names from this fmt; eg c$1",
-                     "nim"     : "path to a nim compiler (>=v1.4)",
-                     "run"     : "Run at once using nim r .. < input",
-                     "args"    : "\"\": -d:danger; '+' prefix appends",
-                     "cache"   : "\"\": --nimcache:/tmp/rp (--incr:on?)",
-                     "verbose" : "Nim compile verbosity level",
-                     "outp"    : "output executable; .nim NOT REMOVED",
-                     "src"     : "show generated Nim source on stderr",
-                     "input"   : "path to mmap|read as input",
-                     "delim"   : "inp delim chars; Any repeats => fold",
-                     "uncheck" : "do not check&skip header row vs fields",
-                     "maxSplit": "max split; 0 => unbounded",
-                     "Warn"    : "\"\": --warning[CannotOpenFile]=off"}
+  include cligen/mergeCfgEnv; dispatch rp, help={
+    "stmts"   : "Nim stmts to run (guarded by `where`); none => echo row",
+    "prelude" : "Nim code for prelude/imports section",
+    "begin"   : "Nim code for begin/pre-loop section",
+    "where"   : "Nim code for row inclusion",
+    "epilog"  : "Nim code for epilog/end loop section",
+    "fields"  : "`delim`-sep field names (match row0)",
+    "genF"    : "make field names from this fmt; eg c$1",
+    "nim"     : "path to a nim compiler (>=v1.4)",
+    "run"     : "Run at once using nim r .. < input",
+    "args"    : "\"\": -d:danger; '+' prefix appends",
+    "cache"   : "\"\": --nimcache:/tmp/rp (--incr:on?)",
+    "verbose" : "Nim compile verbosity level",
+    "outp"    : "output executable; .nim NOT REMOVED",
+    "src"     : "show generated Nim source on stderr",
+    "input"   : "path to mmap|read as input",
+    "delim"   : "inp delim chars; Any repeats => fold",
+    "uncheck" : "do not check&skip header row vs fields",
+    "maxSplit": "max split; 0 => unbounded",
+    "Warn"    : "\"\": --warning[CannotOpenFile]=off"}
