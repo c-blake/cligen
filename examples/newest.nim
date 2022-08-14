@@ -51,7 +51,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
     stdout.write q.pop().path, outEnd           #..in the specified-time order.
 
 when isMainModule:  # Exercise this with an actually useful CLI wrapper.
-  dispatch(printNewest, cmdName="newest",
+  dispatch printNewest,
            help = { "n"      : "number of 'newest' files",
                     "time"   : "timestamp to compare ({-}[bamcv]\\*)",
                     "recurse": "recurse n-levels on dirs; 0:unlimited",
@@ -62,4 +62,4 @@ when isMainModule:  # Exercise this with an actually useful CLI wrapper.
                     "quiet"  : "suppress file access errors",
                     "outEnd" : "output record terminator",
                     "file"   : "optional input (\"-\"|!tty=stdin)",
-                    "delim"  : "input file record delimiter" })
+                    "delim"  : "input file record delimiter" }
