@@ -480,7 +480,8 @@ Options:
 
 ==> test/MultiMulti.out <==
 NAME
-  Test sub-sub-command CLI instantiation.
+  Test sub-sub-command CLI instantiation with outdented and later
+    indented (pre-formatted) comment continuation.
 USAGE
   MultiMulti {SUBCMD}  [sub-command options & parameters]
 

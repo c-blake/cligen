@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.28
+---------------
+
+  - Make `cligen/macUt.summaryOfModule` operate how proc doc comments always
+    have (text indented relative to first row is treated as pre-formatted).
+    In the unlikely event this is unwanted, you can always pass whatever `doc`
+    to `dispatchMulti(["multi",...])`.  Show in `test/MultiMulti.nim`.
+
 Version: 1.5.27
 ---------------
 

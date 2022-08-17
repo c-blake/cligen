@@ -114,24 +114,31 @@ proc versionFromNimble*(nimbleContents: string): string {.deprecated:
   ## const foo = staticRead "relPathToDotNimbleFile"; use versionFromNimble(foo)
   nimbleContents.fromNimble "version"
 
+const textCh = block:
+  var textCh: set[char]
+  for i in 0..255:
+    if chr(i) notin Whitespace and chr(i) != '#': textCh.incl chr(i)
+  textCh
+
 proc summaryOfModule*(sourceContents: string): string =
   ## First paragraph of doc comment for module defining ``n` (or empty string);
   ## Used to default ``["multi",doc]``.
-  var mode = 0
+  var nPfx = 0
   for line in sourceContents.split("\n"):
     let ln = line.strip()
-    if mode == 0:       #scan for start of some substantive '##' doc comment
+    if nPfx == 0:       # Scan for start of some substantive '##' doc comment
       if ln.len < 1: continue     # skip blanks and regular '#' comments
       if ln.startsWith("#") and not ln.startsWith("##"): continue
-      if ln == "##": continue     # Also skip '^white##white$' emptie doc cmts
-      mode = 1          #Something else.  Switch modes.
-    if mode == 1:
+      if ln == "##": continue     # Also skip '^white##white$' empty doc cmts
+      nPfx = ln.find(textCh)      # Something else. Switch modes, save text idx
+    if nPfx > 0:
       if ln == "##" or not ln.startsWith("##"):     # Done with initial block
         break
-      result = result & line[2..^1].strip() & " "   # append doc cmt text
+      let nPfx = min(ln.find(textCh), nPfx) # Handle cmts outdented from initial
+      result.add ln[nPfx..^1].strip(leading=false)&"\n" # append doc cmt text
   result = result.strip()
   if result.len > 0:
-    result = result & "\n\n"
+    result.add "\n\n"
 
 proc summaryOfModule*(n: NimNode): string =
   summaryOfModule(srcData(n))

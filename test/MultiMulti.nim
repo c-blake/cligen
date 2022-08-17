@@ -1,4 +1,6 @@
-## Test sub-sub-command CLI instantiation.
+## Test sub-sub-command CLI instantiation
+##with outdented and later
+##     indented (pre-formatted) comment continuation.
 
 proc demo(alpha=1, beta=2.0, verb=false, item="", files: seq[string]) =
   ## demo entry point with varied, meaningless parameters.
