@@ -9,6 +9,8 @@ Version: 1.5.28
     In the unlikely event this is unwanted, you can always pass whatever `doc`
     to `dispatchMulti(["multi",...])`.  Show in `test/MultiMulti.nim`.
 
+  - Fix old range clipping & code-prefixing bugs in 256-color xterm support.
+
 Version: 1.5.27
 ---------------
 
