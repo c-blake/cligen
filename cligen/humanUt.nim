@@ -101,13 +101,13 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
   except KeyError:
     if s.len >= 2:
       let prefix = if s[0] == 'b': "48;" else: "38;"
-      if   s.len <= 3: result = $(232 + parseInt(s[1..^1])) #xt256 grey scl
-      elif s.len == 4:
-        let r = max(5, ord(s[1]) - ord('0'))
-        let g = max(5, ord(s[2]) - ord('0'))
-        let b = max(5, ord(s[3]) - ord('0'))
+      if   s.len <= 3: result = prefix & "5;" & $(232 + parseInt(s[1..^1]))
+      elif s.len == 4: # Above, xt256 grey scl, Below xt256 6*6*6 color cube
+        let r = min(5, ord(s[1]) - ord('0'))
+        let g = min(5, ord(s[2]) - ord('0'))
+        let b = min(5, ord(s[3]) - ord('0'))
         result = prefix & "5;" & $(16 + 36*r + 6*g + b)
-      elif s.len == 7:
+      elif s.len == 7: # True color
         let r = fromHex[int](s[1..2])
         let g = fromHex[int](s[3..4])
         let b = fromHex[int](s[5..6])
