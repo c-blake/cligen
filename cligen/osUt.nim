@@ -58,6 +58,12 @@ iterator getDelim*(f: File, dlm: char='\n'): string =
     yield res
   free(cline)
 
+iterator getDelim*(path: string, dlm: char='\n'): string =
+  ## Like `getDelim` but take a path instead of an open File.
+  let f = open(path)
+  for s in f.getDelim(dlm): yield s
+  f.close
+
 iterator getDelims*(f: File, dlm: char='\n'): (cstring, int) =
   ## Like `getDelim` but yield `(ptr, len)` not auto-built Nim string.
   ## Note that unlike `lines` or `getDelim`, `len` always *includes* `dlm`.
@@ -70,6 +76,12 @@ iterator getDelims*(f: File, dlm: char='\n'): (cstring, int) =
   while (let n = c_getdelim(s.addr, room.addr, cint(dlm), f); n) + 1 > 0:
     yield (s, n)
   s.free
+
+iterator getDelims*(path: string, dlm: char='\n'): (cstring, int) =
+  ## Like `getDelims` but take a path instead of an open File.
+  let f = open(path)
+  for (s, n) in f.getDelims(dlm): yield (s, n)
+  f.close
 
 iterator getLenPfx*[T: SomeNumber](f: File): string =
   ## Like `getDelim` but "parse" length-prefixed values where a native-endian
