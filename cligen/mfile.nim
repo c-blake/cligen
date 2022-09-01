@@ -16,6 +16,8 @@ type
     mslc* : MSlice  ## (mem, len) of file
   csize = uint
 
+proc `[]`*[A,B](mf: MFile, s: HSlice[A,B]): MSlice = mf.mslc[s]
+
 proc mem*(mf: MFile): pointer = mf.mslc.mem ## accessor to use MFile like MSlice
 proc len*(mf: MFile): int     = mf.mslc.len ## accessor to use MFile like MSlice
 proc `mem=`*(mf: var MFile, m: pointer) = mf.mslc.mem = m ## accessor to use MFile like MSlice
