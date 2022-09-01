@@ -11,7 +11,7 @@ proc hashCB*(x: openArray[char]): uint64 =
   let n = x.len
   if n == 0:
     return h1
-  for i in countup(0, n - 1, 8):    #Word-wise loop helps speed
+  for i in countup(0, n - 8, 8):    #Word-wise loop helps speed
     h1 += cast[ptr uint64](unsafeAddr x[i])[]
     h2 += h1
     h3 += h2
