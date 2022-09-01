@@ -53,6 +53,11 @@ proc parseSlice*(slcSpec: string, sz: int; a, b: var int) =
   else:
     b = a
 
+proc parseSlice*(slcSpec: string, sz: int): Slice[int] =
+  ## Nim inclusive Slice-returning variant of `parseSlice(slcSpec, sz, a, b)`.
+  parseSlice(slcSpec, sz, result.a, result.b)
+  dec result.b          # make inclusive, like other Nim slices
+
 proc parseSlice*(s: string): tuple[a, b: int] =
   ## Parse ``[a][:][b]``-like Python index/slice specification.
   result[0] = 0
