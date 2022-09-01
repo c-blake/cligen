@@ -11,6 +11,14 @@ Version: 1.5.28
 
   - Fix old range clipping & code-prefixing bugs in 256-color xterm support.
 
+  - Better example in `rp` help; Added `crp.nim`
+
+  - Some MSlice saftey improvements & new getDelim & slicing overloads.
+
+  - Fix bad bug in port of hashCB from C.
+
+  - Add statx.fileTime convenience API
+
 Version: 1.5.27
 ---------------
 
