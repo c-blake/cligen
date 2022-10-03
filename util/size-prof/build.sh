@@ -15,6 +15,8 @@ compile() {                     # Compile helper to name output after nim CL
                       -o:"x@${nm}" "$@" >/dev/null 2>&1
 }
 
+# --passC:-ffunction-sections --passC:-fdata-sections --passL:-Wl,--gc-sections
+# only saved all of 8 bytes.  Not even worth including in loop, really.
 cc0="--threads:off --cc:gcc"                # Base options, then compile-modes
 for cc in "$cc0 -d:danger --opt:size"               \
           "$cc0 -d:danger --opt:speed"              \
