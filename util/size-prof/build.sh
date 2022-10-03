@@ -2,7 +2,7 @@
 # Some users complained about object file size bloat.  Concrete e.g.s both make
 # such complaints more objective and provide a reference for those who would
 # space-optimize.  This dir/script harness is such a set of e.g.s for Unix.
-# You can probably just run: ./build.sh; xs=$(only ELF); strip $xs; ls -l $xs
+# You can probably just run: ./build.sh; strip x*; ls -ls x*
 # and util/exsz can perhaps help you explain sizes.  Good luck.
 
 : ${nim:=nim}                   # Allow nim=whatever ./build.sh for other vsns.
