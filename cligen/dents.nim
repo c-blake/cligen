@@ -129,6 +129,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
   var dst, lst: Statx
   var dev = 0.Dev
   var did = initHashSet[tuple[dev: Dev, ino: uint64]]()
+  errno = 0                             # clear any existing errno state
 
   proc maybeOpenDir(dfd: cint; path: string; nmAt: int, canRec: var bool): cint=
     let fd = openat(dfd, path[nmAt].unsafeAddr.cstring,
