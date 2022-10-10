@@ -183,7 +183,7 @@
 <div id="delete-procs-all">
   <div id="delete,string,Natural">
   <dt><pre><span class="Keyword">proc</span> <a href="#delete%2Cstring%2CNatural"><span class="Identifier">delete</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span> {.<span class="Identifier">noSideEffect</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    </span><span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span>.}</pre></dt>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Just like <tt class="docutils literal"><span class="pre">delete(var seq[T], i)</span></tt> but for <tt class="docutils literal"><span class="pre">string</span></tt>.
@@ -205,7 +205,7 @@
 </div>
 <div id="echoQuit130-procs-all">
   <div id="echoQuit130">
-  <dt><pre><span class="Keyword">proc</span> <a href="#echoQuit130"><span class="Identifier">echoQuit130</span></a><span class="Other">(</span><span class="Other">)</span> {.<span class="Identifier">noconv</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> </span><span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#echoQuit130"><span class="Identifier">echoQuit130</span></a><span class="Other">(</span><span class="Other">)</span> {.<span class="Identifier">noconv</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Intended for <tt class="docutils literal"><span class="pre"><span class="Identifier">setControlCHook</span><span class="Punctuation">(</span><span class="Identifier">echoQuit130</span><span class="Punctuation">)</span></span></tt> to achieve quieter exits.
@@ -217,7 +217,7 @@
 <div id="findUO-procs-all">
   <div id="findUO,string,char">
   <dt><pre><span class="Keyword">proc</span> <a href="#findUO%2Cstring%2Cchar"><span class="Identifier">findUO</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span class="Identifier">noSideEffect</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                       </span><span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span>.}</pre></dt>
+                                       <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -272,7 +272,7 @@
 </div>
 <div id="seekable-procs-all">
   <div id="seekable,File">
-  <dt><pre><span class="Keyword">proc</span> <a href="#seekable%2CFile"><span class="Identifier">seekable</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> </span><span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#seekable%2CFile"><span class="Identifier">seekable</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     True if Nim <tt class="docutils literal"><span class="pre"><span class="Identifier">File</span></span></tt> is bound to an OS file pointing at a seekable device.
@@ -290,7 +290,7 @@
     <div id="maybePar-iterators-all">
   <div id="maybePar.i,bool,int,int">
   <dt><pre><span class="Keyword">iterator</span> <a href="#maybePar.i%2Cbool%2Cint%2Cint"><span class="Identifier">maybePar</span></a><span class="Other">(</span><span class="Identifier">parallel</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    </span><span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span>.}</pre></dt>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     if flag is true yield <tt class="docutils literal"><span class="pre">||(a,b)</span></tt> else <tt class="docutils literal"><span class="pre">countup(a,b)</span></tt>.
@@ -337,7 +337,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-08 14:57:14 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-10 13:23:05 UTC</small>
       </div>
     </div>
   </div>
