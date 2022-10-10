@@ -268,3 +268,13 @@ proc fileTime*(path: string; kind: char, missing=int64(0), dir=1): int64 {.inlin
   ## Return file time stamp ([bamcv]) in nanoseconds since the Unix epoch.
   var st: Statx
   if statx(path, st) != 0: missing else: st.fileTime(kind, dir)
+
+proc doStat*(dfd: cint, path: string; nmAt: int, st: var Statx; Deref,
+             quiet: bool): bool {.inline.} =
+  ## A helper proc to effect either `lstatx` or `if Deref` then statxat OR if
+  ## that fails fall back to `lstatxat`.  `quite=true` suppresses errors.
+  if Deref:     # lstat if no deref requested or as fallback if stat fails.
+    if statxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
+    if lstatxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
+  elif lstatxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
+  if not quiet: stderr.write "since: \"", path, "\" ", strerror(errno), '\n'
