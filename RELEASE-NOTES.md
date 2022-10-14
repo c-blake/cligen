@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.29
+---------------
+ - Make cilgen/statx.fileTime API even more convenient with a `dir` param.
+
+ - cligen/dents - suppress erroneous error report from pre-recursion activity.
+
+ - Lift `doStat` out of `newest` into `cligen/statx` since it comes up a lot.
+
+ - Cross-Nim-version portability work for `IndexDefect`, `csize_t`
+
 Version: 1.5.28
 ---------------
 
