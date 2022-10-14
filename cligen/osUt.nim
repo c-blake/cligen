@@ -421,7 +421,7 @@ proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
   fd.write(buf[0].unsafeAddr.cstring, buf.len + 1)
 
-template IOVecLen(x): untyped = IOVec.iov_len(x)
+template IOVecLen(x): untyped = (type(IOVec.iov_len)(x))
 proc wrLine*(fd: cint, buf: string): int =
   ## Write `buf` & then a single newline atomically (`writev` on Linux).
   let nl = '\n'

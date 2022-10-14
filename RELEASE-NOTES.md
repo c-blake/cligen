@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.30
+---------------
+ - `IOVecLen` definition that works more broadly.
+
 Version: 1.5.29
 ---------------
  - Make cligen/statx.fileTime API even more convenient with a `dir` param.
