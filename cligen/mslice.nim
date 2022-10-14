@@ -52,16 +52,20 @@ proc toCstr*(p: pointer): cstring {.inline.} =
 template `^^`(s, i: untyped): untyped =
   (when i is BackwardsIndex: s.len - int(i) else: int(i))
 
+template BadIndex: untyped =
+  when defined(IndexDefect): IndexDefect
+  else: IndexError
+
 proc `[]`*(ms: MSlice, i: int): char {.inline.} =
   when not defined(danger):
     if i >= ms.len:
-      raise newException(IndexDefect, formatErrorIndexBound(i, ms.len))
+      raise newException(BadIndex, formatErrorIndexBound(i, ms.len))
   ms.mem.toCstr[i]
 
 proc `[]=`*(ms: MSlice, i: int, c: char) {.inline.} =
   when not defined(danger):
     if i >= ms.len:
-      raise newException(IndexDefect, formatErrorIndexBound(i, ms.len))
+      raise newException(BadIndex, formatErrorIndexBound(i, ms.len))
   cast[ptr char](ms.mem +! i)[] = c
 
 proc `[]`*[T, U: Ordinal](s: MSlice, x: HSlice[T, U]): MSlice {.inline.} =
