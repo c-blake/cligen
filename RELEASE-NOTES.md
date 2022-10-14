@@ -3,7 +3,7 @@ RELEASE NOTES
 
 Version: 1.5.29
 ---------------
- - Make cilgen/statx.fileTime API even more convenient with a `dir` param.
+ - Make cligen/statx.fileTime API even more convenient with a `dir` param.
 
  - cligen/dents - suppress erroneous error report from pre-recursion activity.
 
