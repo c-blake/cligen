@@ -421,18 +421,19 @@ proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
   fd.write(buf[0].unsafeAddr.cstring, buf.len + 1)
 
+template IOVecLen(x): untyped = IOVec.iov_len(x)
 proc wrLine*(fd: cint, buf: string): int =
   ## Write `buf` & then a single newline atomically (`writev` on Linux).
   let nl = '\n'
-  let iov = [ IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.csize_t),
+  let iov = [ IOVec(iov_base: buf[0].unsafeAddr, iov_len: IOVecLen(buf.len)),
               IOVec(iov_base: nl.unsafeAddr    , iov_len: 1) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
 proc wrLenBuf*(fd: cint, buf: string): int =
   ## Write `int` length prefix & `buf` data atomically (`writev` on Linux).
   let n = buf.len
-  let iov = [ IOVec(iov_base: n.unsafeAddr     , iov_len: n.sizeof.csize_t),
-              IOVec(iov_base: buf[0].unsafeAddr, iov_len: buf.len.csize_t) ]
+  let iov = [ IOVec(iov_base: n.unsafeAddr     , iov_len: IOVecLen(n.sizeof)),
+              IOVec(iov_base: buf[0].unsafeAddr, iov_len: IOVecLen(buf.len)) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
 proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
@@ -440,8 +441,8 @@ proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
   ## where `T` are either flat objects or tuples of flat objects (no indirections
   ## allowed).
   let n = s.len * sizeof(T)
-  let iov = [ IOVec(iov_base: n.unsafeAddr   , iov_len: n.sizeof.csize_t),
-              IOVec(iov_base: s[0].unsafeAddr, iov_len: n.csize_t) ]
+  let iov = [ IOVec(iov_base: n.unsafeAddr   , iov_len: IOVecLen(n.sizeof)),
+              IOVec(iov_base: s[0].unsafeAddr, iov_len: IOVecLen(n.csize)) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
 proc lgBold*(f: File, s: string) = f.write "\e[1m", s, "\e[22m"
