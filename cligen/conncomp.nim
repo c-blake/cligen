@@ -39,6 +39,7 @@ proc vtxId*[T](vi: var Table[T, int]; vn: var seq[T]; vo: T): int {.inline.} =
 
 when isMainModule:
   import cligen
+  when not declared(stdin): import std/syncio
 
   proc conncomp(idelim='\t', odelim="\t") =
     ## Print connected components of the graph of arcs/edges on stdin.
