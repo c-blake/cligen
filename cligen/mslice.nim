@@ -724,7 +724,7 @@ proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): float =
   copysign(decimal.float * pow10[exp], sgn)   # Assemble result
 
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
-  when not compiles($1.0): import std/formatfloat
+  when not declared(addFloat): import std/formatfloat
   let s = "1_2__3"
   let m = s.toMSlice
   for i in 0..5: echo i, " strict: ", m.msplit('_', i)
