@@ -4,6 +4,7 @@
 ## We simulate/translate ordinary ``Stat`` results when necessary.
 
 import std/posix, cligen/posixUt
+when not declared(stderr): import std/syncio
 
 const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
 {.passc: "-D_GNU_SOURCE".}

@@ -20,6 +20,7 @@
 
 import std/[os, sets, posix], cligen/[osUt, posixUt, statx]
 export perror, st_dev, Dev
+when not declared(stderr): import std/syncio
 
 type csize_t = uint #For older Nim
 type DirName = array[256, cchar]  # Some helpers for names in dirents

@@ -2,6 +2,7 @@ type csize = uint
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import std/[posix,sets,tables,strutils,strformat,parseutils], sysUt,argcvt,gcarc,osUt
+when not declared(File): import std/syncio
 
 proc openat*(dirfd: cint, path: cstring, flags: cint):
        cint {.varargs, importc, header: "<unistd.h>", sideEffect.}

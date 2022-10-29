@@ -10,6 +10,7 @@
 ##  dispatch(something)
 
 import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
+when not declared(File): import std/syncio
 type csize = uint
 
 proc isatty(f: File): bool =

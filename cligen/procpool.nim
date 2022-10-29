@@ -45,6 +45,7 @@
 ## This module is only a baby step in that direction that perhaps can inspire.
 
 import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
+when not declared(flushFile): import std/syncio
 type
   Filter* = object   ## Abstract coprocess filter read|writing req|rep fd's
     pid: Pid         # parent uses this to control => hidden
