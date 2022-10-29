@@ -1,4 +1,5 @@
 import std/[strutils, sets, strformat]
+when not declared(File): import std/formatfloat
 
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
