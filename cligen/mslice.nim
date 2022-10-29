@@ -23,7 +23,7 @@ proc `+!`*(p: pointer, i: int): pointer {.inline.} =
   cast[pointer](cast[int](p) +% i)
 proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
   cast[pointer](cast[uint64](p) + i)
-when not declared(File): import std/[syncio, assertions, formatfloat]
+when not declared(File): import std/[syncio, assertions]
 
 type
   MSlice* = object
