@@ -1,6 +1,6 @@
-import cligen
+when not declared(addFloat): import std/formatfloat
 # export `$` in cligen generates a deprecation warning; export just `$`(float)?
-when not compiles($1.0): import std/formatfloat
+import cligen
 
 var fooParse: seq[ClParse]
 

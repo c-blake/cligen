@@ -11,7 +11,7 @@ proc demoInt(nat = 0.Natural,
   echo nat, ' ', pos, ' ', dice, ' ', delta, ' ', score.uint8, ' ', q
 
 when (NimMajor, NimMinor) >= (0, 20):
-  when not compiles($1.0): import std/formatfloat
+  when not declared(addFloat): import std/formatfloat
 
   type Angle = range[0.0 .. 360.0]
 

@@ -1,4 +1,4 @@
-when not compiles($1.0): import std/objectdollar
+when not declared(addFloat): import std/objectdollar
 
 type App* = object
   nim*: string       ## compiler to use

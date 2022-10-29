@@ -1,5 +1,5 @@
+when not declared(addFloat): import std/formatfloat
 import cligen
-when not compiles($1.0): import std/formatfloat
 
 proc demo(al_pha=1, be_ta=2.0, verb=false, item="", args: seq[string]) =
   ## demo entry point with varied, meaningless parameters.  A Nim invocation

@@ -1,4 +1,4 @@
-when not compiles($1.0): import std/formatfloat
+when not declared(addFloat): import std/formatfloat
 
 proc demo(alpha=1, beta=2.0, verb=false,
           item="this is one honking long default value", args: seq[string]) =

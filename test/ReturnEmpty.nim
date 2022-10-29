@@ -1,4 +1,4 @@
-when not compiles($1.0): import std/formatfloat
+when not declared(addFloat): import std/formatfloat
 
 var foo=2.0
 
