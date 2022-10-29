@@ -57,6 +57,7 @@ proc humanReadable4*(bytes: uint, binary=false): string =
 
 when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
  import std/tables
+ when not declared(stderr): import std/syncio
 
  when not declared(fromHex):
   proc fromHex[T: SomeInteger](s: string): T =

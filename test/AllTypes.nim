@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/formatfloat
+
 proc demo(aa: bool = false,
           bb: string = "hi",
           cc: cstring = "ho",

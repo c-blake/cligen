@@ -1,4 +1,5 @@
 import std/[os, parsecfg, streams, strutils]
+when not declared(stderr): import std/syncio
 
 proc cfToCL*(path: string, subCmdName="", quiet=false,
              noRaise=false, activeSec=false): seq[string] =

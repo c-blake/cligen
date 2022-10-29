@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/formatfloat
+
 var foo=2.0
 
 proc demo(alpha: int, beta=foo, verb=false, item: string): int =

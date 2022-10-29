@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/formatfloat
+
 proc demo(al_pha=1, be_ta=2.0, verb=false, item="", a1, a2: seq[string]) =
   echo "alpha:", alpha, " beta:", beta, " verb:", verb, " item:", item
   for i, arg in a1: echo "positional[", i, "]: ", arg

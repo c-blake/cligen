@@ -4,6 +4,7 @@ when defined(nimHasWarningObservableStores):
   {.push warning[ObservableStores]: off.}
 
 import std/[streams, parsecfg] # , os, tables # for standalone
+when not declared(stderr): import std/syncio
 const cgConfigFileBaseName = "config"
 
 proc apply(c: var ClCfg, path: string, plain=false) =

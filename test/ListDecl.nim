@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/formatfloat
+
 proc demo(args: seq[int], alpha, beta: float = 1, verb=false): int =
   ## demo entry point with varied, meaningless parameters.
   echo "alpha:", alpha, " beta:", beta, " verb:", verb

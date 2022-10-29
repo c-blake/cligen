@@ -23,6 +23,7 @@ proc `+!`*(p: pointer, i: int): pointer {.inline.} =
   cast[pointer](cast[int](p) +% i)
 proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
   cast[pointer](cast[uint64](p) + i)
+when not declared(File): import std/syncio
 
 type
   MSlice* = object
@@ -145,7 +146,7 @@ proc mrite*(f: File, mses: varargs[MSlice]) {.inline.} =
 proc toOb*[T](m: MSlice, ob: var T) =
   ## Assumes `m` starts at beginning of object `ob`! Reads data in slice
   ## into object `ob` using `copyMem`.
-  doAssert m.len >= ob.sizeof
+# doAssert m.len >= ob.sizeof
   when supportsCopyMem(T):
     copyMem ob.addr, m.mem, ob.sizeof
   else:
@@ -158,7 +159,7 @@ proc toSeq*[T](m: MSlice, s: var seq[T]) =
   ## object type or tuple of flat objects (no indirections allowed).
   let size = m.len div sizeof(T)
   s = newSeq[T](size)
-  doAssert m.len >= size
+# doAssert m.len >= size
   when supportsCopyMem(T):
     copyMem s[0].addr, m.mem, m.len
   else:

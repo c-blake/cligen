@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/formatfloat
+
 proc demo(al_pha=1, be_ta=2.0, verb=false, item="", args: seq[string]) =
   ## demo entry point with varied, meaningless parameters with an alias system.
   ## E.g., USERALIASES='"-Dk=-a9 -b3.0" "-DK=-Rk -v 1 2"' ./UserAliases -RK 3 4

@@ -6,6 +6,7 @@
 
 import std/[posix, os], ./mslice # cmemcmp mSlices
 export PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_POPULATE
+when not declared(File): import std/syncio
 
 type
   MFile* = object   ## Like MemFile but safe in an MT-environment

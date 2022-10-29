@@ -7,6 +7,7 @@ when (NimMajor,NimMinor,NimPatch) > (0,20,2):
 import std/[strformat, sets, critbits, strutils], ./textUt, ./gcarc, ./parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system
+when not compiles($1.0): import std/formatfloat; export `$`
 
 type
   ClHelpContext* = enum clLongOpt,      ## a long option identifier

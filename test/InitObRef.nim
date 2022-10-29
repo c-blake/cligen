@@ -1,3 +1,5 @@
+when not compiles($1.0): import std/objectdollar
+
 type App* = ref object
   nim*: string       ## compiler to use
   # non-doc comment: this won't appear in `help`

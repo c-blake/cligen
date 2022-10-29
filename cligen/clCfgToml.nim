@@ -3,6 +3,7 @@
 ## add parsetoml to your compile setup via nimble install parsetoml or elsewise.
 
 import std/[strformat, sequtils], parsetoml # , tables # for standalone
+when not declared(stderr): import std/syncio
 const cgConfigFileBaseName = "config.toml"
 
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =

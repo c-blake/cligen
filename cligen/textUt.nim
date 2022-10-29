@@ -2,6 +2,7 @@ from strutils import split, join, strip, repeat, replace, count, Whitespace, sta
 from terminal import terminalWidth
 from unicode  import runeLen
 import os, parseutils, critbits, math, ./mslice # math.^
+when not declared(stderr): import std/syncio
 
 proc stripEsc*(a: string): string =
   ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
