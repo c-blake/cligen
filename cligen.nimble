@@ -1,9 +1,9 @@
 # Package
-version     = "1.5.30"
+version     = "1.5.31"
 author      = "Charles Blake"
 description = "Infer & generate command-line interface/option/argument parser"
 license     = "MIT/ISC"
 
 # Deps
-requires    "nim >= 0.19.2"
+requires    "nim >= 0.20.2"
 skipDirs = @["test"]

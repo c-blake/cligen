@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.31
+---------------
+
+ - Improve Cross-Nim-version `IndexDefect` portability hack.
+
+ - Adapt to newer nim-devel (I think https://github.com/nim-lang/Nim/commit/de4b0346bdafab6c38b77d430d0e83f95da0582c)
+
+ - Get tests working with `-d:nimPreviewSlimSystem`
+
 Version: 1.5.30
 ---------------
  - `IOVecLen` definition that works more broadly.
