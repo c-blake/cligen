@@ -35,7 +35,10 @@ proc toString*(n: NimNode): string =
   ## Get compile-time string from a symbol or literal.
   if n.kind == nnkSym and n.symKind != nskConst:
     error "expecting only static/const expression not `" & $n & "`"
-  if n.kind == nnkSym: n.getImpl.strVal else: $n
+  when (NimMajor, NimMinor, NimPatch) >= (1,7,3):
+    if n.kind == nnkSym: n.getImpl[2].strVal else: $n
+  else:
+    if n.kind == nnkSym: n.getImpl.strVal else: $n
 
 proc toInt*(n: NimNode): int =
   ## Get compile-time int from a symbol or literal.
@@ -56,8 +59,10 @@ proc toStrSeq*(strSeqInitializer: NimNode): seq[string] =
 proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
   ## Get a compile-time ``seq[ident]`` from a symbol or literal @[ "a", .. ].
   if strSeqInitializer.kind == nnkSym:
-    for n in strSeqInitializer.getImpl:
-      result.add(ident(n.strVal))
+    when (NimMajor, NimMinor, NimPatch) >= (1,7,3):
+      for n in strSeqInitializer.getImpl[2]: result.add n.strVal.ident
+    else:
+      for n in strSeqInitializer.getImpl: result.add n.strVal.ident
   else:
     if strSeqInitializer.len > 1:
       for kid in strSeqInitializer[1]:

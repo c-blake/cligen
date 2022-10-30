@@ -186,41 +186,41 @@ proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
   error "formalParams requires a proc argument."
   return nil                #not-reached
 
+iterator AListPairs(alist: NimNode, msg: string): (NimNode, NimNode) =
+  if alist.kind == nnkSym:
+    let imp = alist.getImpl
+    when (NimMajor,NimMinor,NimPatch) >= (1,7,3):
+      if imp.len < 3 or imp[2].len < 2 or imp[2][1].len < 2: # Be more precise?
+        error msg & " initializer must be a static/const {}.toTable construct"
+      let tups = imp[2][1][1]
+    else:
+      if imp.len < 2 or imp[1].len < 2: # This condition should be more precise
+        error msg & " initializer must be a static/const {}.toTable construct"
+      let tups = imp[1][1]
+    for tup in tups:
+      if tup[0].intVal != 0:
+        yield(tup[1], tup[2])
+  else:
+    for ph in alist: yield (ph[1][0], ph[1][1])
+
 proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
     Table[string, (string, string)] =
-  template setCk(p, h: untyped) {.dirty.} =      #set & check result entries
-    let k = p.optionNormalize
-    result[k] = (p, h)
-    if not fpars.containsParam(ident(k)) and k notin builtinOptions:
-      error $proNm & " has no param matching `help` key \"" & p & "\""
-
   result = initTable[string, (string, string)]() #help key & text for any param
-  if helps.kind == nnkSym:
-    let imp = helps.getImpl
-    if imp.len < 2 or imp[1].len < 2:   # This condition should be more precise
-      error "`help` initializer must be a static/const {}.toTable construct"
-    for i, tup in imp[1][1]:
-      if tup[0].intVal != 0: setCk(tup[1].toString, tup[2].toString)
-  else:
-    for ph in helps: setCk(ph[1][0].toString, ph[1][1].toString)
+  for ph in AListPairs(helps, "`help`"):
+    let k = ph[0].toString.optionNormalize
+    if not fpars.containsParam(ident(k)) and k notin builtinOptions:
+      error $proNm & " has no param matching `help` key \"" & k & "\""
+    result[k] = (ph[0].toString, ph[1].toString)
 
 proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
-  template setCk(lo, sh: untyped) {.dirty.} =    #set & check result entries
-    result[lo] = sh
-    if lo.len > 0 and not fpars.containsParam(ident(lo)) and
-        lo notin builtinOptions:
-      error $proNm & " has no param matching `short` key \"" & lo & "\""
-
-  result = initTable[string, char]()  #table giving user-specified short options
-  if shorts.kind == nnkSym:
-    for i, tup in shorts.getImpl[1][1]:
-      if tup[0].intVal != 0:
-        setCk(tup[1].toString.optionNormalize, tup[2].toInt.char)
-  else:
-    for losh in shorts:
-      if losh[1][1].kind == nnkCharLit:
-        setCk(losh[1][0].toString.optionNormalize, losh[1][1].intVal.char)
-      else: error "`short` value for \""&losh[1][0].strVal&"\" not a `char` lit"
+  result = initTable[string, char]()  #table giving user-specified short option
+  for ls in AListPairs(shorts, "`short`"):
+    let k = ls[0].toString.optionNormalize
+    if k.len>0 and not fpars.containsParam(k.ident) and k notin builtinOptions:
+      error $proNm & " has no param matching `short` key \"" & k & "\""
+    if ls[1].kind notin {nnkCharLit, nnkIntLit}:
+      error "`short` value for \"" & k & "\" not a `char` lit"
+    result[k] = if shorts.kind==nnkSym: ls[1].toInt.char else: ls[1].intVal.char
 
 proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
      Table[string, char] =      # Table giving short[param] avoiding collisions
