@@ -40,6 +40,8 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   ##   **rp 'let x=0.f' 'echo (1+x)/x'**               # cache field 0 parse
   ##   **rp -d, -fa,b,c 'echo s[a],b.f+c.i.float'**    # named fields (CSV)
   ## Add niceties (eg. `import lenientops`) to *prelude* in ~/.config/rp.
+  let prelude = if stmts.len > 0: prelude
+                else: "when not declared(stdout): import std/syncio\n" & prelude
   let stmts  = if stmts.len > 0: stmts
                else: @["discard stdout.writeBuffer(row.mem, row.len); " &
                        "stdout.write '\\n'"]
