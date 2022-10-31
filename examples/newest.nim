@@ -1,23 +1,7 @@
 import std/[heapqueue, posix], cligen, cligen/[osUt, posixUt, dents, statx]
+when not declared(stderr): import std/syncio
 
 type TimePath = tuple[tm: int64, path: string]
-
-proc timeStamp(st: Statx, tim: char, dir: int): int64 {.inline.} =
-  case tim
-  of 'b': dir * getBirthTimeNsec(st)
-  of 'a': dir * getLastAccTimeNsec(st)
-  of 'm': dir * getLastModTimeNsec(st)
-  of 'c': dir * getCreationTimeNsec(st)
-  of 'v': dir * max(getLastModTimeNsec(st), getCreationTimeNsec(st))
-  else: 0
-
-proc doStat(dfd: cint, path: string; nmAt: int, st: var Statx; Deref,
-            quiet: bool): bool {.inline.} =
-  if Deref:     # lstat if no deref requested or as fallback if stat fails.
-    if statxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
-    if lstatxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
-  elif lstatxat(dfd, path[nmAt..^1].cstring, st, 0) == 0: return true
-  if not quiet: stderr.write "newest: \"", path, "\" ", strerror(errno), '\n'
 
 proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
                   kinds={fkFile}, quiet=false, xdev=false, outEnd="\n",
@@ -27,8 +11,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
   ## means ***oldest*** }.  Examined files = UNION of *paths* + optional
   ## *delim*-delimited input *file* ( ``stdin`` if `"-"`|if `""` & ``stdin`` is
   ## not a terminal ), **maybe recursed** as roots.  E.g. to echo the 3 oldest
-  ## regular files by m-time under the CWD:
-  ##   ``find . -type f -print | newest -n3 -t-m``.
+  ## regular files by m-time under the CWD: ``newest -n3 -t-m -r0 .``.
   let err = if quiet: nil else: stderr
   let tO = fileTimeParse(time)                  #- or CAPITAL=oldest
   let it = both(paths, fileStrings(file, delim))
@@ -41,7 +24,7 @@ proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
         if (dt==DT_LNK and Deref and doStat(dfd,path,nmAt,lst,Deref,quiet)) or
            lst.stx_nlink != 0 or doStat(dfd,path,nmAt,lst,Deref,quiet):
           if lst.stx_mode.match(kinds):
-            let tp = (timeStamp(lst, tO.tim, tO.dir), path)
+            let tp = (fileTime(lst, tO.tim, tO.dir), path)
             if q.len < n  : q.push(tp)
             elif tp > q[0]: discard q.replace(tp)
     do: discard

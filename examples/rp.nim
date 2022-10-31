@@ -1,5 +1,6 @@
 import std/[strutils, os, hashes, sets, terminal] # % exec* hash HashSet isatty
 import cligen,cligen/[osUt, mslice, parseopt3] # mkdirOpen split optionNormalize
+when not declared(stderr): import std/syncio
 
 proc toDef(fields, delim, genF: string): string =
   result.add "const rpNmFieldB {.used.} = \"" & fields & "\"\n"

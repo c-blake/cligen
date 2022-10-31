@@ -1,4 +1,5 @@
 import std/[strformat, posix], cligen, cligen/[dents, posixUt, statx]
+when not declared(stderr): import std/syncio
 
 proc rr*(roots: seq[string], xdev=false, eof0=false): int =
   ## Like rm -rf but a bit faster.  Does nothing if no ``roots`` specified.

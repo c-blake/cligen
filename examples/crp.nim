@@ -1,5 +1,6 @@
 import std/[strutils,os,hashes,sets],cligen/[osUt,mslice] #% exec* mdOpen split
 from cligen/parseopt3 import optionNormalize
+when not declared(stderr): import std/syncio
 
 proc toDef(fields, delim, genF: string): string =
   result.add "char const * const rpNmFields = \"" & fields & "\";\n"
@@ -26,12 +27,12 @@ proc crp(prelude="", begin="", where="1", stmts:seq[string], epilog="",
   ## A generated program is left at *outp*.c, easily copied for "utilitizing".
   ## If you know *AWK* & C, you can learn *crp* PRONTO.  Examples (need data):
   ##   **seq 0 1000000|crp -w'rowLen<2'**                # Print short rows
-  ##   **crp 'printf("%s %s\\n", s[1], s[0]);'**         # Swap field order
+  ##   **crp 'printf("%s %s\\n", s[1], s[0])'**          # Swap field order
   ##   **crp -b'int t=0' t+=nf -e'printf("%d\\n", t)'**  # Prn total field count
   ##   **crp -b'int t=0' -w'i(0)>0' 't+=i(0)' -e'printf("%d\\n", t)'** # Total>0
   ##   **crp 'float x=f(0)' 'printf("%g\\n", (1+x)/x)'** # cache field 0 parse
   ##   **crp -d, -fa,b,c 'printf("%s %g\\n",s[a],f(b)+i(c))'**  # named fields
-  ## Add niceties (eg. `#include "mystuff.h"`) to *prelude* in ~/.config/crp.
+  ## Add niceties (eg. prelude="#include <mystuff.h>") to ~/.config/crp.
   let fields = if fields.len == 0: fields else: toDef(fields, delim, genF)
   let check  = if fields.len == 0: "    " elif not uncheck: """
     if (nr == 0) {

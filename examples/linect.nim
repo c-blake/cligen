@@ -1,3 +1,4 @@
+when not declared(Thread): import std/threads
 import std/[math, osproc], cligen/[mfile, mslice], cligen
 
 type ThrDat = tuple[part: ptr MSlice, subp: ptr int]

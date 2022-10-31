@@ -1,5 +1,6 @@
 import std/[os, posix, strutils, sets, tables, hashes, sha1, algorithm],
   cligen/[procpool,mfile,mslice,fileUt,strUt, osUt,posixUt,sysUt, dents,statx]
+when not declared(stderr): import std/syncio
 
 type Lg* = enum osErr, summ                     #A tiny logging system
 var dupsLog* = { osErr }
@@ -125,12 +126,12 @@ when isMainModule:                        #Provide a useful CLI wrapper.
             paths: seq[string]): int =
     ## Print sets of files with duplicate contents. Examined files are UNION of
     ## *paths* & optional *delim*-delimited input *file* ( `stdin` if "-"|if ""&
-    ## `stdin` not a tty ).  Eg., ``find -print0|dups -d\\0``.  **Exits non-0**
-    ## if a dup exists.  Trusting hashes can give false positives, but sorting
-    ## can be slow w/many large files of the same size|hash. *slice* can reduce
-    ## IO, but can also give false pos. {False negatives not possible. 0 exit =>
-    ## surely no dups.}. Within-set sort is by `st_blocks` if `summ` is logged,
-    ## then by requested file time {v=max(m,c)} & finally by ``st_ino``.
+    ## `stdin` not a tty ). Eg. ``find -type f -print0|dups -d\\0``. **Exits
+    ## non-0** if a dup exists.  Trusting hashes can give false positives, but
+    ## sorting can be slow w/many large files of the same size|hash. *slice* can
+    ## reduce IO, but can also give false pos. {False negatives not possible. 0
+    ## exit => surely no dups.}. Within-set sort is by `st_blocks` if `summ` is
+    ## logged, then by requested file time {v=max(m,c)} & finally by ``st_ino``.
     dupsLog = log
     let tO = fileTimeParse(time)      #tmUt helper to sort rows by +-[acmv]time
     var tot, nSet, nFile: int         #Track some statistics
