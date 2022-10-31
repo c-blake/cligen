@@ -1,3 +1,4 @@
+when not declared(open): import std/[syncio, formatfloat]
 import cligen/[procpool, mslice, osUt], cligen
 
 proc term(k: int): float = (0.5 - float(k mod 2))*8'f/float(2*k + 1)

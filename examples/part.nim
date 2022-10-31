@@ -1,3 +1,4 @@
+when not declared(stderr): import std/syncio
 import std/[os, cpuinfo, strformat, strutils, memfiles], cligen/[mslice, osUt]
 
 proc part(n=1, fmt="02d", output="$d$n/$b$e", separator='\n', initial=0,

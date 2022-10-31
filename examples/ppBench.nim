@@ -1,3 +1,4 @@
+when not declared(open): import std/syncio
 import std/posix, cligen/[procpool, osUt, posixUt], cligen
 
 var ibuf, obuf: string

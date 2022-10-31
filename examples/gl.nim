@@ -1,3 +1,4 @@
+when not declared(open): import std/syncio
 import std/strutils, cligen/[osUt, procpool, mfile, mslice], cligen
 proc strstr(hay, needle: cstring): cstring {.header: "string.h".}
 proc memmem(h:cstring, nH:int, s:cstring, nS:int): cstring {.header:"string.h".}
