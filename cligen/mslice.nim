@@ -53,7 +53,7 @@ proc toCstr*(p: pointer): cstring {.inline.} =
 template `^^`(s, i: untyped): untyped =
   (when i is BackwardsIndex: s.len - int(i) else: int(i))
 
-template BadIndex: untyped =
+template BadIndex: untyped {.used.} =
   when declared(IndexDefect): IndexDefect else: IndexError
 
 proc `[]`*(ms: MSlice, i: int): char {.inline.} =
