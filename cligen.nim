@@ -116,6 +116,11 @@ const ClNoCall* = ClErrors + ClExit
 var setByParseDum: seq[ClParse]; let cgSetByParseNil* = setByParseDum.addr
 var varSeqStrDum: seq[string]  ; let cgVarSeqStrNil*  = varSeqStrDum.addr
 
+proc quits*(s: int) = quit(if s < -128: -128 elif s > 127: 127 else: s)
+  ## quits)afe|s)aturating is for non-literal/maybe big input for compatibility
+  ## w/older Nim stdlibs.  Value is clipped to -128..127.  Note that Unix shells
+  ## often map a signaled exit to SIGNUM-128, e.g. 2-128 for SIGINT.
+
 proc die0(s: cint) {.noconv, used.} = quit(0)
 proc SIGPIPE_isOk*() =
   ## Install signal handler to exit success upon OS posting SIGPIPE.  This is
@@ -316,7 +321,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##
   ##``cf`` controls whole program aspects of generated CLIs. See ``ClCfg`` docs.
   ##
-  ##Default exit protocol is: quit(int(result)) or (echo $result or discard;
+  ##Default exit protocol is: quits(int(result)) or (echo $result or discard;
   ##quit(0)) depending on what compiles.  True ``echoResult`` forces echo while
   ##``noAutoEcho`` blocks it (=>int()||discard).  Technically, ``cligenQuit``
   ##implements this behavior.
@@ -782,19 +787,19 @@ template cligenQuit*(p: untyped, echoResult=false, noAutoEcho=false): auto =
   when echoResult:                            #CLI author requests echo
     try: echo p; quit(0)                      #May compile-time fail, but do..
     except HelpOnly, VersionOnly: quit(0)     #..want bubble up to CLI auth.
-    except ParseError: quit(cgParseErrorExitCode)
+    except ParseError: quits(cgParseErrorExitCode)
   elif compiles(int(p)):                      #Can convert to int
-    try: quit(int(p))
+    try: quits(int(p))
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(cgParseErrorExitCode)
+    except ParseError: quits(cgParseErrorExitCode)
   elif not noAutoEcho and compiles(echo p):   #autoEcho && have `$`
     try: echo p; quit(0)
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(cgParseErrorExitCode)
+    except ParseError: quits(cgParseErrorExitCode)
   else:                                       #void return type
     try: discarder(p); quit(0)
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(cgParseErrorExitCode)
+    except ParseError: quits(cgParseErrorExitCode)
 
 template cligenHelp*(p: untyped, hlp: untyped, use: untyped, pfx: untyped,
                      skipHlp: untyped, noUHdr=false): auto =
@@ -850,13 +855,13 @@ template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
   else:
     stderr.write "It is not similar to defined subcommands.\n\n"
   stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
-  quit(cgParseErrorExitCode)
+  quits(cgParseErrorExitCode)
 
 template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
   stderr.write "Ambiguous subcommand \"", attempt, "\" matches:\n"
   stderr.write "  ", cb.valsWithPfx(attempt).join("\n  "), "\n"
   stderr.write "Run with no-argument or \"help\" for more details.\n"
-  quit(cgParseErrorExitCode)
+  quits(cgParseErrorExitCode)
 
 proc firstParagraph(doc: string): string =
   var first = true
@@ -1144,7 +1149,7 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
                 @[], @[], "x", mergeNames, alias)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
-    except ParseError: quit(cgParseErrorExitCode)
+    except ParseError: quits(cgParseErrorExitCode)
   callIt()      #inside proc is not strictly necessary, but probably safer.
 
 template initFromCL*[T](default: T, cmdName: string="", doc: string="",
@@ -1167,7 +1172,7 @@ macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
   ## .. code-block:: nim
   ##   initDispatchGen(cmdProc, cfg, cfgDfl):
   ##     cfg.callAPI()
-  ##     quit(min(255, cfg.nError))
+  ##     quit(min(127, cfg.nError))
   ##   dispatch(cmdProc)
   var ti = default.getTypeImpl
   case ti.typeKind:

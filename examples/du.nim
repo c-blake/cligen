@@ -101,7 +101,7 @@ proc du*(file="",delim='\n',oneFileSystem=false,chase=false, dereference=false,
       grandTot += tot
   if total:
     emit(inodes, si, grandTot, scale, scaleA, "total", outEnd)
-  return min(nErr, 255)
+  return min(127, nErr)
 
 when isMainModule:
   dispatch(du,

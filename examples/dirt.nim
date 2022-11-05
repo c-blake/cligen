@@ -49,7 +49,7 @@ proc dirt*(roots: seq[string], verbose=false, quiet=false, dryRun=false,
             dirs[^2].push kidTm               #   reflect dmt -> kidTm in parent
         discard dirs.pop                      #   discard kid queue
     do: recFailDefault("dirt", path)          # Cannot recurse
-  return min(n, 255)
+  return min(127, n)
 
 when isMainModule:
   dispatch(dirt, short = { "dry-run": 'n' }, help = {

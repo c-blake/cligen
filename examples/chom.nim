@@ -50,7 +50,7 @@ proc chom*(verbose=false, quiet=false, dryRun=false, recurse=0, chase=false,
     do: discard                                     # No pre-recurse
     do: discard                                     # No post-recurse
     do: recFailDefault("chom", path)                # cannot recurse
-  return min(nCall, 255)
+  return min(127, nCall)
 
 when isMainModule:
   import cligen, cligen/argcvt, parseutils

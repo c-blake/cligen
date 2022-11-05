@@ -89,10 +89,14 @@ proc `&`*[T](x: openArray[T], y: openArray[T]): seq[T] =
   for i, e in x: result[i] = e
   for i, e in y: result[x.len + i] = e
 
-proc echoQuit130*() {.noconv.} = echo ""; quit 130
+proc echoQuit130*() {.noconv.} = echo ""; quit 2-128 # SIGINT=2
   ## Intended for `setControlCHook(echoQuit130)` to achieve quieter exits.
 
-proc newSeqNoInit*[T: Ordinal|SomeFloat](len: Natural): seq[T] =
+proc supportsCopyMem(t: typedesc): bool {.magic: "TypeTrait".}
+type CopyMemable* = concept type CpMem
+  supportsCopyMem(CpMem)
+
+proc newSeqNoInit*[T: CopyMemable](len: Natural): seq[T] =
   ## Make a new `seq[T]` of length `len`, skipping memory clear.
   ## (`newSeqUninitialized` overly constrains `T` to disallow `[bool]`, etc.)
   result = newSeqOfCap[T](len)

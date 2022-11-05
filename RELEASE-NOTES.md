@@ -1,6 +1,17 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.32
+---------------
+ - Change calls to quit to match what the new stdlib expects (see
+   https://github.com/nim-lang/Nim/commit/d5cc2085eae85ad922dfafc1dca81860d94d1731)
+
+ - Introduce & export a new `quits` for similar behavior on older Nim versions.
+
+ - Silence a `BadIndex` unused warning
+
+ - Adapt some more examples/ to work with `-d:nimPreviewSlimSystem`
+
 Version: 1.5.31
 ---------------
 
