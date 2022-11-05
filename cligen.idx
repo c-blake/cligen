@@ -39,6 +39,7 @@ ClExit	cligen.html#ClExit	cligen: ClExit
 ClNoCall	cligen.html#ClNoCall	cligen: ClNoCall	
 cgSetByParseNil	cligen.html#cgSetByParseNil	cligen: cgSetByParseNil	
 cgVarSeqStrNil	cligen.html#cgVarSeqStrNil	cligen: cgVarSeqStrNil	
+quits	cligen.html#quits,int	cligen: quits(s: int)	
 SIGPIPE_isOk	cligen.html#SIGPIPE_isOk	cligen: SIGPIPE_isOk()	
 SIGPIPE_pass	cligen.html#SIGPIPE_pass	cligen: SIGPIPE_pass()	
 contains	cligen.html#contains,openArray[ClParse],string	cligen: contains(x: openArray[ClParse]; paramName: string): bool	

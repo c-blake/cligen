@@ -180,6 +180,10 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   <li><a class="reference" href="#onCols%2CClCfg" title="onCols(c: ClCfg): seq[string]">onCols(c: ClCfg): seq[string]</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">quits
+  <li><a class="reference" href="#quits%2Cint" title="quits(s: int)">quits(s: int)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">SIGPIPE_isOk
   <li><a class="reference" href="#SIGPIPE_isOk" title="SIGPIPE_isOk()">SIGPIPE_isOk()</a></li>
 
@@ -686,6 +690,17 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 </div>
 
 </div>
+<div id="quits-procs-all">
+  <div id="quits,int">
+  <dt><pre><span class="Keyword">proc</span> <a href="#quits%2Cint"><span class="Identifier">quits</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    quits)afe|s)aturating is for non-literal/maybe big input for compatibility w/older Nim stdlibs.  Value is clipped to -128..127.  Note that Unix shells often map a signaled exit to SIGNUM-128, e.g. 2-128 for SIGINT.
+    
+  </dd>
+</div>
+
+</div>
 <div id="SIGPIPE_isOk-procs-all">
   <div id="SIGPIPE_isOk">
   <dt><pre><span class="Keyword">proc</span> <a href="#SIGPIPE_isOk"><span class="Identifier">SIGPIPE_isOk</span></a><span class="Other">(</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -769,7 +784,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 <p><tt class="docutils literal"><span class="pre">help</span></tt> and <tt class="docutils literal"><span class="pre">short</span></tt> definitions outside of a call require explicit <tt class="docutils literal"><span class="pre">toTable</span></tt> (from <tt class="docutils literal"><span class="pre">std/tables</span></tt>) conversions.</p>
 <p><tt class="docutils literal"><span class="pre">usage</span></tt> is a help template interpolating $command $args $doc $options.</p>
 <p><tt class="docutils literal"><span class="pre">cf</span></tt> controls whole program aspects of generated CLIs. See <tt class="docutils literal"><span class="pre">ClCfg</span></tt> docs.</p>
-<p>Default exit protocol is: quit(int(result)) or (echo $result or discard; quit(0)) depending on what compiles.  True <tt class="docutils literal"><span class="pre">echoResult</span></tt> forces echo while <tt class="docutils literal"><span class="pre">noAutoEcho</span></tt> blocks it (=&gt;int()||discard).  Technically, <tt class="docutils literal"><span class="pre">cligenQuit</span></tt> implements this behavior.</p>
+<p>Default exit protocol is: quits(int(result)) or (echo $result or discard; quit(0)) depending on what compiles.  True <tt class="docutils literal"><span class="pre">echoResult</span></tt> forces echo while <tt class="docutils literal"><span class="pre">noAutoEcho</span></tt> blocks it (=&gt;int()||discard).  Technically, <tt class="docutils literal"><span class="pre">cligenQuit</span></tt> implements this behavior.</p>
 <p>By default, <tt class="docutils literal"><span class="pre">cligen</span></tt> maps the first non-defaulted <tt class="docutils literal"><span class="pre">seq[]</span></tt> proc parameter to any non-option/positional command args.  <tt class="docutils literal"><span class="pre">positional</span></tt> selects another. Set <tt class="docutils literal"><span class="pre">positional</span></tt> to the empty string (<tt class="docutils literal"><span class="pre">&quot;&quot;</span></tt>) to disable this entirely.</p>
 <p><tt class="docutils literal"><span class="pre">suppress</span></tt> is a list of formal parameter names to exclude from the parse- assign system.  Such names are effectively pinned to their default values.</p>
 <p><tt class="docutils literal"><span class="pre">implicitDefault</span></tt> is a list of formal parameter names allowed to default to the Nim default value for a type, rather than becoming required, when they lack an explicit initializer.</p>
@@ -828,7 +843,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
     
     Create a proc with signature from <tt class="docutils literal"><span class="pre">default</span></tt> that calls <tt class="docutils literal"><span class="pre">initGen</span></tt> and initializes <tt class="docutils literal"><span class="pre">var obName</span></tt> by calling to the generated initializer.  It puts <tt class="docutils literal"><span class="pre">body</span></tt> inside an appropriate <tt class="docutils literal"><span class="pre">try/except</span></tt> so that you can just say:<pre class="listing"><span class="Identifier">initDispatchGen</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Punctuation">,</span> <span class="Identifier">cfgDfl</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Identifier">cfg</span><span class="Operator">.</span><span class="Identifier">callAPI</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-  <span class="Identifier">quit</span><span class="Punctuation">(</span><span class="Identifier">min</span><span class="Punctuation">(</span><span class="DecNumber">255</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Operator">.</span><span class="Identifier">nError</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
+  <span class="Identifier">quit</span><span class="Punctuation">(</span><span class="Identifier">min</span><span class="Punctuation">(</span><span class="DecNumber">127</span><span class="Punctuation">,</span> <span class="Identifier">cfg</span><span class="Operator">.</span><span class="Identifier">nError</span><span class="Punctuation">)</span><span class="Punctuation">)</span>
 <span class="Identifier">dispatch</span><span class="Punctuation">(</span><span class="Identifier">cmdProc</span><span class="Punctuation">)</span></pre>
     
   </dd>
@@ -980,7 +995,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-31 16:22:02 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-11-05 16:49:47 UTC</small>
       </div>
     </div>
   </div>
