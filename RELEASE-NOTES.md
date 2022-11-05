@@ -12,6 +12,9 @@ Version: 1.5.32
 
  - Adapt some more examples/ to work with `-d:nimPreviewSlimSystem`
 
+ - Relax constraint on `sysUt.newSeqNoInit` to any `supportsCopyMem` type
+   based on suggestion of @beef331 https://forum.nim-lang.org/t/9545#62731
+
 Version: 1.5.31
 ---------------
 
