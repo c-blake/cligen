@@ -133,7 +133,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
   errno = 0                             # clear any existing errno state
 
   proc maybeOpenDir(dfd: cint; path: string; nmAt: int, canRec: var bool): cint=
-    let fd = openat(dfd, path[nmAt].unsafeAddr.cstring,
+    let fd = openat(dfd, cast[cstring](path[nmAt].unsafeAddr),
                     O_RDONLY or O_CLOEXEC or O_DIRECTORY)
     if fd == -1:
       return cint(-1)
@@ -218,7 +218,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
           let mayRec = maxDepth == 0 or depth + 1 < maxDepth
           lst.stx_nlink = 0                         # Mark Stat invalid
           if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
-             lstatxat(dfd, d.d_name[0].addr.cstring, lst, 0.cint) == 0:
+             lstatxat(dfd, cast[cstring](d.d_name[0].addr), lst, 0.cint) == 0:
             d.d_type = stat2dtype(lst.stx_mode)     # Get d_type from Statx
           dt = d.d_type
           always      # CLIENT CODE GETS: depth,path,nmAt,ino,dt,lst,dfd,dst,did
