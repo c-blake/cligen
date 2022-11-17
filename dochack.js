@@ -3,7 +3,7 @@ var framePtr = null;
 var excHandler = 0;
 var lastJSError = null;
 var NTI687865870 = {size: 0, kind: 18, base: null, node: null, finalizer: null};
-var NTI536871428 = {size: 0, kind: 24, base: null, node: null, finalizer: null};
+var NTI536871441 = {size: 0, kind: 24, base: null, node: null, finalizer: null};
 var NTI671088765 = {size: 0,kind: 25,base: null,node: null,finalizer: null};
 var NTI671088764 = {size: 0,kind: 25,base: null,node: null,finalizer: null};
 var NTI671088763 = {size: 0,kind: 25,base: null,node: null,finalizer: null};
@@ -678,7 +678,7 @@ NTI671088645.base = NTI33555171;
 NTI671088661.base = NTI671088645;
 NTI671088660.base = NTI671088661;
 NTI671089087.base = NTI671088660;
-NTI536871428.base = NTI33554450;
+NTI536871441.base = NTI33554450;
 var NNI687865870 = {kind: 2, len: 2, offset: 0, typ: null, name: null, sons: [{kind: 1, offset: "Field0", len: 0, typ: NTI33554435, name: "Field0", sons: null}, 
 {kind: 1, offset: "Field1", len: 0, typ: NTI33554466, name: "Field1", sons: null}]};
 NTI687865870.node = NNI687865870;
@@ -1952,7 +1952,7 @@ function HEX3Aanonymous_536871643(a_536871648, b_536871649) {
     stuff_536871592 = doc.documentElement;
     
     db_536871580[0] = nimCopy(null, stuff_536871592.getElementsByClassName("reference"), NTI671089087);
-    contents_536871581[0] = nimCopy(null, [], NTI536871428);
+    contents_536871581[0] = nimCopy(null, [], NTI536871441);
     Label1: {
       var ahref_536871617 = null;
       var i_536871790 = 0;
