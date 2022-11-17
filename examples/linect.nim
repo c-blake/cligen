@@ -1,4 +1,4 @@
-when not declared(Thread): import std/threads
+when not declared(Thread): import std/typedthreads
 when not declared(stdout): import std/syncio
 import std/[math, osproc], cligen/[mfile, mslice], cligen
 
