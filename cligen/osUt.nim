@@ -248,6 +248,13 @@ proc open*(fd: cint, mode=fmRead, bufMode=IOFBF, bufSize=4096): File =
 
 when defined(linux) or defined(macosx) or defined(freebsd) or defined(openbsd):
   import posix
+  proc errstr*(): string = $strerror(errno)
+
+  proc write*(fh: cint, s: string) =
+    ## Write a Nim string to a file descriptor
+    if write(fh, s.cstring.pointer, s.len) != s.len:
+      raise newException(IOError, "cannot write string to file")
+
 when defined(linux):
   when defined(tcc): {.passc: "-D_GNU_SOURCE".}
   type CPUSet*{.importc: "cpu_set_t", header: "<sched.h>", final,pure.} = object
