@@ -7,6 +7,7 @@ Version: 1.5.32
    https://github.com/nim-lang/Nim/commit/d5cc2085eae85ad922dfafc1dca81860d94d1731)
 
  - Introduce & export a new `quits` for similar behavior on older Nim versions.
+   (stands for quit-saturating, if you like)
 
  - Silence a `BadIndex` unused warning
 
@@ -14,6 +15,11 @@ Version: 1.5.32
 
  - Relax constraint on `sysUt.newSeqNoInit` to any `supportsCopyMem` type
    based on suggestion of @beef331 https://forum.nim-lang.org/t/9545#62731
+
+ - Add completion code generator for dispatchMulti commands.  Only for Zsh at
+   the moment.
+
+ - Track nim-devel; Silence a warning; add cligen/osUt.errstr & another write
 
 Version: 1.5.31
 ---------------
