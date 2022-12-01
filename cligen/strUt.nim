@@ -417,6 +417,7 @@ iterator tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): MacroCall =
   ## macro with no correspondence in `fmt` intended to pass through `fmt[arg]`.
   ## This is intended to make it easy to write `std/strutils.%` or C/Python
   ## `printf`-like string interpolation with one standard, but flexible syntax.
+  ## See `examples/tmpl.nim` for a fully worked out example with tests.
   var i0,i1, a0,a1, c0, c1: int         # 0-start/1-end offsets: Id,Arg,Call
   let eos = fmt.len                     # End Of String (fmt string)
   c0 = fmt.find(meta, c1)               # `find` should ~~> fast C memchr
