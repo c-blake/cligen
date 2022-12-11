@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.33
+---------------
+    Remove need for `rightSize` in any recent Nim.
+
+    Factor `cligen/mslice.strip` into `stripLeading`, `stripTrailing` and like
+    `std/strutils.strip` with `strip(leading, trailing, chars=..)`.  NOTE the
+    rename of cset to chars is a weakly BREAKING CHANGE (only if you used a
+    named parameter invocation).
+
 Version: 1.5.32
 ---------------
  - Change calls to quit to match what the new stdlib expects (see

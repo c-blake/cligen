@@ -268,13 +268,26 @@ proc mempbrk*(s: pointer, accept: set[char], n: csize): pointer {.inline.} =
   for i in 0 ..< int(n):  #Like cstrpbrk or cmemchr but for mem
     if (cast[cstring](s))[i] in accept: return s +! i
 
-proc strip*(s: MSlice, cset=wspace): MSlice {.inline.} =
-  result = s
-  while result.len > 0 and cast[cstring](result.mem)[0] in cset:
-    result.mem = result.mem +! 1
-    result.len -= 1
-  while result.len > 0 and cast[cstring](result.mem)[result.len-1] in cset:
-    result.len -= 1
+proc stripLeading*(s: var MSlice, chars=wspace) =
+  while s.len > 0 and cast[cstring](s.mem)[0] in chars:
+    s.mem = s.mem +! 1
+    s.len -= 1
+
+proc stripTrailing*(s: var MSlice, chars=wspace) =
+  while s.len > 0 and cast[cstring](s.mem)[s.len - 1] in chars: s.len -= 1
+
+proc strip*(s: var MSlice, leading=true, trailing=true, chars=wspace) =
+  if leading: s.stripLeading chars
+  if trailing: s.stripTrailing chars
+
+proc stripLeading*(s: MSlice, chars=wspace): MSlice =
+  result = s; result.stripLeading chars
+
+proc stripTrailing*(s: MSlice, chars=wspace): MSlice =
+  result = s; result.stripTrailing chars
+
+proc strip*(s: MSlice, leading=true, trailing=true, chars=wspace): MSlice =
+  result = s; result.strip leading, trailing, chars
 
 template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
                      sep: untyped, nextSep: untyped, isSep: untyped) {.dirty.} =
