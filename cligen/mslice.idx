@@ -38,7 +38,12 @@ msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,char	mslice: msplit(msl
 firstN	cligen/mslice.html#firstN,MSlice,int,char	mslice: firstN(ms: MSlice; n = 1; term = &apos;\n&apos;): MSlice	
 wspace	cligen/mslice.html#wspace	mslice: wspace	
 mempbrk	cligen/mslice.html#mempbrk,pointer,set[char],csize	mslice: mempbrk(s: pointer; accept: set[char]; n: csize): pointer	
-strip	cligen/mslice.html#strip,MSlice	mslice: strip(s: MSlice; cset = wspace): MSlice	
+stripLeading	cligen/mslice.html#stripLeading,MSlice	mslice: stripLeading(s: var MSlice; chars = wspace)	
+stripTrailing	cligen/mslice.html#stripTrailing,MSlice	mslice: stripTrailing(s: var MSlice; chars = wspace)	
+strip	cligen/mslice.html#strip,MSlice	mslice: strip(s: var MSlice; leading = true; trailing = true; chars = wspace)	
+stripLeading	cligen/mslice.html#stripLeading,MSlice_2	mslice: stripLeading(s: MSlice; chars = wspace): MSlice	
+stripTrailing	cligen/mslice.html#stripTrailing,MSlice_2	mslice: stripTrailing(s: MSlice; chars = wspace): MSlice	
+strip	cligen/mslice.html#strip,MSlice_2	mslice: strip(s: MSlice; leading = true; trailing = true; chars = wspace): MSlice	
 msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,int	mslice: msplit(s: MSlice; fs: var seq[MSlice]; sep = &apos; &apos;; n = 0; repeat = false): int	
 msplit	cligen/mslice.html#msplit,MSlice,char,int	mslice: msplit(s: MSlice; sep = &apos; &apos;; n = 0; repeat = false): seq[MSlice]	
 msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],int	mslice: msplit(s: MSlice; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int	

@@ -366,7 +366,18 @@
 
 </ul>
 <ul class="simple nested-toc-section">strip
-  <li><a class="reference" href="#strip%2CMSlice" title="strip(s: MSlice; cset = wspace): MSlice">strip(s: MSlice; cset = wspace): MSlice</a></li>
+  <li><a class="reference" href="#strip%2CMSlice_2" title="strip(s: MSlice; leading = true; trailing = true; chars = wspace): MSlice">strip(s: MSlice; leading = true; trailing = true; chars = wspace): MSlice</a></li>
+<li><a class="reference" href="#strip%2CMSlice" title="strip(s: var MSlice; leading = true; trailing = true; chars = wspace)">strip(s: var MSlice; leading = true; trailing = true; chars = wspace)</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">stripLeading
+  <li><a class="reference" href="#stripLeading%2CMSlice_2" title="stripLeading(s: MSlice; chars = wspace): MSlice">stripLeading(s: MSlice; chars = wspace): MSlice</a></li>
+<li><a class="reference" href="#stripLeading%2CMSlice" title="stripLeading(s: var MSlice; chars = wspace)">stripLeading(s: var MSlice; chars = wspace)</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">stripTrailing
+  <li><a class="reference" href="#stripTrailing%2CMSlice_2" title="stripTrailing(s: MSlice; chars = wspace): MSlice">stripTrailing(s: MSlice; chars = wspace): MSlice</a></li>
+<li><a class="reference" href="#stripTrailing%2CMSlice" title="stripTrailing(s: var MSlice; chars = wspace)">stripTrailing(s: var MSlice; chars = wspace)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toCstr
@@ -1248,8 +1259,59 @@
 
 </div>
 <div id="strip-procs-all">
-  <div id="strip,MSlice">
-  <dt><pre><span class="Keyword">proc</span> <a href="#strip%2CMSlice"><span class="Identifier">strip</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">cset</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <div id="strip,MSlice_2">
+  <dt><pre><span class="Keyword">proc</span> <a href="#strip%2CMSlice_2"><span class="Identifier">strip</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">leading</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">trailing</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+<div id="strip,MSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#strip%2CMSlice"><span class="Identifier">strip</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">leading</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">trailing</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+
+</div>
+<div id="stripLeading-procs-all">
+  <div id="stripLeading,MSlice_2">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripLeading%2CMSlice_2"><span class="Identifier">stripLeading</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+<div id="stripLeading,MSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripLeading%2CMSlice"><span class="Identifier">stripLeading</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+
+</div>
+<div id="stripTrailing-procs-all">
+  <div id="stripTrailing,MSlice_2">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripTrailing%2CMSlice_2"><span class="Identifier">stripTrailing</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+<div id="stripTrailing,MSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripTrailing%2CMSlice"><span class="Identifier">stripTrailing</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">chars</span> <span class="Other">=</span> <span class="Identifier">wspace</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1450,7 +1512,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-08 15:21:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-11 17:05:41 UTC</small>
       </div>
     </div>
   </div>
