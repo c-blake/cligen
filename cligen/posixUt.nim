@@ -34,6 +34,8 @@ proc unlinkat*(dirfd: cint; path: cstring; flags: cint):
        cint {.importc, header: "<unistd.h>", sideEffect.}
 proc renameat*(olddirfd: cint; oldpath: cstring; newdirfd: cint;
        newpath: cstring): cint {.importc, header: "<unistd.h>", sideEffect.}
+proc rename*(oldpath, newpath: cstring): cint {.importc, header: "<unistd.h>",
+                                                sideEffect.}
 
 template impConstAs*(T: untyped; path: string; name, nimName): untyped{.dirty.}=
   var `loc name` {.header: path, importc: astToStr(name) .}: `T`
@@ -56,6 +58,8 @@ impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* => omit
 when defined(linux):
   const AT_NO_AUTOMOUNT* = 0x800        ## Suppress terminal automount traversal
   const AT_EMPTY_PATH*   = 0x1000       ## Allow empty relative pathname
+  proc renameat2*(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath:
+                  cstring, flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
 
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
