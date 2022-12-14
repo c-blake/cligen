@@ -1091,14 +1091,17 @@ function raiseRangeError() {
 }
 
 function addChars_285212850(result_285212852, result_285212852_Idx, x_285212853, start_285212854, n_285212855) {
+    var Temporary1;
+
     var old_285212856 = (result_285212852[result_285212852_Idx]).length;
-    (result_285212852[result_285212852_Idx].length = chckRange(addInt(old_285212856, n_285212855), 0, 2147483647));
-    Label1: {
+    if (result_285212852[result_285212852_Idx].length < (Temporary1 = chckRange(addInt(old_285212856, n_285212855), 0, 2147483647), Temporary1)) { for (var i = result_285212852[result_285212852_Idx].length; i < Temporary1; ++i) result_285212852[result_285212852_Idx].push(0); }
+         else {result_285212852[result_285212852_Idx].length = Temporary1; };
+    Label2: {
       var iHEX60gensym4_285212870 = 0;
       var i_536871009 = 0;
-      Label2: {
-          Label3: while (true) {
-          if (!(i_536871009 < n_285212855)) break Label3;
+      Label3: {
+          Label4: while (true) {
+          if (!(i_536871009 < n_285212855)) break Label4;
             iHEX60gensym4_285212870 = i_536871009;
             result_285212852[result_285212852_Idx][chckIndx(addInt(old_285212856, iHEX60gensym4_285212870), 0, (result_285212852[result_285212852_Idx]).length - 1)] = x_285212853.charCodeAt(chckIndx(addInt(start_285212854, iHEX60gensym4_285212870), 0, (x_285212853).length - 1));
             i_536871009 = addInt(i_536871009, 1);
