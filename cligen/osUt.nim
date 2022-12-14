@@ -427,7 +427,7 @@ proc wr*[T](fd: cint, ob: T): int {.deprecated: "use `wrOb`".} = fd.wrOb ob
 
 proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
-  fd.write(buf[0].unsafeAddr.cstring, buf.len + 1)
+  fd.write(cast[cstring](buf[0].unsafeAddr), buf.len + 1)
 
 template IOVecLen(x): untyped = (type(IOVec.iov_len)(x))
 proc wrLine*(fd: cint, buf: string): int =

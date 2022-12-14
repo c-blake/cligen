@@ -198,7 +198,7 @@ proc readlink*(path: string, err=stderr): string =
   while n == nBuf:        #readlink(2) DOES NOT NUL-term, but Nim does, BUT it
     nBuf *= 2             #..is inaccessible to user-code.  So, the below does
     result.setLen(nBuf)   #..not need the nBuf + 1 it would in C code.
-    n = readlink(path, cstring(result[0].addr), nBuf)
+    n = readlink(path, cast[cstring](result[0].addr), nBuf)
   if n <= 0:
     err.write "readlink(\"", $path, "\"): ", strerror(errno), "\n"
     result.setLen(0)
@@ -234,7 +234,7 @@ proc getDents*(fd: cint, st: Stat, dts: ptr seq[int8] = nil,
           continue
     if dts != nil: dts[].add d.d_type
     if inos != nil: inos[].add d.d_ino
-    result.add $cstring(addr d.d_name)
+    result.add $cast[cstring](addr d.d_name)
 
 proc ns*(t: Timespec): int =
   ## Signed nanoseconds since origin (usually epoch, but maybe not if `t` comes
@@ -442,7 +442,7 @@ iterator dirEntries*(dir: string; st: ptr Stat=nil; canRec: ptr bool=nil;
       if (de.d_name[0]=='.' and de.d_name[1]=='\0') or (de.d_name[0]=='.' and
           de.d_name[1]=='.' and de.d_name[2]=='\0'):
         continue                        #Skip "." and ".."
-      var ent = $de.d_name.addr.cstring #Make a Nim string
+      var ent = $cast[cstring](de.d_name.addr) #Make a Nim string
       var path = dir // move(ent)       #Join path down from `dir`
       dt[] = de.d_type
       st[].st_nlink = 0                 #Tell caller we did no stat/lstat

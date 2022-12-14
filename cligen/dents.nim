@@ -25,7 +25,7 @@ when not declared(stderr): import std/syncio
 type csize_t = uint #For older Nim
 type DirName = array[256, cchar]  # Some helpers for names in dirents
 proc strlen(s: cstring): csize_t {.importc: "strlen", header: "<string.h>".}
-proc strlen(a: DirName): csize_t {.inline.} = a[0].unsafeAddr.cstring.strlen
+proc strlen(a:DirName):csize_t{.inline.} = cast[cstring](a[0].unsafeAddr).strlen
 
 proc dotOrDotDot*(nm: DirName): bool {.inline.} =
   nm[0] == '.' and (nm[1] == '\0' or (nm[1] == '.' and nm[2] == '\0'))
