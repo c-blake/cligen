@@ -1,5 +1,5 @@
-when not declared(Thread): import std/typedthreads
-when not declared(stdout): import std/syncio
+when not declared(stdout): import std/[syncio, typedthreads]
+when not declared(Thread): import std/threads
 import std/[math, osproc], cligen/[mfile, mslice], cligen
 
 type ThrDat = tuple[part: ptr MSlice, subp: ptr int]
