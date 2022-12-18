@@ -602,8 +602,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           quote do:
             let cols = `pId`.val.split('=', 1)   #split on 1st '=' only
             try: `aliasesId`[cols[0].strip] = parseCmdLine(cols[1].strip)
-            except: stderr.write "ignored bad alias: ", cols[0].strip, " = ",
-                                  cols[1].strip, "\n"))
+            except CatchableError: stderr.write "ignored bad alias: ",
+                                   cols[0].strip, " = ", cols[1].strip, "\n"))
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(aliasRefN), aliasRefS).add(
           quote do:

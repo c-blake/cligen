@@ -44,6 +44,6 @@ proc envToCL*(evarName: string): seq[string] =
   if e.len == 0:
     return
   try: result.add e.parseCmdLine        # See os.parseCmdLine for details
-  except: stderr.write "ignoring bad evarName $", evarName, "\n"
+  except CatchableError: stderr.write "ignoring bad evarName $", evarName, "\n"
   when defined(debugEnvToCL):
     echo "parsed $", varNm, " into: ", result

@@ -35,7 +35,7 @@ iterator components*(arcs: openArray[tuple[x, y: int]], nV: int): seq[int] =
 proc vtxId*[T](vi: var Table[T, int]; vn: var seq[T]; vo: T): int {.inline.} =
   ## Return a vertex id for maybe-already-seen obj `vo`, updating `vi` & `vn`.
   try   : result = vi[vo]                             # Already known => done
-  except: result = vn.len; vi[vo] = result; vn.add vo # Put into nm->id & id->nm
+  except KeyError: result = vn.len; vi[vo] = result; vn.add vo # ->into fwd/rev
 
 when isMainModule:
   import cligen

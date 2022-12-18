@@ -190,7 +190,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
       result.add " "
       result.add cols[1]
     if cols.len > 2: result.add attrOff
-  except:
+  except CatchableError:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
 
 #NOTE: \-escape off only inside inline DB literals breaks any parser layering &

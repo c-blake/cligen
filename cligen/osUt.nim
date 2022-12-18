@@ -12,6 +12,7 @@
 import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
 when not declared(File): import std/syncio
 type csize = uint
+type Ce* = CatchableError
 
 proc isatty(f: File): bool =
   when defined(posix):
@@ -228,7 +229,7 @@ proc writeNumberToFile*(path: string, num: int) =
     let f = open(path, fmWrite)
     f.write $num, '\n'
     f.close
-  except:
+  except Ce:
     stderr.write "cannot open \"", path, "\" to write ", $num, '\n'
 
 var vIOFBF {.importc: "_IOFBF", header: "stdio.h", nodecl.}: cint
@@ -359,18 +360,18 @@ proc pclose*(f: File, cmd: string): cint =
 proc fileNewerThan*(a, b: string): bool =
   ## True if both path `a` & `b` exist and `a` is newer
   try: result = getLastModificationTime(b) < getLastModificationTime(a)
-  except: discard
+  except Ce: discard
 
 proc fileOlderThan*(a, b: string): bool =
   ## True if both path `a` & `b` exist and `a` is older
   try: result = getLastModificationTime(a) < getLastModificationTime(b)
-  except: discard
+  except Ce: discard
 
 proc clearDir*(dir: string) =
   ## Best effort removal of the *contents* of `dir`, but not `dir` itself.
   for path in walkPattern(dir/"*"):
     try: removeFile path
-    except: removeDir path
+    except Ce: removeDir path
 
 import algorithm
 proc walkPatSorted*(pattern: string): seq[string] =
@@ -384,9 +385,9 @@ proc touch*(path: string) =
   let tm = now().toTime
   if not fileExists(path):
     try: close(open(path, fmWrite))
-    except: erru "could not create ", path; return
+    except Ce: erru "could not create ", path; return
   try: setLastModificationTime path, tm
-  except: erru "could not update time for ", path
+  except Ce: erru "could not update time for ", path
 
 import tables
 var outs: Table[string, File]

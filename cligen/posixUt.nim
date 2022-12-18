@@ -554,12 +554,12 @@ proc dropPrivilegeTo*(newUser, newGroup: string, err=stderr): bool =
   var uid: Uid
   try:
     gid = groupIds()[newGroup]
-  except:
+  except CatchableError:
     err.write "no such group: ", newGroup, '\n'
     return false
   try:
     uid = userIds()[newUser]
-  except:
+  except CatchableError:
     err.write "no such user: ", newUser, '\n'
     return false
   if setGroups(0, nil) != 0:          #Drop supplementary group privilege

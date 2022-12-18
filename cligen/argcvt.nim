@@ -13,6 +13,7 @@ type
   ClHelpContext* = enum clLongOpt,      ## a long option identifier
                         clSubCmd,       ## a sub-command name identifier
                         clEnumVal       ## an enum value name identifier
+  Ce = CatchableError
 
 proc helpCase*(inp: string, context: ClHelpContext = clSubCmd): string =
   ##This is a string-to-string transformer hook to convert whatever the native
@@ -401,7 +402,7 @@ proc argParse*[T](dst: var seq[T], dfl: seq[T], a: var ArgcvtParams): bool =
     else:
       a.msg = "Bad operator (\"$1\") for seq[T], param $2\n" % [a.sep, a.key]
       raise newException(ElementError, "Bad operator")
-  except:
+  except Ce:
     return false
 
 proc argHelp*[T](dfl: seq[T], a: var ArgcvtParams): seq[string]=
@@ -453,7 +454,7 @@ proc argParse*[T](dst: var set[T], dfl: set[T], a: var ArgcvtParams): bool =
     else:
       a.msg = "Bad operator (\"$1\") for set[T], param $2\n" % [a.sep, a.key]
       raise newException(ElementError, "Bad operator")
-  except:
+  except Ce:
     return false
 
 proc argHelp*[T](dfl: set[T], a: var ArgcvtParams): seq[string]=
@@ -487,7 +488,7 @@ proc argParse*[T](dst: var HashSet[T], dfl: HashSet[T],
     else:
       a.msg = "Bad operator (\"$1\") for HashSet[T], param $2\n" % [a.sep,a.key]
       raise newException(ElementError, "Bad operator")
-  except:
+  except Ce:
     return false
 
 proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=

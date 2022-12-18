@@ -372,7 +372,7 @@ func find*(s: openArray[char], sub: char, start: Natural = 0, last = 0): int =
     when hasCStringBuiltin:
       if (let L = last - start + 1; L > 0) and  # memory to search && found
          (let p=cmemchr(s[start].unsafeAddr, sub, cast[csize_t](L)); p != nil):
-          return cast[ByteAddress](p) -% cast[ByteAddress](s[0].unsafeAddr)
+          return cast[int](p) -% cast[int](s[0].unsafeAddr)
     else: (for i in int(start)..last: (if sub == s[i]: return i))
   -1
 

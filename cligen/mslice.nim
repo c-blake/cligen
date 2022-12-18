@@ -18,9 +18,9 @@ proc cmemcpy*(a, b: pointer, n: csize): cint {.
 proc cmemmem*(h: pointer, nH: csize, s: pointer, nS: csize): pointer {.
   importc: "memmem", header: "string.h".}
 proc `-!`*(p, q: pointer): int {.inline.} =
-  (cast[int](p) -% cast[int](q)).int
+  (cast[uint](p) - cast[uint](q)).int
 proc `+!`*(p: pointer, i: int): pointer {.inline.} =
-  cast[pointer](cast[int](p) +% i)
+  cast[pointer](cast[uint](p) + i.uint)
 proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
   cast[pointer](cast[uint64](p) + i)
 when not declared(File): import std/[syncio, assertions]
@@ -297,7 +297,7 @@ template defSplit[T](slc: T, fs: var seq[MSlice], n: int, repeat: bool,
   while repeat and eob -! b > 0 and isSep((cast[cstring](b))[0], sep):
     b = b +! 1
     if b == eob: fs.setLen(0); return
-  var e = nextSep(b, sep, (eob -! b).csize)
+  var e = nextSep(b, sep, max(int.high.csize, (eob -! b).csize))
   while e != nil:
     if n < 1:                               #Unbounded msplit
       if result == fs.len - 1:              #Expand capacity
@@ -361,7 +361,7 @@ template defSplitr(slc: string, fs: var seq[string], n: int, repeat: bool,
       fs.setLen(0)
       if sp != nil: sp[].setLen(0)
       return
-  var e = nextSep(b, sep, (eob -! b).csize)
+  var e = nextSep(b, sep, max(int.high.csize, (eob -! b).csize))
   while e != nil:
     if n < 1:                               #Unbounded splitr
       if result == fs.len - 1:              #Expand capacity
