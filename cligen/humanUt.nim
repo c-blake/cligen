@@ -1,5 +1,5 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
-  {.push warning[UnusedImport]: off.} # import-inside-include confuses used-system
+ {.push warning[UnusedImport]: off.} #import-inside-include confuses used-system
 import std/[strutils, parseutils]
 
 proc parseInt*(s: string, valIfNAN: int): int =
@@ -225,8 +225,8 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
 
  proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
-  ## does *only inline* font markup (single-|double-|triple-)``(*|`)`` since A) that
-  ## is what is most useful displaying to a terminal and B) the whole idea of
+  ## does *only inline* font markup (single-|double-|triple-)``(*|`)`` since A)
+  ## that is what is most useful for terminal display and B) the whole idea of
   ## these markups is to be readable as-is.  Backslash escape & spacing work as
   ## usual to block adornment interpretation.  This proc inits ``rstMdSGR`` with
   ## a Table of {style: "open;close"} text adornments. ``plain==true`` will make

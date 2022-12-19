@@ -299,7 +299,7 @@ proc ecvtE(s: var string; i, e: var int; opts={fcPad0}) {.inline.} = # EXPONENT
     eSign
     if   e < 10 : s[i] = chr(ord('0') + e); inc i
     elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
-    else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]; inc i, 3
+    else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2];inc i,3
 
 proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
   ## ANSI C/Unix ecvt: float -> D.PPPPe+EE; Most conversion in int arithmetic.

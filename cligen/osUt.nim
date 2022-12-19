@@ -446,9 +446,9 @@ proc wrLenBuf*(fd: cint, buf: string): int =
   writev(fd, iov[0].unsafeAddr, 2)
 
 proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
-  ## Write `int` length prefixed data of a `seq[T]` atomically (`writev` on Linux),
-  ## where `T` are either flat objects or tuples of flat objects (no indirections
-  ## allowed).
+  ## Write `int` length prefixed data of a `seq[T]` atomically (`writev` on
+  ## Linux), where `T` are either flat objects or tuples of flat objects (no
+  ## indirections allowed).
   let n = s.len * sizeof(T)
   let iov = [ IOVec(iov_base: n.unsafeAddr   , iov_len: IOVecLen(n.sizeof)),
               IOVec(iov_base: s[0].unsafeAddr, iov_len: IOVecLen(n.csize)) ]

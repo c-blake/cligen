@@ -136,7 +136,7 @@ type
     optsDone*: bool           ## "--" has been seen
     shortNoVal*: set[char]    ## 1-letter options not requiring optarg
     longNoVal*: CritBitTree[string] ## long options not requiring optarg
-    stopWords*: CritBitTree[string] ## special literal parameters acting like "--"
+    stopWords*: CritBitTree[string] ## special literal params acting like "--"
     requireSep*: bool         ## require separator between option key & val
     sepChars*: set[char]      ## all the chars that can be valid separators
     opChars*: set[char]       ## all chars that can prefix a sepChar

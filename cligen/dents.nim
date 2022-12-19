@@ -63,7 +63,7 @@ when defined(linux):
   proc readdir(dp: ptr DIR): ptr DirEnt {.inline.} =
     if dp.bpos == dp.nRd:             # Used all that had been read => Read more
       if dp.eeof and dp.nRd > 0 and dp.nRd + 256+DirEnt.sizeof < dp.buf.sizeof:
-        return nil                  # short read => done     # Sadly, fails on sshfs/NFS/etc.
+        return nil  # short read => done     # Sadly, fails on sshfs/NFS/etc.
       dp.nRd = getdents(dp.fd, dp.buf[0].addr, dp.buf.sizeof)
       if dp.nRd == -1: stderr.write "getdents\n"; return nil # NFS/etc. gotcha
       if dp.nRd == 0: return nil      # done

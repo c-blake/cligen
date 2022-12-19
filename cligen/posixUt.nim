@@ -1,7 +1,8 @@
 type csize = uint
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import std/[posix,sets,tables,strutils,strformat,parseutils], sysUt,argcvt,gcarc,osUt
+import std/[posix, sets, tables, strutils, strformat, parseutils],
+       sysUt, argcvt, gcarc, osUt
 when not declared(File): import std/syncio
 
 proc openat*(dirfd: cint, path: cstring, flags: cint):
@@ -59,7 +60,7 @@ when defined(linux):
   const AT_NO_AUTOMOUNT* = 0x800        ## Suppress terminal automount traversal
   const AT_EMPTY_PATH*   = 0x1000       ## Allow empty relative pathname
   proc renameat2*(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath:
-                  cstring, flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
+    cstring, flags: cint): cint {.importc, header: "<unistd.h>", sideEffect.}
 
 proc log*(f: File, s: string) {.inline.} =
   ## This does nothing if ``f`` is ``nil``, but otherwise calls ``write``.
@@ -154,10 +155,11 @@ proc getgroups*(gids: var HashSet[Gid]) =
   gids.incl(getegid())          #specs say to incl effective gid manually
 proc getgroups*(): HashSet[Gid] = getgroups(result)
 
-template defineIdentities(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
+template defineIdentities(ids, Id, Entry, getid, rewind,
+                          getident, en_id, en_nm) {.dirty.} =
   proc ids*(): Table[Id, string] =
     ##Populate Table[Id, string] with data from system account files
-    when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initTable[Id, string]()
+    when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[Id, string]()
     var id: ptr Entry
     when defined(android):
       proc getid(id: Id): ptr Entry {.importc.}
@@ -175,7 +177,7 @@ defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[string, Id] =
     ##Populate Table[Id, string] with data from system account files
-    when (NimMajor,NimMinor,NimPatch) < (0,20,0): result = initTable[string, Id]()
+    when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[string, Id]()
     var id: ptr Entry
     when defined(android):
       proc getid(id: Id): ptr Entry {.importc.}

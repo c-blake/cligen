@@ -168,7 +168,7 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
             for nMid in 1 .. tLen - 2*sLen - nSfx - nPfx:
               for off in 0 .. s.len - nPfx - nSfx - nMid:
                 let pat = pfx & sep & s[nPfx+off ..< nPfx+off+nMid] & sep & sfx
-                if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
+                if t.match(pat, 2, aN=sep[0]).len==1 and pat.len<result[i].len:
                   result[i] = pat; break outermost
 
 proc realize*(a: var Abbrev, strs: openArray[string]) =
@@ -277,7 +277,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
                 let abb = a.abbOf[src[si]]
                 let quo = a.pquote(abb)
                 if quo != abb:
-                  strs[ti] = strs[ti][0 ..< ab0[si]] & quo & strs[ti][ab1[si]..^1]
+                  strs[ti] = strs[ti][0..<ab0[si]] & quo & strs[ti][ab1[si]..^1]
                   a.abbOf[src[si]] = strs[ti]
           return
 

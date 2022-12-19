@@ -306,15 +306,15 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##
   ##``help`` is a ``{(paramNm, str)}`` of per-param help, eg. ``{"quiet": "be
   ##quiet"}``.  Often, only these help strings are needed for a decent CLI.
-  ##A row of the help table can be suppressed from showing by setting the ``str``
-  ##to a magic ``clCfg.hTabSuppress`` string value (defaults to ``"CLIGEN-NOHELP"``,
-  ##customizable).
+  ##A row of the help table can be suppressed from showing by setting ``str``
+  ##to a magic ``clCfg.hTabSuppress`` value (defaults to ``"CLIGEN-NOHELP"``,
+  ##but is customizable).
   ##
   ##``short`` is a ``{(paramNm, char)}`` of per-param single-char option keys.
-  ##Setting a parameter value to ``'\0'`` suppresses the assignment of a short option.
-  ##Suppress all short options by passing an empty key: ``{ "": ' ' }``.
+  ##Setting a parameter value to ``'\0'`` suppresses the assignment of a short
+  ##option. Suppress all short options by passing an empty key: ``{ "": ' ' }``.
   ##
-  ##``help`` and ``short`` definitions outside of a call require explicit ``toTable``
+  ##``help`` & ``short`` definitions outside a call require explicit ``toTable``
   ## (from ``std/tables``) conversions.
   ##
   ##``usage`` is a help template interpolating $command $args $doc $options.

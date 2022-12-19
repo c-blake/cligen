@@ -193,20 +193,20 @@ proc nextSlice*(mslc, ms: var MSlice, sep='\n', eat='\0'): int =
     var remaining = mslc.len
     if remaining > 0:
       let recEnd = cmemchr(mslc.mem, sep, remaining.csize)
-      if recEnd == nil:                             #Unterminated final slice
-        ms.len = remaining                          #Weird case..consult eat?
+      if recEnd == nil:                         #Unterminated final slice
+        ms.len = remaining                      #Weird case..consult eat?
         ms.mem = mslc.mem
-        mslc.len = 0                                # empty input slice
+        mslc.len = 0                            # empty input slice
         # set input memory to nil?
         # mslc.mem = nil
         return remaining
-      ms.mem = mslc.mem                             # assign output slice
-      ms.len = recEnd -! mslc.mem                   #sep is NOT included
+      ms.mem = mslc.mem                         # assign output slice
+      ms.len = recEnd -! mslc.mem               # sep is NOT included
       if eat != '\0' and ms.len > 0 and ms[ms.len - 1] == eat:
-        dec(ms.len)                                 #trim pre-sep char
-      mslc.mem = recEnd +! 1                        # advance input & skip sep
-      result = mslc.mem -! ms.mem                   # calc number of advanced idxs
-      mslc.len = mslc.len - result                  # and adjust input length
+        dec(ms.len)                             # trim pre-sep char
+      mslc.mem = recEnd +! 1                    # advance input & skip sep
+      result = mslc.mem -! ms.mem               # calc number of advanced idxs
+      mslc.len = mslc.len - result              # and adjust input length
 
 iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
   ## Iterate over [optionally ``eat``-suffixed] ``sep``-delimited slices in
@@ -514,13 +514,15 @@ iterator frame*(s: MSlice, sep: Sep, n=0): TextFrame =
     for f in s.frame(sep.setDlm, sep.repeat, n): yield f
 
 proc frame*(s: MSlice, fs: var seq[TextFrame], sep: Sep, n=0): int =
-  ## Fill `seq` w/all `sep`-separated `TextFrame` in `s` split `<=n` times (0=unlim).
+  ## Fill `seq` w/all `sep`-separated `TextFrame` in `s` split `<=n` times
+  ## (0=unlim).
   fs.setLen 0
   for f in s.frame(sep): fs.add f
   fs.len
 
 proc frame*(s: MSlice, sep: Sep, n=0): seq[TextFrame] =
-  ## Return `seq` of all `sep`-separated `TextFrame` in `s` split `<=n` times (0=unlim).
+  ## Return `seq` of all `sep`-separated `TextFrame` in `s` split `<=n` times
+  ## (0=unlim).
   ##
   ## .. code-block:: nim
   ##   let x = "hi there you "

@@ -25,7 +25,7 @@ when not haveStatx:
       stx_ino*:             uint64   ## Inode number
       stx_size*:            uint64   ## Total size in bytes
       stx_blocks*:          uint64   ## Number of 512B blocks allocated
-      stx_attributes_mask*: uint64   ## Mask showing what stx_attributes supports
+      stx_attributes_mask*: uint64   ## Mask showing supported by stx_attributes
       stx_atime*:           StatxTs  ## Last access
       stx_btime*:           StatxTs  ## Birth/Creation
       stx_ctime*:           StatxTs  ## Last status change
@@ -53,7 +53,7 @@ else:
       stx_ino*:             uint64   ## Inode number
       stx_size*:            uint64   ## Total size in bytes
       stx_blocks*:          uint64   ## Number of 512B blocks allocated
-      stx_attributes_mask*: uint64   ## Mask showing what stx_attributes supports
+      stx_attributes_mask*: uint64   ## Mask showing supported by stx_attributes
       stx_atime*:           StatxTs  ## Last access
       stx_btime*:           StatxTs  ## Birth/Creation
       stx_ctime*:           StatxTs  ## Last status change
@@ -124,13 +124,13 @@ when haveStatx:
     ##A Linux statx wrapper with a call signature more like regular ``stat``.
     statx(AT_FDCWD, path, flags, mask, stx.addr)
 
-  proc lstatx*(path: cstring, stx: var Statx,
-              flags=(statxFlags or AT_SYMLINK_NOFOLLOW), mask=statxMask): cint {.inline.} =
+  proc lstatx*(path: cstring, stx: var Statx, flags=(statxFlags or
+               AT_SYMLINK_NOFOLLOW), mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``lstat``.
     statx(AT_FDCWD, path, flags, mask, stx.addr)
 
-  proc fstatx*(fd: cint, stx: var Statx,
-              flags=(AT_EMPTY_PATH or statxFlags), mask=statxMask): cint {.inline.} =
+  proc fstatx*(fd: cint, stx: var Statx, flags=(AT_EMPTY_PATH or
+                 statxFlags), mask=statxMask): cint {.inline.} =
     ##A Linux statx wrapper with a call signature more like regular ``fstat``.
     statx(fd, "", flags, mask, stx.addr)
 else:
@@ -237,10 +237,10 @@ proc statx*(dirfd: cint, path: cstring, flags: cint, stx: var Statx,
   else:
     fstatat(dirfd, path, stx, flags)
 
-proc statxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
+proc statxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint =
   statx(dirfd, path, flags, stx)
 
-proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint {.inline.} =
+proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint =
   statx(dirfd, path, flags or AT_SYMLINK_NOFOLLOW, stx)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
@@ -265,7 +265,7 @@ proc fileTime*(st: Statx, kind: char, dir=1): int64 {.inline.} =
   of 'v': dir * max(getLastModTimeNsec(st), getCreationTimeNsec(st))
   else: 0
 
-proc fileTime*(path: string; kind: char, missing=int64(0), dir=1): int64 {.inline.} =
+proc fileTime*(path: string; kind: char, missing=int64(0), dir=1): int64 =
   ## Return file time stamp ([bamcv]) in nanoseconds since the Unix epoch.
   var st: Statx
   if statx(path, st) != 0: missing else: st.fileTime(kind, dir)

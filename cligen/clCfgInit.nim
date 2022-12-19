@@ -91,7 +91,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             c.helpAttr["clValType"] = on; c.helpAttrOff["clValType"] = off
           of "dflvals", "defaultvalues", "dflval", "defaultvalue":
             c.helpAttr["clDflVal"]  = on; c.helpAttrOff["clDflVal"]  = off
-          of "descrips", "descriptions", "paramdescriptions", "descrip", "description", "paramdescription":
+          of "descrips", "descriptions", "paramdescriptions", "descrip",
+             "description", "paramdescription":
             c.helpAttr["clDescrip"] = on; c.helpAttrOff["clDescrip"] = off
           of "cmd", "command", "cmdname", "commandname":
             c.helpAttr["cmd"] = on; c.helpAttrOff["cmd"] = off
@@ -101,7 +102,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
           else:
             stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-              "Expecting: options types defaultvalues descriptions command documentation arguments\n"
+              "Expecting: options types defaultvalues descriptions command" &
+              " documentation arguments\n"
       of "render":
         case e.key.optionNormalize
         of "singlestar": rendOpts["singlestar"] = e.value
@@ -111,7 +113,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "doublebquo": rendOpts["doublebquo"] = e.value
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: singlestar, doublestar, triplestar, singlebquo, doublebquo\n"
+            "Expecting: singlestar, doublestar, triplestar, singlebquo," &
+            " doublebquo\n"
       of "templates":
         case e.key.optionNormalize
         of "usehdr", "usageheader" : c.useHdr     = hl(e.value)

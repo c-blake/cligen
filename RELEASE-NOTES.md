@@ -10,6 +10,9 @@ Version: 1.5.33
     rename of cset to chars is a weakly BREAKING CHANGE (only if you used a
     named parameter invocation).
 
+    Harden against ByteAddress deprecation and BareExcept/LineTooLong warnings
+    if you like those sorts of things.
+
 Version: 1.5.32
 ---------------
  - Change calls to quit to match what the new stdlib expects (see

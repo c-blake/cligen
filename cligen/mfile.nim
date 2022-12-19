@@ -21,8 +21,8 @@ proc `[]`*[A,B](mf: MFile, s: HSlice[A,B]): MSlice = mf.mslc[s]
 
 proc mem*(mf: MFile): pointer = mf.mslc.mem ## accessor to use MFile like MSlice
 proc len*(mf: MFile): int     = mf.mslc.len ## accessor to use MFile like MSlice
-proc `mem=`*(mf: var MFile, m: pointer) = mf.mslc.mem = m ## accessor to use MFile like MSlice
-proc `len=`*(mf: var MFile, n: int)     = mf.mslc.len = n ## accessor to use MFile like MSlice
+proc `mem=`*(mf: var MFile, m: pointer) = mf.mslc.mem = m ## use MFile ~ MSlice
+proc `len=`*(mf: var MFile, n: int)     = mf.mslc.len = n ## use MFile ~ MSlice
 
 proc getpagesize(): cint {. importc: "getpagesize", header: "<unistd.h>" .}
 let pagesize = getpagesize()
@@ -164,7 +164,7 @@ proc inCore*(mf: MFile): tuple[resident, total: int] =
 
 proc `<`*(a,b: MFile): bool = cmemcmp(a.mem, b.mem, min(a.len, b.len).csize) < 0
 
-proc `==`*(a,b: MFile): bool = a.len==b.len and cmemcmp(a.mem,b.mem,a.len.csize)==0
+proc `==`*(a,b:MFile): bool=a.len==b.len and cmemcmp(a.mem,b.mem,a.len.csize)==0
 
 proc `==`*(a: MFile, p: pointer): bool = a.mem==p
 
@@ -224,7 +224,8 @@ iterator rows*(f: File, s: Sep, n=0): seq[string] =
   for row in rows(f, s, sq, n): yield sq
 
 iterator getDelims(f: File, dlm: char='\n'): (cstring, int) =
-  proc getdelim(p: ptr cstring, n: ptr uint, dlm: cint, f: File): int {.header: "stdio.h".}
+  proc getdelim(p: ptr cstring, n: ptr uint, dlm: cint,
+                f: File): int {.header: "stdio.h".}
   proc free(pointr: cstring) {.header: "stdlib.h".}
   var s: cstring
   var room: csize

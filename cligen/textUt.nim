@@ -1,4 +1,5 @@
-from strutils import split, join, strip, repeat, replace, count, Whitespace, startsWith, toUpper
+from strutils import split, join, strip, repeat, replace, count, Whitespace,
+                     startsWith, toUpper
 from terminal import terminalWidth
 from unicode  import runeLen
 import os, parseutils, critbits, math, ./mslice # math.^
