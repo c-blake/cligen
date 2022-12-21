@@ -1,5 +1,4 @@
 import std/[strutils, sets, strformat]
-when not declared(File): import std/formatfloat
 
 proc hashCB*(x: openArray[char]): uint64 =
   ## Hash inspired by Fletcher1982-Arithmetic Checksum. Please credit him&me!
@@ -590,6 +589,7 @@ proc fmtUncertainMerged*(val, err: float, sigDigs=2, e0 = -2..4): string =
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 when isMainModule:
+  when not declared(File): import std/formatfloat
   from math as m3 import sqrt, log10    # for -nan; dup import is ok
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
