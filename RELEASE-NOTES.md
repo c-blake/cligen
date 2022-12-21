@@ -13,6 +13,11 @@ Version: 1.5.33
     Harden against ByteAddress deprecation and BareExcept/LineTooLong warnings
     if you like those sorts of things.
 
+    Try to make mostly clean Re: hint:Performance warnings.  There is a big
+    `hint[Performance]: off` pragma push at the top of cligen.nim, but you
+    should be able to skip that deactivationa by compiling with -d:cgCfgNone
+    to check any code you would like.
+
 Version: 1.5.32
 ---------------
  - Change calls to quit to match what the new stdlib expects (see
