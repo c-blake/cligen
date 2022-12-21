@@ -1,8 +1,10 @@
+{.push hint[Performance]: off.}
+{.push warning[ProveField]: off.}
+
 when not declared(os.joinPath):    import std/os
 when not declared(strutils.split): import std/strutils
 when not declared(cfToCL):         import cligen/cfUt
 
-{.push warning[ProveField]: off.}
 proc mergeParams(cmdNames: seq[string],
                  cmdLine=os.commandLineParams()): seq[string] =
   ## This is an include file to provide query & merge of alternate sources for
@@ -26,3 +28,4 @@ proc mergeParams(cmdNames: seq[string],
   result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   result.add cmdLine
 {.pop.}
+# Leave hint[Performance]=off as this seems required to avoid warnings.

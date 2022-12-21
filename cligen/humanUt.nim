@@ -241,12 +241,12 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
 
  iterator rstTokens(s: string): RstToken =
   var tok: RstToken = (rstBeg, "", -1)
-  yield tok
+  yield tok #COPY - warning, but rst transform should not be a bottleneck
   tok.kind = rstNil
 
   template doYield() =          # Maybe yield and if so reset token
     if tok.kind != rstNil:
-      yield tok
+      yield tok #COPY - warning, but rst transform should not be a bottleneck
       tok.text.setLen 0
       tok.kind = rstNil
       tok.ix = -1

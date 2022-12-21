@@ -1,3 +1,5 @@
+when not (defined(cgCfgNone) and defined(cgNoColor)):
+  {.push hint[Performance]: off.}     # Silence RstToken copy warning
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import std/[os, macros, tables, strutils, critbits], system/ansi_c,
