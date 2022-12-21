@@ -841,8 +841,8 @@ Options:
   -h, --help                          print this cligen-erated help
   --help-syntax                       advanced: prepend,plurals,..
   -s=, --secondsSpread=  int   300    length of time window covered by one file
-  -0, --0                bool  false  NUL-delimit the file in --outputFile
-                                      instead of newline-delimiting
+  -0, --0                bool  false  NUL-delimit --outputFile instead of
+                                      newline-delimiting
   -b, --b                bool  false  single letter parameters don't suffer
 
 ==> test/SubScope.out <==
