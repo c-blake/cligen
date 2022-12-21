@@ -580,7 +580,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       newStrLitNode("helpsyntax")).add(
         quote do:
           if cast[pointer](`setByParseId`) != cgSetByParseNil:
-            `setByParseId`[].add(("helpsyntax","", `cf`.helpSyntax, clHelpOnly))
+            `setByParseId`[].add(("helpsyntax","", #COPY
+                                  `cf`.helpSyntax[0..^1], clHelpOnly))
           if not `prsOnlyId`:
             stdout.write(`cf`.helpSyntax); raise newException(HelpOnly, "")))
     if not hasVsn:
@@ -588,7 +589,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         newStrLitNode("version"), newStrLitNode(vsnSh)).add(
           quote do:
             if cast[pointer](`setByParseId`) != cgSetByParseNil:
-              `setByParseId`[].add(("version", "", `cf`.version, clVersionOnly))
+              `setByParseId`[].add(("version", "", #COPY
+                                    `cf`.version[0..^1], clVersionOnly))
             if not `prsOnlyId`:
               if `cf`.version.len > 0:
                 stdout.write(`cf`.version, "\n")
