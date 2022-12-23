@@ -467,6 +467,33 @@ Run "MultMultMult {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "MultMultMult help" to get *comprehensive* help.
 Top-level --version also available
 
+==> test/MultMultMultTopLvl.out <==
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
+    MultMultMult {SUBCMD} [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  apple [optional-params] [cmdLine: seq...]
+    apple SUB-SUB commands
+  Options:
+      --version  bool  false  print version
+
+  whoa [optional-params] [names: string...]
+    Another entry point; here we echoResult
+  Options:
+      --version     bool   false  print version
+      -z=, --zeta=  int    1      set zeta
+      -e=, --eta=   float  2.0    set eta
+      -v, --verb    bool   false  set verb
+
+  nelly [optional-params] [names: string...]
+    Yet another entry point; here we block autoEcho
+  Options:
+      --version      bool  false  print version
+      --hooves=      int   4      set hooves
+      -r=, --races=  int   9      set races
+      -v, --verb     bool  false  set verb
+
 ==> test/MultiFlag.out <==
 Usage:
   demo [optional-params] [args: string...]
@@ -633,6 +660,44 @@ Run "PassValuesMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "PassValuesMulti help" to get *comprehensive* help.
 Top-level --version also available
 
+==> test/PassValuesMultiTopLvl.out <==
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
+    PassValuesMulti {SUBCMD} [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  [7mdemo [optional-params] [files: string...][m
+  [1m  demo entry point with varied, meaningless parameters.
+  [mOptions:
+      --version      bool    false  print version
+      -a=, --alpha=  int     1      set alpha
+      -b=, --beta=   float   2.0    set beta
+      -v, --verb     bool    false  on=chatty, off=quiet
+      -i=, --item=   string  ""     set item
+
+  [7mprint [optional-params] [paths: string...][m
+  [1m  show entry point with varied, meaningless parameters.
+  [mOptions:
+      --version      bool   false  print version
+      -z=, --gamma=  int    1      set gamma
+      -i=, --iota=   float  2.0    set iota
+      -v, --verb     bool   false  set verb
+
+  [7mpunt [optional-params] [names: string...][m
+  [1m  Another entry point; here we echoResult
+  [mOptions:
+      -z=, --zeta=  int    1      set zeta
+      -e=, --eta=   float  2.0    set eta
+      -v, --verb    bool   false  set verb
+
+  [7mnel-ly [optional-params] [names: string...][m
+  [1m  Yet another entry point; here we block autoEcho
+  [mOptions:
+      --version      bool  false  print version
+      --hooves=      int   4      set hooves
+      -r=, --races=  int   9      set races
+      -v, --verb     bool  false  set verb
+
 ==> test/PerParam.out <==
 Usage:
   demo [optional-params] [args: string...]
@@ -659,6 +724,20 @@ QualifiedMulti {-h|--help} or with no args at all prints this message.
 QualifiedMulti --help-syntax gives general cligen syntax help.
 Run "QualifiedMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "QualifiedMulti help" to get *comprehensive* help.
+
+==> test/QualifiedMultiTopLvl.out <==
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
+    QualifiedMulti {SUBCMD} [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  get [optional-params] 
+  Options:
+      -a=, --a=  int  1  set a
+
+  put [optional-params] 
+  Options:
+      -b=, --b=  int  2  set b
 
 ==> test/QualifiedSym.out <==
 Usage:
@@ -857,6 +936,20 @@ SubScope {-h|--help} or with no args at all prints this message.
 SubScope --help-syntax gives general cligen syntax help.
 Run "SubScope {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "SubScope help" to get *comprehensive* help.
+
+==> test/SubScopeTopLvl.out <==
+This is a multiple-dispatch command.  -h/--help/--help-syntax is available
+for top-level/all subcommands.  Usage is like:
+    SubScope {SUBCMD} [subcommand-opts & args]
+where subcommand syntaxes are as follows:
+
+  get [optional-params] 
+  Options:
+      -a=, --a=  int  1  set a
+
+  put [optional-params] 
+  Options:
+      -b=, --b=  int  2  set b
 
 ==> test/Suppress.out <==
 Usage:
