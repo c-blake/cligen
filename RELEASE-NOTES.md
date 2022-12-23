@@ -13,6 +13,8 @@ Version: 1.5.33
     rename of cset to chars is a weakly BREAKING CHANGE (only if you used a
     named parameter invocation).
 
+    Add renameat, renameat2 to cligen/posixUt.
+
     Harden against ByteAddress deprecation and BareExcept/LineTooLong warnings
     if you like those sorts of things.
 
