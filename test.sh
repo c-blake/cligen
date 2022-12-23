@@ -16,9 +16,10 @@ for n in test/[A-Z]*.nim; do
     grep -v '\<CC: ' > $o &
 done
 wait
-./test/FullyAutoMulti help > test/FullyAutoMultiTopLvl.out 2>&1
-./test/MultiMulti help > test/MultiMultiTopLvl.out 2>&1
-./test/RangeTypes help > test/RangeTypesTopLvl.out 2>&1
+for n in $(grep -lw dispatchMulti test/*nim); do
+    p=${n%.nim}; p=${p#test/}
+    ./test/$p help > test/${p}TopLvl.out 2>&1
+done
 head -n900 test/*.out | grep -v '^Hint: ' |
      sed -e 's@.*/cligen.nim(@cligen.nim(@' \
          -e 's@.*/cligen/@cligen/@' \
