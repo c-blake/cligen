@@ -146,9 +146,9 @@ when isMainModule:
   dispatchMulti([foo, help={"myRequired": "Need it!"}], [bar])
 ```
 With the above in `cmd.nim`, CLI users can run `./cmd foo -m1` or
-`./cmd bar -y10 1.0 2.0`.  `./cmd` or `./cmd --help` print brief help messages
-while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help`
-or `./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
+`./cmd bar -y10 1.0 2.0`.  `./cmd` with no arguments prints a brief help message
+while `./cmd help` prints a comprehensive message, and `./cmd SUBCMD --help` or
+`./cmd help SUBCMD` print a message for just `SUBCMD` (e.g. `foo`|`bar`).
 
 Like long option keys or `enum` value names, subcommand names can also be ***any
 unambiguous prefix and are case-kebab-insensitive***.  So, `./cmd f-O -m1` would
