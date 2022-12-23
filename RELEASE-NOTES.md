@@ -3,6 +3,9 @@ RELEASE NOTES
 
 Version: 1.5.33
 ---------------
+    Fix a subtle certain-config-files-only bug related to top-level multi-cmd
+    help dump from -h/--help; See https://github.com/c-blake/cligen/issues/219
+
     Remove need for `rightSize` in any recent Nim.
 
     Factor `cligen/mslice.strip` into `stripLeading`, `stripTrailing` and like
