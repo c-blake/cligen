@@ -43,7 +43,7 @@ proc envToCL*(evarName: string): seq[string] =
   let e = os.getEnv(evarName)
   if e.len == 0:
     return
-  try: result.add e.parseCmdLine        # See os.parseCmdLine for details
+  try: result = e.parseCmdLine # See os.parseCmdLine for details
   except CatchableError: stderr.write "ignoring bad evarName $", evarName, "\n"
   when defined(debugEnvToCL):
     echo "parsed $", varNm, " into: ", result
