@@ -551,8 +551,8 @@ proc fmtUncertainRender*(val, err: float; fmt0, fmtE: string; parse0, parseE:
   else:                                 # too small/too big: sci notation
     fmtUncertainRender(vm, ve, um, ue, exp, fmtE, parseE)
 
-const fmtUncertain0 = "$val0 $pm $err0"
-const fmtUncertainE = "($valMan $pm $errV)$valExp"
+const fmtUncertain0 = "$val0${pm}$err0"
+const fmtUncertainE = "($valMan${pm}$errV)$valExp"
 proc fmtUncertain*(val, err: float; fmt0=fmtUncertain0, fmtE=fmtUncertainE,
                    e0 = -2..4, sigDigs=2): string =
   ## Driver for `fmtUncertainRender` which can do most desired formats.
@@ -563,8 +563,8 @@ proc fmtUncertain*(val, err: float; fmt0=fmtUncertain0, fmtE=fmtUncertainE,
   fmtUncertainRender val, err, fmt0, fmtE, parse0, parseE, e0, sigDigs
 
 proc fmtUncertainSci*(val, err: float, sigDigs=2): string =
-  ## Format co-rounded (val $pm err)e+NN with err to `sigDigs`.
-  const fmt = "($valMan $pm $errV)$valExp"; const parse = tmplParsed(fmt)
+  ## Format co-rounded (val${pm}err)e+NN with err to `sigDigs`.
+  const fmt = "($valMan${pm}$errV)$valExp"; const parse = tmplParsed(fmt)
   let (vm, ve, um, ue, exp) = fmtUncertainParts(val, err, sigDigs)
   fmtUncertainRender vm, ve, um, ue, exp, fmt, parse
 
