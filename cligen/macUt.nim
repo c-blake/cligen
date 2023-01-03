@@ -126,8 +126,8 @@ const textCh = block:
   textCh
 
 proc summaryOfModule*(sourceContents: string): string =
-  ## First paragraph of doc comment for module defining ``n` (or empty string);
-  ## Used to default ``["multi",doc]``.
+  ## First paragraph of doc comment for module defining `sourceContents` (or
+  ## empty string); Used to default `["multi",doc]`.
   var nPfx = 0
   for line in sourceContents.split("\n"):
     let ln = line.strip()
