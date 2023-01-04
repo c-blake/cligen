@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.34
+---------------
+    Default to unspaced uncertain number formats.
+
+    Minor doc fix & cfUt environment parsing simplification.
+    
+    Bug fix for `fileTime` on non-haveStatx platforms and auto-detect statx.h
+    on Ubuntu (and maybe more).
+
 Version: 1.5.33
 ---------------
     Fix a subtle certain-config-files-only bug related to top-level multi-cmd
