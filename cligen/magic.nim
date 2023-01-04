@@ -13,6 +13,11 @@ const
       if gorgeEx("test -e " & f)[1] == 0:
         r = f
         break
+    when defined(macosx):
+      const pat = "/usr/local/Cellar/libmagic/*/lib/libmagic.1.dylib"
+      if r.len == 0:                          # This only works if there..
+        if gorgeEx("test -e " & pat)[1] == 0: #..is exactly 1 pattern aka..
+          r = gorgeEx("echo " & pat)[0]       #..version installed.
     r
   cligenMagic {.booldefine.} = true
   haveMagic* = so.len > 0 and cligenMagic
