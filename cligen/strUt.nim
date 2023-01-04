@@ -1,3 +1,4 @@
+include cligen/unsafeAddr
 import std/[strutils, sets, strformat]
 
 proc hashCB*(x: openArray[char]): uint64 =

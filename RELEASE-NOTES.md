@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.35
+---------------
+    `include cligen/unsafeAddr` and use unsafeAddr where it used to be needed
+    to get Nim-version portable code without deprecation warnings or errors.
+
 Version: 1.5.34
 ---------------
     Default to unspaced uncertain number formats.

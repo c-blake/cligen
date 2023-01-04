@@ -9,8 +9,9 @@
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
 
-import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
 when not declared(File): import std/syncio
+include cligen/unsafeAddr
+import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
 type csize = uint
 type Ce* = CatchableError
 

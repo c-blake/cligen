@@ -1,4 +1,5 @@
 when not declared(addFloat): import std/objectdollar
+include cligen/unsafeAddr
 
 type App* = object
   nim*: string       ## compiler to use

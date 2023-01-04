@@ -18,9 +18,10 @@
 ## & its sibling ``fstatat`` which largely eliminates the need to deal with full
 ## paths instead of just dirent filenames.
 
+when not declared(stderr): import std/syncio
+include cligen/unsafeAddr
 import std/[os, sets, posix], cligen/[osUt, posixUt, statx]
 export perror, st_dev, Dev, readdir, closedir
-when not declared(stderr): import std/syncio
 
 type csize_t = uint #For older Nim
 type DirName = array[256, cchar]  # Some helpers for names in dirents

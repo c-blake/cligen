@@ -5,6 +5,8 @@
 ## styles can also be bounded by a number of splits/number of outputs and accept
 ## either ``MSlice`` or ``string`` as inputs to produce the ``seq[MSlice]``.
 
+when not declared(File): import std/[syncio, assertions]
+include cligen/unsafeAddr
 from std/typetraits import supportsCopyMem
 type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
@@ -23,7 +25,6 @@ proc `+!`*(p: pointer, i: int): pointer {.inline.} =
   cast[pointer](cast[uint](p) + i.uint)
 proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
   cast[pointer](cast[uint64](p) + i)
-when not declared(File): import std/[syncio, assertions]
 
 type
   MSlice* = object
