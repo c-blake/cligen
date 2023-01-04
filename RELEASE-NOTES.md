@@ -6,6 +6,13 @@ Version: 1.5.35
     `include cligen/unsafeAddr` and use unsafeAddr where it used to be needed
     to get Nim-version portable code without deprecation warnings or errors.
 
+    ***POSSIBLY*** breaking change note: `procpool.evalOb` uses `wrOb` which
+    uses `unsafeAddr`, but this needs to be re-declared/defined in the scope
+    which uses/instantiates `evalOb` or you get an ambiguous call error between
+    system.unsafeAddr & unsafeAddr.unsafeAddr.  Just add in an `include` @use.
+    Sorry.  I don't see an easier way to work across both many old & upcoming
+    versions.  Any suggestions are welcome, though.
+
 Version: 1.5.34
 ---------------
     Default to unspaced uncertain number formats.
