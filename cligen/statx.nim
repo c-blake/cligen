@@ -6,7 +6,8 @@
 import std/posix, cligen/posixUt
 when not declared(stderr): import std/syncio
 
-const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h ]")[1] == 0
+const haveStatx* = (gorgeEx "[ -e /usr/include/bits/statx.h -o " &
+                      "-e /usr/include/x86_64-linux-gnu/bits/statx.h ]")[1]==0
 {.passc: "-D_GNU_SOURCE".}
 when not haveStatx:
   type
