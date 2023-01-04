@@ -268,7 +268,7 @@ proc fileTime*(st: Statx, kind: char, dir=1): int64 {.inline.} =
 proc fileTime*(path: string; kind: char, missing=int64(0), dir=1): int64 =
   ## Return file time stamp ([bamcv]) in nanoseconds since the Unix epoch.
   var st: Statx
-  if statx(path, st) != 0: missing else: st.fileTime(kind, dir)
+  if stat(path, st) != 0: missing else: st.fileTime(kind, dir)
 
 proc doStat*(dfd: cint, path: string; nmAt: int, st: var Statx; Deref,
              quiet: bool): bool {.inline.} =
