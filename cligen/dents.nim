@@ -19,7 +19,7 @@
 ## paths instead of just dirent filenames.
 
 import std/[os, sets, posix], cligen/[osUt, posixUt, statx]
-export perror, st_dev, Dev
+export perror, st_dev, Dev, readdir, closedir
 when not declared(stderr): import std/syncio
 
 type csize_t = uint #For older Nim
