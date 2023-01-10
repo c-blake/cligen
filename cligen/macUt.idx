@@ -1,24 +1,26 @@
-maybeDestrop	cligen/macUt.html#maybeDestrop,NimNode	macUt: maybeDestrop(id: NimNode): NimNode	
-findByName	cligen/macUt.html#findByName,NimNode,NimNode	macUt: findByName(parId: NimNode; fpars: NimNode): int	
-collectComments	cligen/macUt.html#collectComments,string,NimNode,int	macUt: collectComments(buf: var string; n: NimNode; depth: int = 0)	
-toString	cligen/macUt.html#toString,NimNode	macUt: toString(n: NimNode): string	
-toInt	cligen/macUt.html#toInt,NimNode	macUt: toInt(n: NimNode): int	
-toStrIni	cligen/macUt.html#toStrIni,range[]	macUt: toStrIni(c: range[0 .. 255]): NimNode	
-toStrSeq	cligen/macUt.html#toStrSeq,NimNode	macUt: toStrSeq(strSeqInitializer: NimNode): seq[string]	
-toIdSeq	cligen/macUt.html#toIdSeq,NimNode	macUt: toIdSeq(strSeqInitializer: NimNode): seq[NimNode]	
-has	cligen/macUt.html#has,seq[NimNode],NimNode	macUt: has(ns: seq[NimNode]; n: NimNode): bool	
-srcPath	cligen/macUt.html#srcPath,NimNode	macUt: srcPath(n: NimNode): string	
-srcBaseName	cligen/macUt.html#srcBaseName,NimNode,string	macUt: srcBaseName(n: NimNode; sfx = &quot;.nim&quot;): NimNode	
-srcData	cligen/macUt.html#srcData,NimNode	macUt: srcData(n: NimNode): string	
-paramPresent	cligen/macUt.html#paramPresent,NimNode,string	macUt: paramPresent(n: NimNode; kwArg: string): bool	
-paramVal	cligen/macUt.html#paramVal,NimNode,string	macUt: paramVal(n: NimNode; kwArg: string): NimNode	
-newParam	cligen/macUt.html#newParam,string,NimNode	macUt: newParam(id: string; rhs: NimNode): NimNode	
-fromNimble	cligen/macUt.html#fromNimble,string,string	macUt: fromNimble(nimbleContents: string; field: string): string	
-versionFromNimble	cligen/macUt.html#versionFromNimble,string	macUt: versionFromNimble(nimbleContents: string): string	
-summaryOfModule	cligen/macUt.html#summaryOfModule,string	macUt: summaryOfModule(sourceContents: string): string	
-summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	macUt: summaryOfModule(n: NimNode): string	
-docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macUt: docFromModuleOf(sym: typed{nkSym}): untyped	
-docFromProc	cligen/macUt.html#docFromProc.m	macUt: docFromProc(sym: typed{nkSym}): untyped	
-with	cligen/macUt.html#with.m,typed,untyped,untyped	macUt: with(ob: typed; fields: untyped; body: untyped): untyped	
-callsOn	cligen/macUt.html#callsOn.m,varargs[untyped]	macUt: callsOn(routineFirstsRest: varargs[untyped]): untyped	
-docCommentAdd	cligen/macUt.html#docCommentAdd.m,staticstring	macUt: docCommentAdd(s: static string): untyped	
+nimTitle	macUt	cligen/macUt.html	module cligen/macUt		0
+nim	maybeDestrop	cligen/macUt.html#maybeDestrop,NimNode	proc maybeDestrop(id: NimNode): NimNode		6
+nim	findByName	cligen/macUt.html#findByName,NimNode,NimNode	proc findByName(parId: NimNode; fpars: NimNode): int		13
+nim	collectComments	cligen/macUt.html#collectComments,string,NimNode,int	proc collectComments(buf: var string; n: NimNode; depth: int = 0)		24
+nim	toString	cligen/macUt.html#toString,NimNode	proc toString(n: NimNode): string		34
+nim	toInt	cligen/macUt.html#toInt,NimNode	proc toInt(n: NimNode): int		43
+nim	toStrIni	cligen/macUt.html#toStrIni,range[]	proc toStrIni(c: range[0 .. 255]): NimNode		49
+nim	toStrSeq	cligen/macUt.html#toStrSeq,NimNode	proc toStrSeq(strSeqInitializer: NimNode): seq[string]		53
+nim	toIdSeq	cligen/macUt.html#toIdSeq,NimNode	proc toIdSeq(strSeqInitializer: NimNode): seq[NimNode]		59
+nim	has	cligen/macUt.html#has,seq[NimNode],NimNode	proc has(ns: seq[NimNode]; n: NimNode): bool		71
+nim	srcPath	cligen/macUt.html#srcPath,NimNode	proc srcPath(n: NimNode): string		75
+nim	srcBaseName	cligen/macUt.html#srcBaseName,NimNode,string	proc srcBaseName(n: NimNode; sfx = ".nim"): NimNode		79
+nim	srcData	cligen/macUt.html#srcData,NimNode	proc srcData(n: NimNode): string		85
+nim	paramPresent	cligen/macUt.html#paramPresent,NimNode,string	proc paramPresent(n: NimNode; kwArg: string): bool		89
+nim	paramVal	cligen/macUt.html#paramVal,NimNode,string	proc paramVal(n: NimNode; kwArg: string): NimNode		96
+nim	newParam	cligen/macUt.html#newParam,string,NimNode	proc newParam(id: string; rhs: NimNode): NimNode		104
+nim	fromNimble	cligen/macUt.html#fromNimble,string,string	proc fromNimble(nimbleContents: string; field: string): string		108
+nim	versionFromNimble	cligen/macUt.html#versionFromNimble,string	proc versionFromNimble(nimbleContents: string): string		117
+nim	summaryOfModule	cligen/macUt.html#summaryOfModule,string	proc summaryOfModule(sourceContents: string): string		128
+nim	summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	proc summaryOfModule(n: NimNode): string		148
+nim	docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macro docFromModuleOf(sym: typed{nkSym}): untyped		151
+nim	docFromProc	cligen/macUt.html#docFromProc.m	macro docFromProc(sym: typed{nkSym}): untyped		155
+nim	with	cligen/macUt.html#with.m,typed,untyped,untyped	macro with(ob: typed; fields: untyped; body: untyped): untyped		162
+nim	callsOn	cligen/macUt.html#callsOn.m,varargs[untyped]	macro callsOn(routineFirstsRest: varargs[untyped]): untyped		175
+nim	docCommentAdd	cligen/macUt.html#docCommentAdd.m,staticstring	macro docCommentAdd(s: static string): untyped		186
+nimgrp	summaryofmodule	cligen/macUt.html#summaryOfModule-procs-all	proc		128

@@ -1,16 +1,17 @@
-`:=`	cligen/sysUt.html#:=,T,T	sysUt: `:=`[T](x: var T; y: T): T	
-findUO	cligen/sysUt.html#findUO,string,char	sysUt: findUO(s: string; c: char): int	
-delete	cligen/sysUt.html#delete,string,Natural	sysUt: delete(x: var string; i: Natural)	
-maybePar	cligen/sysUt.html#maybePar.i,bool,int,int	sysUt: maybePar(parallel: bool; a, b: int): int	
-enumerate	cligen/sysUt.html#enumerate.m,ForLoopStmt	sysUt: enumerate(x: ForLoopStmt): untyped	
-toItr	cligen/sysUt.html#toItr.m,ForLoopStmt	sysUt: toItr(x: ForLoopStmt): untyped	
-incd	cligen/sysUt.html#incd,T,int	sysUt: incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
-decd	cligen/sysUt.html#decd,T,int	sysUt: decd[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
-postInc	cligen/sysUt.html#postInc,T,int	sysUt: postInc[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
-postDec	cligen/sysUt.html#postDec,T,int	sysUt: postDec[T: Ordinal | uint | uint64](x: var T; amt = 1): T	
-delItem	cligen/sysUt.html#delItem,seq[T],T	sysUt: delItem[T](x: var seq[T]; item: T): int	
-seekable	cligen/sysUt.html#seekable,File	sysUt: seekable(f: File): bool	
-`&amp;`	cligen/sysUt.html#&,openArray[T],openArray[T]	sysUt: `&amp;`[T](x: openArray[T]; y: openArray[T]): seq[T]	
-echoQuit130	cligen/sysUt.html#echoQuit130	sysUt: echoQuit130()	
-CopyMemable	cligen/sysUt.html#CopyMemable	sysUt: CopyMemable	
-newSeqNoInit	cligen/sysUt.html#newSeqNoInit,Natural	sysUt: newSeqNoInit[T: CopyMemable](len: Natural): seq[T]	
+nimTitle	sysUt	cligen/sysUt.html	module cligen/sysUt		0
+nim	`:=`	cligen/sysUt.html#:=,T,T	proc `:=`[T](x: var T; y: T): T		2
+nim	findUO	cligen/sysUt.html#findUO,string,char	proc findUO(s: string; c: char): int		7
+nim	delete	cligen/sysUt.html#delete,string,Natural	proc delete(x: var string; i: Natural)		13
+nim	maybePar	cligen/sysUt.html#maybePar.i,bool,int,int	iterator maybePar(parallel: bool; a, b: int): int		20
+nim	enumerate	cligen/sysUt.html#enumerate.m,ForLoopStmt	macro enumerate(x: ForLoopStmt): untyped		29
+nim	toItr	cligen/sysUt.html#toItr.m,ForLoopStmt	macro toItr(x: ForLoopStmt): untyped		46
+nim	incd	cligen/sysUt.html#incd,T,int	proc incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T		59
+nim	decd	cligen/sysUt.html#decd,T,int	proc decd[T: Ordinal | uint | uint64](x: var T; amt = 1): T		63
+nim	postInc	cligen/sysUt.html#postInc,T,int	proc postInc[T: Ordinal | uint | uint64](x: var T; amt = 1): T		67
+nim	postDec	cligen/sysUt.html#postDec,T,int	proc postDec[T: Ordinal | uint | uint64](x: var T; amt = 1): T		71
+nim	delItem	cligen/sysUt.html#delItem,seq[T],T	proc delItem[T](x: var seq[T]; item: T): int		75
+nim	seekable	cligen/sysUt.html#seekable,File	proc seekable(f: File): bool		81
+nim	`&`	cligen/sysUt.html#&,openArray[T],openArray[T]	proc `&`[T](x: openArray[T]; y: openArray[T]): seq[T]		86
+nim	echoQuit130	cligen/sysUt.html#echoQuit130	proc echoQuit130()		92
+nim	CopyMemable	cligen/sysUt.html#CopyMemable	type CopyMemable		96
+nim	newSeqNoInit	cligen/sysUt.html#newSeqNoInit,Natural	proc newSeqNoInit[T: CopyMemable](len: Natural): seq[T]		99
