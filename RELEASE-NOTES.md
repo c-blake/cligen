@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.37
+---------------
+    Fix https://github.com/c-blake/cligen/issues/220
+
 Version: 1.5.35
 ---------------
     `include cligen/unsafeAddr` and use unsafeAddr where it used to be needed
