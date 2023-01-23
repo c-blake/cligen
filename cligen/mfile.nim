@@ -101,7 +101,7 @@ proc mopen*(fh: cint, prot=PROT_READ, flags=MAP_SHARED, a=0, b = Off(-1),
     result.fi = result.fd.getFileInfo
   except CatchableError: # LEAK: Win cannot fdclose(fd) WITHOUT closing `fh`!
     perror cstring("fstat"), err; return
-  if result.fi.isSpecial:             #Even symlns should fstat to ISREG. Quiet
+  if result.fi.size == 0:             #Even symlns should fstat to ISREG. Quiet
     return  # Same LEAK               #error in case client trying /dev/stdin.
   mopen(result.fd, fh, result.fi, prot, flags, a, b, allowRemap, noShrink, err)
 
