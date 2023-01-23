@@ -277,7 +277,7 @@ iterator mSlices*(path: string, sep='\l', eat='\r', keep=false,
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
   ##means MFile or strings backing MSlice's are kept alive for life of program
   ##unless you also pass `mf` which returns the `MFile` to close when unneeded.
-  let mfl = mopen(path, err=err)    # MT-safety means cannot just use `mf`
+  let mfl = mopen(path, err=nil)    # MT-safety means cannot just use `mf`
   if mfl.mem != nil:
     for ms in mSlices(mfl.toMSlice, sep, eat):
       yield ms
