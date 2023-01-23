@@ -529,7 +529,7 @@ proc findPathPattern*(pathPattern: string): string =
     if base in path:
       result = dir & '/' & path; break
 
-proc setFileSize*(fh: FileHandle; currSize, newSize: int): OSErrorCode =
+proc setFileSize*(fh: FileHandle; currSize, newSize: int64): OSErrorCode =
   ## Set the size of open file pointed to by `fh` to `newSize` if >= 0.  Space
   ## is pre-allocated only when cheaper than writing.  To support no exceptions
   ## code, this returns 0 on success, elsewise last OSErrorCode.

@@ -51,7 +51,7 @@ proc fdClose*(mf: MFile): int = doFdClose(mf.fd, mf.fh)
 proc fdClose*(mf: var MFile): int = ## Only release file handles underlying `mf`
   if doFdClose(mf.fd, mf.fh) != -1: mf.fd = -1  # invalidate on success
 
-proc setSize(mf: MFile; old, new: int): OSErrorCode =
+proc setSize(mf: MFile; old, new: int64): OSErrorCode =
   (when defined(windows): mf.fh else: mf.fd).setFileSize(old, new)
 
 proc mopen*(fd,fh: cint; fi:FileInfo, prot=PROT_READ, flags=MAP_SHARED, a=0.Off,
@@ -150,7 +150,7 @@ proc close*(mf: var MFile, err=stderr) =
   ## Release memory acquired by `mf` mopen()s; Sets fields to invalid.
   doClose(); mf.mslc.mem = nil; mf.fd = -1
 
-proc resize*(mf: var MFile, newFileSize: int, err=stderr): int =
+proc resize*(mf: var MFile, newFileSize: int64, err=stderr): int =
   ## Resize & re-map file underlying an ``allowRemap MFile``. ``.mem`` will
   ## likely change.  **Note**: this assumes entire file is mapped @off=0.
   if mf.fd == -1 or (when defined(windows): mf.mh == 0 else: false):
