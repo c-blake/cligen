@@ -324,7 +324,8 @@ proc mkdirOpen*(path: string, mode=fmRead, bufSize = -1): File =
 
 template popent(cmd, path, bufSize, mode, modeStr, dfl, dflStr): untyped =
   when defined(Windows):
-    proc popen(a1, a2: cstring): File {.importc: "_popen".}
+    proc popen(cmd, mode: cstring): File =
+      {.emit: "_popen((const char *)`cmd`, (const char *)`mode`);" .}
     let modeExtra = "b"
   else:
     let modeExtra = ""
