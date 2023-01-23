@@ -18,6 +18,10 @@ Version: 1.5.38
     Give `osUt` & `mfile` modules minimal unit tests.  Works fine under MSYS2
     with with mingw-w64-ucrt-x86_64 in virt.mach.; Could use VStudio testing.
 
+    Another BREAKING CHANGE is an unlikely externally used overload
+    `mfile.mopen(fd: cint; st: Stat, ...)` which has now become
+    `mfile.mopen(fd, fh: cint; fi: FileInfo, ...)`.
+
 Version: 1.5.37
 ---------------
     Fix https://github.com/c-blake/cligen/issues/220
