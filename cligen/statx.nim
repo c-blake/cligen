@@ -78,8 +78,9 @@ proc toStatxTs*(t: int64): StatxTs {.inline.} =
   result.tv_sec  = t div 1_000_000_000
   result.tv_nsec = int32(t - result.tv_sec * 1_000_000_000)
 
-export impConst, impCint, AT_FDCWD, AT_SYMLINK_NOFOLLOW, AT_SYMLINK_FOLLOW,
-       AT_REMOVEDIR, AT_EACCESS      ## These & next export used to live here.
+export impConst, impCint
+when declared(AT_FDCWD): export AT_FDCWD, AT_SYMLINK_NOFOLLOW,
+     AT_SYMLINK_FOLLOW, AT_REMOVEDIR, AT_EACCESS
 when defined(linux) and haveStatx:
   export AT_NO_AUTOMOUNT, AT_EMPTY_PATH
   impCint("fcntl.h", AT_STATX_SYNC_TYPE)
@@ -158,14 +159,16 @@ proc stat2statx(dst: var Statx, src: Stat) {.inline.} =
   dst.stx_mask            = 0xFFFFFFFF.uint32
 # dst.stx_attributes      = .uint64     #No analogues; Extra syscalls?
 # dst.stx_attributes_mask = .uint64
-  dst.stx_blksize         = src.st_blksize.uint32
+  when not defined(windows):
+    dst.stx_blksize       = src.st_blksize.uint32
   dst.stx_nlink           = src.st_nlink.uint32
   dst.stx_uid             = src.st_uid.uint32
   dst.stx_gid             = src.st_gid.uint32
   dst.stx_mode            = src.st_mode.uint16
   dst.stx_ino             = src.st_ino.uint64
   dst.stx_size            = src.st_size.uint64
-  dst.stx_blocks          = src.st_blocks.uint64
+  when not defined(windows):
+    dst.stx_blocks        = src.st_blocks.uint64
   dst.stx_atime           = src.st_atim.toStatxTs
   dst.stx_btime = min(src.st_atim, min(src.st_ctim, src.st_mtim)).toStatxTs
   dst.stx_ctime           = src.st_ctim.toStatxTs
@@ -242,7 +245,9 @@ proc statxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint =
   statx(dirfd, path, flags, stx)
 
 proc lstatxat*(dirfd: cint, path: cstring, stx: var Statx, flags: cint): cint =
-  statx(dirfd, path, flags or AT_SYMLINK_NOFOLLOW, stx)
+  when declared(AT_SYMLINK_NOFOLLOW):
+    statx(dirfd, path, flags or AT_SYMLINK_NOFOLLOW, stx)
+  else: statx(dirfd, path, flags, stx)
 
 template makeGetTimeNSec(name: untyped, field: untyped) =
   proc name*(stx: Statx): int64 {.inline.} =

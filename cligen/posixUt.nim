@@ -49,13 +49,14 @@ template impConst*(T: untyped, path: string, name: untyped): untyped {.dirty.} =
 template impCint*(path: string, name: untyped): untyped {.dirty.} =
   impConst(cint, path, name)
 
-impCint("fcntl.h", AT_FDCWD)            ## Tell *at calls to use CWorking Direct
-impCint("fcntl.h", AT_SYMLINK_NOFOLLOW) ## Do not follow symbolic links
-impCint("fcntl.h", AT_REMOVEDIR)        ## Remove dir instead of unlinking file
-impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
-impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
-impConst(clong, "sys/stat.h", UTIME_NOW)  ## tv_nsec value for *utimens* => now
-impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* => omit
+when not defined(windows):
+ impCint("fcntl.h", AT_FDCWD)            ## Tell *at calls to use Curr Wkg Dir
+ impCint("fcntl.h", AT_SYMLINK_NOFOLLOW) ## Do not follow symbolic links
+ impCint("fcntl.h", AT_REMOVEDIR)        ## Remove dir instead of unlinking file
+ impCint("fcntl.h", AT_SYMLINK_FOLLOW)   ## Follow symbolic links
+ impCint("fcntl.h", AT_EACCESS)          ## Test access perm for EID,not real ID
+ impConst(clong, "sys/stat.h", UTIME_NOW)  ## tv_nsec value for *utimens* => now
+ impConst(clong, "sys/stat.h", UTIME_OMIT) ## tv_nsec value for *utimens* =>omit
 when defined(linux):
   const AT_NO_AUTOMOUNT* = 0x800        ## Suppress terminal automount traversal
   const AT_EMPTY_PATH*   = 0x1000       ## Allow empty relative pathname
@@ -161,7 +162,7 @@ template defineIdentities(ids, Id, Entry, getid, rewind,
     ##Populate Table[Id, string] with data from system account files
     when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[Id, string]()
     var id: ptr Entry
-    when defined(android):
+    when defined(android) or defined(windows):
       proc getid(id: Id): ptr Entry {.importc.}
       for i in 0 ..< 32768:
         if (id := getid(i)) != nil:
@@ -179,7 +180,7 @@ template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
     ##Populate Table[Id, string] with data from system account files
     when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[string, Id]()
     var id: ptr Entry
-    when defined(android):
+    when defined(android) or defined(windows):
       proc getid(id: Id): ptr Entry {.importc.}
       for i in 0 ..< 32768:
         if (id := getid(i)) != nil:
@@ -220,6 +221,11 @@ proc `$`*(st: Stat): string =
    "blksize: " & $st.st_blksize & ", " & "blocks: " & $st.st_blocks & ", " &
    "atim: "    & $st.st_atim    & ", " & "mtim: "   & $st.st_mtim   & ", " &
    "ctim: "    & $st.st_ctim    & ")"
+
+when defined(windows):
+  proc d_type*(de: Dirent): int8 = 0
+  proc d_type*(de: ptr Dirent): int8 = 0
+  proc `d_type=`*(de: var Dirent, x: int8) = discard
 
 proc stat2dtype*(st_mode: Mode): int8 {.inline.} =
   ##Convert S_ISDIR(st_mode) style dirent types to DT_DIR style.
@@ -621,11 +627,12 @@ proc match*(m: Mode|uint16, kinds: set[FileKind]): bool {.inline.} =
   if fkPipe in kinds and m.S_ISFIFO: return true
   if fkSock in kinds and m.S_ISSOCK: return true
 
-impConstAs(cint, "sys/mman.h", POSIX_MADV_NORMAL    , MADV_NORMAL    )
-impConstAs(cint, "sys/mman.h", POSIX_MADV_SEQUENTIAL, MADV_SEQUENTIAL)
-impConstAs(cint, "sys/mman.h", POSIX_MADV_RANDOM    , MADV_RANDOM    )
-impConstAs(cint, "sys/mman.h", POSIX_MADV_WILLNEED  , MADV_WILLNEED  )
-impConstAs(cint, "sys/mman.h", POSIX_MADV_DONTNEED  , MADV_DONTNEED  )
+when not defined(windows):
+  impConstAs(cint, "sys/mman.h", POSIX_MADV_NORMAL    , MADV_NORMAL    )
+  impConstAs(cint, "sys/mman.h", POSIX_MADV_SEQUENTIAL, MADV_SEQUENTIAL)
+  impConstAs(cint, "sys/mman.h", POSIX_MADV_RANDOM    , MADV_RANDOM    )
+  impConstAs(cint, "sys/mman.h", POSIX_MADV_WILLNEED  , MADV_WILLNEED  )
+  impConstAs(cint, "sys/mman.h", POSIX_MADV_DONTNEED  , MADV_DONTNEED  )
 proc madvise*(mem: pointer, len: int, advice: cint): int =
   ## Define briefer/old school `madvise` in terms of the more portable
   ## `(posix|POSIX)_` constructs.
