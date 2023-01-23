@@ -543,14 +543,15 @@ proc setFileSize*(fh: FileHandle; currSize, newSize: int64): OSErrorCode =
       result = osLastError()
       echo "could not set EOF: ", result
   else:
+    let nSz = newSize.Off
     if newSize > currSize:              # GROW FILE
       var e: cint                       # posix_fallocate truncates up as needed
-      while (e = posix_fallocate(fh, 0, newSize); e == EINTR): discard
-      if e in [EINVAL, EOPNOTSUPP] and ftruncate(fh, newSize) == -1:
+      while (e = posix_fallocate(fh, 0.Off, nSz); e == EINTR): discard
+      if e in [EINVAL, EOPNOTSUPP] and ftruncate(fh, nSz) == -1:
         result = osLastError()          # ftruncate fallback debatable; More FS
       elif e!=0: result = osLastError() #..portable, but SEGV becomes possible.
     else:                               # newSize < currSize: SHRINK FILE
-      result = if ftruncate(fh,newSize) == -1: osLastError() else: 0.OSErrorCode
+      result = if ftruncate(fh, nSz) == -1: osLastError() else: 0.OSErrorCode
 
 when isMainModule:
   proc testSetFileSize =
