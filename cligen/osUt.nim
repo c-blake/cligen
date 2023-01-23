@@ -14,6 +14,12 @@ include cligen/unsafeAddr
 import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
 type csize = uint
 type Ce* = CatchableError
+when defined(windows):
+  import winlean
+  proc openOsFhandle*(osh:Handle, mode:cint): cint {.importc: "_open_osfhandle",
+                                                     header: "io.h".} # get &
+  proc fdClose*(fd: cint): cint {.importc: "_close", header: "io.h".} # free
+  #NOTE: Like ANSI C `fclose`, `_close` also closes underlying file.
 
 proc isatty(f: File): bool =
   when defined(posix):
@@ -22,22 +28,23 @@ proc isatty(f: File): bool =
     proc isatty(fildes: FileHandle): cint {.importc:"_isatty",header:"io.h".}
   result = isatty(getFileHandle(f)) != 0'i32
 
-proc perror*(x: cstring, len: int, err=stderr) =
+proc strlen(a: cstring): uint {.header: "string.h".}
+proc strerror(n: cint): cstring {.header: "string.h".}
+proc perror*(x: cstring, len: int, code: OSErrorCode, err=stderr) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
   if err == nil: return
-  proc strlen(a: cstring): csize {.importc: "strlen", header: "<string.h>" .}
-  let errno  = int(osLastError())
-# var sys_errlist {.importc: "sys_errlist", header: "<stdio.h>".}: cstringArray
-# var sys_nerr {.importc: "sys_nerr", header: "<stdio.h>".}: cint
-# let errstr = if errno < int(sys_nerr): sys_errlist[errno] #XXX sys_*err always
-#              else: cstring("errno with no sys_errlist")   #nil for some reason
-  proc strerror(n: cint): cstring {.importc: "strerror", header: "<string.h>".}
-  let errstr = strerror(cint(errno))  #XXX docs claim strerror is not MT-safe,
-  let errlen = strlen(errstr)         #    but it sure seems to be on Linux.
-  discard err.writeBuffer(pointer(x), len)
-  err.write ": "
-  discard err.writeBuffer(errstr, errlen)
-  err.write "\n"
+  let errStr = strerror(code.cint)
+  let errLen = strlen(errstr)
+  try:
+    discard err.writeBuffer(x.pointer, len); err.write ": "
+    discard err.writeBuffer(errstr, errlen); err.write "\n"
+  except CatchableError: discard  # This should perhaps panic
+
+proc perror*(x:cstring, len:int, err=stderr) = perror x, len, osLastError(), err
+  ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
+
+proc perror*(x:cstring, err=stderr) = perror x, x.strlen.int, osLastError(), err
+  ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
 
 proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
@@ -45,6 +52,45 @@ proc useStdin*(path: string): bool =
 
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
+when true or defined(windows):
+  {.emit: """#include <stdio.h>
+ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
+  char *ptr, *end;
+  if (*buf == NULL || *nBuf == 0) {
+    *nBuf = BUFSIZ;
+    if ((*buf = malloc(*nBuf)) == NULL)
+      return -1;
+  }
+  for (ptr = *buf, end = *buf + *nBuf;;) {
+    int c = fgetc(fp);
+    if (c == -1) {
+      if (feof(fp)) {
+        ssize_t diff = (ssize_t)(ptr - *buf);
+        if (diff != 0) {
+          *ptr = '\0';
+          return diff;
+        }
+      }
+      return -1;
+    }
+    *ptr++ = c;
+    if (c == delim) {
+      *ptr = '\0';
+      return ptr - *buf;
+    }
+    if (ptr + 2 >= end) {
+      char *nbuf;
+      size_t nBufSz = *nBuf * 2;
+      ssize_t d = ptr - *buf;
+      if ((nbuf = realloc(*buf, nBufSz)) == NULL)
+        return -1;
+      *buf = nbuf;
+      *nBuf = nBufSz;
+      end = nbuf + nBufSz;
+      ptr = nbuf + d;
+    }
+  }
+}""".}
 
 proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
 iterator getDelim*(f: File, dlm: char='\n'): string =
@@ -277,6 +323,8 @@ when defined(linux):
       for cpu in cpus:
         cpu_set(cpu.cint, cs.addr)
     discard sched_setaffinity(0.Pid, cs.sizeof.csize, cs.addr)
+else:
+  proc setAffinity*(cpus: openArray[cint] = []) = discard # no-op
 
 proc splitPathName*(path: string, shortestExt=false):
     tuple[dir, name, ext: string] =
@@ -406,7 +454,8 @@ proc autoClose* =
   for path, f in outs: (if f != nil: f.close)
   outs.clear
 
-proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
+when not defined(windows):
+ proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
   ## Like read but loop if `end!=eor` (growing `buf` to multiples of `n`).  In
   ## effect, this reads an integral number of recs - which must still be split!
   var o, nR: int
@@ -415,39 +464,39 @@ proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
     buf.setLen buf.len + n                      # Keeps total len multiple of n,
   result = if nR <= 0: nR else: o+nR            #..but `buf` gets trailing junk.
 
-proc uRd*[T](f: File, ob: var T): bool =
+ proc uRd*[T](f: File, ob: var T): bool =
   ## Unlocked read flat object `ob` from `File`.
   f.ureadBuffer(ob.addr, ob.sizeof) == ob.sizeof
 
-proc uWr*[T](f: File, ob: var T): bool =
+ proc uWr*[T](f: File, ob: var T): bool =
   ## Unlocked write flat object `ob` to `File`.
   f.uriteBuffer(ob.addr, ob.sizeof) == ob.sizeof
 
-proc wrOb*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
+ proc wrOb*[T](fd: cint, ob: T): int = fd.write(ob.unsafeAddr, T.sizeof)
   ## Write flat object `ob` to file handle/descriptor `fd`.
 
-proc wr*[T](fd: cint, ob: T): int {.deprecated: "use `wrOb`".} = fd.wrOb ob
+ proc wr*[T](fd: cint, ob: T): int {.deprecated: "use `wrOb`".} = fd.wrOb ob
 
-proc wr0term*(fd: cint, buf: string): int =
+ proc wr0term*(fd: cint, buf: string): int =
   ## Write `buf` as a NUL-terminated string to `fd`.
   fd.write(cast[cstring](buf[0].unsafeAddr), buf.len + 1)
 
-template IOVecLen(x): untyped = (type(IOVec.iov_len)(x))
-proc wrLine*(fd: cint, buf: string): int =
+ template IOVecLen(x): untyped = (type(IOVec.iov_len)(x))
+ proc wrLine*(fd: cint, buf: string): int =
   ## Write `buf` & then a single newline atomically (`writev` on Linux).
   let nl = '\n'
   let iov = [ IOVec(iov_base: buf[0].unsafeAddr, iov_len: IOVecLen(buf.len)),
               IOVec(iov_base: nl.unsafeAddr    , iov_len: 1) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
-proc wrLenBuf*(fd: cint, buf: string): int =
+ proc wrLenBuf*(fd: cint, buf: string): int =
   ## Write `int` length prefix & `buf` data atomically (`writev` on Linux).
   let n = buf.len
   let iov = [ IOVec(iov_base: n.unsafeAddr     , iov_len: IOVecLen(n.sizeof)),
               IOVec(iov_base: buf[0].unsafeAddr, iov_len: IOVecLen(buf.len)) ]
   writev(fd, iov[0].unsafeAddr, 2)
 
-proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
+ proc wrLenSeq*[T](fd: cint, s: seq[T]): int =
   ## Write `int` length prefixed data of a `seq[T]` atomically (`writev` on
   ## Linux), where `T` are either flat objects or tuples of flat objects (no
   ## indirections allowed).
@@ -471,3 +520,52 @@ proc run*(cmd: openArray[string], env: StringTableRef=nil, opts={poEchoCmd,
   if not dryRun:
     startProcess(cmd[0], "", cmd[1..^1], env, opts - {poEchoCmd}).waitForExit
   else: 0
+
+proc findPathPattern*(pathPattern: string): string =
+  ## Search directory containing pathPattern (or ".") for *first* matching name.
+  ## Pattern matching is currently substring only.
+  let (dir, base, _) = pathPattern.splitFile
+  for (_, path) in dir.walkDir(relative=true):
+    if base in path:
+      result = dir & '/' & path; break
+
+proc setFileSize*(fh: FileHandle; currSize, newSize: int): OSErrorCode =
+  ## Set the size of open file pointed to by `fh` to `newSize` if >= 0.  Space
+  ## is pre-allocated only when cheaper than writing.  To support no exceptions
+  ## code, this returns 0 on success, elsewise last OSErrorCode.
+  if newSize < 0 or newSize == currSize: return
+  when defined(windows):                # GROW|SHRINK FILE
+    var szHi = int32(newSize shr 32)
+    let szLo = int32(newSize and 0xffffffff)
+    if fh.setFilePointer(szLo, szHi.addr, FILE_BEGIN)==INVALID_SET_FILE_POINTER:
+      return osLastError()
+    if fh.setEndOfFile == 0:
+      result = osLastError()
+      echo "could not set EOF: ", result
+  else:
+    if newSize > currSize:              # GROW FILE
+      var e: cint                       # posix_fallocate truncates up as needed
+      while (e = posix_fallocate(fh, 0, newSize); e == EINTR): discard
+      if e in [EINVAL, EOPNOTSUPP] and ftruncate(fh, newSize) == -1:
+        result = osLastError()          # ftruncate fallback debatable; More FS
+      elif e!=0: result = osLastError() #..portable, but SEGV becomes possible.
+    else:                               # newSize < currSize: SHRINK FILE
+      result = if ftruncate(fh,newSize) == -1: osLastError() else: 0.OSErrorCode
+
+when isMainModule:
+  proc testSetFileSize =
+    let path = "testFile.txt"
+    let f   = open(path, fmReadWrite)
+    let ofh = f.getOsFileHandle
+    let fd  = when defined(windows): openOsFhandle(ofh, 0).FileHandle else: ofh
+    if (let e = ofh.setFileSize(0, 9); e != 0.OSErrorCode): echo "err ", e
+    if fd.getFileInfo.size != 9: echo "did not grow"
+    if (let e = ofh.setFileSize(9, 1); e != 0.OSErrorCode): echo "err ", e
+    if fd.getFileInfo.size != 1: echo "did not shrink"
+    if (let e = ofh.setFileSize(1, 5); e != 0.OSErrorCode): echo "err ", e
+    if fd.getFileInfo.size != 5: echo "did not re-grow"
+    if (let e = ofh.setFileSize(5, 2); e != 0.OSErrorCode): echo "err ", e
+    if fd.getFileInfo.size != 2: echo "did not re-shrink"
+    f.close                     # should also close fd according to MSDN
+    removeFile path
+  testSetFileSize()

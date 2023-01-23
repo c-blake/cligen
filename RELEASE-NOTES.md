@@ -1,6 +1,23 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.38
+---------------
+    BREAKING (but only impacts `adix/tests/anaPrime.nim` to my knowledge).
+      - `findPathPattern` moves from `cligen/mfile` to `cligen/osUt`
+    Many platform portability fixes for Windows.
+      - oft Forum-mentioned & widely used in my code `cligen/[mfile, mslice]`
+      - simpler `perror`
+      - `osUt.setFileSize`
+      - setAffinity -> no-op on non-Linux
+      - Windows fallback for osUt.getDelims
+      - No longer def cligen/mfile.perror|getDelims for `rp` compile-speeds
+      - temporarily deactivate cligen/procpool helpers like uRd
+      - little things in `cligen/[statx, posixUt]` such that `bu/fage` works
+      - get `popenr` `popenw` compiling on Windows
+    Give `osUt` & `mfile` modules minimal unit tests.  Works fine under MSYS2
+    with with mingw-w64-ucrt-x86_64 in virt.mach.; Could use VStudio testing.
+
 Version: 1.5.37
 ---------------
     Fix https://github.com/c-blake/cligen/issues/220
