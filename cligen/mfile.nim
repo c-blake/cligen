@@ -184,7 +184,7 @@ proc resize*(mf: var MFile, newFileSize: int64, err=stderr): int =
     if newAddr == cast[pointer](MAP_FAILED):
       perror cstring("mmap"), err; return -1
   mf.mslc.mem = newAddr
-  mf.mslc.len = newFileSize
+  mf.mslc.len = newFileSize.int
 
 proc add*[T: SomeInteger](mf: var MFile, ch: char, off: var T) = # -> mfile
   ## Append `ch` to `mf`, resizing if necessary and updating offset `off`.
