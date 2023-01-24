@@ -27,21 +27,19 @@
 ## like `examples/grl.nim`, or `*Ob` like `examples/gl.nim`.  Interleaved output
 ## is not a problem since reply processing (`prn` above) is all in the parent.
 ## There is no need for locking (unless `work` sets up & uses shared resources).
-
+##
 ## Many prog.lang people seem unaware that processes & threads are distinguished
 ## mostly by safe vs. unsafe defaults { see Linux `clone` after Plan9 `rfork` }.
 ## Memory can be opt-in-shared via `memfiles`.  RAM files can avoid device IO &
 ## copying (other than short paths) to reduce differences to the awkwardness of
 ## pointers becoming relative to named files.  Opt-into-risk designs are always
 ## "more work on-purpose" for client code.  Additional benefits are bought here:
-## seamless persistent data, well separated resource limits/state/etc. Procs are
-## about as fast, esp. in pre-spawned pools.  YMMV, but shared-all can cost more
-## than it saves.  Procs can be slower to build sharing *OR* faster from removed
-## contention { e.g. if kids do memfiles IO, thread-sibs block each others' VM
-## edits in fast (un)map cycles, but proc-sibs have private, uncontended VM }.
-## Since one situation's "awkward" is another's "expressing vital constraints",
-## good ecosystems should have libs for both (& also for files as named arenas).
-## This module is only a baby step in that direction that perhaps can inspire.
+## seamless persistent data, well separated resource limits/state/etc. YMMV, but
+## pre-spawned proc pools switch about as fast.  Procs can be slower to build
+## sharing BUT faster from less contention {eg. if kids do mmap IO, thread-sibs
+## contend for VM edits in fast (un)map cycles, but proc-sibs have uncontended,
+## private VM}. One case's "awkward" is another's "expresses vital ideas".  Good
+## ecosystems should have libs for both (& also for files as named arenas).
 
 import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
 when not declared(flushFile): import std/syncio
