@@ -52,7 +52,7 @@ proc useStdin*(path: string): bool =
 
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
   importc: "getdelim", header: "<stdio.h>".}
-when true or defined(windows):
+when defined(windows):
   {.emit: """#include <stdio.h>
 ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
   char *ptr, *end;
