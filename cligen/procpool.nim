@@ -6,13 +6,12 @@
 ##
 ## In more detail, this module abstracts the orchestration activity of a parent
 ## striping work over a pool of classic kid coprocesses { i.e. a double-pipe to
-## each kid; How classic?  Ksh88 had `coproc`. }  Kids are the user code here &
-## are basically just stdin-stdout filters needing only request-reply framing.
-## The parent just loops over work generation passed in `initProcPool`, writing
-## request frames to each kid, reading & framing whatever replies until the work
-## & replies are done.  The core of this is under 80 lines of code.  This set up
-## is least awkward when inputs & outputs are both small and there is an easy
-## message protocol, as with the example programs.
+## each kid; How classic? Ksh88 had `coproc`. }  Kids are user code here & are
+## in-out filters needing only request-reply framing.  The parent loops over
+## work generation passed in `initProcPool`, writes request frames to each kid,
+## reads & frames whatever replies until all work & replies are done.  The core
+## of this is ~80 lines of code.  This set up is least awkward when inputs &
+## outputs are both small & an easy message protocol exists (like examples/).
 ##
 ## Concretely this snippet computes & formats line lengths in parallel kids,
 ##
@@ -24,14 +23,14 @@
 ##    var pp = initProcPool(work, framesLines)
 ##    pp.evalLines commandLineParams(), echo
 ##
-## Instead of `*Lines`, you likely want to use `*0term` like `examples/only.nim`
-## or more generally `*LenPfx` like `examples/grl.nim`.  Interleaved output is
-## not a problem since reply processing (`prn` above) is all in the parent.
-## There is no need for locking unless `work` sets up & uses shared resources.
-##
+## Instead of `*Lines`, you may like `*0term` as `examples/only.nim`, `*LenPfx`
+## like `examples/grl.nim`, or `*Ob` like `examples/gl.nim`.  Interleaved output
+## is not a problem since reply processing (`prn` above) is all in the parent.
+## There is no need for locking (unless `work` sets up & uses shared resources).
+
 ## Many prog.lang people seem unaware that processes & threads are distinguished
 ## mostly by safe vs. unsafe defaults { see Linux `clone` after Plan9 `rfork` }.
-## Memory can be opt-in-shared via `memfiles` & RAM files can avoid device IO &
+## Memory can be opt-in-shared via `memfiles`.  RAM files can avoid device IO &
 ## copying (other than short paths) to reduce differences to the awkwardness of
 ## pointers becoming relative to named files.  Opt-into-risk designs are always
 ## "more work on-purpose" for client code.  Additional benefits are bought here:
@@ -41,7 +40,7 @@
 ## contention { e.g. if kids do memfiles IO, thread-sibs block each others' VM
 ## edits in fast (un)map cycles, but proc-sibs have private, uncontended VM }.
 ## Since one situation's "awkward" is another's "expressing vital constraints",
-## good ecosystems should have libs for both (and for files as named arenas).
+## good ecosystems should have libs for both (& also for files as named arenas).
 ## This module is only a baby step in that direction that perhaps can inspire.
 
 import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
