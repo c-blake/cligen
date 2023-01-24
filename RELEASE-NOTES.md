@@ -12,15 +12,16 @@ Version: 1.5.38
       - setAffinity -> no-op on non-Linux
       - Windows fallback for osUt.getDelims
       - No longer def cligen/mfile.perror|getDelims for `rp` compile-speeds
+      - MFile uses `FileInfo` not Unix-specific `Stat` for metadata
       - temporarily deactivate cligen/procpool helpers like uRd
       - little things in `cligen/[statx, posixUt]` such that `bu/fage` works
       - get `popenr` `popenw` compiling on Windows
     Give `osUt` & `mfile` modules minimal unit tests.  Works fine under MSYS2
     with with mingw-w64-ucrt-x86_64 in virt.mach.; Could use VStudio testing.
 
-    Another BREAKING CHANGE is an unlikely externally used overload
-    `mfile.mopen(fd: cint; st: Stat, ...)` which has now become
-    `mfile.mopen(fd, fh: cint; fi: FileInfo, ...)`.
+    Another BREAKING CHANGE is an overload unlikely to be used externally
+    `mfile.mopen(fd: cint; st: Stat, ...)` which has now become `mopen(fd, fh:
+    cint; fi: FileInfo, ...)` (done to support `FileInfo` over `Stat` field).
 
 Version: 1.5.37
 ---------------
