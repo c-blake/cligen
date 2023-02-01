@@ -1,4 +1,12 @@
 #!/bin/sh
 # Explain size of ELF .o files (does not work with gcc -flto).
-nm -oS --defined-only -fposix -td "$@" |
-    sort -nk5 | awk '{print $1,$2,$3,$5}'
+nm --defined-only -PAtd "$@" | # Dump all with sizes
+    sort -nk5                | # Sort all together; --size-sort does per-obFile
+    awk '{print $1,$2,$3,$5}'  # Slightly briefer report
+
+# Changing --defined-only => -U changes output format a lot (in binutils-2.40,
+# anyway; in contraction to -U seeming like a short option for --define-only
+# in both --help and man page; Some kind of CLI toolkit object lesson there..).
+#
+# Win: MSYS2 nm may work similarly
+# OSX: nm -APU -t d "$@" | sort -nk5 (but sizes are all 0; LLVM oddity?)
