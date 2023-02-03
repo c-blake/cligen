@@ -6,6 +6,7 @@ Version: 1.5.39
     - Colorize bad&good literals within error messages for unknown | ambiguous
       long opts, subcommands w/new config-file `[color] bad|good =` directives.
     - Positional argument help is now also fed to mdRst-esque render.
+    - Colorize default positional help w/same name/type colors as help table.
 
 Version: 1.5.38
 ---------------

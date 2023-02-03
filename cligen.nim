@@ -515,13 +515,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parNm = `aliasRefL`; `apId`.parSh = `aliasRefS`
         `apId`.parReq = 0; `apId`.parRend = `apId`.parNm
         `tabId`.add(argHelp("", `apId`) & `aliasRefH`) )
-    let posHelp = if posIx != -1:
-                    let posNm = optionNormalize($fpars[posIx][0])
-                    if posNm in helps: helps[posNm][1]
-                    else:
-                      let typeName = fpars[posIx][1][1].strVal
-                      "[" & $(fpars[posIx][0]) & ": " & typeName & "...]"
-                  else: ""
+    let (posNm, posHlp, posTy) = if posIx != -1:
+        let kH = helps.getOrDefault(optionNormalize($fpars[posIx][0]), ("",""))
+        let ty = if fpars[posIx][1].kind == nnkSym: fpars[posIx][1].getImpl.repr
+                 else: fpars[posIx][1][1].strVal
+        if kH[0].len != 0: (kH[0], kH[1], ty)
+        else: ($fpars[posIx][0], "", ty)
+      else: ("", "", "")
     for i in 1 ..< len(fpars):
       let idef = fpars[i]
       let sdef = spars[i]
@@ -555,7 +555,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       proc hl(tag, val: string): string = # {.gcsafe.} clCfg access
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          `cf`.helpAttrOff.getOrDefault(tag, ""))
-
+      let posHelp = if `posHlp`.len != 0: `posHlp`
+                    elif `posNm`.len == 0: ""
+                    else: "[" & hl("clOptKeys", `posNm`) & ": " &
+                          hl("clValType", `posTy`) & "...]"
       let use = if `noHdrId`:
                   if `usageId`.len > 0: `usageId` else: `cf`.use
                 else:
@@ -565,7 +568,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                      "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
                            "command", hl("cmd", `cName`),
-                          "args", hl("args",argStart & " " & `posHelp`.mayRend),
+                           "args",  hl("args",argStart & " " & posHelp.mayRend),
                            "options", addPrefix(`prefixId` & "  ",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
