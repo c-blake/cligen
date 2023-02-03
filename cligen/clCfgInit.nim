@@ -100,10 +100,14 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
           of "args", "arguments", "argsonlinewithcmd":
             c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
+          of "bad", "errbad", "errorbad":
+            c.helpAttr["bad"] = on; c.helpAttrOff["bad"] = off
+          of "good", "errgood", "errorgood":
+            c.helpAttr["good"] = on; c.helpAttrOff["good"] = off
           else:
             stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
               "Expecting: options types defaultvalues descriptions command" &
-              " documentation arguments\n"
+              " documentation arguments errorbad errorgood\n"
       of "render":
         case e.key.optionNormalize
         of "singlestar": rendOpts["singlestar"] = e.value

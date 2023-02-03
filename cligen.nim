@@ -97,6 +97,11 @@ proc offCols*(c: ClCfg): seq[string] =
   for e in ClHelpCol.low..ClHelpCol.high:
     result.add c.helpAttrOff.getOrDefault($e, "")
 
+proc ha0*(key: string, c=clCfg): string = c.helpAttr.getOrDefault(key, "")
+  ## Internal routine to access `c.helpAttr`
+proc ha1*(key: string, c=clCfg): string = c.helpAttrOff.getOrDefault(key, "")
+  ## Internal routine to access `c.helpAttrOff`
+
 type    #Utility types/code for generated parser/dispatchers for parseOnly mode
   ClStatus* = enum clBadKey,                        ## Unknown long key
                    clBadVal,                        ## Unparsable value
@@ -421,6 +426,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   callIt.add(pro)
   let shortHlp = newStrLitNode($shortH)
   let setByParseId = ident("setByP")    # parse recording var seq
+  let b0 = ident("b0"); let b1 = ident("b1")
+  let g0 = ident("g0"); let g1 = ident("g1")
   let es = newStrLitNode("")
   let aliasesId = ident("aliases")      # [key]=>seq[string] meta param table
   let aliasSnId = ident("aliasSeen")    # flag saying *any* alias was used
@@ -484,6 +491,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
+      let `b0` = ha0("bad" , `cf`); let `b1` = ha1("bad" , `cf`)
+      let `g0` = ha0("good", `cf`); let `g1` = ha1("good", `cf`)
       {.push warning[GCUnsafe]: off.} # See github.com/c-blake/cligen/issues/92
       proc mayRend(x: string): string = # {.gcsafe.} clCfg access
         if `cf`.render != nil: `cf`.render(x) else: x
@@ -657,8 +666,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
     let ambigReport = quote do:
       let ks = `cbId`.valsWithPfx(p.key)
-      let msg=("Ambiguous long option prefix \"$1\" matches:\n  $2 "%[`pId`.key,
-              ks.join("\n  ")]) & "\nRun with --help for more details.\n"
+      let msg=("Ambiguous long option prefix \"" & `b0` & "$1" & `b1`  & "\"" &
+       " matches:\n  " & `g0` & "$2" & `g1` & " ")%[`pId`.key,ks.join("\n  ")] &
+       "\nRun with " & `g0` & "--help" & `g1` & " for more details.\n"
       if cast[pointer](`setByParseId`) != cgSetByParseNil:
         `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
@@ -673,10 +683,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         var idNorm: seq[string]
         for id in allParams: idNorm.add(optionNormalize(id))
         let sugg = suggestions(optionNormalize(`pId`.key), idNorm, allParams)
-        if sugg.len > 0:
-          mb &= "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
-      let msg = ("Unknown " & k & " option: \"" & `pId`.key & "\"\n\n" &
-                 mb & "Run with --help for full usage.\n")
+        if sugg.len > 0: mb &= "Maybe you meant one of:\n\t" & `g0` &
+                               join(sugg, " ") & `g1` & "\n\n"
+      let msg=("Unknown "&k&" option: \"" & `b0` & `pId`.key & `b1` & "\"\n\n" &
+               mb & "Run with " & `g0` & "--help" & `g1` & " for full usage.\n")
       if cast[pointer](`setByParseId`) != cgSetByParseNil:
         `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
@@ -852,19 +862,21 @@ proc subCmdName(p: NimNode): string =
              else: $p[0]                            #unqualified
 
 template unknownSubcommand*(cmd: string, subCmds: seq[string]) =
-  stderr.write "Unknown subcommand \"" & cmd & "\".  "
+  let g0 = ha0("good"); let g1 = ha1("good"); let hlp = g0 & "help" & g1
+  stderr.write "Unknown subcommand \"", ha0("bad"), cmd, ha1("bad"), "\".  "
   let sugg = suggestions(cmd, subCmds, subCmds)
   if sugg.len > 0:
-    stderr.write "Maybe you meant one of:\n\t" & join(sugg, " ") & "\n\n"
+    stderr.write "Maybe you meant one of:\n\t", g0, join(sugg, " "), g1, "\n\n"
   else:
     stderr.write "It is not similar to defined subcommands.\n\n"
-  stderr.write "Run again with subcommand \"help\" to get detailed usage.\n"
+  stderr.write "Run again with subcommand \"", hlp, "\" for detailed usage.\n"
   quits(cgParseErrorExitCode)
 
 template ambigSubcommand*(cb: CritBitTree[string], attempt: string) =
-  stderr.write "Ambiguous subcommand \"", attempt, "\" matches:\n"
-  stderr.write "  ", cb.valsWithPfx(attempt).join("\n  "), "\n"
-  stderr.write "Run with no-argument or \"help\" for more details.\n"
+  let g0 = ha0("good"); let g1 = ha1("good"); let hlp = g0 & "help" & g1
+  stderr.write "Ambiguous subcommand \"", ha0("bad"), attempt, ha1("bad"), "\""
+  stderr.write " matches:\n  ",g0,cb.valsWithPfx(attempt).join("\n  "),g1,"\n"
+  stderr.write "Run with no-argument or \"", hlp, "\" for more details.\n"
   quits(cgParseErrorExitCode)
 
 proc firstParagraph(doc: string): string =

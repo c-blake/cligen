@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.39
+---------------
+    - Colorize bad&good literals within error messages for unknown | ambiguous
+      long opts, subcommands w/new config-file `[color] bad|good =` directives.
+
 Version: 1.5.38
 ---------------
     BREAKING (but only impacts `adix/tests/anaPrime.nim` to my knowledge).

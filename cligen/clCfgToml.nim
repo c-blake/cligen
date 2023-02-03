@@ -87,6 +87,10 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
             c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
           of "args", "arguments", "argsonlinewithcmd":
             c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
+          of "bad", "errbad", "errorbad":
+            c.helpAttr["bad"] = on; c.helpAttrOff["bad"] = off
+          of "good", "errgood", "errorgood":
+            c.helpAttr["good"] = on; c.helpAttrOff["good"] = off
           else:
             stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "render":
