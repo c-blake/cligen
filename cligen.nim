@@ -565,7 +565,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                      "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
                            "command", hl("cmd", `cName`),
-                           "args",    hl("args", argStart & " " & `posHelp`),
+                          "args", hl("args",argStart & " " & `posHelp`.mayRend),
                            "options", addPrefix(`prefixId` & "  ",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
