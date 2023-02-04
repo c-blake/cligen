@@ -160,6 +160,14 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 <li><a class="reference" href="#contains%2CopenArray%5BClParse%5D%2CClStatus" title="contains(x: openArray[ClParse]; status: ClStatus): bool">contains(x: openArray[ClParse]; status: ClStatus): bool</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">ha0
+  <li><a class="reference" href="#ha0%2Cstring" title="ha0(key: string; c = clCfg): string">ha0(key: string; c = clCfg): string</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">ha1
+  <li><a class="reference" href="#ha1%2Cstring" title="ha1(key: string; c = clCfg): string">ha1(key: string; c = clCfg): string</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">mergeParams
   <li><a class="reference" href="#mergeParams%2Cseq%5Bstring%5D" title="mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]">mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]</a></li>
 
@@ -632,6 +640,28 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 </div>
 
 </div>
+<div id="ha0-procs-all">
+  <div id="ha0,string">
+  <dt><pre><span class="Keyword">proc</span> <a href="#ha0%2Cstring"><span class="Identifier">ha0</span></a><span class="Other">(</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">c</span> <span class="Other">=</span> <span class="Identifier">clCfg</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Internal routine to access <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span><span class="Operator">.</span><span class="Identifier">helpAttr</span></span></tt>
+    
+  </dd>
+</div>
+
+</div>
+<div id="ha1-procs-all">
+  <div id="ha1,string">
+  <dt><pre><span class="Keyword">proc</span> <a href="#ha1%2Cstring"><span class="Identifier">ha1</span></a><span class="Other">(</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">c</span> <span class="Other">=</span> <span class="Identifier">clCfg</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Internal routine to access <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span><span class="Operator">.</span><span class="Identifier">helpAttrOff</span></span></tt>
+    
+  </dd>
+</div>
+
+</div>
 <div id="mergeParams-procs-all">
   <div id="mergeParams,seq[string]">
   <dt><pre><span class="Keyword">proc</span> <a href="#mergeParams%2Cseq%5Bstring%5D"><span class="Identifier">mergeParams</span></a><span class="Other">(</span><span class="Identifier">cmdNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cmdLine</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
@@ -995,7 +1025,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-01-24 20:11:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-04 00:38:02 UTC</small>
       </div>
     </div>
   </div>
