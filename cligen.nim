@@ -52,6 +52,9 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ParseError*  = object of CatchableError ## CL-Syntax Err from generated code
   HelpError*   = object of CatchableError ## User-Syntax/Semantic Err; ${HELP}
 
+proc descape(s: string): string =
+  for c, escaped in s.descape: result.add c
+
 {.push hint[GlobalVar]: off.}
 var clCfg* = ClCfg(
   version:     "",
@@ -70,7 +73,7 @@ var clCfg* = ClCfg(
   helpAttr:    initTable[string,string](),
   helpAttrOff: initTable[string,string](),
   helpSyntax:  syntaxHelp,
-  render:      nil,   # Typically set in `clCfgInit`, e.g. to rstMdToSGR
+  render:      descape,     # Often set in `clCfgInit`, eg. to `rstMdToSGR`
   widthEnv:    "CLIGEN_WIDTH",
   sigPIPE:     spIsOk)
 

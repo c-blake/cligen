@@ -55,6 +55,16 @@ proc humanReadable4*(bytes: uint, binary=false): string =
   elif Bytes < 100 * T  : result = "100T"
   else:                   result = ff(Bytes/T, 3) & "T"
 
+#NOTE: \-escape off only inside inline DB literals breaks any parser layering &
+# I think blocks any 1-pass parse.  For now ``lit\eral`` -> <DB0>literal<DB1>.
+# The old parser/substitutor also failed in this same, way.
+iterator descape*(s: string, escape='\\'): tuple[c: char; escaped: bool] =
+  var escaping = false  # This just yields a char & bool escaped status
+  for c in s:
+    if escaping: escaping = false; yield (c, true)
+    elif c == escape: escaping = true
+    else: yield (c, false)
+
 when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
  import std/tables
  when not declared(stderr): import std/syncio
@@ -192,16 +202,6 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if cols.len > 2: result.add attrOff
   except CatchableError:
     raise newException(ValueError, "bad humanDuration format \"" & fmt & "\"")
-
-#NOTE: \-escape off only inside inline DB literals breaks any parser layering &
-#I think blocks any 1-pass parse.  For now ``lit\eral`` -> <DB0>literal<DB1>.
-#Also, the old parser/substitutor also failed in this same, way.
- iterator descape(s: string, escape='\\'): tuple[c: char; escaped: bool] =
-  var escaping = false  # This just yields a char & bool escaped status
-  for c in s:
-    if escaping: escaping = false; yield (c, true)
-    elif c == escape: escaping = true
-    else: yield (c, false)
 
  type
   RstKind = enum rstNil, rstBeg,rstEnd, rstEsc, rstWhite,rstText, rstOpn,rstCls,

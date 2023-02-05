@@ -16,6 +16,9 @@ Version: 1.5.39
       (But note if a short option for help is not the default -h, both rows
       still appear since non-obvious information is afoot.)
 
+    - Default (no user-color config) render now de-escapes (removes extra '\'),
+      but leaves alone other markdown/rST embellishments (like *emphasis*).
+
 Version: 1.5.38
 ---------------
     BREAKING (but only impacts `adix/tests/anaPrime.nim` to my knowledge).
