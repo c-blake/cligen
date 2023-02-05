@@ -63,7 +63,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           c.noHelpHelp = e.value.optionNormalize in yes
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: rowseparator columngap leastfinal required columns\n"
+            "Expecting: rowseparator columngap leastfinal required columns " &
+            "nohelphelp\n"
       of "syntax":
         case e.key.optionNormalize
         of "reqsep", "requireseparator":
