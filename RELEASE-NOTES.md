@@ -5,8 +5,16 @@ Version: 1.5.39
 ---------------
     - Colorize bad&good literals within error messages for unknown | ambiguous
       long opts, subcommands w/new config-file `[color] bad|good =` directives.
+
     - Positional argument help is now also fed to mdRst-esque render.
+
     - Colorize default positional help w/same name/type colors as help table.
+
+    - Since the color pattern alone can already indicate cligen-erated help,
+      allow end CLusers to also disable --help and --help-syntax rows in the
+      generated help table with a new [layout]/noHelpHelp = true directive.
+      (But note if a short option for help is not the default -h, both rows
+      still appear since non-obvious information is afoot.)
 
 Version: 1.5.38
 ---------------

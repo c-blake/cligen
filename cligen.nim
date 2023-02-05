@@ -38,6 +38,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
     helpAttrOff*: Table[string, string] ## Text attr offs for each help area
+    noHelpHelp*: bool            ## Elide --help, --help-syntax from help table
     useHdr*:      string         ## Override of const usage header template
     use*:         string         ## Override of const usage template
     useMulti*:    string         ## Override of const subcmd table template
@@ -481,6 +482,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       var `mandId`: seq[string]
       var `tabId`: TextTab = @[]
       let helpHelpRow = @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]
+      let `skipHelp` = `skipHelp` or `cf`.noHelpHelp
       if `skipHelp`:                    # auto-skip help help for `helpDump`
         if shortH != "h" and `helpHelp`[1] != `cf`.hTabSuppress:
           `tabId`.add(helpHelpRow)

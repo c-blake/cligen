@@ -59,6 +59,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "cols", "columns":
           c.hTabCols.setLen 0
           for tok in e.value.split: c.hTabCols.add parseEnum[ClHelpCol](tok)
+        of "nohelphelp", "skiphelphelp":
+          c.noHelpHelp = e.value.optionNormalize in yes
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
             "Expecting: rowseparator columngap leastfinal required columns\n"
