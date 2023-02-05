@@ -19,6 +19,8 @@ Version: 1.5.39
     - Default (no user-color config) render now de-escapes (removes extra '\'),
       but leaves alone other markdown/rST embellishments (like *emphasis*).
 
+    - Fix https://github.com/c-blake/cligen/issues/219#issuecomment-1364093654
+
 Version: 1.5.38
 ---------------
     BREAKING (but only impacts `adix/tests/anaPrime.nim` to my knowledge).
