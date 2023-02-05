@@ -454,7 +454,36 @@ proc autoClose* =
   for path, f in outs: (if f != nil: f.close)
   outs.clear
 
-when not defined(windows):
+when defined(windows):
+ proc FD_CLR*(socket: cint, s: var TFdSet) =
+    for i in 0 ..< s.fd_count:
+      if s.fd_array[i].cint == socket:
+        for j in countdown(s.fd_count - 1, i+1):
+          s.fd_array[j-1] = s.fd_array[j]
+        dec(s.fd_count)
+        break
+ proc pipeSelectR*(mx: cint, rd: ptr TFdSet, to: ptr Timeval):cint=
+  select mx, rd, nil, nil, to #XXX peekNamedPipe
+ proc pipeSelectW*(mx: cint, wr: ptr TFdSet, to: ptr Timeval):cint=
+  select mx, nil, wr, nil, to #XXX peekNamedPipe
+ proc syRead*(fd: cint, buffer: pointer, n: int): int =
+  var nRd: int32
+  if readFile(fd, buffer, n.int32, nRd.addr, nil) != 0: nRd else: -nRd
+ proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int = discard
+ proc uRd*[T](f: File, ob: var T): bool = discard
+ proc uWr*[T](f: File, ob: var T): bool = discard
+ proc wrOb*[T](fd: cint, ob: T): int = discard
+ proc wr0term*(fd: cint, buf: string): int = discard
+ proc wrLine*(fd: cint, buf: string): int = discard
+ proc wrLenBuf*(fd: cint, buf: string): int = discard
+ proc wrLenSeq*[T](fd: cint, s: seq[T]): int = discard
+else:
+ proc pipeSelectR*(mx: cint, rd: ptr TFdSet, to: ptr Timeval): cint =
+  select mx, rd, nil, nil, to
+ proc pipeSelectW*(mx: cint, wr: ptr TFdSet, to: ptr Timeval): cint =
+  select mx, nil, wr, nil, to
+ proc syRead*(fd: cint, buffer: pointer, n: int): int = read(fd, buffer, n)
+
  proc rdRecs*(fd: cint, buf: var string, eor='\0', n=16384): int =
   ## Like read but loop if `end!=eor` (growing `buf` to multiples of `n`).  In
   ## effect, this reads an integral number of recs - which must still be split!

@@ -911,7 +911,7 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
   let ww = wrapWidth(clCfg.widthEnv)
   let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), ww)
                else: wrap(doc, ww)
-  use % [ "doc", docUse, "command", cmd, "ifVersion", ifVsn,
+  use % [ "doc", docUse, "command", on[0] & cmd & off[0], "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs, 2, attrOn=on,
                                                 attrOff=off, width=ww))]
 
