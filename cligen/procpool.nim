@@ -41,18 +41,11 @@
 ## private VM}. One case's "awkward" is another's "expresses vital ideas".  Good
 ## ecosystems should have libs for both (& also for files as named arenas).
 
-import std/[cpuinfo, random], cligen/[mslice, sysUt, osUt]
+import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
 when not declared(flushFile): import std/syncio
-when defined(windows):
-  import std/winlean
-  converter toSockHdl*(x: cint): SocketHandle = x.SocketHandle # To port, un-do
-  converter toCint*(x: SocketHandle): cint = x.cint            #.. distinct int
-else: import std/posix
 type
   Filter* = object   ## Abstract coprocess filter read|writing req|rep fd's
-    pid: cint        # Pid=cint; parent uses this to control => hidden
-    when defined(windows):
-      procInfo: PROCESS_INFORMATION
+    pid: Pid         # parent uses this to control => hidden
     fd0*, fd1*: cint ## PARENT VIEW of request|input & reply|output file handles
     buf*: string     ## current read buffer
     off*: int        ## byte offset into `buf` to read new data into
@@ -70,34 +63,29 @@ type
 
 proc len*(pp: ProcPool): int {.inline.} = pp.kids.len
 
-proc close*(pp: ProcPool, kid: int) =
-  when defined(windows): discard pp.kids[kid].fd0.closeHandle
-  else: discard pp.kids[kid].fd0.close
+proc close*(pp: ProcPool, kid: int) = discard pp.kids[kid].fd0.close
 
 proc initFilter(work: proc(r, w: cint), aux, bufSz: int): Filter {.inline.} =
   result.aux = aux
-  when defined(windows):    #XXX Finish this with createPipe
-    discard                 #XXX and createProcess
-  else:                     # Unix/OSX/etc.
-    var fds0, fds1: array[2, cint]
-    discard fds0.pipe       # pipe for data flowing from parent -> kid
-    discard fds1.pipe       # pipe for data flowing from kid -> parent
-    case (let pid = fork(); pid):
-    of -1: result.pid = -1
-    of 0:
-      flushFile stdin
-      discard close(fds0[1])
-      discard close(fds1[0])
-      work(fds0[0], fds1[1])
-      quit(0)
-    else:
-      result.buf = newString(bufSz) # allocate, setLen, but no-init
-      result.pid = pid
-      result.fd0 = fds0[1]  # Parent writes to fd0 & reads from fd1;  Those are
-      result.fd1 = fds1[0]  #..like the fd nums in the kid, but with RW/swapped.
-      discard fcntl(result.fd0, F_SETFL, O_NONBLOCK)
-      discard close(fds0[0])
-      discard close(fds1[1])
+  var fds0, fds1: array[2, cint]
+  discard fds0.pipe         # pipe for data flowing from parent -> kid
+  discard fds1.pipe         # pipe for data flowing from kid -> parent
+  case (let pid = fork(); pid):
+  of -1: result.pid = -1    #NOTE: A when(Windows) PR with CreatePipe,
+  of 0:                     #      CreateProcess is very welcome.
+    flushFile stdin
+    discard close(fds0[1])
+    discard close(fds1[0])
+    work(fds0[0], fds1[1])
+    quit(0)
+  else:
+    result.buf = newString(bufSz) # allocate, setLen, but no-init
+    result.pid = pid
+    result.fd0 = fds0[1]    # Parent writes to fd0 & reads from fd1;  Those are
+    result.fd1 = fds1[0]    #..like the fd nums in the kid, but with RW/swapped.
+    discard fcntl(result.fd0, F_SETFL, O_NONBLOCK)
+    discard close(fds0[0])
+    discard close(fds1[1])
 
 proc ctrlC() {.noconv.} = quit 2-128 # SIGINT=2; Cannot leave only 1 \n; So,do 0
 var to0: Timeval
@@ -112,19 +100,11 @@ proc initProcPool*(work: proc(r, w: cint); frames: Frames; jobs=0; aux=0,
     result.kids[i] = initFilter(work, aux, bufSz)
     if result.kids[i].pid == -1:                      # -1 => fork failed
       for j in 0 ..< i:                               # for prior launched kids:
-        when defined(windows):
-          discard result.kids[j].fd1.closeHandle
-          discard terminateProcess(result.kids[j].procInfo.hProcess, 0)
-        else:
-          discard result.kids[j].fd1.close            #   close fd to kid
-          discard kill(result.kids[j].pid, SIGKILL)   #   and kill it.
-        raise newException(OSError, "fork") # Do not quit since re-try MAY work
-    when defined(windows):
-      FD_SET result.kids[i].fd0, result.fdsetW
-      FD_SET result.kids[i].fd1, result.fdsetR
-    else:
-      FD_SET result.kids[i].fd0, result.fdsetW
-      FD_SET result.kids[i].fd1, result.fdsetR
+        discard result.kids[j].fd1.close              #   close fd to kid
+        discard kill(result.kids[j].pid, SIGKILL)     #   and kill it.
+        raise newException(OSError, "fork") # vague chance trying again may work
+    FD_SET result.kids[i].fd0, result.fdsetW
+    FD_SET result.kids[i].fd1, result.fdsetR
     result.fdMaxW = max(result.fdMaxW, result.kids[i].fd0)
     result.fdMaxR = max(result.fdMaxR, result.kids[i].fd1)
   result.fdMaxW.inc; result.fdMaxR.inc                # select takes fdMax + 1
@@ -133,31 +113,25 @@ proc initProcPool*(work: proc(r, w: cint); frames: Frames; jobs=0; aux=0,
 iterator readyReplies*(pp: var ProcPool): MSlice =
   var to = pp.toR                                     # Block for <= 1 ms
   var fdsetR = pp.fdsetR
-  if pipeSelectR(pp.fdMaxR, fdsetR.addr, to.addr) > 0:
+  if select(pp.fdMaxR, fdsetR.addr, nil, nil, to.addr) > 0:
     for i in 0 ..< pp.len:
       if FD_ISSET(pp.kids[i].fd1, fdsetR) != 0:
         for rep in toItr(pp.frames(pp.kids[i])): yield rep
 
 iterator finalReplies*(pp: var ProcPool): MSlice =
+  var st: cint
   var n = pp.len                                      # Do final answers
   var fdset0 = pp.fdsetR
   while n > 0:
     var fdset = fdset0                                # nil timeout => block
-    if pipeSelectR(pp.fdMaxR, fdset.addr, nil) > 0:
+    if select(pp.fdMaxR, fdset.addr, nil, nil, nil) > 0:
       for i in 0 ..< pp.len:
         if FD_ISSET(pp.kids[i].fd1, fdset) != 0:
           for rep in toItr(pp.frames(pp.kids[i])): yield rep
           if pp.kids[i].done:                         # got EOF from kid
-            when defined(windows):
-              FD_CLR pp.kids[i].fd1, fdset0           # Rm from fdset
-              discard pp.kids[i].fd1.closeHandle      # Reclaim fd
-              #XXX terminateProcess
-#             discard waitpid(pp.kids[i].pid, st, 0)  # Accum CPU to par;No zomb
-            else:
-              FD_CLR pp.kids[i].fd1, fdset0           # Rm from fdset
-              var st: cint
-              discard pp.kids[i].fd1.close            # Reclaim fd
-              discard waitpid(pp.kids[i].pid, st, 0)  # Accum CPU to par;No zomb
+            FD_CLR pp.kids[i].fd1, fdset0             # Rm from fdset
+            discard pp.kids[i].fd1.close              # Reclaim fd
+            discard waitpid(pp.kids[i].pid, st, 0)    # Accum CPU to par;No zomb
             n.dec
 
 proc framesOb*(f: var Filter): iterator(): MSlice =
@@ -165,7 +139,7 @@ proc framesOb*(f: var Filter): iterator(): MSlice =
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice = # NOTE: must cp to other mem before next call.
     let obsz = f.aux
-    if (let nRd = syRead(f.fd1, f.buf[0].addr, obsz); nRd > 0):
+    if (let nRd = read(f.fd1, f.buf[0].addr, obsz); nRd > 0):
       yield MSlice(mem: f.buf[0].addr, len: obsz)
     else: f.done = true
 
@@ -174,9 +148,9 @@ proc framesLenPfx*(f: var Filter): iterator(): MSlice =
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice = # NOTE: must cp to other mem before next call.
     var n = 0
-    if (let nHd = syRead(f.fd1, n.addr, n.sizeof); nHd == n.sizeof):
+    if (let nHd = read(f.fd1, n.addr, n.sizeof); nHd == n.sizeof):
       f.buf.setLen n    # Below may need loop for EINTR (if not SA_RESTART)
-      if (let nRd = syRead(f.fd1, f.buf[0].addr, n); nRd > 0):
+      if (let nRd = read(f.fd1, f.buf[0].addr, n); nRd > 0):
         yield MSlice(mem: f.buf[0].addr, len: n)
       else: f.done = true
     else: f.done = true
@@ -184,7 +158,7 @@ proc framesLenPfx*(f: var Filter): iterator(): MSlice =
 template framesTerm(f, ch): untyped =
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice =         # NOTE: replies cannot be > bufSz
-    let nRd = syRead(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
+    let nRd = read(f.fd1, f.buf[f.off].addr, f.buf.len - f.off)
     if nRd > 0:
       let buf = MSlice(mem: f.buf[0].addr, len: f.off + nRd)
       let eob = cast[uint](buf.mem) + cast[uint](buf.len)
@@ -213,7 +187,7 @@ template wrReq*(fds, i0, pp, wr, rq): untyped =
   if not wrote:                                 # If none worked, do new select
     var toW    = pp.toW                         # Block for `toW`
     var fdsetW = pp.fdsetW
-    if pipeSelectW(pp.fdMaxW, fdsetW.addr, toW.addr) > 0:
+    if select(pp.fdMaxW, nil, fdsetW.addr, nil, toW.addr) > 0:
       fds.setLen 0                              # select mask -> fd seq
       for i in 0 ..< pp.len:
         if FD_ISSET(pp.kids[i].fd0, fdsetW) != 0: fds.add pp.kids[i].fd0
