@@ -543,7 +543,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         let hlp = helps.getOrDefault(pNm)[1]
         let isReq = if i in mandatory: true else: false
         result.add(quote do:
-         `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq = ord(`isReq`)
+         `apId`.parNm = `parNm`; `apId`.parSh = `sh`; `apId`.parReq=ord(`isReq`)
          `apId`.parRend = if `hky`.len>0: `hky` else:helpCase(`parNm`,clLongOpt)
          let descr = getDescription(`defVal`, `parNm`, `hlp`)
          if descr != `cf`.hTabSuppress:
