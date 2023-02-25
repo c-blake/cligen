@@ -1,6 +1,20 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.40
+---------------
+    - Add new `cligen/colorScl` module to provide a way to specify colors
+      as along a single 1-D axis/color scale (though some scales can take
+      extra parameters).  (Uses sqrt & sin - so might induce new need for
+      C math library working, depending.)  Full example over at:
+        https://github.com/c-blake/bu/blob/main/doc/dfr.md#configuration
+
+    - Activate cligen/unsafeAddr; seems to work fine from 0.20.2 -> devel.
+
+    - Incorporate bug fix from @ringabout
+
+    - Minor reformat stuff.
+
 Version: 1.5.39
 ---------------
     - Colorize bad&good literals within error messages for unknown | ambiguous
