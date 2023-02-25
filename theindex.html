@@ -21,7 +21,7 @@
   <div class="document" id="documentId">
     <div class="container">
       <h1 class="title">Index</h1>
-      Modules: <a href="cligen.html">cligen</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/textUt.html">cligen/textUt</a>.<br/><p /><h2>API symbols</h2>
+      Modules: <a href="cligen.html">cligen</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/colorScl.html">cligen/colorScl</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/textUt.html">cligen/textUt</a>, <a href="cligen/unsafeAddr.html">cligen/unsafeAddr</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc `$`(ms: MSlice): string" href="cligen/mslice.html#%24%2CMSlice">mslice: proc `$`(ms: MSlice): string</a></li>
@@ -364,6 +364,10 @@
 <li><a class="reference external"
           data-doc-search-tag="macUt: proc collectComments(buf: var string; n: NimNode; depth: int = 0)" href="cligen/macUt.html#collectComments%2Cstring%2CNimNode%2Cint">macUt: proc collectComments(buf: var string; n: NimNode; depth: int = 0)</a></li>
           </ul></dd>
+<dt><a name="Color3" href="#Color3"><span>Color3:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: type Color3" href="cligen/colorScl.html#Color3">colorScl: type Color3</a></li>
+          </ul></dd>
 <dt><a name="contains" href="#contains"><span>contains:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="cligen: proc contains(x: openArray[ClParse]; status: ClStatus): bool" href="cligen.html#contains%2CopenArray%5BClParse%5D%2CClStatus">cligen: proc contains(x: openArray[ClParse]; status: ClStatus): bool</a></li>
@@ -589,6 +593,14 @@
 <dt><a name="HelpOnly" href="#HelpOnly"><span>HelpOnly:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="cligen: object HelpOnly" href="cligen.html#HelpOnly">cligen: object HelpOnly</a></li>
+          </ul></dd>
+<dt><a name="hex" href="#hex"><span>hex:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc hex(rgb: Color3; lim: range[5 .. 1024] = 256): string" href="cligen/colorScl.html#hex%2CColor3%2Crange%5B%5D">colorScl: proc hex(rgb: Color3; lim: range[5 .. 1024] = 256): string</a></li>
+          </ul></dd>
+<dt><a name="hsv2rgb" href="#hsv2rgb"><span>hsv2rgb:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc hsv2rgb(hsv: Color3): Color3" href="cligen/colorScl.html#hsv2rgb%2CColor3">colorScl: proc hsv2rgb(hsv: Color3): Color3</a></li>
           </ul></dd>
 <dt><a name="humanDuration" href="#humanDuration"><span>humanDuration:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -816,6 +828,10 @@
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc parseBin(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int" href="cligen/mslice.html#parseBin%2C%2Cint">mslice: proc parseBin(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int</a></li>
           </ul></dd>
+<dt><a name="parseColorScl" href="#parseColorScl"><span>parseColorScl:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc parseColorScl(s: MSlice | openArray[char] | string; nParsed: var int = doNotUse): Color3" href="cligen/colorScl.html#parseColorScl%2C%2Cint">colorScl: proc parseColorScl(s: MSlice | openArray[char] | string; nParsed: var int = doNotUse): Color3</a></li>
+          </ul></dd>
 <dt><a name="ParseError" href="#ParseError"><span>ParseError:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="cligen: object ParseError" href="cligen.html#ParseError">cligen: object ParseError</a></li>
@@ -866,6 +882,10 @@
 <li><a class="reference external"
           data-doc-search-tag="humanUt: proc render(r: rstMdSGR; rstOrMd: string): string" href="cligen/humanUt.html#render%2CrstMdSGR%2Cstring">humanUt: proc render(r: rstMdSGR; rstOrMd: string): string</a></li>
           </ul></dd>
+<dt><a name="rgb" href="#rgb"><span>rgb:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc rgb(x: UnitR; scale = sWLen; sat = UnitR(0.7); val = UnitR(0.9)): Color3" href="cligen/colorScl.html#rgb%2CUnitR">colorScl: proc rgb(x: UnitR; scale = sWLen; sat = UnitR(0.7); val = UnitR(0.9)): Color3</a></li>
+          </ul></dd>
 <dt><a name="rstMdSGR" href="#rstMdSGR"><span>rstMdSGR:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="humanUt: object rstMdSGR" href="cligen/humanUt.html#rstMdSGR">humanUt: object rstMdSGR</a></li>
@@ -874,6 +894,14 @@
 <li><a class="reference external"
           data-doc-search-tag="humanUt: let rstMdSGRDefault" href="cligen/humanUt.html#rstMdSGRDefault">humanUt: let rstMdSGRDefault</a></li>
           </ul></dd>
+<dt><a name="Scale" href="#Scale"><span>Scale:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: enum Scale" href="cligen/colorScl.html#Scale">colorScl: enum Scale</a></li>
+          </ul></dd>
+<dt><a name="scaledCompon" href="#scaledCompon"><span>scaledCompon:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc scaledCompon(x: float; lim: range[4 .. 1024] = 256): int" href="cligen/colorScl.html#scaledCompon%2Cfloat%2Crange%5B%5D">colorScl: proc scaledCompon(x: float; lim: range[4 .. 1024] = 256): int</a></li>
+          </ul></dd>
 <dt><a name="seekable" href="#seekable"><span>seekable:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="sysUt: proc seekable(f: File): bool" href="cligen/sysUt.html#seekable%2CFile">sysUt: proc seekable(f: File): bool</a></li>
@@ -881,6 +909,14 @@
 <dt><a name="Sep" href="#Sep"><span>Sep:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mslice: tuple Sep" href="cligen/mslice.html#Sep">mslice: tuple Sep</a></li>
+          </ul></dd>
+<dt><a name="sGray" href="#sGray"><span>sGray:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: Scale.sGray" href="cligen/colorScl.html#sGray">colorScl: Scale.sGray</a></li>
+          </ul></dd>
+<dt><a name="sHue" href="#sHue"><span>sHue:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: Scale.sHue" href="cligen/colorScl.html#sHue">colorScl: Scale.sHue</a></li>
           </ul></dd>
 <dt><a name="SIGPIPE_isOk" href="#SIGPIPE_isOk"><span>SIGPIPE_isOk:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -931,6 +967,10 @@
           data-doc-search-tag="mslice: proc splitr(s: string; fs: var seq[string]; seps = wspace; n = 0; repeat = true;
        sp: ptr seq[string] = nil): int" href="cligen/mslice.html#splitr%2Cstring%2Cseq%5Bstring%5D%2Cint%2Cptr.seq%5Bstring%5D">mslice: proc splitr(s: string; fs: var seq[string]; seps = wspace; n = 0; repeat = true;
        sp: ptr seq[string] = nil): int</a></li>
+          </ul></dd>
+<dt><a name="sPm3D" href="#sPm3D"><span>sPm3D:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: Scale.sPm3D" href="cligen/colorScl.html#sPm3D">colorScl: Scale.sPm3D</a></li>
           </ul></dd>
 <dt><a name="spPass" href="#spPass"><span>spPass:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -993,6 +1033,14 @@
           data-doc-search-tag="macUt: proc summaryOfModule(n: NimNode): string" href="cligen/macUt.html#summaryOfModule%2CNimNode">macUt: proc summaryOfModule(n: NimNode): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="macUt: proc summaryOfModule(sourceContents: string): string" href="cligen/macUt.html#summaryOfModule%2Cstring">macUt: proc summaryOfModule(sourceContents: string): string</a></li>
+          </ul></dd>
+<dt><a name="sViridis" href="#sViridis"><span>sViridis:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: Scale.sViridis" href="cligen/colorScl.html#sViridis">colorScl: Scale.sViridis</a></li>
+          </ul></dd>
+<dt><a name="sWLen" href="#sWLen"><span>sWLen:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: Scale.sWLen" href="cligen/colorScl.html#sWLen">colorScl: Scale.sWLen</a></li>
           </ul></dd>
 <dt><a name="termAlign" href="#termAlign"><span>termAlign:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1094,6 +1142,10 @@
 <li><a class="reference external"
           data-doc-search-tag="macUt: proc toStrSeq(strSeqInitializer: NimNode): seq[string]" href="cligen/macUt.html#toStrSeq%2CNimNode">macUt: proc toStrSeq(strSeqInitializer: NimNode): seq[string]</a></li>
           </ul></dd>
+<dt><a name="ttc" href="#ttc"><span>ttc:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc ttc(rgb: Color3; lim: range[5 .. 1024] = 256): string" href="cligen/colorScl.html#ttc%2CColor3%2Crange%5B%5D">colorScl: proc ttc(rgb: Color3; lim: range[5 .. 1024] = 256): string</a></li>
+          </ul></dd>
 <dt><a name="ttyWidth" href="#ttyWidth"><span>ttyWidth:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="textUt: let ttyWidth" href="cligen/textUt.html#ttyWidth">textUt: let ttyWidth</a></li>
@@ -1101,6 +1153,10 @@
 <dt><a name="unescape" href="#unescape"><span>unescape:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="argcvt: proc unescape(s: string): string" href="cligen/argcvt.html#unescape%2Cstring">argcvt: proc unescape(s: string): string</a></li>
+          </ul></dd>
+<dt><a name="UnitR" href="#UnitR"><span>UnitR:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: type UnitR" href="cligen/colorScl.html#UnitR">colorScl: type UnitR</a></li>
           </ul></dd>
 <dt><a name="unknownSubcommand" href="#unknownSubcommand"><span>unknownSubcommand:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1142,11 +1198,15 @@
 <li><a class="reference external"
           data-doc-search-tag="mslice: const wspace" href="cligen/mslice.html#wspace">mslice: const wspace</a></li>
           </ul></dd>
+<dt><a name="xt256" href="#xt256"><span>xt256:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colorScl: proc xt256(rgb: Color3; lim: range[5 .. 1024] = 256): string" href="cligen/colorScl.html#xt256%2CColor3%2Crange%5B%5D">colorScl: proc xt256(rgb: Color3; lim: range[5 .. 1024] = 256): string</a></li>
+          </ul></dd>
 </dl>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-24 14:29:49 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-25 21:27:33 UTC</small>
       </div>
     </div>
   </div>
