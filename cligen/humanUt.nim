@@ -75,7 +75,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
- let attrNames = {  #WTF: const compiles but then cannot look anything up
+ let attrNames = {  # const compiles but needs CT-RT hash coherence for look up.
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
   "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9",
   "NONE":   "", "-bold":"22", "-faint": "22", "-italic":"23","-underline":"24",
