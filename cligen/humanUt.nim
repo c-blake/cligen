@@ -66,7 +66,7 @@ iterator descape*(s: string, escape='\\'): tuple[c: char; escaped: bool] =
     else: yield (c, false)
 
 when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
- import std/tables
+ import std/tables, cligen/colorScl
  when not declared(stderr): import std/syncio
 
  when not declared(fromHex):
@@ -111,8 +111,13 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
   try: result = attrNames[s]
   except KeyError:
     if s.len >= 2:
-      let prefix = if s[0] == 'b': "48;" else: "38;"
+      let prefix = if s[0] in {'b', 'B'}: "48;" else: "38;"
       if   s.len <= 3: result = prefix & "5;" & $(232 + parseInt(s[1..^1]))
+      elif s[1] == 's': # color scale: [fFbB]s[gwpv]<float>[,..]
+        if (var nP: int; let c = s[2..^1].parseColorScl(nP); nP == s.len - 2):
+          result = prefix & (if s[0] == s[0].toUpperAscii: "5;" & c.xt256 else:
+                             "2;" & c.ttc) # Leading uppercase => xt256
+        else: raise newException(ValueError, "bad color scale \"" & s & "\"")
       elif s.len == 4: # Above, xt256 grey scl, Below xt256 6*6*6 color cube
         let r = min(5, ord(s[1]) - ord('0'))
         let g = min(5, ord(s[2]) - ord('0'))
