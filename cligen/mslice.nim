@@ -736,7 +736,7 @@ proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): float =
       exp = 10*exp + ord(s[j]) - ord('0')     # decimal exponent
       inc j
   exp = (ixPt - nDig + po10) + esgn * exp     # Combine implicit&explicit exp
-  eoNum = s.len
+  eoNum = j
   copysign(decimal.float * pow10[exp], sgn)   # Assemble result
 
 when isMainModule:  #Run tests with n<1, nCol, <nCol, repeat=false,true.
