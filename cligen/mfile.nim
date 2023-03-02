@@ -180,7 +180,7 @@ proc resize*(mf: var MFile, newFileSize: int64, err=stderr): int =
     if munmap(mf.mem, mf.len) != 0:
       perror cstring("munmap"), err; return -1
     editFileSize()
-    let newAddr = mmap(nil, newFileSize, mf.prot, mf.flags, mf.fd, 0)
+    let newAddr = mmap(nil, newFileSize.int, mf.prot, mf.flags, mf.fd, 0)
     if newAddr == cast[pointer](MAP_FAILED):
       perror cstring("mmap"), err; return -1
   mf.mslc.mem = newAddr
