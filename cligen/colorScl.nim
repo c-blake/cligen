@@ -113,18 +113,22 @@ proc parseColorScl*(s: MSlice | openArray[char] | string;
 
 when isMainModule:
   import cligen
-  proc colScl(ns=7..7, scales: seq[Scale]) =
+  proc colScl(ns=7..7, text="X", x = -1.0,sat=0.7,val=0.9, scales: seq[Scale]) =
     ## Color scale driver to test distinguishability & name/memorability; Egs.:
-    ## `colorScl -n8 g h w p v`; Look@slanted edges in `colorScl -n6..17 w p v`.
+    ## `colorScl -n8 g h w p v`; Look@"color edges" in `colorScl -n6..17 w p v`.
+    ## Test just one color with e.g. `colorScl -x.75 -s.7 -v.95 wLen|head -n1`.
+    proc outp(p: string, scl: Scale; x, s, v: UnitR) =
+      stdout.write p, ";", rgb(x, scl, s, v).ttc, "m", text, "\e[m"
     let nLoop = ns.b > ns.a
     for scl in (if scales.len > 0: scales else: @[sWLen]):
       for n in ns:
         if nLoop: stdout.write align($n, 2), " "
-        stdout.write $scl, ": ", if nLoop: "" else: "\n"
+        if scales.len > 1: stdout.write $scl, ": ", if nLoop: "" else: "\n"
         for (p,s,v)in [("\e[40;38;2", 0.70, 0.90), ("\e[107;38;2", 0.70, 0.75),
                        ("\e[30;48;2", 0.60, 0.90), ("\e[97;48;2" , 0.70, 0.65)]:
-          for k in 0 ..< n: #^^Fix BG, vary FG; then fix FG, vary BG^^
-            stdout.write p,";",rgb(k.float/(n-1).float, scl, s, v).ttc,"mX\e[m"
+          if x == -1.0: # ^^Fix BG, vary FG; then fix FG, vary BG^^
+            for k in 0 ..< n: outp p, scl, k.float/(n - 1).float, s, v
+          else: outp p, scl, x, sat, val # Fully user specified: ignore `ns`,s,v
           if not nLoop: stdout.write "\n"
           else: stdout.write ' '.repeat(ns.b - n)
         if nLoop: stdout.write "\n"
