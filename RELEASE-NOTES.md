@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.5.41
+---------------
+    - Slight update to cligen/mfile for portability to OSX.
+
+    - Enhancement to cligen/colorScl for point-extraction of color scale.
+
 Version: 1.5.40
 ---------------
     - Add new `cligen/colorScl` module to provide a way to specify colors
