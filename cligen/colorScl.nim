@@ -113,6 +113,7 @@ proc parseColorScl*(s: MSlice | openArray[char] | string;
 
 when isMainModule:
   import cligen
+  when not declared(stdout): import std/syncio
   proc colScl(ns=7..7, text="X", x = -1.0,sat=0.7,val=0.9, scales: seq[Scale]) =
     ## Color scale driver to test distinguishability & name/memorability; Egs.:
     ## `colorScl -n8 g h w p v`; Look@"color edges" in `colorScl -n6..17 w p v`.
