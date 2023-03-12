@@ -1,5 +1,10 @@
 RELEASE NOTES
 =============
+Version: 1.5.42
+---------------
+    - colorScl test prog working with nimPreviewSlimSystem
+
+    - cligen/mslice working with older Nim.
 
 Version: 1.5.41
 ---------------
