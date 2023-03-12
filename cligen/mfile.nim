@@ -117,8 +117,8 @@ proc mopen*(path: string, prot=PROT_READ, flags=MAP_SHARED, a=0, b = -1,
         FILE_SHARE_READ or (if ro: 0 else: FILE_SHARE_WRITE), nil,
         if ro: OPEN_EXISTING else: CREATE_ALWAYS,
         if ro: FILE_ATTRIBUTE_READONLY else: FILE_ATTRIBUTE_NORMAL, 0)
-    let fh = (when useWinUnicode: openFl(createFileW, path.newWideCString)
-              else: openFl(createFileA, path)).cint
+    when useWinUnicode: (let fh = openFl(createFileW, path.newWideCString))
+    else: (let fh = openFl(createFileA, path).cint)
   else: # infer file open-flags from mapping flags
     let fl = if flags == MAP_PRIVATE: O_RDONLY                     # Read Only
              elif (prot and PROT_RW) == PROT_RW: O_RDWR or O_CREAT # Read-Write
