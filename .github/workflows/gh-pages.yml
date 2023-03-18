@@ -44,7 +44,7 @@ jobs:
           nim-version: 'devel --latest'
 
       - name: Generate API documents
-        run: nim doc --project --outdir:docs cligen.nim
+        run: (echo 'cligen'; grep -rl '##' cligen | grep -v clCfg) | sed -e's/.nim//' -e's/^/import /' > all.nim; nim doc --path=. --project --outdir:docs all.nim
 
       - name: Deploy documents
         uses: peaceiris/actions-gh-pages@v3
