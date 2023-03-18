@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html><head> <title>cligen docs</title></head><body>
 <h1>cligen docs</h1><br/>
-<h2>Modules related to the Main CLI generator</h2><br/>
+<h3>Modules related to the Main CLI generator</h3>
 <ul>
  <li><a href="cligen.html">cligen - the main event</a>
  <li><a href="cligen/parseopt3.html">cligen/parseopt3 - how cligen parses argv</a>
@@ -12,22 +12,23 @@
  <li><a href="cligen/textUt.html">cligen/textUt - de-color, word-wrap, help tab, edit distance</a>
  <li><a href="cligen/cfUt.html">cligen/cfUt - a helper for cligen/mergeCfgEnv* </a>
 </ul>
-<h2>Nim `include` before `dispatch` for auto-magic param ingestion from cfg-files/env-vars</h2><br/>
+<h3>Nim `include` before `dispatch` for auto-magic param ingestion from
+    cfg-files/env-vars</h3>
 <ul>
  <li><a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv - basic dispatch</a>
  <li><a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti - dispatchMulti</a>
  <li><a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul - nested dispatchMulti</a>
 </ul>
 There are also <tt>cligen/[helpTmpl, syntaxHelp, clCfgInit, clCfgToml]</tt>
-helper include files.<br/>
-<h2>Utility modules originally added for `dups`</h2><br/>
+helper include files.
+<h3>Utility modules originally added for `dups`</h3>
 <ul>
  <li><a href="cligen/fileUt.html">cligen/fileUt - Cmp files, parse file slice specs</a>
  <li><a href="cligen/strUt.html">cligen/strUt - hashes, strutils alikes, a mini-template language, fast number formatters (w/uncertainties)</a>
  <li><a href="cligen/mslice.html">cligen/mslice - non-GC'd-string & strip-split-framers & fast number parsers</a>
  <li><a href="cligen/mfile.html">cligen/mfile - exception-free, layered-mslice-aware memfiles</a>
 </ul>
-<h2>Various system & OS support</h2><br/>
+<h3>Various system & OS support</h3>
 <ul>
  <li><a href="cligen/sysUt.html">cligen/sysUt - system/language level things</a>
  <li><a href="cligen/print.html">cligen/print - APIs for Python refugees</a>
@@ -38,15 +39,16 @@ helper include files.<br/>
  <li><a href="cligen/procpool.html">cligen/procpool - Python Multiprocessing analogue</a>
  <li><a href="cligen/magic.html">cligen/magic - wrap libmagic from darwinsys file</a>
 </ul>
-<h2>Originally for `lc` but of broader use</h2><br/>
+<h3>Originally for `lc` but of broader use</h3>
 <ul>
  <li><a href="cligen/tab.html">cligen/tab - padded, flowed layout engine</a>
  <li><a href="cligen/tern.html">cligen/tern - Ternary Search Tree</a>
  <li><a href="cligen/trie.html">cligen/trie - Unordered doubly indirect Trie</a>
  <li><a href="cligen/abbrev.html">cligen/abbrev - Automatic glob-abbreviation system</a>
 </ul>
-<h2>Internal and/or going away soon</h2>
+<h3>Internal and/or going away soon</h3>
 cligen/[gcarc, unsafeAddr, prefetch, conncomp]
+<br/>
 <br/>
 About 50% of the modules here are not-strictly about CLI-generation, but other
 functionality I have found useful in several-to-many CLI utilities.  Being here
