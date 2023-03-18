@@ -260,10 +260,7 @@ many examples (which I tried to name suggestively) in the automated test suite:
   [test/](https://github.com/c-blake/cligen/tree/master/test/)
 for starting points of various advanced usages.
 
-Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and generated
-documentation for the three main modules:
-  [parseopt3](http://c-blake.github.io/cligen/cligen/parseopt3.html)
-  [argcvt](http://c-blake.github.io/cligen/cligen/argcvt.html)
-  [cligen](http://c-blake.github.io/cligen/cligen.html)
+Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and [generated
+documentation for the various modules](https://c-blake.github.io/cligen/).
 Finally, I try to keep track of possibly breaking changes and new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).

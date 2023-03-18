@@ -1,14 +1,74 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html>
-  <head>
-    <title>cligen docs</title>
-  </head>
-  <body>
-    <h1>cligen docs</h1>
-    <ul>
-      <li><a href="cligen/argcvt.html">argcvt.html</a>
-      <li><a href="cligen.html">cligen.html</a>
-      <li><a href="cligen/parseopt3.html">parseopt3.html</a>
-    </ul>
-  </body>
-</html>
+<html><head> <title>cligen docs</title></head><body>
+<h1>cligen docs</h1><br/>
+<h2>Modules related to the Main CLI generator</h2><br/>
+<ul>
+ <li><a href="cligen.html">cligen - the main event</a>
+ <li><a href="cligen/parseopt3.html">cligen/parseopt3 - how cligen parses argv</a>
+ <li><a href="cligen/argcvt.html">cligen/argcvt - default string-to-native</a>
+ <li><a href="cligen/macUt.html">cligen/macUt - Nim macro utilities</a>
+ <li><a href="cligen/humanUt.html">cligen/humanUt - units, colors, rST render</a>
+ <li><a href="cligen/colorScl.html">cligen/colorScl - fancy color specifying</a>
+ <li><a href="cligen/textUt.html">cligen/textUt - de-color, word-wrap, help tab, edit distance</a>
+ <li><a href="cligen/cfUt.html">cligen/cfUt - a helper for cligen/mergeCfgEnv* </a>
+</ul>
+<h2>Nim `include` before `dispatch` for auto-magic param ingestion from cfg-files/env-vars</h2><br/>
+<ul>
+ <li><a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv - basic dispatch</a>
+ <li><a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti - dispatchMulti</a>
+ <li><a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul - nested dispatchMulti</a>
+</ul>
+There are also <tt>cligen/[helpTmpl, syntaxHelp, clCfgInit, clCfgToml]</tt>
+helper include files.<br/>
+<h2>Utility modules originally added for `dups`</h2><br/>
+<ul>
+ <li><a href="cligen/fileUt.html">cligen/fileUt - Cmp files, parse file slice specs</a>
+ <li><a href="cligen/strUt.html">cligen/strUt - hashes, strutils alikes, a mini-template language, fast number formatters (w/uncertainties)</a>
+ <li><a href="cligen/mslice.html">cligen/mslice - non-GC'd-string & strip-split-framers & fast number parsers</a>
+ <li><a href="cligen/mfile.html">cligen/mfile - exception-free, layered-mslice-aware memfiles</a>
+</ul>
+<h2>Various system & OS support</h2><br/>
+<ul>
+ <li><a href="cligen/sysUt.html">cligen/sysUt - system/language level things</a>
+ <li><a href="cligen/print.html">cligen/print - APIs for Python refugees</a>
+ <li><a href="cligen/osUt.html">cligen/osUt - various OS support</a>
+ <li><a href="cligen/posixUt.html">cligen/posixUt - POSIX & Linux-only support</a>
+ <li><a href="cligen/statx.html">cligen/statx - Linux-statx support</a>
+ <li><a href="cligen/dents.html">cligen/dents - cb-Linux-sys_batch-based walkDir</a>
+ <li><a href="cligen/procpool.html">cligen/procpool - Python Multiprocessing analogue</a>
+ <li><a href="cligen/magic.html">cligen/magic - wrap libmagic from darwinsys file</a>
+</ul>
+<h2>Originally for `lc` but of broader use</h2><br/>
+<ul>
+ <li><a href="cligen/tab.html">cligen/tab - padded, flowed layout engine</a>
+ <li><a href="cligen/tern.html">cligen/tern - Ternary Search Tree</a>
+ <li><a href="cligen/trie.html">cligen/trie - Unordered doubly indirect Trie</a>
+ <li><a href="cligen/abbrev.html">cligen/abbrev - Automatic glob-abbreviation system</a>
+</ul>
+<h2>Internal and/or going away soon</h2>
+cligen/[gcarc, unsafeAddr, prefetch, conncomp]
+<br/>
+About 50% of the modules here are not-strictly about CLI-generation, but other
+functionality I have found useful in several-to-many CLI utilities.  Being here
+means a "script writer" who wants a nice CLI and various support not in Nim's
+stdlib need only <tt>git clone https://github.com/c-blake/cligen there</tt>
+(which they already know) and <tt>nim --path=there myThing</tt>.  They needn't
+read tutorials, about 6 alternative package managers or build systems, about
+dot.nimble files or versioning rules - nada.  Trying out a new prog.lang. with
+an easy CLI framework and niceties is <em>classic</em>, though.  So, I feel
+secure in the idea that <tt>cligen</tt> itself should remain dependency-free.
+
+Such users may not investigate the support modules, of course, and it may be an
+overachieving level of extra support (the kernel module in particular).  OTOH,
+the "more I want to tweak --help output the more I must learn" is already a part
+of the "workflow" of becoming a cligen-power user.  Also, it also keeps the dep
+tree of my other packages very shallow -- alleviating package manager hassles
+for them as well.
+
+Anyway, these files are not many bytes.  There could be "dark" (unpublished)
+code anywhere that imports them.  The nature of cligen and PL experimenting, as
+just described, makes such dark code more likely here than for other packages.
+So, at a minimum a long deprecation period before removal is warranted.
+<a href="https://github.com/c-blake/cligen/discussions/201">This discussion has
+more details if you want to chime in.</a>
+</body></html>
