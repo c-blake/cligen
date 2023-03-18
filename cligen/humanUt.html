@@ -235,7 +235,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    fmt is divisor-aka-numerical-unit-in-seconds unit-text <a class="reference internal" href="#attrs">attrs</a>
+    fmt is divisor-aka-numerical-unit-in-seconds unit-text <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Identifier">attrs</span><span class="Punctuation">]</span></span></tt>
     
   </dd>
 </div>
@@ -259,7 +259,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that does <em>only inline</em> font markup (single-|double-|triple-)<tt class="docutils literal"><span class="pre">(*|`)</span></tt> since A) that is what is most useful for terminal display and B) the whole idea of these markups is to be readable as-is.  Backslash escape &amp; spacing work as usual to block adornment interpretation.  This proc inits <tt class="docutils literal"><span class="pre">rstMdSGR</span></tt> with a Table of {style: &quot;open;close&quot;} text adornments. <tt class="docutils literal"><span class="pre">plain==true</span></tt> will make the associated <tt class="docutils literal"><span class="pre">render</span></tt> proc merely remove all such adornments.
+    A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that does <em>only inline</em> font markup <tt class="docutils literal"><span class="pre"><span class="Punctuation">(</span><span class="Identifier">single</span><span class="Operator">-|</span><span class="Identifier">double</span><span class="Operator">-|</span><span class="Identifier">triple</span><span class="Operator">-</span><span class="Punctuation">)</span><span class="Punctuation">(</span><span class="Operator">*|</span><span class="Punctuation">)</span></span></tt> since A) that is what is most useful for terminal display and B) the whole idea of these markups is to be readable as-is.  Backslash escape &amp; spacing work as usual to block adornment interpretation.  This proc inits <tt class="docutils literal"><span class="pre">rstMdSGR</span></tt> with a Table of {style: &quot;open;close&quot;} text adornments. <tt class="docutils literal"><span class="pre">plain==true</span></tt> will make the associated <tt class="docutils literal"><span class="pre">render</span></tt> proc merely remove all such adornments.
     
   </dd>
 </div>
@@ -297,7 +297,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    &quot;.. %X(A1 A2)Ya ..&quot; -&gt; &quot;.. ON<a class="reference internal" href="#A1 A2">A1 A2</a>%XYaOFF ..&quot;
+    <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;.. %X(A1 A2)Ya ..&quot;</span></span></tt> -&gt; <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;.. ON[A1 A2]%XYaOFF ..&quot;</span></span></tt>
     
   </dd>
 </div>
@@ -389,7 +389,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:13:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:40:31 UTC</small>
       </div>
     </div>
   </div>

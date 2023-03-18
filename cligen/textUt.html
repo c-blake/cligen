@@ -329,7 +329,7 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#stripEsc%2Cstring"><span class="Identifier">stripEsc</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal escape sequences (&quot;e<a class="reference internal" href="#..m&quot;, &quot;\e">..m&quot;, &quot;\e</a>..e\&quot;) removed.
+    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal esc sequences (<tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">[..m&quot;</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">]..</span><span class="EscapeSequence">\e</span><span class="EscapeSequence">\\</span><span class="StringLit">&quot;</span></span></tt>) removed.
     
   </dd>
 </div>
@@ -340,7 +340,7 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#stripSGR%2Cstring"><span class="Identifier">stripSGR</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal escape sequences (&quot;e<a class="reference internal" href="#..m&quot;, &quot;\e">..m&quot;, &quot;\e</a>..e\&quot;) removed. Just an alias for <tt class="docutils literal"><span class="pre"><span class="Identifier">stripEsc</span></span></tt>.
+    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal esc sequences (<tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">[..m&quot;</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">]..</span><span class="EscapeSequence">\e</span><span class="EscapeSequence">\\</span><span class="StringLit">&quot;</span></span></tt>) removed. Just an alias for <tt class="docutils literal"><span class="pre"><span class="Identifier">stripEsc</span></span></tt>.
     
   </dd>
 </div>
@@ -445,7 +445,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:13:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:40:31 UTC</small>
       </div>
     </div>
   </div>

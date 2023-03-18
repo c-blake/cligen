@@ -148,7 +148,8 @@
     <p class="module-desc">This module provides a Nim command line parser that is mostly API compatible with the Nim standard library parseopt (and the code derives from that). It supports one convenience iterator over all command line options and some lower-level features. Supported command syntax (here <tt class="docutils literal"><span class="pre">=|:</span></tt> may be any char in <tt class="docutils literal"><span class="pre">sepChars</span></tt>):<ol class="simple"><li>short option bundles: <tt class="docutils literal"><span class="pre">-abx</span></tt>  (where a, b, x <em>are in</em> <tt class="docutils literal"><span class="pre">shortNoVal</span></tt>)</li>
 </ol>
 <p>1a. bundles with one final value: <tt class="docutils literal"><span class="pre">-abc:Bar</span></tt>, <tt class="docutils literal"><span class="pre">-abc=Bar</span></tt>, <tt class="docutils literal"><span class="pre">-c Bar</span></tt>, <tt class="docutils literal"><span class="pre">-abcBar</span></tt> (where <tt class="docutils literal"><span class="pre">c</span></tt> is <em>not in</em> <tt class="docutils literal"><span class="pre">shortNoVal</span></tt>)</p>
-<p>2. long options with values: <tt class="docutils literal"><span class="pre">--foo:bar</span></tt>, <tt class="docutils literal"><span class="pre">--foo=bar</span></tt>, <tt class="docutils literal"><span class="pre">--foo bar</span></tt> (where <tt class="docutils literal"><span class="pre">foo</span></tt> is <em>not in</em> <tt class="docutils literal"><span class="pre">longNoVal</span></tt>)</p>
+<ol class="simple" start="2"><li>long options with values: <tt class="docutils literal"><span class="pre">--foo:bar</span></tt>, <tt class="docutils literal"><span class="pre">--foo=bar</span></tt>, <tt class="docutils literal"><span class="pre">--foo bar</span></tt> (where <tt class="docutils literal"><span class="pre">foo</span></tt> is <em>not in</em> <tt class="docutils literal"><span class="pre">longNoVal</span></tt>)</li>
+</ol>
 <p>2a. long options without vals: <tt class="docutils literal"><span class="pre">--baz</span></tt> (where <tt class="docutils literal"><span class="pre">baz</span></tt> is in <tt class="docutils literal"><span class="pre">longNoVal</span></tt>)</p>
 <ol class="simple" start="3"><li>command parameters: everything else | anything after &quot;--&quot; or a stop word.</li>
 </ol>
@@ -228,7 +229,7 @@
     
     <p>Initializes a parse. <tt class="docutils literal"><span class="pre">cmdline</span></tt> should not contain parameter 0, typically the program name.  If <tt class="docutils literal"><span class="pre">cmdline</span></tt> is not given, default to current program parameters.</p>
 <p><tt class="docutils literal"><span class="pre">shortNoVal</span></tt> and <tt class="docutils literal"><span class="pre">longNoVal</span></tt> specify respectively one-letter and long option keys that do <em>not</em> take arguments.</p>
-<p>If <tt class="docutils literal"><span class="pre">requireSeparator==true</span></tt>, then option keys&amp;values must be separated by an element of <tt class="docutils literal"><span class="pre">sepChars</span></tt> (default <tt class="docutils literal"><span class="pre">{'=',':'}</span></tt>) in short or long option contexts.  If <tt class="docutils literal"><span class="pre">requireSeparator==false</span></tt>, the parser understands that only non-NoVal options will expect args and users may say <tt class="docutils literal"><span class="pre">-aboVal</span></tt> or <tt class="docutils literal"><span class="pre">-o Val</span></tt> or <tt class="docutils literal"><span class="pre">--opt Val</span></tt> <a class="reference internal" href="# as well as the ``-o:Val``|``--opt=Val`` separator style which always works "> as well as the ``-o:Val``|``--opt=Val`` separator style which always works </a>.</p>
+<p>If <tt class="docutils literal"><span class="pre">requireSeparator==true</span></tt>, then option keys&amp;values must be separated by an element of <tt class="docutils literal"><span class="pre">sepChars</span></tt> (default <tt class="docutils literal"><span class="pre">{'=',':'}</span></tt>) in short or long option contexts.  If <tt class="docutils literal"><span class="pre">requireSeparator==false</span></tt>, the parser understands that only non-NoVal options will expect args and users may say <tt class="docutils literal"><span class="pre">-aboVal</span></tt> or <tt class="docutils literal"><span class="pre">-o Val</span></tt> or <tt class="docutils literal"><span class="pre">--opt Val</span></tt> { as well as the <tt class="docutils literal"><span class="pre"><span class="Operator">-</span><span class="Identifier">o</span><span class="Punctuation">:</span><span class="Identifier">Val</span><span class="Operator">|--</span><span class="Identifier">opt</span><span class="Operator">=</span><span class="Identifier">Val</span></span></tt> separator style which always works }.</p>
 <p>If <tt class="docutils literal"><span class="pre">opChars</span></tt> is not empty then those characters before the <tt class="docutils literal"><span class="pre">:|==</span></tt> separator are reported in the <tt class="docutils literal"><span class="pre">.sep</span></tt> field of an element parse.  This allows &quot;incremental&quot; syntax like <tt class="docutils literal"><span class="pre">--values+=val</span></tt>.</p>
 <p>If <tt class="docutils literal"><span class="pre">longPfxOk</span></tt> then unique prefix matching is done for long options. If <tt class="docutils literal"><span class="pre">stopPfxOk</span></tt> then unique prefix matching is done for stop words (usually subcommand names).</p>
 <p>Parameters following either &quot;--&quot; or any literal parameter in <tt class="docutils literal"><span class="pre">stopWords</span></tt> are never interpreted as options.</p>
@@ -241,7 +242,7 @@
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Initializes option parses with cmdline.  Splits cmdline in on spaces and calls initOptParser(openarray<a class="reference internal" href="#string">string</a>).  Should use a proper tokenizer.
+    Initializes option parses with cmdline.  Splits cmdline in on spaces and calls <tt class="docutils literal"><span class="pre"><span class="Identifier">initOptParser</span><span class="Punctuation">(</span><span class="Identifier">openarray</span><span class="Punctuation">[</span><span class="Identifier">string</span><span class="Punctuation">]</span><span class="Punctuation">)</span></span></tt>.  Should use a proper tokenizer.
     
   </dd>
 </div>
@@ -353,7 +354,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:13:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:40:31 UTC</small>
       </div>
     </div>
   </div>

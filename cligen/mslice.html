@@ -638,7 +638,7 @@
                                     <span class="FloatNumber">1e+306</span><span class="Other">,</span> <span class="FloatNumber">1e+307</span><span class="Other">,</span> <span class="FloatNumber">1e+308</span><span class="Other">]</span></pre></dt>
   <dd>
     
-    pow10<a class="reference internal" href="#i">i</a> = 10^i as a float
+    <tt class="docutils literal"><span class="pre"><span class="Identifier">pow10</span><span class="Punctuation">[</span><span class="Identifier">i</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="DecNumber">10</span><span class="Operator">^</span><span class="Identifier">i</span></span></tt> as a float
     
   </dd>
 </div>
@@ -1070,7 +1070,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Fast msplit with cached fs<a class="reference internal" href="#"></a> and single-char-of-set delimiter. n &gt;= 2.
+    Fast msplit with cached <tt class="docutils literal"><span class="pre"><span class="Identifier">fs</span><span class="Punctuation">[</span><span class="Punctuation">]</span></span></tt> and single-char-of-set delimiter. n &gt;= 2.
     
   </dd>
 </div>
@@ -1223,7 +1223,7 @@
             <span class="Identifier">sp</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    split w/reused fs<a class="reference internal" href="#"></a>, bounded cols char-of-set sep which can maybe repeat.
+    split w/reused <tt class="docutils literal"><span class="pre"><span class="Identifier">fs</span><span class="Punctuation">[</span><span class="Punctuation">]</span></span></tt>, bounded cols char-of-set sep which can maybe repeat.
     
   </dd>
 </div>
@@ -1457,7 +1457,7 @@
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Iterate over <a class="reference internal" href="#optionally ``eat``-suffixed">optionally ``eat``-suffixed</a> <tt class="docutils literal"><span class="pre">sep</span></tt>-delimited slices in <tt class="docutils literal"><span class="pre">mslc</span></tt>.  Delimiters are NOT part of returned slices.  Pass eat='\0' to be strictly <tt class="docutils literal"><span class="pre"><span class="Identifier">sep</span></span></tt>-delimited.  A final, unterminated record is returned like any other.  You can swap <tt class="docutils literal"><span class="pre">sep</span></tt> &amp; <tt class="docutils literal"><span class="pre">eat</span></tt> to ignore any optional prefix except '\0'.  This is similar to &quot;lines parsing&quot;.  E.g. usage:<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">mfile</span><span class="Punctuation">;</span> <span class="Keyword">var</span> <span class="Identifier">count</span> <span class="Operator">=</span> <span class="DecNumber">0</span>  <span class="Comment">#Count initial '#' comment lines</span>
+    Iterate over {optionally <tt class="docutils literal"><span class="pre">eat</span></tt>-suffixed} <tt class="docutils literal"><span class="pre">sep</span></tt>-delimited slices in <tt class="docutils literal"><span class="pre">mslc</span></tt>.  Delimiters are NOT part of returned slices.  Pass eat='\0' to be strictly <tt class="docutils literal"><span class="pre"><span class="Identifier">sep</span></span></tt>-delimited.  A final, unterminated record is returned like any other.  You can swap <tt class="docutils literal"><span class="pre">sep</span></tt> &amp; <tt class="docutils literal"><span class="pre">eat</span></tt> to ignore any optional prefix except '\0'.  This is similar to &quot;lines parsing&quot;.  E.g. usage:<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">mfile</span><span class="Punctuation">;</span> <span class="Keyword">var</span> <span class="Identifier">count</span> <span class="Operator">=</span> <span class="DecNumber">0</span>  <span class="Comment">#Count initial '#' comment lines</span>
 <span class="Keyword">for</span> <span class="Identifier">slice</span> <span class="Keyword">in</span> <span class="Identifier">mSlices</span><span class="Punctuation">(</span><span class="Identifier">mopen</span><span class="Punctuation">(</span><span class="StringLit">&quot;foo&quot;</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">toMSlice</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Keyword">if</span> <span class="Identifier">slice</span><span class="Operator">.</span><span class="Identifier">len</span> <span class="Operator">&gt;</span> <span class="DecNumber">0</span> <span class="Keyword">and</span> <span class="Identifier">slice</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span> <span class="Operator">!=</span> <span class="CharLit">'#'</span><span class="Punctuation">:</span> <span class="Identifier">count</span><span class="Operator">.</span><span class="Identifier">inc</span></pre>
     
@@ -1512,7 +1512,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:13:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 19:40:31 UTC</small>
       </div>
     </div>
   </div>
