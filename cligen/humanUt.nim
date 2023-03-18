@@ -142,7 +142,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
 
  proc specifierHighlight*(fmt: string, pctTerm: set[char], plain=false, pct='%',
     openBkt="([{", closeBkt=")]}", keepPct=true, termInAttr=true): string =
-  ## ".. %X(A1 A2)Ya .." -> ".. ON[A1 A2]%XYaOFF .."
+  ## `".. %X(A1 A2)Ya .."` -> `".. ON[A1 A2]%XYaOFF .."`
   var term = pctTerm; term.incl pct     #Caller need not enter pct in pctTerm
   var other, attr, attrOn: string       #..Should maybe check xBkt^pctTerm=={}.
   var inPct = false
@@ -185,7 +185,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if attrOn.len > 0: result.add attrOff
 
  proc humanDuration*(dt: int, fmt: string, plain=false): string =
-  ## fmt is divisor-aka-numerical-unit-in-seconds unit-text [attrs]
+  ## fmt is divisor-aka-numerical-unit-in-seconds unit-text `[attrs]`
   let cols = fmt.splitWhitespace
   let attrOff = if plain: "" else: textAttrOff
   try:
@@ -230,7 +230,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
 
  proc initRstMdSGR*(attrs=rstMdSGRDefault, plain=false): rstMdSGR =
   ## A hybrid restructuredText-Markdown-to-ANSI SGR/highlighter/renderer that
-  ## does *only inline* font markup (single-|double-|triple-)``(*|`)`` since A)
+  ## does *only inline* font markup `(single-|double-|triple-)(*|)` since A)
   ## that is what is most useful for terminal display and B) the whole idea of
   ## these markups is to be readable as-is.  Backslash escape & spacing work as
   ## usual to block adornment interpretation.  This proc inits ``rstMdSGR`` with

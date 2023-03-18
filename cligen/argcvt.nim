@@ -300,7 +300,7 @@ proc argHelp*[T,U](dfl: HSlice[T,U]; a: var ArgcvtParams): seq[string] =
 ## See more examples and comments in cligen/syntaxHelp.nim
 
 proc argAggSplit*[T](a: var ArgcvtParams, split=true): seq[T] =
-  ## Split DPSV (e.g. ",hello,world") into a parsed seq[T].
+  ## Split DPSV (e.g. ",hello,world") into a parsed `seq[T]`.
   let toks = if split: a.val[1..^1].split(a.val[0]) else: @[ move(a.val) ]
   let old = a.sep; a.sep = ""     #can have agg[string] & want clobbers on elts
   for i, tok in toks:

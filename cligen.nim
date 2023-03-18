@@ -355,7 +355,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
   ##
   ##``alias`` is ``@[]`` | 2-seq of ``(string,char,string)`` 3-tuples specifying
-  ##(Long, Short opt keys, Help) to [Define,Reference] aliases.  This lets CL
+  ##(Long, Short opt keys, Help) to {Define,Reference} aliases.  This lets CL
   ##users define aliases early in ``mergeParams`` sources (e.g. cfg files/evars)
   ##& reference them later. Eg. if ``alias[0][0]=="alias" and alias[1][1]=='a'``
   ##then ``--alias:k='-a -b' -ak`` expands to ``@["-a", "-b"]``.

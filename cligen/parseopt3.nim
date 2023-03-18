@@ -10,7 +10,7 @@
 ## ``-abcBar`` (where ``c`` is *not in* ``shortNoVal``)
 ##
 ## 2. long options with values: ``--foo:bar``, ``--foo=bar``, ``--foo bar``
-## (where ``foo`` is *not in* ``longNoVal``)
+##    (where ``foo`` is *not in* ``longNoVal``)
 ##
 ## 2a. long options without vals: ``--baz`` (where ``baz`` is in ``longNoVal``)
 ##
@@ -165,8 +165,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## by an element of ``sepChars`` (default ``{'=',':'}``) in short or long
   ## option contexts.  If ``requireSeparator==false``, the parser understands
   ## that only non-NoVal options will expect args and users may say ``-aboVal``
-  ## or ``-o Val`` or ``--opt Val`` [ as well as the ``-o:Val``|``--opt=Val``
-  ## separator style which always works ].
+  ## or ``-o Val`` or ``--opt Val`` { as well as the `-o:Val|--opt=Val`
+  ## separator style which always works }.
   ##
   ## If ``opChars`` is not empty then those characters before the ``:|==``
   ## separator are reported in the ``.sep`` field of an element parse.  This
@@ -196,7 +196,7 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
 
 proc initOptParser*(cmdline: string): OptParser =
   ## Initializes option parses with cmdline.  Splits cmdline in on spaces and
-  ## calls initOptParser(openarray[string]).  Should use a proper tokenizer.
+  ## calls `initOptParser(openarray[string])`.  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
     return initOptParser(commandLineParams())
   else:

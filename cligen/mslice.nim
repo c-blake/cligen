@@ -210,7 +210,7 @@ proc nextSlice*(mslc, ms: var MSlice, sep='\n', eat='\0'): int =
       mslc.len = mslc.len - result              # and adjust input length
 
 iterator mSlices*(mslc: MSlice, sep=' ', eat='\0'): MSlice =
-  ## Iterate over [optionally ``eat``-suffixed] ``sep``-delimited slices in
+  ## Iterate over {optionally ``eat``-suffixed} ``sep``-delimited slices in
   ## ``mslc``.  Delimiters are NOT part of returned slices.  Pass eat='\\0' to
   ## be strictly `sep`-delimited.  A final, unterminated record is returned
   ## like any other.  You can swap ``sep`` & ``eat`` to ignore any optional
@@ -342,7 +342,7 @@ proc msplit*(s: string, sep: char, n=0, repeat=false): seq[MSlice] {.inline.} =
   discard msplit(s, result, sep, n, repeat)
 
 proc msplit*(s: string, fs: var seq[MSlice], seps=wspace, n=0, repeat=true):int=
-  ## Fast msplit with cached fs[] and single-char-of-set delimiter. n >= 2.
+  ## Fast msplit with cached `fs[]` and single-char-of-set delimiter. n >= 2.
   defSplit(s, fs, n, repeat, seps, mempbrk, charIn)
 
 proc msplit*(s: string, seps=wspace, n=0, repeat=true): seq[MSlice] {.inline.}=
@@ -399,7 +399,7 @@ proc splitr*(s: string, sep: char, n=0, repeat=false): seq[string] {.inline.} =
 
 proc splitr*(s: string, fs: var seq[string], seps=wspace, n=0, repeat=true,
              sp: ptr seq[string] = nil): int =
-  ##split w/reused fs[], bounded cols char-of-set sep which can maybe repeat.
+  ##split w/reused `fs[]`, bounded cols char-of-set sep which can maybe repeat.
   defSplitr(s, fs, n, repeat, seps, mempbrk, charIn, sp)
 
 proc splitr*(s: string, seps=wspace, n=0, repeat=true): seq[string] {.inline.}=
@@ -692,7 +692,7 @@ const pow10*: array[-308..308, float] = [
  1e273, 1e274, 1e275, 1e276, 1e277, 1e278, 1e279, 1e280, 1e281, 1e282, 1e283,
  1e284, 1e285, 1e286, 1e287, 1e288, 1e289, 1e290, 1e291, 1e292, 1e293, 1e294,
  1e295, 1e296, 1e297, 1e298, 1e299, 1e300, 1e301, 1e302, 1e303, 1e304, 1e305,
- 1e306, 1e307, 1e308] ## pow10[i] = 10^i as a float
+ 1e306, 1e307, 1e308] ## `pow10[i] = 10^i` as a float
 
 proc parseFloat*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): float =
   proc copysign(x, y: cdouble): cdouble {.importc, header: "<math.h>".}

@@ -16,7 +16,7 @@
 ## own.  If you are porting a bunch of Python code nimpylib may be more useful.
 ##
 ## Auto-line ending & target `File` s do vary, though.  For these we just use
-## more proc names (there are only 3*2).  These lean upon pre-established naming
+## more proc names (there are only 3x2). These lean upon pre-established naming
 ## conventions like `echo -n` on Unix & fprintf in C for (maybe) easier recall.
 when not declared(File): import std/syncio
 

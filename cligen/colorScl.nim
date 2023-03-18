@@ -91,8 +91,8 @@ proc xt256*(rgb: Color3, lim: range[5..1024] = 256): string =
 var doNotUse: int
 proc parseColorScl*(s: MSlice | openArray[char] | string;
                     nParsed: var int=doNotUse): Color3 =
-  ## Parse color scale like "<sclNmPfx>FLOAT[,..] where <sclNmPfx> is the first
-  ## letter of a scale name, FLOAT is a 0..1 scale, & [,..] are optional params.
+  ## Parse color scale like `<sclNmPfx>FLOAT[,..]` where <sclNmPfx> is the first
+  ## letter of a scale name, FLOAT is 0..1 scale, & `[,..]` are optional params.
   ## `nParse` gets number of chars handled.  An eg. good spec is: "w.3,.7,.65"
   ## for 30% wLen at 70% saturation, 65% value. { Yes, this could be fancier. }
   nParsed = 0; var nTmp = 0

@@ -51,13 +51,13 @@ proc toStrIni*(c: range[0 .. 255]): NimNode =
   newStrLitNode($chr(c))
 
 proc toStrSeq*(strSeqInitializer: NimNode): seq[string] =
-  ## Transform a literal @[ "a", .. ] into compile-time seq[string]
+  ## Transform a literal `@[ "a", .. ]` into compile-time `seq[string]`
   if strSeqInitializer.len > 1:
     for kid in strSeqInitializer[1]:
       result.add($kid)
 
 proc toIdSeq*(strSeqInitializer: NimNode): seq[NimNode] =
-  ## Get a compile-time ``seq[ident]`` from a symbol or literal @[ "a", .. ].
+  ## Get a compile-time `seq[ident]` from a symbol or literal `@[ "a", .. ]`.
   if strSeqInitializer.kind == nnkSym:
     when (NimMajor, NimMinor, NimPatch) >= (1,7,3):
       for n in strSeqInitializer.getImpl[2]: result.add n.strVal.ident
@@ -174,7 +174,7 @@ macro with*(ob: typed, fields: untyped, body: untyped): untyped =
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
  macro callsOn*(routineFirstsRest: varargs[untyped]): untyped =
   ## `callsOn f, [a, b,..], y, z, ..` generates `f(a,y,z,..); f(b,y,z,..); ..`.
-  ## You can use (), [], or {} for the list of first arguments.
+  ## You can use `()`, `[]`, or `{}` for the list of first arguments.
   if routineFirstsRest.len < 2 or
      routineFirstsRest[1].kind notin {nnkTupleConstr, nnkBracket, nnkCurly}:
     error "expecting routine, ()/[]/{}-list & however many routine args"

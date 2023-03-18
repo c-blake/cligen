@@ -6,7 +6,7 @@ import os, parseutils, critbits, math, ./mslice # math.^
 when not declared(stderr): import std/syncio
 
 proc stripEsc*(a: string): string =
-  ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
+  ## Return `a` with terminal esc sequences (`"\e[..m"`, `"\e]..\e\\"`) removed.
   result = newStringOfCap(a.len)
   var postEsc = false
   var inSGR = false
@@ -36,7 +36,7 @@ proc stripEsc*(a: string): string =
     inc i
 
 proc stripSGR*(a: string): string =
-  ## Return `a` with terminal escape sequences ("\e[..m", "\e]..\e\\") removed.
+  ## Return `a` with terminal esc sequences (`"\e[..m"`, `"\e]..\e\\"`) removed.
   ## Just an alias for `stripEsc`.
   a.stripEsc
 
