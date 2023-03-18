@@ -159,7 +159,7 @@ proc getgroups*(): HashSet[Gid] = getgroups(result)
 template defineIdentities(ids, Id, Entry, getid, rewind,
                           getident, en_id, en_nm) {.dirty.} =
   proc ids*(): Table[Id, string] =
-    ##Populate Table[Id, string] with data from system account files
+    ##Populate `Table[Id, string]` with data from system account files
     when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[Id, string]()
     var id: ptr Entry
     when defined(android) or defined(windows):
@@ -177,7 +177,7 @@ defineIdentities(groups, Gid, Group, getgrgid,setgrent,getgrent,gr_gid,gr_name)
 
 template defineIds(ids,Id,Entry,getid,rewind,getident,en_id,en_nm) {.dirty.} =
   proc ids*(): Table[string, Id] =
-    ##Populate Table[Id, string] with data from system account files
+    ##Populate `Table[Id, string]` with data from system account files
     when (NimMajor,NimMinor,NimPatch)<(0,20,0): result = initTable[string, Id]()
     var id: ptr Entry
     when defined(android) or defined(windows):
@@ -264,7 +264,7 @@ proc dtNs*(t0: int, clockId=CLOCK_REALTIME): int = clockId.getTime.ns - t0
   ## the system clock is addressed by `CLOCK_MONOTONIC.getTmNs`.
 
 proc fileTimeParse*(code: string): tuple[tim: char, dir: int] =
-  ##Parse [+-][amcvAMCV]* into a file time order specification.  In case default
+  ##Parse `[+-][amcvAMCV]*` into file time order specification.  In case default
   ##increasing order is non-intuitive, this provides two ways to specify reverse
   ##order: leading '-' or upper-casing.  Such reversals compose: "-A" === "a".
   if code.len < 1:
@@ -278,7 +278,7 @@ proc fileTimeParse*(code: string): tuple[tim: char, dir: int] =
     result.tim = toLowerAscii(result.tim)
 
 proc fileTime*(st: Stat, tim: char, dir: int): int =
-  ## file time useful in sorting by [+-][amcv]time; pre-parsed code.
+  ## file time useful in sorting by `[+-][amcv]`-time; pre-parsed code.
   case tim
   of 'a': dir * ns(st.st_atim)
   of 'm': dir * ns(st.st_mtim)
@@ -287,7 +287,7 @@ proc fileTime*(st: Stat, tim: char, dir: int): int =
   else: 0
 
 proc fileTime*(st: Stat, code: string): int =
-  ## file time useful in sorting by [+-][amcv]time.
+  ## file time useful in sorting by `[+-][amcv]`-time.
   let td = fileTimeParse(code)
   fileTime(st, td.tim, td.dir)
 
@@ -307,7 +307,7 @@ let strftimeCodes* = { 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'F',
                        '1', '2', '3', '4', '5', '6', '7', '8', '9' }
 
 proc strftime*(fmt: string, ts: Timespec): string =
-  ##Nim wrap strftime, and translate %[1..9] => '.' & that many tv_nsec digits.
+  ##Nim wrap strftime & translate `%[1..9]` => '.' & that many tv_nsec digits.
   proc ns(fmt: string): string =
     var inPct = false
     for c in fmt:
@@ -538,10 +538,10 @@ proc recEntries*(it: iterator(): string; st: ptr Stat=nil; dt: ptr int8=nil,
 iterator paths*(roots:seq[string], maxDepth=0, follow=false, file="",delim='\n',
                 err=stderr, st: ptr Stat=nil, dt: ptr int8=nil): string =
   ## iterator for maybe-following, maybe-recursive closure of the union of
-  ## ``roots`` and optional ``delim``-delimited input ``file`` (stdin if "-"|if
-  ## "" & stdin not a tty).  Usage is ``for p in paths(roots,...): echo p``.
+  ## `roots` and optional `delim`-delimited input `file` (stdin if "-" \| if
+  ## "" & stdin not a tty).  Usage is `for p in paths(roots,...): echo p`.
   ## This allows fully general path input if used in a command pipeline like
-  ## ``find .  -print0 | cmd -d\\0`` (where ``-d`` sets ``delim``).
+  ## `find .  -print0 | cmd -d\\0` (where `-d` sets `delim`).
   let it = recEntries(both(roots, fileStrings(file, delim)),
                       st, dt, follow, maxDepth, err)
   for e in it(): yield e

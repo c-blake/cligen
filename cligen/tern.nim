@@ -2,7 +2,7 @@
 ##for a sorted set|mapping of strings in the family of digital search trees.
 ##Presently, NUL bytes(``'\0'``) are not allowed in keys.  I have measured it as
 ##up to 1.5x faster than ``CritBitTree`` (at a cost of a 7x memory footprint)
-##doing things like unique **.nim lines and never more than 1.1x slower.  It
+##doing things like unique `**.nim` lines and never more than 1.1x slower.  It
 ##mostly felt easier for me to extend this variant.  It is API-compatible with
 ##``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
 ##which will be trapped by the compiler if you use kwargs).  ``CritBitTree``

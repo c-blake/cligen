@@ -85,7 +85,7 @@ proc endsWithI*(s, suffix: string): bool {.noSideEffect.} =
   if i >= suffix.len: return true
 
 proc `-`*(a, b: openArray[string]): seq[string] =
-  ## All a[]s not in b (implemented efficiently with a HashSet).
+  ## All `a[]s` not in b (implemented efficiently with a HashSet).
   when not declared(toHashSet):
     error "Nim too old; string symmetric set diff unsupported."
   var sb = toHashSet(b)
@@ -183,7 +183,7 @@ func decimalDigitTuples(p10, n: int): string =
 
 const d3 = decimalDigitTuples(3, 1000)  # Global so usable by ecvt for exponents
 func uint64toDecimal*(res: var openArray[char], x: uint64): int =
-  ## Flexible oA[char] inp; Fast 3B outp at a time; Answer is `res[result..^1]`.
+  ## Flexible `oA[char]` inp; Fast 3B @a time out; Answer is `res[result..^1]`.
   var num = x                           # On AMD/Intel perf d3 ~same as `d2`
   result = res.len - 1                  #.. (PGO moving either +-1.2x); d3 is
   while num >= 1000:                    #.. consistently faster on ARM & also
@@ -395,16 +395,16 @@ type MacroCall* = (Slice[int], Slice[int], Slice[int]) ## id,a,c
 iterator tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): MacroCall =
   ## A text template parser converting `fmt` into a list of macro calls encoded
   ## as `fmt`-relative slices.  Callers resolve calls in rendering.  Macro call
-  ## syntax is $ID, %[ID], ${(ID)ARG} with any non-ids valid braces|quotes. This
-  ## generalizes most escape-free format string interpolation styles.
+  ## syntax is `$ID`, `%[ID]`, `${(ID)ARG}` with any nonIds valid braces|quotes.
+  ## This generalizes most escape-free format string interpolation styles.
   ##
-  ## Specifically, if "[X]" => OPTIONAL X & "<Y>" => NEEDED Y, then a call is:
-  ##  - M[B][Q]<ID>[very next q][ARGUMENT STRING][very next b]
+  ## Specifically, if `"[X]"` => OPTIONAL X & "<Y>" => NEEDED Y, then a call is:
+  ##  - `M[B][Q]<ID>[very next q][ARGUMENT STRING][very next b]`
   ## where
   ##  - M is the so-called self-escaping warning meta char, like '$', '%', ..
   ##  - B is an optional opening brace|quote (any NON-alpha_numeric)
-  ##  - b=other[B] is the matching closer (other[c]==c, except for bracey chars)
-  ##  - Q is a macro id brace|quote (IF non-alpha_numeric); q=other[Q] closes
+  ##  - b=`close[B]` is matching closer (`close[c]`==c except for bracey chars)
+  ##  - Q is a macro id brace|quote (IF non-alpha_numeric); q=`other[Q]` closes
   ## No B => calls stop at the next NON-alpha_numeric char (eg. ':' in "$ID:x")
   ## and the macro gets an empty ARG.  No Q => ID stops at next non-`ids` char,
   ## eg. ${ID ARG}.  The only escape is M self-escaping (MM -> M) {only outside

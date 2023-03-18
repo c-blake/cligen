@@ -108,7 +108,7 @@ const maxspc = 1023
 const spaces = repeat(' ', maxspc + 1)
 proc write*(f: File; strs: seq[string]; lens: seq[int]; ws: seq[int];
             m,nr,nc,widest: int; pfx: string) =
-  ##Write lines to file w/padding; lens[i]<0 means left align else right align.
+  ##Write lines to file w/pads; `lens[i]<0` means left align else right align.
   let ncMaj = nc div m
   for r in 0 ..< min(nr, if widest > 0: widest else: nr):
     if pfx.len > 0: f.write pfx         #0,1..   nr*m,nr*m+1.. nr*2m,nr*2m+1..

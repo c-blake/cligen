@@ -262,7 +262,7 @@ proc getBirthTimeNsec*(path: string): int64 =
   result = if stat(path, stx) < cint(0): 0'i64 else: getBirthTimeNsec(stx)
 
 proc fileTime*(st: Statx, kind: char, dir=1): int64 {.inline.} =
-  ## Return file time stamp ([bamcv]) in nanoseconds since the Unix epoch.
+  ## Return file time stamp (`[bamcv]`) in nanoseconds since the Unix epoch.
   case kind
   of 'b': dir * getBirthTimeNsec(st)
   of 'a': dir * getLastAccTimeNsec(st)
@@ -272,7 +272,7 @@ proc fileTime*(st: Statx, kind: char, dir=1): int64 {.inline.} =
   else: 0
 
 proc fileTime*(path: string; kind: char, missing=int64(0), dir=1): int64 =
-  ## Return file time stamp ([bamcv]) in nanoseconds since the Unix epoch.
+  ## Return file time stamp (`[bamcv]`) in nanoseconds since the Unix epoch.
   var st: Statx
   if stat(path, st) != 0: missing else: st.fileTime(kind, dir)
 

@@ -65,7 +65,7 @@ proc abbrev*(a: Abbrev, str: string): string {.inline.} =
     str
 
 proc parseAbbrev*(s: string): Abbrev =
-  ##Parse comma-separated abbreviation spec [mx][,[hd][,[tl][,[sep]]]] ``s``
+  ##Parse comma-separated abbreviation spec `[mx][,[hd][,[tl][,[sep]]]] s`
   ##into ``Abbrev abb``.  Non-numeric ``mx`` => -1 => caller must set mx and
   ##call ``update``.  Non-numeric|missing ``hd`` => ``mx-sep.len-tl``
   ##Non-numeric or missing ``tl`` => ``mx-sep.len-hd``.  Non-num|missing both =>

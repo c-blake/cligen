@@ -144,7 +144,7 @@ proc framesOb*(f: var Filter): iterator(): MSlice =
     else: f.done = true
 
 proc framesLenPfx*(f: var Filter): iterator(): MSlice =
-  ## A reply frames iterator for wrk procs writing [int, value] results.
+  ## A reply frames iterator for wrk procs writing `[int, value]` results.
   let f = f.addr # Seems to relate to nimWorkaround14447; Can `lent`|`sink` fix?
   result = iterator(): MSlice = # NOTE: must cp to other mem before next call.
     var n = 0

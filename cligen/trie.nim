@@ -148,7 +148,7 @@ proc simplifyPattern*(pat: string, a1='?', aN='*'): string =
     result = result.replace(post, post2)
 
 proc match*[T](t: Trie[T], pat="", limit=0, a1='?', aN='*'): seq[string] =
-  ## Return up to ``limit`` matches of shell [?*] glob pattern ``pat`` in ``t``.
+  ## Return up to `limit` matches of shell `[?*]` glob pattern `pat` in `t`.
   var key: string
   var s: HashSet[string]
   let pat = pat.simplifyPattern(a1, aN)
