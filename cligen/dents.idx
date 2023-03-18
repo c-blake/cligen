@@ -1,0 +1,20 @@
+nimTitle	dents	cligen/dents.html	module cligen/dents		0
+nim	dotOrDotDot	cligen/dents.html#dotOrDotDot,DirName	proc dotOrDotDot(nm: DirName): bool		31
+nim	EXDEV	cligen/dents.html#EXDEV	const EXDEV		102
+nim	ENOTDIR	cligen/dents.html#ENOTDIR	const ENOTDIR		103
+nim	ENFILE	cligen/dents.html#ENFILE	const ENFILE		104
+nim	EMFILE	cligen/dents.html#EMFILE	const EMFILE		105
+nim	recFailDefault	cligen/dents.html#recFailDefault.t,string,string	template recFailDefault(context: string; path: string; err = stderr)		107
+nim	forPath	cligen/dents.html#forPath.t,string,int,bool,bool,bool,bool,File,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped	template forPath(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;\n        err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;\n        always, preRec, postRec, recFail: untyped)		116
+nim	forPath	cligen/dents.html#forPath.t,string,int,bool,bool,bool,bool,File,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped	template forPath(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;\n        err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;\n        always, preRec, postRec: untyped)		307
+nim	forPath	cligen/dents.html#forPath.t,string,int,bool,bool,bool,bool,File,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped	template forPath(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;\n        err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;\n        always, preRec: untyped)		318
+nim	forPath	cligen/dents.html#forPath.t,string,int,bool,bool,bool,bool,File,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped,untyped	template forPath(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;\n        err: File; depth, path, nmAt, ino, dt, lst, dfd, dst, did: untyped;\n        always: untyped)		329
+nim	find	cligen/dents.html#find,seq[string],int	proc find(roots: seq[string]; recurse = 0; stats = false; chase = false;\n     xdev = false; eof0 = false; zero = false)		340
+nim	dstats	cligen/dents.html#dstats,seq[string],int	proc dstats(roots: seq[string]; recurse = 0; stats = false; chase = false;\n       xdev = false; eof0 = false)		349
+nim	wstats	cligen/dents.html#wstats,seq[string]	proc wstats(roots: seq[string])		367
+nim	showNames	cligen/dents.html#showNames,string,seq[string],bool	proc showNames(label: string; dir: seq[string]; wrote: var bool)		375
+nim	ls1AU	cligen/dents.html#ls1AU,seq[string],int	proc ls1AU(roots: seq[string]; recurse = 1; stats = false; chase = false;\n      xdev = false; eof0 = false)		381
+nim	initDEnt	cligen/dents.html#initDEnt,string,int,Statx	proc initDEnt(path: string; nmAt: int; lst: Statx): DEnt		411
+nim	showLong	cligen/dents.html#showLong,string,seq[DEnt],bool	proc showLong(label: string; dir: seq[DEnt]; wrote: var bool)		418
+nim	lss1AU	cligen/dents.html#lss1AU,seq[string],int	proc lss1AU(roots: seq[string]; recurse = 1; chase = false; xdev = false;\n       eof0 = false)		427
+nimgrp	forpath	cligen/dents.html#forPath-templates-all	template		116

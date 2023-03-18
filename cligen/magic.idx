@@ -1,0 +1,60 @@
+nimTitle	magic	cligen/magic.html	module cligen/magic		0
+nim	haveMagic	cligen/magic.html#haveMagic	const haveMagic		23
+nim	MAGIC_NONE	cligen/magic.html#MAGIC_NONE	const MAGIC_NONE		29
+nim	MAGIC_DEBUG	cligen/magic.html#MAGIC_DEBUG	const MAGIC_DEBUG		30
+nim	MAGIC_SYMLINK	cligen/magic.html#MAGIC_SYMLINK	const MAGIC_SYMLINK		31
+nim	MAGIC_COMPRESS	cligen/magic.html#MAGIC_COMPRESS	const MAGIC_COMPRESS		32
+nim	MAGIC_DEVICES	cligen/magic.html#MAGIC_DEVICES	const MAGIC_DEVICES		33
+nim	MAGIC_MIME_TYPE	cligen/magic.html#MAGIC_MIME_TYPE	const MAGIC_MIME_TYPE		34
+nim	MAGIC_CONTINUE	cligen/magic.html#MAGIC_CONTINUE	const MAGIC_CONTINUE		35
+nim	MAGIC_CHECK	cligen/magic.html#MAGIC_CHECK	const MAGIC_CHECK		36
+nim	MAGIC_PRESERVE_ATIME	cligen/magic.html#MAGIC_PRESERVE_ATIME	const MAGIC_PRESERVE_ATIME		37
+nim	MAGIC_RAW	cligen/magic.html#MAGIC_RAW	const MAGIC_RAW		38
+nim	MAGIC_ERROR	cligen/magic.html#MAGIC_ERROR	const MAGIC_ERROR		39
+nim	MAGIC_MIME_ENCODING	cligen/magic.html#MAGIC_MIME_ENCODING	const MAGIC_MIME_ENCODING		40
+nim	MAGIC_MIME	cligen/magic.html#MAGIC_MIME	const MAGIC_MIME		41
+nim	MAGIC_APPLE	cligen/magic.html#MAGIC_APPLE	const MAGIC_APPLE		42
+nim	MAGIC_EXTENSION	cligen/magic.html#MAGIC_EXTENSION	const MAGIC_EXTENSION		43
+nim	MAGIC_COMPRESS_TRANSP	cligen/magic.html#MAGIC_COMPRESS_TRANSP	const MAGIC_COMPRESS_TRANSP		44
+nim	MAGIC_NODESC	cligen/magic.html#MAGIC_NODESC	const MAGIC_NODESC		45
+nim	MAGIC_NO_CHECK_COMPRESS	cligen/magic.html#MAGIC_NO_CHECK_COMPRESS	const MAGIC_NO_CHECK_COMPRESS		46
+nim	MAGIC_NO_CHECK_TAR	cligen/magic.html#MAGIC_NO_CHECK_TAR	const MAGIC_NO_CHECK_TAR		47
+nim	MAGIC_NO_CHECK_SOFT	cligen/magic.html#MAGIC_NO_CHECK_SOFT	const MAGIC_NO_CHECK_SOFT		48
+nim	MAGIC_NO_CHECK_APPTYPE	cligen/magic.html#MAGIC_NO_CHECK_APPTYPE	const MAGIC_NO_CHECK_APPTYPE		49
+nim	MAGIC_NO_CHECK_ELF	cligen/magic.html#MAGIC_NO_CHECK_ELF	const MAGIC_NO_CHECK_ELF		50
+nim	MAGIC_NO_CHECK_TEXT	cligen/magic.html#MAGIC_NO_CHECK_TEXT	const MAGIC_NO_CHECK_TEXT		51
+nim	MAGIC_NO_CHECK_CDF	cligen/magic.html#MAGIC_NO_CHECK_CDF	const MAGIC_NO_CHECK_CDF		52
+nim	MAGIC_NO_CHECK_TOKENS	cligen/magic.html#MAGIC_NO_CHECK_TOKENS	const MAGIC_NO_CHECK_TOKENS		53
+nim	MAGIC_NO_CHECK_ENCODING	cligen/magic.html#MAGIC_NO_CHECK_ENCODING	const MAGIC_NO_CHECK_ENCODING		54
+nim	MAGIC_NO_CHECK_BUILTIN	cligen/magic.html#MAGIC_NO_CHECK_BUILTIN	const MAGIC_NO_CHECK_BUILTIN		56
+nim	MAGIC_SNPRINTB	cligen/magic.html#MAGIC_SNPRINTB	const MAGIC_SNPRINTB		60
+nim	MAGIC_NO_CHECK_ASCII	cligen/magic.html#MAGIC_NO_CHECK_ASCII	const MAGIC_NO_CHECK_ASCII		62
+nim	MAGIC_NO_CHECK_FORTRAN	cligen/magic.html#MAGIC_NO_CHECK_FORTRAN	const MAGIC_NO_CHECK_FORTRAN		64
+nim	MAGIC_NO_CHECK_TROFF	cligen/magic.html#MAGIC_NO_CHECK_TROFF	const MAGIC_NO_CHECK_TROFF		65
+nim	MAGIC_VERSION	cligen/magic.html#MAGIC_VERSION	const MAGIC_VERSION		66
+nim	magic_t	cligen/magic.html#magic_t	type magic_t		68
+nim	magic_open	cligen/magic.html#magic_open,cint	proc magic_open(flags: cint): magic_t		70
+nim	magic_close	cligen/magic.html#magic_close,magic_t	proc magic_close(m: magic_t)		71
+nim	magic_getpath	cligen/magic.html#magic_getpath,cstring,cint	proc magic_getpath(magicFile: cstring; action: cint): cstring		72
+nim	magic_file	cligen/magic.html#magic_file,magic_t,cstring	proc magic_file(m: magic_t; inName: cstring): cstring		73
+nim	magic_descriptor	cligen/magic.html#magic_descriptor,magic_t,cint	proc magic_descriptor(m: magic_t; fd: cint): cstring		74
+nim	magic_buffer	cligen/magic.html#magic_buffer,magic_t,pointer,csize	proc magic_buffer(m: magic_t; buf: pointer; nb: csize): cstring		75
+nim	magic_error	cligen/magic.html#magic_error,magic_t	proc magic_error(m: magic_t): cstring		76
+nim	magic_getflags	cligen/magic.html#magic_getflags,magic_t	proc magic_getflags(m: magic_t): cint		77
+nim	magic_setflags	cligen/magic.html#magic_setflags,magic_t,cint	proc magic_setflags(m: magic_t; flags: cint): cint		78
+nim	magic_version	cligen/magic.html#magic_version_2	proc magic_version(): cint		79
+nim	magic_load	cligen/magic.html#magic_load,magic_t,cstring	proc magic_load(m: magic_t; magicFile: cstring): cint		80
+nim	magic_load_buffers	cligen/magic.html#magic_load_buffers,magic_t,ptr.pointer,ptr.csize,csize	proc magic_load_buffers(m: magic_t; bufs: ptr pointer; sizes: ptr csize; nbufs: csize): cint		81
+nim	magic_compile	cligen/magic.html#magic_compile,magic_t,cstring	proc magic_compile(m: magic_t; magicFile: cstring): cint		83
+nim	magic_check	cligen/magic.html#magic_check,magic_t,cstring	proc magic_check(m: magic_t; magicFile: cstring): cint		84
+nim	magic_list	cligen/magic.html#magic_list,magic_t,cstring	proc magic_list(m: magic_t; magicFile: cstring): cint		85
+nim	magic_errno	cligen/magic.html#magic_errno,magic_t	proc magic_errno(m: magic_t): cint		86
+nim	MAGIC_PARAM_INDIR_MAX	cligen/magic.html#MAGIC_PARAM_INDIR_MAX	const MAGIC_PARAM_INDIR_MAX		88
+nim	MAGIC_PARAM_NAME_MAX	cligen/magic.html#MAGIC_PARAM_NAME_MAX	const MAGIC_PARAM_NAME_MAX		89
+nim	MAGIC_PARAM_ELF_PHNUM_MAX	cligen/magic.html#MAGIC_PARAM_ELF_PHNUM_MAX	const MAGIC_PARAM_ELF_PHNUM_MAX		90
+nim	MAGIC_PARAM_ELF_SHNUM_MAX	cligen/magic.html#MAGIC_PARAM_ELF_SHNUM_MAX	const MAGIC_PARAM_ELF_SHNUM_MAX		91
+nim	MAGIC_PARAM_ELF_NOTES_MAX	cligen/magic.html#MAGIC_PARAM_ELF_NOTES_MAX	const MAGIC_PARAM_ELF_NOTES_MAX		92
+nim	MAGIC_PARAM_REGEX_MAX	cligen/magic.html#MAGIC_PARAM_REGEX_MAX	const MAGIC_PARAM_REGEX_MAX		93
+nim	MAGIC_PARAM_BYTES_MAX	cligen/magic.html#MAGIC_PARAM_BYTES_MAX	const MAGIC_PARAM_BYTES_MAX		94
+nim	magic_setparam	cligen/magic.html#magic_setparam,magic_t,cint,pointer	proc magic_setparam(m: magic_t; param: cint; val: pointer): cint		95
+nim	magic_getparam	cligen/magic.html#magic_getparam,magic_t,cint,pointer	proc magic_getparam(m: magic_t; param: cint; val: pointer): cint		96

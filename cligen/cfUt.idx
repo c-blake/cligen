@@ -1,0 +1,3 @@
+nimTitle	cfUt	cligen/cfUt.html	module cligen/cfUt		0
+nim	cfToCL	cligen/cfUt.html#cfToCL,string,string	proc cfToCL(path: string; subCmdName = ""; quiet = false; noRaise = false;\n       activeSec = false): seq[string]		4
+nim	envToCL	cligen/cfUt.html#envToCL,string	proc envToCL(evarName: string): seq[string]		42

@@ -1,0 +1,22 @@
+nimTitle	procpool	cligen/procpool.html	module cligen/procpool		0
+nim	Filter	cligen/procpool.html#Filter	object Filter		47
+nim	Frames	cligen/procpool.html#Frames	type Frames		55
+nim	ProcPool	cligen/procpool.html#ProcPool	object ProcPool		57
+nim	len	cligen/procpool.html#len,ProcPool	proc len(pp: ProcPool): int		64
+nim	close	cligen/procpool.html#close,ProcPool,int	proc close(pp: ProcPool; kid: int)		66
+nim	initProcPool	cligen/procpool.html#initProcPool,proc(cint,cint),Frames,int,int,int	proc initProcPool(work: proc (r, w: cint); frames: Frames; jobs = 0; aux = 0;\n             toR = to0; toW = to0; raiseCtrlC = false; bufSz = 8192): ProcPool		92
+nim	readyReplies	cligen/procpool.html#readyReplies.i,ProcPool	iterator readyReplies(pp: var ProcPool): MSlice		113
+nim	finalReplies	cligen/procpool.html#finalReplies.i,ProcPool	iterator finalReplies(pp: var ProcPool): MSlice		121
+nim	framesOb	cligen/procpool.html#framesOb,Filter	proc framesOb(f: var Filter): iterator (): MSlice		137
+nim	framesLenPfx	cligen/procpool.html#framesLenPfx,Filter	proc framesLenPfx(f: var Filter): iterator (): MSlice		146
+nim	frames0term	cligen/procpool.html#frames0term,Filter	proc frames0term(f: var Filter): iterator (): MSlice		176
+nim	framesLines	cligen/procpool.html#framesLines,Filter	proc framesLines(f: var Filter): iterator (): MSlice		179
+nim	wrReq	cligen/procpool.html#wrReq.t,,,,,	template wrReq(fds, i0, pp, wr, rq): untyped		182
+nim	noop	cligen/procpool.html#noop,MSlice	proc noop(s: MSlice)		210
+nim	evalOb	cligen/procpool.html#evalOb.t,,,	template evalOb(pp, reqGen, onReply)		212
+nim	evalLenPfx	cligen/procpool.html#evalLenPfx.t,,,	template evalLenPfx(pp, reqGen, onReply)		213
+nim	eval0term	cligen/procpool.html#eval0term.t,,,	template eval0term(pp, reqGen, onReply)		214
+nim	evalLines	cligen/procpool.html#evalLines.t,,,	template evalLines(pp, reqGen, onReply)		215
+nim	frames0	cligen/procpool.html#frames0,Filter	proc frames0(f: var Filter): (iterator (): MSlice)		216
+nim	eval	cligen/procpool.html#eval.t,untyped,untyped,untyped	template eval(pp, reqGen, onReply: untyped)		218
+nim	evalp	cligen/procpool.html#evalp.t,untyped,untyped,untyped	template evalp(pp, reqGen, onReply: untyped)		220

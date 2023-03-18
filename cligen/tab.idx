@@ -1,0 +1,9 @@
+nimTitle	tab	cligen/tab.html	module cligen/tab		0
+nim	colPad	cligen/tab.html#colPad,seq[int],int,int,int,int	proc colPad(cw: var seq[int]; fw = 80; pm = 999; m = 1; j = -1)		4
+nim	colOptimize	cligen/tab.html#colOptimize,seq[int],int,int,int,int,int	proc colOptimize(lens: seq[int]; W = 80; gap = 1; mx = 999; m = 1; nr: var int): int		28
+nim	layout	cligen/tab.html#layout,seq[int],int,int,int,int,int,int	proc layout(lens: seq[int]; W, gap, mx, m: int; nr, nc: var int): seq[int]		59
+nim	sortByWidth	cligen/tab.html#sortByWidth,seq[int],int,int,int	proc sortByWidth(lens: seq[int]; m, nr, nc: int): seq[int]		74
+nim	sortByWidth	cligen/tab.html#sortByWidth,seq[string],seq[int],int,int,int	proc sortByWidth(strs: var seq[string]; lens: var seq[int]; m, nr, nc: int)		95
+nim	write	cligen/tab.html#write,File,seq[string],seq[int],seq[int],int,int,int,int,string	proc write(f: File; strs: seq[string]; lens: seq[int]; ws: seq[int];\n      m, nr, nc, widest: int; pfx: string)		109
+nim	format	cligen/tab.html#format,File,int,seq[int],seq[string],int,string	proc format(f: File; tw: int; wids: seq[int]; strs: seq[string]; gap = 1; pfx = "")		128
+nimgrp	sortbywidth	cligen/tab.html#sortByWidth-procs-all	proc		74

@@ -1,0 +1,73 @@
+nimTitle	osUt	cligen/osUt.html	module cligen/osUt		0
+nim	Ce	cligen/osUt.html#Ce	type Ce		16
+nim	perror	cligen/osUt.html#perror,cstring,int,OSErrorCode	proc perror(x: cstring; len: int; code: OSErrorCode; err = stderr)		33
+nim	perror	cligen/osUt.html#perror,cstring,int	proc perror(x: cstring; len: int; err = stderr)		43
+nim	perror	cligen/osUt.html#perror,cstring	proc perror(x: cstring; err = stderr)		46
+nim	useStdin	cligen/osUt.html#useStdin,string	proc useStdin(path: string): bool		49
+nim	c_getdelim	cligen/osUt.html#c_getdelim,ptr.cstring,ptr.csize,cint,File	proc c_getdelim(p: ptr cstring; nA: ptr csize; dlm: cint; f: File): int		53
+nim	getDelim	cligen/osUt.html#getDelim.i,File,char	iterator getDelim(f: File; dlm: char = '\n'): string		96
+nim	getDelim	cligen/osUt.html#getDelim.i,string,char	iterator getDelim(path: string; dlm: char = '\n'): string		110
+nim	getDelims	cligen/osUt.html#getDelims.i,File,char	iterator getDelims(f: File; dlm: char = '\n'): (cstring, int)		116
+nim	getDelims	cligen/osUt.html#getDelims.i,string,char	iterator getDelims(path: string; dlm: char = '\n'): (cstring, int)		129
+nim	getLenPfx	cligen/osUt.html#getLenPfx.i,File	iterator getLenPfx[T: SomeNumber](f: File): string		135
+nim	fileStrings	cligen/osUt.html#fileStrings,string,char	proc fileStrings(path: string; delim: char): auto		147
+nim	both	cligen/osUt.html#both,seq[T],	proc both[T](s: seq[T]; it: iterator (): T): iterator (): T		156
+nim	both	cligen/osUt.html#both,,seq[T]	proc both[T](it: iterator (): T; s: seq[T]): iterator (): T		162
+nim	uriteBuffer	cligen/osUt.html#uriteBuffer,File,pointer,Natural	proc uriteBuffer(f: File; buffer: pointer; len: Natural): int		168
+nim	urite	cligen/osUt.html#urite,File,string	proc urite(f: File; s: string)		178
+nim	urite	cligen/osUt.html#urite,File,varargs[string,]	proc urite(f: File; a: varargs[string, `$`])		183
+nim	replacingUrite	cligen/osUt.html#replacingUrite,File,string,char,string	proc replacingUrite(f: File; s: string; eor: char; subEor: string)		187
+nim	eof	cligen/osUt.html#eof,File	proc eof(f: File): bool		200
+nim	outu	cligen/osUt.html#outu.t,varargs[string,]	template outu(a: varargs[string, `$`])		202
+nim	erru	cligen/osUt.html#erru.t,varargs[string,]	template erru(a: varargs[string, `$`])		205
+nim	ureadBuffer	cligen/osUt.html#ureadBuffer,File,pointer,Natural	proc ureadBuffer(f: File; buffer: pointer; len: Natural): int		208
+nim	simplifyPath	cligen/osUt.html#simplifyPath,string	proc simplifyPath(path: string; collapseDotDot = false): string		217
+nim	loadSym	cligen/osUt.html#loadSym,string	proc loadSym(x: string): pointer		237
+nim	timeIt	cligen/osUt.html#timeIt.t,untyped,string,float,int,string,int,untyped	template timeIt(output: untyped; label: string; unit = 0.000001; places = 3; sep = "\n";\n       reps = 1; body: untyped)		252
+nim	writeNumberToFile	cligen/osUt.html#writeNumberToFile,string,int	proc writeNumberToFile(path: string; num: int)		273
+nim	IOFBF	cligen/osUt.html#IOFBF	let IOFBF		285
+nim	IOLBF	cligen/osUt.html#IOLBF	let IOLBF		286
+nim	IONBF	cligen/osUt.html#IONBF	let IONBF		287
+nim	c_setvbuf	cligen/osUt.html#c_setvbuf,File,pointer,cint,csize	proc c_setvbuf(f: File; buf: pointer; mode: cint; size: csize): cint		288
+nim	open	cligen/osUt.html#open,cint,int	proc open(fd: cint; mode = fmRead; bufMode = IOFBF; bufSize = 4096): File		291
+nim	errstr	cligen/osUt.html#errstr	proc errstr(): string		299
+nim	write	cligen/osUt.html#write,cint,string	proc write(fh: cint; s: string)		301
+nim	CPUSet	cligen/osUt.html#CPUSet	object CPUSet		308
+nim	cpu_zero	cligen/osUt.html#cpu_zero,ptr.CPUSet	proc cpu_zero(set: ptr CPUSet)		310
+nim	cpu_set	cligen/osUt.html#cpu_set,cint,ptr.CPUSet	proc cpu_set(cpu: cint; set: ptr CPUSet)		311
+nim	getcpu	cligen/osUt.html#getcpu	proc getcpu(): cint		313
+nim	sched_setaffinity	cligen/osUt.html#sched_setaffinity,Pid,csize,ptr.CPUSet	proc sched_setaffinity(pid: Pid; sz: csize; mask: ptr CPUSet): cint		314
+nim	setAffinity	cligen/osUt.html#setAffinity,openArray[cint]	proc setAffinity(cpus: openArray[cint] = [])		317
+nim	splitPathName	cligen/osUt.html#splitPathName,string	proc splitPathName(path: string; shortestExt = false): tuple[dir, name, ext: string]		329
+nim	mkdirP	cligen/osUt.html#mkdirP,string	proc mkdirP(path: string)		354
+nim	mkdirTo	cligen/osUt.html#mkdirTo,string	proc mkdirTo(path: string)		363
+nim	mkdirOpen	cligen/osUt.html#mkdirOpen,string,int	proc mkdirOpen(path: string; mode = fmRead; bufSize = -1): File		368
+nim	popenr	cligen/osUt.html#popenr,string,string,int	proc popenr(cmd: string; path = ""; bufSize = -1): File		392
+nim	popenw	cligen/osUt.html#popenw,string,string,int	proc popenw(cmd: string; path = ""; bufSize = -1): File		398
+nim	pclose	cligen/osUt.html#pclose,File,string	proc pclose(f: File; cmd: string): cint		404
+nim	fileNewerThan	cligen/osUt.html#fileNewerThan,string,string	proc fileNewerThan(a, b: string): bool		410
+nim	fileOlderThan	cligen/osUt.html#fileOlderThan,string,string	proc fileOlderThan(a, b: string): bool		415
+nim	clearDir	cligen/osUt.html#clearDir,string	proc clearDir(dir: string)		420
+nim	walkPatSorted	cligen/osUt.html#walkPatSorted,string	proc walkPatSorted(pattern: string): seq[string]		427
+nim	touch	cligen/osUt.html#touch,string	proc touch(path: string)		433
+nim	autoOpen	cligen/osUt.html#autoOpen,string,int	proc autoOpen(path: string; mode = fmWrite; bufSize = -1): File		445
+nim	autoClose	cligen/osUt.html#autoClose	proc autoClose()		452
+nim	rdRecs	cligen/osUt.html#rdRecs,cint,string,char,int	proc rdRecs(fd: cint; buf: var string; eor = '\x00'; n = 16384): int		458
+nim	uRd	cligen/osUt.html#uRd,File,T	proc uRd[T](f: File; ob: var T): bool		467
+nim	uWr	cligen/osUt.html#uWr,File,T	proc uWr[T](f: File; ob: var T): bool		471
+nim	wrOb	cligen/osUt.html#wrOb,cint,T	proc wrOb[T](fd: cint; ob: T): int		475
+nim	wr	cligen/osUt.html#wr,cint,T	proc wr[T](fd: cint; ob: T): int		478
+nim	wr0term	cligen/osUt.html#wr0term,cint,string	proc wr0term(fd: cint; buf: string): int		480
+nim	wrLine	cligen/osUt.html#wrLine,cint,string	proc wrLine(fd: cint; buf: string): int		485
+nim	wrLenBuf	cligen/osUt.html#wrLenBuf,cint,string	proc wrLenBuf(fd: cint; buf: string): int		492
+nim	wrLenSeq	cligen/osUt.html#wrLenSeq,cint,seq[T]	proc wrLenSeq[T](fd: cint; s: seq[T]): int		499
+nim	lgBold	cligen/osUt.html#lgBold,File,string	proc lgBold(f: File; s: string)		508
+nim	lgInv	cligen/osUt.html#lgInv,File,string	proc lgInv(f: File; s: string)		511
+nim	run	cligen/osUt.html#run,openArray[string],StringTableRef	proc run(cmd: openArray[string]; env: StringTableRef = nil;\n    opts = {poEchoCmd, poUsePath}; dryRun = false; logFile = stderr;\n    logWrite = lgBold): int		514
+nim	findPathPattern	cligen/osUt.html#findPathPattern,string	proc findPathPattern(pathPattern: string): string		524
+nim	setFileSize	cligen/osUt.html#setFileSize,FileHandle,int64,int64	proc setFileSize(fh: FileHandle; currSize, newSize: int64): OSErrorCode		532
+nimgrp	perror	cligen/osUt.html#perror-procs-all	proc		33
+nimgrp	urite	cligen/osUt.html#urite-procs-all	proc		178
+nimgrp	both	cligen/osUt.html#both-procs-all	proc		156
+nimgrp	getdelim	cligen/osUt.html#getDelim-iterators-all	iterator		96
+nimgrp	getdelims	cligen/osUt.html#getDelims-iterators-all	iterator		116

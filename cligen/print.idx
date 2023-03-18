@@ -1,0 +1,10 @@
+nimTitle	print	cligen/print.html	module cligen/print		0
+nim	printsFlush	cligen/print.html#printsFlush	var printsFlush		23
+nim	printsSep	cligen/print.html#printsSep	var printsSep		24
+nim	fprintEF	cligen/print.html#fprintEF,string,File,varargs[string,]	proc fprintEF(eol: string; f: File; a: varargs[string, `$`])		26
+nim	fprint	cligen/print.html#fprint,File,varargs[string,]	proc fprint(f: File; a: varargs[string, `$`])		34
+nim	fprintn	cligen/print.html#fprintn,File,varargs[string,]	proc fprintn(f: File; a: varargs[string, `$`])		36
+nim	print	cligen/print.html#print,varargs[string,]	proc print(a: varargs[string, `$`])		39
+nim	printn	cligen/print.html#printn,varargs[string,]	proc printn(a: varargs[string, `$`])		41
+nim	eprint	cligen/print.html#eprint,varargs[string,]	proc eprint(a: varargs[string, `$`])		44
+nim	eprintn	cligen/print.html#eprintn,varargs[string,]	proc eprintn(a: varargs[string, `$`])		46
