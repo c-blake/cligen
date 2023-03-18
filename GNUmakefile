@@ -25,7 +25,8 @@ NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))
 TESTS_TOP_LVL_OUT := $(patsubst %,test/%TopLvl.out,\
-	FullyAutoMulti MultiMulti RangeTypes)
+	FullyAutoMulti MultMultMult MultiMulti PassValuesMulti QualifiedMulti\
+	RangeTypes SubScope)
 OUT := test/out
 
 test: $(OUT)
