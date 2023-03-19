@@ -1,3 +1,3 @@
 nimTitle	conncomp	cligen/conncomp.html	module cligen/conncomp		0
-nim	components	cligen/conncomp.html#components.i,openArray[tuple[int,int]],int	iterator components(arcs: openArray[tuple[x, y: int]]; nV: int): seq[int]		22
-nim	vtxId	cligen/conncomp.html#vtxId,Table[T,int],seq[T],T	proc vtxId[T](vi: var Table[T, int]; vn: var seq[T]; vo: T): int		35
+nim	components	cligen/conncomp.html#components.i,openArray[tuple[int,int]],int	iterator components(arcs: openArray[tuple[x, y: int]]; nV: int): seq[int]		23
+nim	vtxId	cligen/conncomp.html#vtxId,Table[T,int],seq[T],T	proc vtxId[T](vi: var Table[T, int]; vn: var seq[T]; vo: T): int		36
