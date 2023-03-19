@@ -155,10 +155,6 @@
                    parse: seq[MacroCall]): string</a></li>
 
 </ul>
-<ul class="simple nested-toc-section">fmtUncertainRound
-  <li><a class="reference" href="#fmtUncertainRound%2Cfloat%2Cfloat%2Cint" title="fmtUncertainRound(val, err: float; sigDigs = 2): (string, string)">fmtUncertainRound(val, err: float; sigDigs = 2): (string, string)</a></li>
-
-</ul>
 <ul class="simple nested-toc-section">fmtUncertainSci
   <li><a class="reference" href="#fmtUncertainSci%2Cfloat%2Cfloat%2Cint" title="fmtUncertainSci(val, err: float; sigDigs = 2): string">fmtUncertainSci(val, err: float; sigDigs = 2): string</a></li>
 
@@ -485,22 +481,6 @@
 </div>
 
 </div>
-<div id="fmtUncertainRound-procs-all">
-  <div id="fmtUncertainRound,float,float,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fmtUncertainRound%2Cfloat%2Cfloat%2Cint"><span class="Identifier">fmtUncertainRound</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">,</span> <span class="Identifier">err</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">sigDigs</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;use ident(fmtUncertainParts)&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    <div class="deprecation-message">
-  <b>Deprecated:</b> use ident(fmtUncertainParts)
-</div>
-
-    Format like (3141.5, 45.6) =&gt; (&quot;3.142e+03&quot;, &quot;4.6e+01&quot;).
-    
-  </dd>
-</div>
-
-</div>
 <div id="fmtUncertainSci-procs-all">
   <div id="fmtUncertainSci,float,float,int">
   <dt><pre><span class="Keyword">proc</span> <a href="#fmtUncertainSci%2Cfloat%2Cfloat%2Cint"><span class="Identifier">fmtUncertainSci</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">,</span> <span class="Identifier">err</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">sigDigs</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -668,7 +648,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-18 23:48:05 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-19 19:07:18 UTC</small>
       </div>
     </div>
   </div>
