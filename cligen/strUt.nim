@@ -460,6 +460,7 @@ proc fmtUncertainParts*(val, err: float,
   ## Then fmt `val` so that the final decimal place of both *always* aligns.
   ## Eg., (3141.5.., 45.6..) => ("3.142", "e+03", "4.6", "e+01").  Alignment
   ## means the difference in exponents should always be `sigDigs`.
+  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
   let abs_val = abs(val)
   let err = abs(err)
@@ -504,13 +505,6 @@ proc addShiftPt(result: var string; sciNum: string; shift: int) =
       result.add '.'
   else:
     result.add sciNum
-
-proc fmtUncertainRound*(val,err: float, sigDigs=2): (string,string){.deprecated:
-       "use ident(fmtUncertainParts)".} =
-  ## Format like (3141.5, 45.6) => ("3.142e+03", "4.6e+01").
-  when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
-  let (vm, ve, um, ue, _) = fmtUncertainParts(val, err, sigDigs)
-  result[0] = vm & ve; result[1] = um & ue
 
 proc fmtUncertainRender*(vm, ve, um, ue: string; exp: int, fmt: string,
                          parse: seq[MacroCall]): string =
@@ -594,13 +588,13 @@ when isMainModule:
   when not declared(File): import std/formatfloat
   from math as m3 import sqrt, log10    # for -nan; dup import is ok
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
-    let (v,e) = fmtUncertainRound(v, e, sig); v & "   " & e
+    let (vm, ve, um, ue, _) = fmtUncertainParts(v, e, sig); vm&ve&"   "&um&ue
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
   proc aut(v, e: float; sig=2): string = fmtUncertain(v, e, sigDigs=sig)
   proc msc(v, e: float; sig=2): string = fmtUncertainMergedSci(v, e, sig)
   proc mau(v, e: float; sig=2): string = fmtUncertainMerged(v, e, sig)
 
-  for k, nmFmt in [("ROUND", rnd), ("SCI", sci), ("AUTO", aut),
+  for k, nmFmt in [("PARTS", rnd), ("SCI", sci), ("AUTO", aut),
                    ("MRGSCI", msc), ("MRGAUTO", mau)]:
     let fmt = nmFmt[1]
     if k != 0: echo ""
