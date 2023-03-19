@@ -1,5 +1,11 @@
 RELEASE NOTES
 =============
+Version: 1.6.0
+---------------
+    - Deprecate cligen/conncomp
+    - Fix exact power-of-10 bug in cligen/strUt.ecvt2/fmtUncertain system
+    - Add some more documentation/indexing there-of
+
 Version: 1.5.42
 ---------------
     - colorScl test prog working with nimPreviewSlimSystem
