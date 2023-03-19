@@ -267,7 +267,8 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
   elif frac != 0:                       # post decimal digits to convert
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
-  if dig > 9: dig = 1; inc e            # perfect 10.0 scl can occur; adjust
+  if dig > 9: dig = 1; inc e            # Adjust for perfect po10 scl | x
+  elif bumped and dig == 2: dig = 1; inc e; bumped = false
   s[i] = chr(ord('0') + dig); inc i     # format D
   if p > 0:                             # format .PPP => '.'&lead0&digits&trail0
     s[i] = '.'; inc i
