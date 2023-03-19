@@ -1,3 +1,4 @@
+{.deprecated: "Use gralg/grAlg.unDirCompons | util/conncomp".}
 import tables
 
 proc root(up: var seq[int], x: int): int {.inline.} =
