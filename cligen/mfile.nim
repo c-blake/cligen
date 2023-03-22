@@ -289,7 +289,7 @@ iterator mSlices*(path: string, sep='\l', eat='\r', keep=false,
     try:
       let f = if path == "/dev/stdin": stdin else: open(path)
       for (cs, n) in f.getDelims:
-        if n > 0 and cs[n-1] == '\n':
+        if n > 0 and cs[n-1] == '\n':   # Newline -> NUL
           cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
           yield MSlice(mem: cs, len: n - 1)
         else:
