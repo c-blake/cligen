@@ -253,14 +253,13 @@ help templates.
 
  3. No param of a wrapped proc can be named "help".  (Name collision!)
 
-### Even More Controls and Details
+## Even More Controls and Details
 
-After many feature requests `cligen` grew many knobs & levers.  Look at the
-many examples (which I tried to name suggestively) in the automated test suite:
-  [test/](https://github.com/c-blake/cligen/tree/master/test/)
-for starting points of various advanced usages.
-
-Then there is [The Wiki](https://github.com/c-blake/cligen/wiki) and [generated
-documentation for the various modules](https://c-blake.github.io/cligen/).
-Finally, I try to keep track of possibly breaking changes and new features in
+`cligen` grew many features upon request & usage.  The [test
+suite](https://github.com/c-blake/cligen/tree/master/test/) has suggestively
+named examples.  There's also [a Wiki](https://github.com/c-blake/cligen/wiki),
+[generated docs for various modules](https://c-blake.github.io/cligen/) (which
+include various system interfaces useful in writing CLIs) and a [set of fully
+worked utilities](https://github.com/c-blake/bu) which may be useful to you in
+their own right.  I also try to mention breaking changes & new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
