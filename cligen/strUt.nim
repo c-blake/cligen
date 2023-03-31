@@ -390,10 +390,10 @@ proc makeOther(): array[256, char] =    # make a little pairing table
   result[ord('{')] = '}'; result[ord('}')] = '{'
   result[ord('<')] = '>'; result[ord('>')] = '<'
 const other = makeOther() # Any ASCII bracketing/punctuation can be brace|quote
-const alpha_Num* = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\128'..'\255'}
+const alphaNum* = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\128'..'\255'}
 
 type MacroCall* = (Slice[int], Slice[int], Slice[int]) ## id,a,c
-iterator tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): MacroCall =
+iterator tmplParse*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall =
   ## A text template parser converting `fmt` into a list of macro calls encoded
   ## as `fmt`-relative slices.  Callers resolve calls in rendering.  Macro call
   ## syntax is `$ID`, `%[ID]`, `${(ID)ARG}` with any nonIds valid braces|quotes.
@@ -447,7 +447,7 @@ iterator tmplParse*(fmt: openArray[char], meta='$', ids=alpha_Num): MacroCall =
     c0 = fmt.find(meta, start=c1)
   if c1 < eos: yield (0..0,c1..<eos,0..0) # Maybe emit tail
 
-proc tmplParsed*(fmt: openArray[char], meta='$', ids=alpha_Num): seq[MacroCall]=
+proc tmplParsed*(fmt: openArray[char], meta='$', ids=alphaNum): seq[MacroCall] =
   for macCall in tmplParse(fmt, meta, ids): result.add macCall
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
