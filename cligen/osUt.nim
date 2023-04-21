@@ -28,6 +28,9 @@ proc isatty(f: File): bool =
     proc isatty(fildes: FileHandle): cint {.importc:"_isatty",header:"io.h".}
   result = isatty(getFileHandle(f)) != 0'i32
 
+proc ferr*(f: File): cint {.importc: "ferror", header: "stdio.h", tags: [].}
+  ## expose ANSI C stdio error condition checking
+
 proc strlen(a: cstring): uint {.header: "string.h".}
 proc strerror(n: cint): cstring {.header: "string.h".}
 proc perror*(x: cstring, len: int, code: OSErrorCode, err=stderr) =
@@ -164,6 +167,12 @@ proc both*[T](it: iterator(): T, s: seq[T]): iterator(): T =
   result = iterator(): T =
     for e in it(): yield e
     for e in s: yield e
+
+when defined(linux) and not defined(android):
+  proc putchar*(c: char): cint {.importc: "putchar_unlocked", header: "stdio.h",
+                                 discardable.}
+else:
+  proc putchar*(c: char): cint {.importc, header: "stdio.h", discardable.}
 
 proc uriteBuffer*(f: File, buffer: pointer, len: Natural): int {.inline.} =
   ## Unlocked (i.e. single threaded) libc `writeBuffer` (maybe Linux-only).
