@@ -13,9 +13,8 @@ export CLIGEN := /dev/null
 NIM := $(or $(nim),nim)
 NIM_BACKEND := $(or $(BE),c)
 
-#XXX I do not know why the warning push in the code fails to suppress.
-NIM_FLAGS := --warning[ObservableStores]:off --warning[Deprecated]:off
-
+NIM_FLAGS := --warning[ObservableStores]:off --warning[Deprecated]:off \
+ --warning[ImplicitDefaultValue]:off
 ifeq ($(shell $(NIM) c $(NIM_FLAGS) /dev/null 2>&1 | \
 		grep -q 'unknown warning:'; echo $$?),0)
 	NIM_FLAGS :=

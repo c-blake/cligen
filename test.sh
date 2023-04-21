@@ -4,7 +4,7 @@ export COLUMNS="80" CLIGEN_WIDTH="80" CLIGEN=/dev/null
 rm -rf $HOME/.cache/nim/*
 v="--verbosity:1"
 h="--hint[Processing]=off --hint[CC]=off --hint[Exec]=off --hint[SuccessX]=off"
-: ${w="--warning[ObservableStores]:off --warning[Deprecated]:off"}
+: ${w="--warning[ObservableStores]:off --warning[Deprecated]:off --warning[ImplicitDefaultValue]:off"}
 if ${nim:-nim} c $w /dev/null 2>&1 | grep -aq 'unknown warning:'; then
   w=""
 fi
