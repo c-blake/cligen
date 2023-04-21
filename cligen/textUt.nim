@@ -1,7 +1,6 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace,
                      startsWith, toUpper
 from terminal import terminalWidth
-from unicode  import runeLen
 import os, parseutils, critbits, math, ./mslice # math.^
 when not declared(stderr): import std/syncio
 
@@ -45,8 +44,42 @@ proc stripEsc*(a: openArray[char]): string =
 
 proc stripSGR*(a: openArray[char]): string = a.stripEsc ## Alias for `stripEsc`.
 
-proc printedLen*(a: string): int = a.stripEsc.runeLen
-  ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
+const runeBytes: array[256, int8] = [ # adix/sequint could do in 96B, not 256B
+   0i8,0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x00
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x10
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x20
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x30
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x40
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x50
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x60
+   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,   0,  0,  0,  0,  # 0x70
+  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  # 0x80
+  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  # 0x90
+  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  # 0xa0
+  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1,  # 0xb0
+   1,  1,  1,  1,   1,  1,  1,  1,   1,  1,  1,  1,   1,  1,  1,  1,  # 0xc0
+   1,  1,  1,  1,   1,  1,  1,  1,   1,  1,  1,  1,   1,  1,  1,  1,  # 0xd0
+   2,  2,  2,  2,   2,  2,  2,  2,   2,  2,  2,  2,   2,  2,  2,  2,  # 0xe0
+   3,  3,  3,  3,   3,  3,  3,  3,   4,  4,  4,  4,   5,  5, -1, -1]  # 0xf0
+
+proc printedLen*(a: openArray[char]): int =
+  ## Rendered width in terminal cells, accounting for ANSI SGR colors &| utf8.
+  ## This counts invalid start-bytes as 1 cell.
+  var skip = 0
+  for c in a.noCSI_OSC:
+    if skip > 0: dec skip
+    else:
+      inc result
+      when defined(branchyRuneLen):
+        skip = if   c.uint <= 127: 0
+               elif c.uint shr 5 == 0b110:     1
+               elif c.uint shr 4 == 0b1110:    2
+               elif c.uint shr 3 == 0b11110:   3
+               elif c.uint shr 2 == 0b111110:  4
+               elif c.uint shr 1 == 0b1111110: 5
+               else: 0
+      else:
+        skip = runeBytes[c.int]
 
 iterator paragraphs*(s: string, indent = {' ', '\t'}):
     tuple[pre: bool, para: string] =
