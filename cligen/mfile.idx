@@ -29,7 +29,7 @@ nim	rows	cligen/mfile.html#rows.i,MFile,Sep,int,char,char	iterator rows(mf: MFil
 nim	rows	cligen/mfile.html#rows.i,File,Sep,seq[string],int	iterator rows(f: File; s: Sep; row: var seq[string]; n = 0): seq[string]		262
 nim	rows	cligen/mfile.html#rows.i,File,Sep,int	iterator rows(f: File; s: Sep; n = 0): seq[string]		268
 nim	mSlices	cligen/mfile.html#mSlices.i,string,char,char,MFile	iterator mSlices(path: string; sep = '\n'; eat = '\r'; keep = false; err = stderr;\n        mf: var MFile = doNotUse): MSlice		274
-nim	nSplit	cligen/mfile.html#nSplit,int,string,char	proc nSplit(n: int; path: string; sep = '\n'; prot = PROT_READ; flags = MAP_SHARED): tuple[\n    mf: MFile, parts: seq[MSlice]]		300
+nim	nSplit	cligen/mfile.html#nSplit,int,string,char	proc nSplit(n: int; path: string; sep = '\n'; prot = PROT_READ; flags = MAP_SHARED): tuple[\n    mf: MFile, parts: seq[MSlice]]		304
 nimgrp	fdclose	cligen/mfile.html#fdClose-procs-all	proc		48
 nimgrp	close	cligen/mfile.html#close-procs-all	proc		146
 nimgrp	add	cligen/mfile.html#add-procs-all	proc		189

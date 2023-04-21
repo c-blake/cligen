@@ -142,9 +142,9 @@
            cols = @[0, 1]; attrOn = @[&quot;&quot;, &quot;&quot;]; attrOff = @[&quot;&quot;, &quot;&quot;]; aligns = &quot;&quot;;
            width = ttyWidth; measure = printedLen): string</a></li>
           </ul></dd>
-<dt><a name="alpha_Num" href="#alpha_Num"><span>alpha_Num:</span></a></dt><dd><ul class="simple">
+<dt><a name="alphaNum" href="#alphaNum"><span>alphaNum:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="strUt: const alpha_Num" href="cligen/strUt.html#alpha_Num">strUt: const alpha_Num</a></li>
+          data-doc-search-tag="strUt: const alphaNum" href="cligen/strUt.html#alphaNum">strUt: const alphaNum</a></li>
           </ul></dd>
 <dt><a name="ambigSubcommand" href="#ambigSubcommand"><span>ambigSubcommand:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -873,6 +873,10 @@
           data-doc-search-tag="mfile: proc fdClose(mf: MFile): int" href="cligen/mfile.html#fdClose%2CMFile">mfile: proc fdClose(mf: MFile): int</a></li>
           <li><a class="reference external"
           data-doc-search-tag="mfile: proc fdClose(mf: var MFile): int" href="cligen/mfile.html#fdClose%2CMFile_2">mfile: proc fdClose(mf: var MFile): int</a></li>
+          </ul></dd>
+<dt><a name="ferr" href="#ferr"><span>ferr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="osUt: proc ferr(f: File): cint" href="cligen/osUt.html#ferr%2CFile">osUt: proc ferr(f: File): cint</a></li>
           </ul></dd>
 <dt><a name="fileEq" href="#fileEq"><span>fileEq:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2012,6 +2016,14 @@
 <li><a class="reference external"
           data-doc-search-tag="argcvt: proc nimEscape(s: string; quote = '\&quot;'): string" href="cligen/argcvt.html#nimEscape%2Cstring%2Cchar">argcvt: proc nimEscape(s: string; quote = '\&quot;'): string</a></li>
           </ul></dd>
+<dt><a name="NoCSI_OSC" href="#NoCSI_OSC"><span>NoCSI_OSC:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="textUt: object NoCSI_OSC" href="cligen/textUt.html#NoCSI_OSC">textUt: object NoCSI_OSC</a></li>
+          </ul></dd>
+<dt><a name="noCSI_OSC" href="#noCSI_OSC"><span>noCSI_OSC:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="textUt: iterator noCSI_OSC(a: openArray[char]; nc: var NoCSI_OSC = nc0): char" href="cligen/textUt.html#noCSI_OSC.i%2CopenArray%5Bchar%5D%2CNoCSI_OSC">textUt: iterator noCSI_OSC(a: openArray[char]; nc: var NoCSI_OSC = nc0): char</a></li>
+          </ul></dd>
 <dt><a name="Node" href="#Node"><span>Node:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="tern: type Node" href="cligen/tern.html#Node">tern: type Node</a></li>
@@ -2224,7 +2236,7 @@
           </ul></dd>
 <dt><a name="printedLen" href="#printedLen"><span>printedLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="textUt: proc printedLen(a: string): int" href="cligen/textUt.html#printedLen%2Cstring">textUt: proc printedLen(a: string): int</a></li>
+          data-doc-search-tag="textUt: proc printedLen(a: openArray[char]): int" href="cligen/textUt.html#printedLen%2CopenArray%5Bchar%5D">textUt: proc printedLen(a: openArray[char]): int</a></li>
           </ul></dd>
 <dt><a name="printn" href="#printn"><span>printn:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2245,6 +2257,10 @@
 <dt><a name="PROT_RW" href="#PROT_RW"><span>PROT_RW:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mfile: let PROT_RW" href="cligen/mfile.html#PROT_RW">mfile: let PROT_RW</a></li>
+          </ul></dd>
+<dt><a name="putchar" href="#putchar"><span>putchar:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="osUt: proc putchar(c: char): cint" href="cligen/osUt.html#putchar%2Cchar">osUt: proc putchar(c: char): cint</a></li>
           </ul></dd>
 <dt><a name="quits" href="#quits"><span>quits:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2716,7 +2732,7 @@
           </ul></dd>
 <dt><a name="stripEsc" href="#stripEsc"><span>stripEsc:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="textUt: proc stripEsc(a: string): string" href="cligen/textUt.html#stripEsc%2Cstring">textUt: proc stripEsc(a: string): string</a></li>
+          data-doc-search-tag="textUt: proc stripEsc(a: openArray[char]): string" href="cligen/textUt.html#stripEsc%2CopenArray%5Bchar%5D">textUt: proc stripEsc(a: openArray[char]): string</a></li>
           </ul></dd>
 <dt><a name="stripLeading" href="#stripLeading"><span>stripLeading:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2726,7 +2742,7 @@
           </ul></dd>
 <dt><a name="stripSGR" href="#stripSGR"><span>stripSGR:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="textUt: proc stripSGR(a: string): string" href="cligen/textUt.html#stripSGR%2Cstring">textUt: proc stripSGR(a: string): string</a></li>
+          data-doc-search-tag="textUt: proc stripSGR(a: openArray[char]): string" href="cligen/textUt.html#stripSGR%2CopenArray%5Bchar%5D">textUt: proc stripSGR(a: openArray[char]): string</a></li>
           </ul></dd>
 <dt><a name="stripTrailing" href="#stripTrailing"><span>stripTrailing:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2836,11 +2852,11 @@
           </ul></dd>
 <dt><a name="tmplParse" href="#tmplParse"><span>tmplParse:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="strUt: iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alpha_Num): MacroCall" href="cligen/strUt.html#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar">strUt: iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alpha_Num): MacroCall</a></li>
+          data-doc-search-tag="strUt: iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall" href="cligen/strUt.html#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar">strUt: iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall</a></li>
           </ul></dd>
 <dt><a name="tmplParsed" href="#tmplParsed"><span>tmplParsed:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="strUt: proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alpha_Num): seq[MacroCall]" href="cligen/strUt.html#tmplParsed%2CopenArray%5Bchar%5D%2Cchar">strUt: proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alpha_Num): seq[MacroCall]</a></li>
+          data-doc-search-tag="strUt: proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]" href="cligen/strUt.html#tmplParsed%2CopenArray%5Bchar%5D%2Cchar">strUt: proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]</a></li>
           </ul></dd>
 <dt><a name="toCstr" href="#toCstr"><span>toCstr:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2875,6 +2891,10 @@
           data-doc-search-tag="mfile: proc toMSlice(mf: MFile): MSlice" href="cligen/mfile.html#toMSlice%2CMFile">mfile: proc toMSlice(mf: MFile): MSlice</a></li>
           <li><a class="reference external"
           data-doc-search-tag="mslice: proc toMSlice(a: string; keep = false): MSlice" href="cligen/mslice.html#toMSlice%2Cstring">mslice: proc toMSlice(a: string; keep = false): MSlice</a></li>
+          </ul></dd>
+<dt><a name="toOa" href="#toOa"><span>toOa:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sysUt: template toOa[T](p: pointer; a, b: int): untyped" href="cligen/sysUt.html#toOa.t%2Cpointer%2Cint%2Cint">sysUt: template toOa[T](p: pointer; a, b: int): untyped</a></li>
           </ul></dd>
 <dt><a name="toOb" href="#toOb"><span>toOb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -3146,7 +3166,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-24 10:24:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-21 18:50:43 UTC</small>
       </div>
     </div>
   </div>

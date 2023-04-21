@@ -15,3 +15,4 @@ nim	`&`	cligen/sysUt.html#&,openArray[T],openArray[T]	proc `&`[T](x: openArray[T
 nim	echoQuit130	cligen/sysUt.html#echoQuit130	proc echoQuit130()		92
 nim	CopyMemable	cligen/sysUt.html#CopyMemable	type CopyMemable		96
 nim	newSeqNoInit	cligen/sysUt.html#newSeqNoInit,Natural	proc newSeqNoInit[T: CopyMemable](len: Natural): seq[T]		99
+nim	toOa	cligen/sysUt.html#toOa.t,pointer,int,int	template toOa[T](p: pointer; a, b: int): untyped		106

@@ -475,7 +475,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Copy each line in <tt class="docutils literal"><span class="pre">mf</span></tt> to passed <tt class="docutils literal"><span class="pre">buf</span></tt>, like <tt class="docutils literal"><span class="pre">system.lines(File)</span></tt>. <tt class="docutils literal"><span class="pre">sep</span></tt>, <tt class="docutils literal"><span class="pre">eat</span></tt>, and delimiting logic is as for <tt class="docutils literal"><span class="pre">mslice.mSlices</span></tt>, but Nim strings are returned.  Default parameters parse lines ending in either Unix(\l) or Windows(\r\l) style on on a line-by-line basis (not every line needs the same ending).  <tt class="docutils literal"><span class="pre">sep='\\r', eat='\\0'</span></tt> parses archaic MacOS9 files.<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">buffer</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="StringLit">&quot;&quot;</span>
+    Copy each line in <tt class="docutils literal"><span class="pre">mf</span></tt> to passed <tt class="docutils literal"><span class="pre">buf</span></tt>, like <tt class="docutils literal"><span class="pre">system.lines(File)</span></tt>. <tt class="docutils literal"><span class="pre">sep</span></tt>, <tt class="docutils literal"><span class="pre">eat</span></tt>, and delimiting logic is as for <tt class="docutils literal"><span class="pre">mslice.mSlices</span></tt>, but Nim strings are returned.  Default parameters parse lines ending in either Unix(\n) or Windows(\r\n) style on on a line-by-line basis (not every line needs the same ending).  <tt class="docutils literal"><span class="pre">sep='\\r', eat='\\0'</span></tt> parses archaic MacOS9 files.<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">buffer</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="StringLit">&quot;&quot;</span>
 <span class="Keyword">for</span> <span class="Identifier">line</span> <span class="Keyword">in</span> <span class="Identifier">lines</span><span class="Punctuation">(</span><span class="Identifier">mopen</span><span class="Punctuation">(</span><span class="StringLit">&quot;foo&quot;</span><span class="Punctuation">)</span><span class="Punctuation">,</span> <span class="Identifier">buffer</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">echo</span> <span class="Identifier">line</span></pre>
     
   </dd>
@@ -562,7 +562,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-24 10:24:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-21 18:50:42 UTC</small>
       </div>
     </div>
   </div>

@@ -81,7 +81,7 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#10" id="60">Consts</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#alpha_Num" title="alpha_Num = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\x80'..'\xFF'}">alpha_Num</a></li>
+      <li><a class="reference" href="#alphaNum" title="alphaNum = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\x80'..'\xFF'}">alphaNum</a></li>
 <li><a class="reference" href="#pmUnicode" title="pmUnicode = &quot;±&quot;">pmUnicode</a></li>
 <li><a class="reference" href="#pmUnicodeSpaced" title="pmUnicodeSpaced = &quot; ± &quot;">pmUnicodeSpaced</a></li>
 
@@ -188,7 +188,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">tmplParsed
-  <li><a class="reference" href="#tmplParsed%2CopenArray%5Bchar%5D%2Cchar" title="tmplParsed(fmt: openArray[char]; meta = '$'; ids = alpha_Num): seq[MacroCall]">tmplParsed(fmt: openArray[char]; meta = '$'; ids = alpha_Num): seq[MacroCall]</a></li>
+  <li><a class="reference" href="#tmplParsed%2CopenArray%5Bchar%5D%2Cchar" title="tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]">tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toString
@@ -208,7 +208,7 @@
     <summary><a class="reference reference-toplevel" href="#15" id="65">Iterators</a></summary>
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">tmplParse
-  <li><a class="reference" href="#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar" title="tmplParse(fmt: openArray[char]; meta = '$'; ids = alpha_Num): MacroCall">tmplParse(fmt: openArray[char]; meta = '$'; ids = alpha_Num): MacroCall</a></li>
+  <li><a class="reference" href="#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar" title="tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall">tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall</a></li>
 
 </ul>
 
@@ -277,8 +277,8 @@
 <div class="section" id="10">
   <h1><a class="toc-backref" href="#10">Consts</a></h1>
   <dl class="item">
-    <div id="alpha_Num">
-  <dt><pre><a href="strUt.html#alpha_Num"><span class="Identifier">alpha_Num</span></a> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'a'</span><span class="Other">..</span><span class="CharLit">'z'</span><span class="Other">,</span> <span class="CharLit">'A'</span><span class="Other">..</span><span class="CharLit">'Z'</span><span class="Other">,</span> <span class="CharLit">'_'</span><span class="Other">,</span> <span class="CharLit">'0'</span><span class="Other">..</span><span class="CharLit">'9'</span><span class="Other">,</span> <span class="CharLit">'\x80'</span><span class="Other">..</span><span class="CharLit">'\xFF'</span><span class="Other">}</span></pre></dt>
+    <div id="alphaNum">
+  <dt><pre><a href="strUt.html#alphaNum"><span class="Identifier">alphaNum</span></a> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">'a'</span><span class="Other">..</span><span class="CharLit">'z'</span><span class="Other">,</span> <span class="CharLit">'A'</span><span class="Other">..</span><span class="CharLit">'Z'</span><span class="Other">,</span> <span class="CharLit">'_'</span><span class="Other">,</span> <span class="CharLit">'0'</span><span class="Other">..</span><span class="CharLit">'9'</span><span class="Other">,</span> <span class="CharLit">'\x80'</span><span class="Other">..</span><span class="CharLit">'\xFF'</span><span class="Other">}</span></pre></dt>
   <dd>
     
     
@@ -575,8 +575,8 @@
 </div>
 <div id="tmplParsed-procs-all">
   <div id="tmplParsed,openArray[char],char">
-  <dt><pre><span class="Keyword">proc</span> <a href="#tmplParsed%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParsed</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alpha_Num</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
-    <a href="strUt.html#MacroCall"><span class="Identifier">MacroCall</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#tmplParsed%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParsed</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alphaNum</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="strUt.html#MacroCall"><span class="Identifier">MacroCall</span></a><span class="Other">]</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -616,7 +616,7 @@
   <dl class="item">
     <div id="tmplParse-iterators-all">
   <div id="tmplParse.i,openArray[char],char">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParse</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alpha_Num</span><span class="Other">)</span><span class="Other">:</span> <a href="strUt.html#MacroCall"><span class="Identifier">MacroCall</span></a> {.
+  <dt><pre><span class="Keyword">iterator</span> <a href="#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParse</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alphaNum</span><span class="Other">)</span><span class="Other">:</span> <a href="strUt.html#MacroCall"><span class="Identifier">MacroCall</span></a> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -648,7 +648,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-24 10:24:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-21 18:50:42 UTC</small>
       </div>
     </div>
   </div>

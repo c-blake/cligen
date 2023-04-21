@@ -113,6 +113,10 @@
   <li><a class="reference" href="#errstr" title="errstr(): string">errstr(): string</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">ferr
+  <li><a class="reference" href="#ferr%2CFile" title="ferr(f: File): cint">ferr(f: File): cint</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">fileNewerThan
   <li><a class="reference" href="#fileNewerThan%2Cstring%2Cstring" title="fileNewerThan(a, b: string): bool">fileNewerThan(a, b: string): bool</a></li>
 
@@ -177,6 +181,10 @@
 </ul>
 <ul class="simple nested-toc-section">popenw
   <li><a class="reference" href="#popenw%2Cstring%2Cstring%2Cint" title="popenw(cmd: string; path = &quot;&quot;; bufSize = -1): File">popenw(cmd: string; path = &quot;&quot;; bufSize = -1): File</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">putchar
+  <li><a class="reference" href="#putchar%2Cchar" title="putchar(c: char): cint">putchar(c: char): cint</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">rdRecs
@@ -523,6 +531,18 @@
 </div>
 
 </div>
+<div id="ferr-procs-all">
+  <div id="ferr,File">
+  <dt><pre><span class="Keyword">proc</span> <a href="#ferr%2CFile"><span class="Identifier">ferr</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;ferror&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;stdio.h&quot;</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                           <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    expose ANSI C stdio error condition checking
+    
+  </dd>
+</div>
+
+</div>
 <div id="fileNewerThan-procs-all">
   <div id="fileNewerThan,string,string">
   <dt><pre><span class="Keyword">proc</span> <a href="#fileNewerThan%2Cstring%2Cstring"><span class="Identifier">fileNewerThan</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -726,6 +746,18 @@
   <dd>
     
     If <tt class="docutils literal"><span class="pre"><span class="Identifier">cmd</span><span class="Operator">.</span><span class="Identifier">len</span><span class="Operator">==</span><span class="DecNumber">0</span></span></tt> this is like regular <tt class="docutils literal"><span class="pre"><span class="Identifier">open</span><span class="Punctuation">(</span><span class="Identifier">mode</span><span class="Operator">=</span><span class="Identifier">fmWrite</span><span class="Punctuation">)</span></span></tt> except that &quot;&quot; or &quot;/dev/stdout&quot; are in-line translated to return <tt class="docutils literal"><span class="pre"><span class="Identifier">stdout</span></span></tt>. It otherwise wraps <tt class="docutils literal"><span class="pre"><span class="Identifier">popen</span><span class="Punctuation">(</span><span class="Identifier">cmd</span> <span class="Operator">%</span> <span class="Identifier">path</span><span class="Punctuation">,</span><span class="StringLit">&quot;wb&quot;</span><span class="Punctuation">)</span></span></tt>.  So, $1 is how users place <tt class="docutils literal"><span class="pre"><span class="Identifier">path</span></span></tt> in <tt class="docutils literal"><span class="pre"><span class="Identifier">cmd</span></span></tt>.
+    
+  </dd>
+</div>
+
+</div>
+<div id="putchar-procs-all">
+  <div id="putchar,char">
+  <dt><pre><span class="Keyword">proc</span> <a href="#putchar%2Cchar"><span class="Identifier">putchar</span></a><span class="Other">(</span><span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;putchar_unlocked&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;stdio.h&quot;</span><span class="Other">,</span>
+                              <span class="Identifier">discardable</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
     
   </dd>
 </div>
@@ -1133,7 +1165,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-24 10:24:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-21 18:50:42 UTC</small>
       </div>
     </div>
   </div>

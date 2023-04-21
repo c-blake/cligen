@@ -54,7 +54,8 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#TextTab" title="TextTab = seq[seq[string]]">TextTab</a></li>
+      <li><a class="reference" href="#NoCSI_OSC" title="NoCSI_OSC = object">NoCSI_OSC</a></li>
+<li><a class="reference" href="#TextTab" title="TextTab = seq[seq[string]]">TextTab</a></li>
 
     </ul>
   </details>
@@ -113,15 +114,15 @@
 
 </ul>
 <ul class="simple nested-toc-section">printedLen
-  <li><a class="reference" href="#printedLen%2Cstring" title="printedLen(a: string): int">printedLen(a: string): int</a></li>
+  <li><a class="reference" href="#printedLen%2CopenArray%5Bchar%5D" title="printedLen(a: openArray[char]): int">printedLen(a: openArray[char]): int</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">stripEsc
-  <li><a class="reference" href="#stripEsc%2Cstring" title="stripEsc(a: string): string">stripEsc(a: string): string</a></li>
+  <li><a class="reference" href="#stripEsc%2CopenArray%5Bchar%5D" title="stripEsc(a: openArray[char]): string">stripEsc(a: openArray[char]): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">stripSGR
-  <li><a class="reference" href="#stripSGR%2Cstring" title="stripSGR(a: string): string">stripSGR(a: string): string</a></li>
+  <li><a class="reference" href="#stripSGR%2CopenArray%5Bchar%5D" title="stripSGR(a: openArray[char]): string">stripSGR(a: openArray[char]): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">suggestions
@@ -158,7 +159,11 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#15" id="65">Iterators</a></summary>
     <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">paragraphs
+      <ul class="simple nested-toc-section">noCSI_OSC
+  <li><a class="reference" href="#noCSI_OSC.i%2CopenArray%5Bchar%5D%2CNoCSI_OSC" title="noCSI_OSC(a: openArray[char]; nc: var NoCSI_OSC = nc0): char">noCSI_OSC(a: openArray[char]; nc: var NoCSI_OSC = nc0): char</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">paragraphs
   <li><a class="reference" href="#paragraphs.i%2Cstring" title="paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]">paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]</a></li>
 
 </ul>
@@ -184,7 +189,16 @@
 <div class="section" id="7">
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
-    <div id="TextTab">
+    <div id="NoCSI_OSC">
+  <dt><pre><a href="textUt.html#NoCSI_OSC"><span class="Identifier">NoCSI_OSC</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  </pre></dt>
+  <dd>
+    
+    Call-to-call state used by the noCSI_OSC iterator
+    
+  </dd>
+</div>
+<div id="TextTab">
   <dt><pre><a href="textUt.html#TextTab"><span class="Identifier">TextTab</span></a> <span class="Other">=</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -314,33 +328,33 @@
 
 </div>
 <div id="printedLen-procs-all">
-  <div id="printedLen,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#printedLen%2Cstring"><span class="Identifier">printedLen</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <div id="printedLen,openArray[char]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#printedLen%2CopenArray%5Bchar%5D"><span class="Identifier">printedLen</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Compute width when printed; Currently ignores &quot;e[..m&quot; seqs&amp;cnts utf8 runes.
+    Rendered width in terminal cells, accounting for ANSI SGR colors &amp;| utf8. This counts invalid start-bytes as 1 cell.
     
   </dd>
 </div>
 
 </div>
 <div id="stripEsc-procs-all">
-  <div id="stripEsc,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#stripEsc%2Cstring"><span class="Identifier">stripEsc</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <div id="stripEsc,openArray[char]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripEsc%2CopenArray%5Bchar%5D"><span class="Identifier">stripEsc</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal esc sequences (<tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">[..m&quot;</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">]..</span><span class="EscapeSequence">\e</span><span class="EscapeSequence">\\</span><span class="StringLit">&quot;</span></span></tt>) removed.
+    Use <tt class="docutils literal"><span class="pre"><span class="Identifier">noCSI_OSC</span></span></tt> to give <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> without non-rendering terminal escape seqs.
     
   </dd>
 </div>
 
 </div>
 <div id="stripSGR-procs-all">
-  <div id="stripSGR,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#stripSGR%2Cstring"><span class="Identifier">stripSGR</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <div id="stripSGR,openArray[char]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#stripSGR%2CopenArray%5Bchar%5D"><span class="Identifier">stripSGR</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> with terminal esc sequences (<tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">[..m&quot;</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">]..</span><span class="EscapeSequence">\e</span><span class="EscapeSequence">\\</span><span class="StringLit">&quot;</span></span></tt>) removed. Just an alias for <tt class="docutils literal"><span class="pre"><span class="Identifier">stripEsc</span></span></tt>.
+    Alias for <tt class="docutils literal"><span class="pre"><span class="Identifier">stripEsc</span></span></tt>.
     
   </dd>
 </div>
@@ -423,7 +437,19 @@
 <div class="section" id="15">
   <h1><a class="toc-backref" href="#15">Iterators</a></h1>
   <dl class="item">
-    <div id="paragraphs-iterators-all">
+    <div id="noCSI_OSC-iterators-all">
+  <div id="noCSI_OSC.i,openArray[char],NoCSI_OSC">
+  <dt><pre><span class="Keyword">iterator</span> <a href="#noCSI_OSC.i%2CopenArray%5Bchar%5D%2CNoCSI_OSC"><span class="Identifier">noCSI_OSC</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">nc</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="textUt.html#NoCSI_OSC"><span class="Identifier">NoCSI_OSC</span></a> <span class="Other">=</span> <span class="Identifier">nc0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">char</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Iterate over chars in <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> skipping CSI/OSC term escape seqs (<tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">[..m&quot;</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="StringLit">&quot;</span><span class="EscapeSequence">\e</span><span class="StringLit">]..</span><span class="EscapeSequence">\e</span><span class="EscapeSequence">\\</span><span class="StringLit">&quot;</span></span></tt>). See en.wikipedia.org/wiki/ANSI_escape_code &quot;Fe Escape&quot;. To aid buffered use, if provided, <tt class="docutils literal"><span class="pre"><span class="Identifier">nc</span></span></tt> can propagate parser state.
+    
+  </dd>
+</div>
+
+</div>
+<div id="paragraphs-iterators-all">
   <div id="paragraphs.i,string">
   <dt><pre><span class="Keyword">iterator</span> <a href="#paragraphs.i%2Cstring"><span class="Identifier">paragraphs</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">indent</span> <span class="Other">=</span> <span class="Other">{</span><span class="CharLit">' '</span><span class="Other">,</span> <span class="CharLit">'\t'</span><span class="Other">}</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">pre</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">,</span>
     <span class="Identifier">para</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -445,7 +471,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-24 10:24:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-04-21 18:50:42 UTC</small>
       </div>
     </div>
   </div>

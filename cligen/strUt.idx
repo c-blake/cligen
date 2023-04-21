@@ -24,10 +24,10 @@ nim	fcvt	cligen/strUt.html#fcvt,string,float,int	proc fcvt(s: var string; x: flo
 nim	find	cligen/strUt.html#find,openArray[char],char,Natural,int	proc find(s: openArray[char]; sub: char; start: Natural = 0; last = 0): int		369
 nim	toString	cligen/strUt.html#toString,openArray[char]	proc toString(s: openArray[char]): string		380
 nim	add	cligen/strUt.html#add,string,openArray[char]	proc add(result: var string; a: openArray[char])		384
-nim	alpha_Num	cligen/strUt.html#alpha_Num	const alpha_Num		393
+nim	alphaNum	cligen/strUt.html#alphaNum	const alphaNum		393
 nim	MacroCall	cligen/strUt.html#MacroCall	type MacroCall		395
-nim	tmplParse	cligen/strUt.html#tmplParse.i,openArray[char],char	iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alpha_Num): MacroCall		396
-nim	tmplParsed	cligen/strUt.html#tmplParsed,openArray[char],char	proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alpha_Num): seq[MacroCall]		450
+nim	tmplParse	cligen/strUt.html#tmplParse.i,openArray[char],char	iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall		396
+nim	tmplParsed	cligen/strUt.html#tmplParsed,openArray[char],char	proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]		450
 nim	pmUnicode	cligen/strUt.html#pmUnicode	const pmUnicode		453
 nim	pmUnicodeSpaced	cligen/strUt.html#pmUnicodeSpaced	const pmUnicodeSpaced		454
 nim	pmDfl	cligen/strUt.html#pmDfl	var pmDfl		455
