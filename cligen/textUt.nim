@@ -5,40 +5,45 @@ from unicode  import runeLen
 import os, parseutils, critbits, math, ./mslice # math.^
 when not declared(stderr): import std/syncio
 
-proc stripEsc*(a: string): string =
-  ## Return `a` with terminal esc sequences (`"\e[..m"`, `"\e]..\e\\"`) removed.
-  result = newStringOfCap(a.len)
-  var postEsc = false
-  var inSGR = false
-  var inOSC = false
+type NoCSI_OSC* = object  ## Call-to-call state used by the noCSI_OSC iterator
+  inCSI, inOSC, postEsc: bool
+
+var nc0: NoCSI_OSC        ## A default `nc` which is all 0/false
+
+iterator noCSI_OSC*(a: openArray[char], nc: var NoCSI_OSC = nc0): char =
+  ## Iterate over chars in `a` skipping CSI/OSC term escape seqs (`"\e[..m"`,
+  ## `"\e]..\e\\"`). See en.wikipedia.org/wiki/ANSI_escape_code "Fe Escape".
+  ## To aid buffered use, if provided, `nc` can propagate parser state.
   var i = 0
   while i < a.len:
     let c = a[i]
-    if inSGR:
-      if c == 'm': inSGR = false
-    elif inOSC:
+    if nc.inCSI:
+      if ord(c) in 0x40..0x7E: nc.inCSI = false
+    elif nc.inOSC:
       if c == '\e':
         if (i + 1) < a.len and a[i + 1] == '\\':
-          inOSC = false
+          nc.inOSC = false
           inc i
       elif c == '\a':
-        inOSC = false
-    elif postEsc:
-      if c == '[': inSGR = true
-      elif c == ']': inOSC = true
+        nc.inOSC = false
+    elif nc.postEsc:
+      if   c == '[': nc.inCSI = true
+      elif c == ']': nc.inOSC = true
       else:
-        result.add '\e'
-        result.add c
-      postEsc = (c == '\e')
+        yield '\e'
+        yield c
+      nc.postEsc = (c == '\e')
     elif c == '\e':
-      postEsc = true
-    else: result.add c
+      nc.postEsc = true
+    else: yield c
     inc i
 
-proc stripSGR*(a: string): string =
-  ## Return `a` with terminal esc sequences (`"\e[..m"`, `"\e]..\e\\"`) removed.
-  ## Just an alias for `stripEsc`.
-  a.stripEsc
+proc stripEsc*(a: openArray[char]): string =
+  ## Use `noCSI_OSC` to give `a` without non-rendering terminal escape seqs.
+  result = newStringOfCap(a.len)
+  for c in a.noCSI_OSC: result.add c
+
+proc stripSGR*(a: openArray[char]): string = a.stripEsc ## Alias for `stripEsc`.
 
 proc printedLen*(a: string): int = a.stripEsc.runeLen
   ##Compute width when printed; Currently ignores "\e[..m" seqs&cnts utf8 runes.
