@@ -1,7 +1,18 @@
 RELEASE NOTES
 =============
+Version: 1.6.1
+--------------
+    - Fix a bug in `mslice.mSlices` with non-default `sep` & `eat`.
+    - Lift `textUt.stripEsc` into a new `iterator noCSI_OSC` and its old self.
+      Iterator allows optional call-to-call parse state propagation.
+    - Optimize `textUt.printedLen` to not allocate at all and to not depend on
+      `std/unicode` and also to default to a less branchy algo.
+    - Declare `ferr` & `putchar` in `osUt` from Ye Ol ANSI C stdio.
+    - Retire `'\l'` spelling of `'\n'`
+    - Add `sysUt.toOa` after `std/[parseutils, unicode]`, my own code, etc.
+
 Version: 1.6.0
----------------
+--------------
     - Deprecate cligen/conncomp
     - Fix exact power-of-10 bug in cligen/strUt.ecvt2/fmtUncertain system
     - Add some more documentation/indexing there-of
