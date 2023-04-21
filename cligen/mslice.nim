@@ -259,7 +259,7 @@ proc firstN*(ms: MSlice, n=1, term='\n'): MSlice =
       break
     inc i
 
-const wspace* = {' ', '\t', '\v', '\r', '\l', '\f'}  ## == strutils.Whitespace
+const wspace* = {' ', '\t', '\v', '\r', '\n', '\f'}  ## == strutils.Whitespace
 
 proc charEq(x, c: char): bool {.inline.} = x == c
 

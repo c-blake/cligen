@@ -218,15 +218,15 @@ proc `==`*(a: MFile, p: pointer): bool = a.mem==p
 proc toMSlice*(mf: MFile): MSlice = mf.mslc
   ## MSlice field accessor for consistency with toMSlice(string)
 
-iterator mSlices*(mf: MFile, sep='\l', eat='\r'): MSlice =
+iterator mSlices*(mf: MFile, sep='\n', eat='\r'): MSlice =
   for ms in mSlices(mf.toMSlice, sep, eat):
     yield ms
 
-iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'): string =
+iterator lines*(mf:MFile, buf:var string, sep='\n', eat='\r'): string =
   ## Copy each line in ``mf`` to passed ``buf``, like ``system.lines(File)``.
   ## ``sep``, ``eat``, and delimiting logic is as for ``mslice.mSlices``, but
   ## Nim strings are returned.  Default parameters parse lines ending in either
-  ## Unix(\\l) or Windows(\\r\\l) style on on a line-by-line basis (not every
+  ## Unix(\\n) or Windows(\\r\\n) style on on a line-by-line basis (not every
   ## line needs the same ending).  ``sep='\\r', eat='\\0'`` parses archaic
   ## MacOS9 files.
   ##
@@ -238,7 +238,7 @@ iterator lines*(mf:MFile, buf:var string, sep='\l', eat='\r'): string =
       ms.toString buf
       yield buf
 
-iterator lines*(mf: MFile, sep='\l', eat='\r'): string =
+iterator lines*(mf: MFile, sep='\n', eat='\r'): string =
   ## Exactly like ``lines(MFile, var string)`` but yields new Nim strings.
   ##
   ## .. code-block:: nim
@@ -246,7 +246,7 @@ iterator lines*(mf: MFile, sep='\l', eat='\r'): string =
   var buf = newStringOfCap(80)
   for line in lines(mf, buf, sep, eat): yield buf
 
-iterator rows*(mf: MFile, s: Sep, row: var seq[MSlice], n=0, sep='\l',
+iterator rows*(mf: MFile, s: Sep, row: var seq[MSlice], n=0, sep='\n',
                eat='\r'): seq[MSlice] =
   ##Like ``lines(MFile)`` but also split each line into columns with ``Sep``.
   if mf.mem != nil:
@@ -254,7 +254,7 @@ iterator rows*(mf: MFile, s: Sep, row: var seq[MSlice], n=0, sep='\l',
       s.split(line, row, n)
       yield row
 
-iterator rows*(mf: MFile, s: Sep, n=0, sep='\l', eat='\r'): seq[MSlice] =
+iterator rows*(mf: MFile, s: Sep, n=0, sep='\n', eat='\r'): seq[MSlice] =
   ## Exactly like ``rows(MFile, Sep)`` but yields new Nim ``seq``s.
   var sq = newSeqOfCap[MSlice](n)
   for row in rows(mf, s, sq, n, sep, eat): yield sq
@@ -271,7 +271,7 @@ iterator rows*(f: File, s: Sep, n=0): seq[string] =
   for row in rows(f, s, sq, n): yield sq
 
 var doNotUse: MFile
-iterator mSlices*(path: string, sep='\l', eat='\r', keep=false,
+iterator mSlices*(path: string, sep='\n', eat='\r', keep=false,
                   err=stderr, mf: var MFile=doNotUse): MSlice =
   ##A convenient input iterator that ``mopen()``s path or if that fails falls
   ##back to ordinary file IO but constructs ``MSlice`` from lines. ``true keep``
@@ -288,10 +288,14 @@ iterator mSlices*(path: string, sep='\l', eat='\r', keep=false,
     if mf.addr != doNotUse.addr: mf.mslc.mem = nil; mf.fd = -1 # close => no-op
     try:
       let f = if path == "/dev/stdin": stdin else: open(path)
-      for (cs, n) in f.getDelims:
-        if n > 0 and cs[n-1] == '\n':   # Newline -> NUL
+      for (cs, n) in f.getDelims(sep):
+        if n > 0 and cs[n-1] == sep:                        # `sep` (\n) -> NUL
           cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
-          yield MSlice(mem: cs, len: n - 1)
+          if eat != '\0' and n > 1 and cs[n-2] == eat:      # `eat` (\r) -> NUL
+            cast[ptr UncheckedArray[char]](cs)[n-2] = '\0'
+            yield MSlice(mem: cs, len: n - 2)
+          else:
+            yield MSlice(mem: cs, len: n - 1)
         else:
           yield MSlice(mem: cs, len: n)
       if f!=stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
