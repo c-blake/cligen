@@ -1,23 +1,22 @@
 name: test
 
 on:
-  push:
-  pull_request:
+  - push
+  - pull_request
 
 jobs:
-  skip:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skip job"
-
   before:
     runs-on: ubuntu-latest
-    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    outputs:
+      skip-ci: ${{ contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
-      - run: echo "not contains '[skip ci]'"
+      - name: Dummy step
+        run: /bin/true
 
   test:
     runs-on: ${{ matrix.os }}
+    needs: before
+    if: ${{ !needs.before.outputs.skip_ci }}
     strategy:
       matrix:
         os:
@@ -25,25 +24,22 @@ jobs:
           # - macOS-latest # no devel-compiler of mac
           # - windows-latest # FIXME
         nim_version:
-          - 'devel'
-    needs: before
+          - stable
+          - devel
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v1
       - name: Cache choosenim
-        id: cache-choosenim
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.choosenim
-          key: ${{ runner.os }}-choosenim-${{ matrix.nim_version }}
-      - name: Cache nimble
-        id: cache-nimble
-        uses: actions/cache@v1
-        with:
-          path: ~/.nimble
-          key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
+          key: ${{ matrix.os }}-choosenim-${{ matrix.nim_version }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ matrix.os }}-choosenim-${{ matrix.nim_version }}-
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim_version }}
-
       - name: Test
-        run: CLIGEN=/dev/null make -j4 test/out
+        run: make V=1 -j $(nproc)
+        env:
+          DIFF: diff -u
