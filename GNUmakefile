@@ -3,6 +3,12 @@
 # `gmake a='...'` allows to pass additional flags to the Nim compiler.  Also
 # useful to clean up test programs via `gmake clean`.
 
+# Run `gmake V=1` for verbose output
+V = 0
+AT_0 := @
+AT_1 :=
+AT = $(AT_$(V))
+
 DIFF ?= diff # DIFF='diff -u' gmake | gmake DIFF='diff --color=auto' | etc.
 
 .PHONY: test clean clean_cache
@@ -31,20 +37,20 @@ OUT := test/out
 test: $(OUT)
 
 clean:
-	@rm -f -- $(TESTS_OUT:.out=) $(TESTS_OUT) $(TESTS_TOP_LVL_OUT) $(OUT)
+	$(AT)rm -f -- $(TESTS_OUT:.out=) $(TESTS_OUT) $(TESTS_TOP_LVL_OUT) $(OUT)
 
 clean_cache:
-	@rm -rf -- '$(NIM_CACHE)'/*
+	$(AT)@rm -rf -- '$(NIM_CACHE)'/*
 
 $(TESTS_OUT): %.out: %.nim clean_cache
-	@$(NIM) $(NIM_BACKEND) --nimcache:'$(NIM_CACHE)/cache-$(<:.nim=)' \
+	$(AT)$(NIM) $(NIM_BACKEND) --nimcache:'$(NIM_CACHE)/cache-$(<:.nim=)' \
 		$(NIM_FLAGS) --run $< --help 2>&1 | grep -v '\<CC: ' > $@
 
 $(TESTS_TOP_LVL_OUT): %TopLvl.out: %.out
-	@./$(<:.out=) help > $@ 2>&1
+	$(AT)./$(<:.out=) help > $@ 2>&1
 
 $(OUT): $(TESTS_OUT) $(TESTS_TOP_LVL_OUT)
-	@{ \
+	$(AT){ \
 	set -eu; \
 	head -n900 -- $(sort $^) | sed \
 		-e '/^Hint: / d' \
