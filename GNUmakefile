@@ -10,6 +10,7 @@ AT_1 :=
 AT = $(AT_$(V))
 
 DIFF ?= diff # DIFF='diff -u' gmake | gmake DIFF='diff --color=auto' | etc.
+SED ?= sed
 
 .PHONY: test clean clean_cache
 export COLUMNS := 80
@@ -46,10 +47,10 @@ $(TESTS_TOP_LVL_OUT): %TopLvl.out: %.out
 $(OUT): $(TESTS_OUT) $(TESTS_TOP_LVL_OUT)
 	$(AT){ \
 	set -eu; \
-	head -n900 -- $(sort $^) | sed \
-		-e 's@.*/cligen.nim(@cligen.nim(@' \
-		-e 's@.*/cligen/@cligen/@' \
-		-e 's@.*/test/@test/@' > $@; \
+	tail -n+1 -- $(sort $^) | $(SED) \
+		-e 's|.*/cligen.nim(|cligen.nim(|g' \
+		-e 's|.*/cligen/|cligen/|g' \
+		-e 's|.*/test/|test/|g' > $@; \
 	rm -f -- $^; \
 	$(DIFF) -- test/ref $@; \
 	}
