@@ -193,6 +193,10 @@ proc urite*(f: File, a: varargs[string, `$`]) {.inline.} =
   ## Unlocked (i.e. single threaded) libc `write` (maybe Linux-only).
   for x in items(a): urite(f, x)
 
+proc urite*[A,B](f: File, str: string, s: HSlice[A,B]) =
+  if s.len < 1: return
+  discard f.uriteBuffer(str[s.a].addr, s.len)
+
 proc replacingUrite*(f: File, s: string, eor: char, subEor: string) =
   ## Unlocked write `s` to `f` replacing any `eor` char with `subEor`.
   var off = 0
