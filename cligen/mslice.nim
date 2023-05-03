@@ -535,6 +535,10 @@ iterator items*(a: MSlice): char {.inline.} =
   for i in 0 ..< a.len:
     yield a[i]
 
+func contains*(s: MSlice, cset: set[char]): bool = ## Test `s` for any `cset`
+  for c in s:
+    if c in cset: return true
+
 iterator pairs*(a: MSlice): tuple[ix: int; c: char] {.inline.} =
   ## Yields each (index,char) in `a`.
   for i in 0 ..< a.len:
