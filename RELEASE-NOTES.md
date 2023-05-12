@@ -1,5 +1,19 @@
 RELEASE NOTES
 =============
+Version: 1.6.3
+--------------
+    - Fix compilation errors by adapting to removal of LineTooLong hint in
+      https://github.com/nim-lang/Nim/commit/3a08e2e6ace20f086ba24360c7139852a75b93b2
+
+    - Add `mslice.contains(s: MSlice, cset: set[char])` to make `SomeString`
+      more string-compatible.
+
+Version: 1.6.2
+--------------
+    - ImplicitDefaultValue
+    - Fix CI
+    - Test Makefile improvements; Thanks @CyberTailor
+
 Version: 1.6.1
 --------------
     - Fix a bug in `mslice.mSlices` with non-default `sep` & `eat`.
