@@ -68,7 +68,7 @@ nim	lgBold	cligen/osUt.html#lgBold,File,string	proc lgBold(f: File; s: string)		
 nim	lgInv	cligen/osUt.html#lgInv,File,string	proc lgInv(f: File; s: string)		524
 nim	run	cligen/osUt.html#run,openArray[string],StringTableRef	proc run(cmd: openArray[string]; env: StringTableRef = nil;\n    opts = {poEchoCmd, poUsePath}; dryRun = false; logFile = stderr;\n    logWrite = lgBold): int		527
 nim	findPathPattern	cligen/osUt.html#findPathPattern,string	proc findPathPattern(pathPattern: string): string		537
-nim	setFileSize	cligen/osUt.html#setFileSize,FileHandle,int64,int64	proc setFileSize(fh: FileHandle; currSize, newSize: int64): OSErrorCode		545
+nim	setFileSize	cligen/osUt.html#setFileSize,FileHandle,int64,int64	proc setFileSize(fh: FileHandle; currSize, newSize: int64): OSErrorCode		564
 nimgrp	perror	cligen/osUt.html#perror-procs-all	proc		36
 nimgrp	urite	cligen/osUt.html#urite-procs-all	proc		187
 nimgrp	both	cligen/osUt.html#both-procs-all	proc		159
