@@ -1,5 +1,9 @@
 RELEASE NOTES
 =============
+Version: 1.6.4
+--------------
+    - A couple Nim version portability fixes.
+
 Version: 1.6.3
 --------------
     - Fix compilation errors by adapting to removal of LineTooLong hint in
