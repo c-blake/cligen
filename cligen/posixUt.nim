@@ -133,8 +133,8 @@ proc argHelp*(dfl: Timespec, a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys, "Timespec", $dfl ]
 
 proc nsToTimeval*(ns: int64): Timeval =
-  result.tv_sec  = Time(ns div 1_000_000_000)
-  result.tv_usec = clong(ns mod 1_000_000_000) div 1_000
+  result.tv_sec  = Time(ns div 1_000_000_000i64)
+  result.tv_usec = Suseconds(ns mod 1_000_000_000i64) div 1_000
 
 proc toUidSet*(strs: seq[string]): HashSet[Uid] =
   ##Just parse some ints into typed Uids
