@@ -1,5 +1,9 @@
 RELEASE NOTES
 =============
+Version: 1.6.5
+--------------
+    - Simple posixUt.nsToTimeval add (release forced by bu/ bug fix release)
+
 Version: 1.6.4
 --------------
     - A couple Nim version portability fixes.
