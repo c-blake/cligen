@@ -1,5 +1,9 @@
 RELEASE NOTES
 =============
+Version: 1.6.6
+--------------
+    - Fix Suseconds type error that manifests only on some Nim versions / OSes.
+    
 Version: 1.6.5
 --------------
     - Simple posixUt.nsToTimeval add (release forced by bu/ bug fix release)
