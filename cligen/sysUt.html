@@ -73,6 +73,10 @@
   <li><a class="reference" href="#decd%2CT%2Cint" title="decd[T: Ordinal | uint | uint64](x: var T; amt = 1): T">decd[T: Ordinal | uint | uint64](x: var T; amt = 1): T</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">decSat
+  <li><a class="reference" href="#decSat%2CT" title="decSat[T: Ordinal](x: var T)">decSat[T: Ordinal](x: var T)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">delete
   <li><a class="reference" href="#delete%2Cstring%2CNatural" title="delete(x: var string; i: Natural)">delete(x: var string; i: Natural)</a></li>
 
@@ -91,6 +95,10 @@
 </ul>
 <ul class="simple nested-toc-section">incd
   <li><a class="reference" href="#incd%2CT%2Cint" title="incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T">incd[T: Ordinal | uint | uint64](x: var T; amt = 1): T</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">incSat
+  <li><a class="reference" href="#incSat%2CT" title="incSat[T: Ordinal](x: var T)">incSat[T: Ordinal](x: var T)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">newSeqNoInit
@@ -213,6 +221,17 @@
 </div>
 
 </div>
+<div id="decSat-procs-all">
+  <div id="decSat,T">
+  <dt><pre><span class="Keyword">proc</span> <a href="#decSat%2CT"><span class="Identifier">decSat</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">Ordinal</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    Like <tt class="docutils literal"><span class="pre"><span class="Identifier">dec</span></span></tt>, but saturating &amp; only -1; Never raises | panics.
+    
+  </dd>
+</div>
+
+</div>
 <div id="delete-procs-all">
   <div id="delete,string,Natural">
   <dt><pre><span class="Keyword">proc</span> <a href="#delete%2Cstring%2CNatural"><span class="Identifier">delete</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">)</span> {.<span class="Identifier">noSideEffect</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -265,6 +284,17 @@
   <dd>
     
     Similar to prefix <tt class="docutils literal"><span class="pre">++</span></tt> in C languages: increment then yield value
+    
+  </dd>
+</div>
+
+</div>
+<div id="incSat-procs-all">
+  <div id="incSat,T">
+  <dt><pre><span class="Keyword">proc</span> <a href="#incSat%2CT"><span class="Identifier">incSat</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">Ordinal</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    Like <tt class="docutils literal"><span class="pre"><span class="Identifier">inc</span></span></tt>, but saturating &amp; only +1; Never raises | panics.
     
   </dd>
 </div>
@@ -387,7 +417,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-05-24 13:07:00 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-06-21 11:15:40 UTC</small>
       </div>
     </div>
   </div>
