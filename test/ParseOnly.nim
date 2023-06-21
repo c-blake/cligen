@@ -54,4 +54,4 @@ if clVersionOnly in fooParse:
 #Also, if you are really deciding much logic based on *specifically how* users
 #entered data, you may prefer just using `parseopt3` (or even the Nim stdlib
 #`parseopt`).  You can still use `argcvt`, even without the `dispatch` system.
-#Compile any `dispatch`-using program with `-d:printDispatch` to see how.
+#Compile any `dispatch`-using program w/`--expandMacro:dispatchGen` to see how.

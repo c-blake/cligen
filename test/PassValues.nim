@@ -24,7 +24,7 @@ when isMainModule:
   const positional      = "a1"
   const suppress        = @[ "verb" ]
   const implicitDefault = @[ "a2" ]
-  const dispatchName    = "demoCL"    #This one tested via -d:printDispatch
+  const dispatchName    = "demoCL"  # This1 tested via --expandMacro:dispatchGen
 
   dispatch(demo, cmdName, doc, help, short, usage, echoResult, noAutoEcho,
            positional, suppress, implicitDefault, dispatchName)

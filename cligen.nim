@@ -799,7 +799,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       except HelpError as e:
         stderr.write e.msg % ["HELP", `apId`.help]
         raise newException(ParseError, "Bad parameter user-syntax/semantics")
-  when defined(printDispatch): echo repr(result)  # maybe print generated code
 
 template discarder[T](a: T): void = # discard if possible, else identity;  Name
   when T is not void: discard a     #..ideas: discardVoid alwaysDiscard Discard
@@ -1032,7 +1031,6 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
                    else: ""
       let `restId`: seq[string] = if n > 1: `cmdLineId`[1..<n] else: @[ ]
       `cases`)
-  when defined(printDispatchMultiGen): echo repr(result)  # maybe print gen code
 
 macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let procBrackets = if procBkts.len < 2: procBkts[0] else: procBkts
@@ -1066,7 +1064,6 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
   let subDocsId = ident(prefix & "SubDocs")
   result[^1].add(newParam("usage", quote do:
     topLevelHelp(`doc`, `use`, `cmd`, `subCmdsId`, `subDocsId`)))
-  when defined(printDispatchDG): echo repr(result)  # maybe print gen code
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A wrapper to generate a multi-command dispatcher, call it, and quit.  The
@@ -1109,7 +1106,6 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      {.pop.}  #ProveField
      {.pop.}  #GlobalVar
     {.pop.}) #GCUnsafe
-  when defined(printDispatchMulti): echo repr(result)  # maybe print gen code
 
 macro initGen*(default: typed, T: untyped, positional="",
                suppress: seq[string] = @[], name=""): untyped =
@@ -1154,7 +1150,6 @@ macro initGen*(default: typed, T: untyped, positional="",
     if id == lastUnsuppressed: break
   let nm = if name.strVal.len > 0: name.strVal else: "init"
   result = newProc(name = ident(nm), params = params, body = assigns)
-  when defined(printInit): echo repr(result)  # maybe print gen code
 
 template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
     help: typed={}, short: typed={}, usage: string=clUse, cf: ClCfg=clCfg,
@@ -1229,7 +1224,6 @@ macro initDispatchGen*(dispName, obName: untyped; default: typed; positional="";
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quit(cgParseErrorExitCode)
   result = newProc(name = dispName, params = params, body = body)
-  when defined(printIDGen): echo repr(result)  # maybe print gen code
 
 proc mergeParams*(cmdNames: seq[string],
                   cmdLine=commandLineParams()): seq[string] =

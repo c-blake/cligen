@@ -32,4 +32,4 @@ dispatch(foo)
 #many places, though, you would also probably prefer using `parseopt3` (or
 #even the Nim stdlib `parseopt`) and `argcvt` directly rather than the
 #`dispatch`/`dispatchGen` system.  Compile any `dispatch`-using program with
-#`-d:printDispatch` to see what to do.
+#`--expandMacro:dispatchGen` to see what to do.
