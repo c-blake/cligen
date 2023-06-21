@@ -106,3 +106,11 @@ proc newSeqNoInit*[T: CopyMemable](len: Natural): seq[T] =
 template toOa*[T](p: pointer; a, b: int): untyped =
   ## Make an openArray from ptr, range triple.
   toOpenArray[T](cast[ptr UncheckedArray[T]](p), a, b)
+
+# Defect => panic means arith can panic. So, cannot just try-except:set to high.
+# Saturating arith is most useful (to me) when moves are by +-1.  Full work can
+# be added later with a `,y=1` default when/if more general cases arise.
+proc incSat*[T: Ordinal](x: var T) = (if x < T.high: inc x)
+  ## Like `inc`, but saturating & only +1; Never raises | panics.
+proc decSat*[T: Ordinal](x: var T) =  (if x > T.low: dec x)
+  ## Like `dec`, but saturating & only -1; Never raises | panics.
