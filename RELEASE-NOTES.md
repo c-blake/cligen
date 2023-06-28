@@ -1,5 +1,14 @@
 RELEASE NOTES
 =============
+
+Version: 1.6.7
+--------------
+    - It's been a long time since `--expandMacro` was added.  So, drop the less
+      general & more manual variant of that.  This isn't BREAKING since it is
+      only about macro debugging, but it is kind of a big change.
+
+    - Add saturating `inc`, `dec` as `incSat`, `decSat` in `cligen/sysUt`.
+
 Version: 1.6.6
 --------------
     - Fix Suseconds type error that manifests only on some Nim versions / OSes.
