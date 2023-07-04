@@ -279,11 +279,10 @@ iterator mSlices*(path: string, sep='\n', eat='\r', keep=false,
   ##unless you also pass `mf` which returns the `MFile` to close when unneeded.
   let mfl = mopen(path, err=nil)    # MT-safety means cannot just use `mf`
   if mfl.mem != nil:
+    if mf.addr != doNotUse.addr: mf = mfl
     for ms in mSlices(mfl.toMSlice, sep, eat):
       yield ms
-    if mf.addr == doNotUse.addr:
-      if not keep: mfl.close(err=err)
-    else: mf = mfl
+    if not keep and mf.addr == doNotUse.addr: mfl.close(err=err)
   else:
     if mf.addr != doNotUse.addr: mf.mslc.mem = nil; mf.fd = -1 # close => no-op
     try:
