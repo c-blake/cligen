@@ -7,6 +7,10 @@ Version: 1.6.8
       had an `include` that will now need to be supplemented by `import` for
       your own local scopes.
 
+    - cligen/mslice grows a few more quality of life APIs - `rfind` and `dup`,
+      the latter for promoting read-only to RW or saving out of IO buffers
+      (until end of program life or dealloc).
+
 Version: 1.6.7
 --------------
     - It's been a long time since `--expandMacro` was added.  So, drop the less

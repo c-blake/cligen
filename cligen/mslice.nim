@@ -12,7 +12,7 @@ type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
 proc cmemrchr*(s: pointer, c: char, n: csize): pointer {.
-  importc: "memchr", header: "<string.h>" .}
+  importc: "memrchr", header: "string.h" .}
 proc cmemcmp*(a, b: pointer, n: csize): cint {. #Exported by system/ansi_c??
   importc: "memcmp", header: "<string.h>", noSideEffect.}
 proc cmemcpy*(a, b: pointer, n: csize): cint {.
@@ -30,7 +30,7 @@ type
   MSlice* = object
     ## Represent a memory slice, such as a delimited record in an `MFile`.
     ## Care is required to access `MSlice` data (think C mem\* not str\*).
-    ## Use `toString` to a (reusable?) buffer for safer/compatible work.
+    ## Use `$ | toString` to get a buffer for safer/more compatible work.
     mem*: pointer
     len*: int
 
@@ -92,6 +92,27 @@ proc find*(s: MSlice, sub: SomeString): int =
   ## Like `strutils.find`.
   let p = cmemmem(s.mem, s.len.csize_t, sub.mem, sub.len.csize_t)
   if p.isNil: -1 else: p -! s.mem
+
+func high*(s: MSlice): int = s.len - 1
+
+func rfind*(s: MSlice, sub: char, start: Natural = 0, last = -1): int =
+  let last = if last == -1: s.high else: last
+  let p = cmemrchr(s.mem, sub, csize(last + 1))
+  if p.isNil: -1 else: p -! s.mem
+
+func rfind*(s: MSlice, chars: set[char], start: Natural = 0, last = -1): int =
+  let last = if last == -1: s.high else: last
+  for i in countdown(last, start): (if s[i] in chars: return i)
+  -1
+
+proc dup*(ms: var MSlice) =
+  ## Alloc & populate data for `ms`.  This is useful when `ms` begins life from
+  ## an RO MFile | getDelims slice & you want writable or longer-lived memory.
+  ## To not leak, `dealloc ms.mem`.
+  let old = ms.mem
+  ms.mem = alloc(ms.len + 1)
+  copyMem ms.mem, old, ms.len
+  ms[ms.len] = '\0'
 
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
