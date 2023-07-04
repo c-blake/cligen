@@ -1,9 +1,10 @@
 {.push hint[Performance]: off.}
 {.push warning[ProveField]: off.}
 
-when not declared(os.joinPath):    import std/os
-when not declared(strutils.split): import std/strutils
-when not declared(cfToCL):         import cligen/cfUt
+when not declared(os.joinPath): from std/os import commandLineParams, getEnv,
+                                                   getConfigDir, fileExists, `/`
+when not declared(strutils.split): from std/strutils import toUpperAscii
+when not declared(cfToCL):         from cligen/cfUt  import cfToCL, envToCL
 
 proc mergeParams(cmdNames: seq[string],
                  cmdLine=os.commandLineParams()): seq[string] =
@@ -21,9 +22,9 @@ proc mergeParams(cmdNames: seq[string],
   var cfPath = os.getEnv(strutils.toUpperAscii(cmdNames[0]) & "_CONFIG")
   if cfPath.len == 0:
     cfPath = os.getConfigDir() / cmdNames[0] / "config"
-    if not fileExists(cfPath):
+    if not os.fileExists(cfPath):
       cfPath = cfPath[0..^8]
-  if fileExists(cfPath):
+  if os.fileExists(cfPath):
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
   result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   result.add cmdLine

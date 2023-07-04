@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.8
+--------------
+    - cligen/mergeCfgEnv* do much more surgical `import`.  It is possible you
+      had an `include` that will now need to be supplemented by `import` for
+      your own local scopes.
+
 Version: 1.6.7
 --------------
     - It's been a long time since `--expandMacro` was added.  So, drop the less
