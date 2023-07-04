@@ -287,7 +287,7 @@ iterator mSlices*(path: string, sep='\n', eat='\r', keep=false,
   else:
     if mf.addr != doNotUse.addr: mf.mslc.mem = nil; mf.fd = -1 # close => no-op
     try:
-      let f = if path == "/dev/stdin": stdin else: open(path)
+      let f = if path.useStdin: stdin else: open(path)
       for (cs, n) in f.getDelims(sep):
         if n > 0 and cs[n-1] == sep:                        # `sep` (\n) -> NUL
           cast[ptr UncheckedArray[char]](cs)[n-1] = '\0'
