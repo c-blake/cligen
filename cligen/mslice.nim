@@ -110,9 +110,8 @@ proc dup*(ms: var MSlice) =
   ## an RO MFile | getDelims slice & you want writable or longer-lived memory.
   ## To not leak, `dealloc ms.mem`.
   let old = ms.mem
-  ms.mem = alloc(ms.len + 1)
+  ms.mem = alloc(ms.len)
   copyMem ms.mem, old, ms.len
-  ms[ms.len] = '\0'
 
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
