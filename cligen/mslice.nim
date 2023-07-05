@@ -113,6 +113,14 @@ proc dup*(ms: var MSlice) =
   ms.mem = alloc(ms.len)
   copyMem ms.mem, old, ms.len
 
+proc dup*(ms: MSlice): MSlice =
+  ## Alloc & populate data for new `ms`.  This is useful when `ms` begins life
+  ## from an RO MFile | getDelims slice & you want writable or longer-lived
+  ## memory.  To not leak, `dealloc ms.mem`.
+  result.mem = alloc(ms.len)
+  result.len = ms.len
+  copyMem result.mem, ms.mem, ms.len
+
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
   s.setLen(ms.len)
