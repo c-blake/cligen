@@ -256,7 +256,8 @@
 
 </ul>
 <ul class="simple nested-toc-section">dup
-  <li><a class="reference" href="#dup%2CMSlice" title="dup(ms: var MSlice)">dup(ms: var MSlice)</a></li>
+  <li><a class="reference" href="#dup%2CMSlice_2" title="dup(ms: MSlice): MSlice">dup(ms: MSlice): MSlice</a></li>
+<li><a class="reference" href="#dup%2CMSlice" title="dup(ms: var MSlice)">dup(ms: var MSlice)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">endsWith
@@ -871,7 +872,15 @@
 
 </div>
 <div id="dup-procs-all">
-  <div id="dup,MSlice">
+  <div id="dup,MSlice_2">
+  <dt><pre><span class="Keyword">proc</span> <a href="#dup%2CMSlice_2"><span class="Identifier">dup</span></a><span class="Other">(</span><span class="Identifier">ms</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Alloc &amp; populate data for new <tt class="docutils literal"><span class="pre"><span class="Identifier">ms</span></span></tt>.  This is useful when <tt class="docutils literal"><span class="pre"><span class="Identifier">ms</span></span></tt> begins life from an RO MFile | getDelims slice &amp; you want writable or longer-lived memory.  To not leak, <tt class="docutils literal"><span class="pre"><span class="Identifier">dealloc</span> <span class="Identifier">ms</span><span class="Operator">.</span><span class="Identifier">mem</span></span></tt>.
+    
+  </dd>
+</div>
+<div id="dup,MSlice">
   <dt><pre><span class="Keyword">proc</span> <a href="#dup%2CMSlice"><span class="Identifier">dup</span></a><span class="Other">(</span><span class="Identifier">ms</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1584,7 +1593,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-04 23:33:37 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-05 09:54:12 UTC</small>
       </div>
     </div>
   </div>
