@@ -5,11 +5,14 @@ Version: 1.6.8
 --------------
     - cligen/mergeCfgEnv* do much more surgical `import`.  It is possible you
       had an `include` that will now need to be supplemented by `import` for
-      your own local scopes.
+      your own local scopes (but the plus side is that symbols from several
+      big std/libs no longer necessarily collide with your own symbols).
 
     - cligen/mslice grows a few more quality of life APIs - `rfind` and `dup`,
       the latter for promoting read-only to RW or saving out of IO buffers
       (until end of program life or dealloc).
+
+    - cligen/mfile.mSlices now uses cligen/osUt.useStdin logic.
 
 Version: 1.6.7
 --------------
