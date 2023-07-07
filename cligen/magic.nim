@@ -22,7 +22,6 @@ const
   cligenMagic {.booldefine.} = true
   haveMagic* = so.len > 0 and cligenMagic
 
-#{.push hint[LineTooLong]:off.}
 when haveMagic:
   {. passl: so .}
   const
@@ -94,4 +93,3 @@ when haveMagic:
   const MAGIC_PARAM_BYTES_MAX* = 6
   proc magic_setparam*(m: magic_t; param: cint; val: pointer): cint {.importc.}
   proc magic_getparam*(m: magic_t; param: cint; val: pointer): cint {.importc.}
-#{.pop.}
