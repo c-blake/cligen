@@ -1,7 +1,7 @@
 # On-the-side GNUmakefile contributed by https://github.com/SirNickolas with a
-# few minor c-blake & CyberTailor updates.  `gmake -j$(nproc)` runs & checks all
-# tests.  `gmake a='...'` allows to pass additional flags to the Nim compiler.
-# Also useful to clean up test programs via `gmake clean`.
+# few minor c-blake & CyberTailor updates.  `gmake -j$(nproc)` runs & checks
+# all tests.  `gmake NIM_EXTRA='...'` allows passing additional flags to the
+# Nim compiler.  Also useful to clean up test programs via `gmake clean`.
 
 # Run `gmake V=1` for verbose output
 V := 0
@@ -24,7 +24,7 @@ NIM_BACKEND := $(or $(BE),c)
 
 NIM_FLAGS := \
 	--hints:off --warning:all:off --warning:User:on --colors:off\
-	--parallelBuild:$J $a
+	--parallelBuild:$J $(NIM_EXTRA)
 NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))
