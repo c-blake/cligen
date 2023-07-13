@@ -23,8 +23,11 @@ NIM := $(or $(nim),nim)
 NIM_BACKEND := $(or $(BE),c)
 
 NIM_FLAGS := \
-	--hints:off --warning:all:off --warning:User:on --colors:off\
-	--parallelBuild:$J $(NIM_EXTRA)
+	--verbosity:2 --warning:Deprecated:off --warning:ProveField:off \
+	--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off \
+	--hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off \
+	--hint:GCStats:off \
+	--colors:off --parallelBuild:$J $(NIM_EXTRA)
 NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))

@@ -1,3 +1,5 @@
+{.hint[Performance]: off.}
+
 proc demo(alpha=1, verb=0, junk= @[ "rs", "tu" ], stuff= @[ "ab", "cd" ],
           args: seq[string]): int=
   ## demo entry point with varied, meaningless parameters.  A Nim invocation
@@ -14,7 +16,7 @@ when isMainModule:
 
   proc argParse*(dst: var int, dfl: int; a: var ArgcvtParams): bool =
     if a.parNm == "verb":               # make "verb" a special kind of int
-      inc(dst)                          # that just counts its occurances
+      inc(dst)                          # that just counts its occurrences
     else:
       if parseInt(strip(a.val), dst) == 0:
         a.msg = "Bad value: \"$1\" for option \"$2\"; expecting int\n$3" %
@@ -26,7 +28,7 @@ when isMainModule:
     if a.parNm == "verb":    # This is a parNm-conditional hybrid of bool & int
       result = @[ a.argKeys, "countr", $defVal ]
       if a.parSh.len > 0: a.shortNoVal.incl(a.parSh[0])
-      a.longNoVal.add(a.parNm)
+      a.longNoVal.add(a.parNm)          # Triggers hint[Performance]
     else:
       result = @[ a.argKeys, "int", $defVal ]
 
