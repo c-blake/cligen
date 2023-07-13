@@ -4,10 +4,10 @@
 # useful to clean up test programs via `gmake clean`.
 
 # Run `gmake V=1` for verbose output
-V = 0
+V := 0
 AT_0 := @
 AT_1 :=
-AT = $(AT_$(V))
+AT := $(AT_$V)
 
 DIFF ?= diff # DIFF='diff -u' gmake | gmake DIFF='diff --color=auto' | etc.
 SED ?= sed
@@ -20,7 +20,9 @@ export CLIGEN := /dev/null
 NIM := $(or $(nim),nim)
 NIM_BACKEND := $(or $(BE),c)
 
-NIM_FLAGS := --hints:off --warning:all:off --warning:User:on --colors:off $a
+NIM_FLAGS := \
+	--hints:off --warning:all:off --warning:User:on --colors:off\
+	--parallelBuild:1 $a
 NIM_CACHE := $(HOME)/.cache/nim
 
 TESTS_OUT := $(patsubst %.nim,%.out,$(wildcard test/[A-Z]*.nim))
