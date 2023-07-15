@@ -2,17 +2,15 @@
 exec < /dev/null
 export COLUMNS="80" CLIGEN_WIDTH="80" CLIGEN=/dev/null
 rm -rf $HOME/.cache/nim/*
-v="--verbosity:1"
-h="--hint[Processing]=off --hint[CC]=off --hint[Exec]=off --hint[SuccessX]=off"
-: ${w="--warning[ObservableStores]:off --warning[Deprecated]:off --warning[ImplicitDefaultValue]:off"}
-if ${nim:-nim} c $w /dev/null 2>&1 | grep -aq 'unknown warning:'; then
-  w=""
-fi
+v="--verbosity:2"
+h="--hint[Path]:off --hint[Conf]:off --hint[Processing]:off --hint[CC]:off"
+h="$h --hint[Exec]:off --hint[Source]:off --hint[Link]:off --hint[SuccessX]:off"
+h="$h --hint[GCStats]:off"
+: ${w="--warning[Deprecated]:off --warning[ProveField]:off"}
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
   c=$HOME/.cache/nim/cache-${n%.nim}
-  #`cat` here is needed to integrate the [User] warning in the output stream.
-  ${nim:-nim} ${BE:-c} --nimcache:$c $v $h $w "$@" --run $n --help 2>&1|cat>$o&
+  ${nim:-nim} ${BE:-c} --nimcache:$c $v $h $w "$@" --run $n --help > $o 2>&1 &
 done
 wait
 for n in $(grep -lw dispatchMulti test/*nim); do
