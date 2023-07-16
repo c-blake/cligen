@@ -31,8 +31,8 @@ _@{main}() {
   _arguments \
   @subFlags}"""
   let ind = repeat(' ', 8)
-  for (lit, id, arg, call) in mainTmpl.tmplParse2(meta='@'):
-    if lit: stdout.write mainTmpl[arg]
+  for (id, arg, call) in mainTmpl.tmplParse(meta='@'):
+    if id.idIsLiteral: stdout.write mainTmpl[arg]
     else:
       case mainTmpl[id]
       of "main": stdout.write main
@@ -49,8 +49,8 @@ _@{main}() {
       else: stdout.write mainTmpl[call]
   for sub in subs:
     stdout.write "\n\n"
-    for (lit, id, arg, call) in tmplParse2(subTmpl, meta='@'):
-      if lit: stdout.write subTmpl[arg]
+    for (id, arg, call) in tmplParse(subTmpl, meta='@'):
+      if id.idIsLiteral: stdout.write subTmpl[arg]
       else:
         case subTmpl[id]
         of "sub": stdout.write sub.name
