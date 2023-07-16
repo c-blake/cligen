@@ -2,8 +2,8 @@ from std/strutils import toUpperAscii
 import cligen/strUt     # Example/test text template/macro expand/interpolation.
 
 proc render(fmt: openArray[char]): string =
-  for (lit, id, arg, call) in tmplParse2(fmt):
-    if lit: result.add fmt[arg]
+  for (id, arg, call) in tmplParse(fmt):
+    if id.idIsLiteral: result.add fmt[arg]
     else:
       case fmt[id].toString
       of "a": result.add "hmm"
@@ -13,10 +13,8 @@ proc render(fmt: openArray[char]): string =
       of "(": result.add "lparen"
       of "}": result.add "rbrace"
       of "": result.add "nil"
-      else:
-        result.add '?'
-        result.add fmt[call]
-        result.add '?'
+      else: # Mark unknown calls; Non-macro-lang folk likely want err|drop|pass
+        result.add '?'; result.add fmt[call]; result.add '?'
 
 for (n, fmt, expect) in [ # This tests a bunch of cases.  Maybe I missed some?
   ( 0, "${x} ho$y"     ,"?${x}? ho?$y?" ),( 1, "$x ho${y}"    ,"?$x? ho?${y}?"),

@@ -385,51 +385,51 @@ proc add*(result: var string; a: openArray[char]) = (for c in a: result.add c)
 
 proc makeOther(): array[256, char] =    # make a little pairing table
   for i in 0 ..< 256: result[i] = chr(i)          # identity for "'`..
-  result[ord('(')] = ')'; result[ord(')')] = '('  # paired like ()
-  result[ord('[')] = ']'; result[ord(']')] = '['
+  result[ord('(')] = ')'; result[ord(')')] = '('  #..paired like [] OR ][ ..
+  result[ord('[')] = ']'; result[ord(']')] = '['  #..Latter kinda questionable.
   result[ord('{')] = '}'; result[ord('}')] = '{'
   result[ord('<')] = '>'; result[ord('>')] = '<'
 const other = makeOther() # Any ASCII bracketing/punctuation can be brace|quote
 const alphaNum* = {'a'..'z', 'A'..'Z', '_', '0'..'9', '\128'..'\255'}
 
-type MacroCall2* = (bool, Slice[int], Slice[int], Slice[int]) ## lit,id,a,c
-iterator tmplParse2*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall2 =
-  ## A text template parser converting `fmt` into a list of macro calls encoded
-  ## as `fmt`-relative slices.  Callers resolve calls in rendering.  Macro call
-  ## syntax is `$ID`:literal:, `%[ID]`:literal:, `${(ID)ARG}`:literal: with any
-  ## nonIds valid braces|quotes.  This generalizes most escape-free format
-  ## string interpolation styles.
+proc idIsLiteral*(id: Slice[int]): bool = id.a == 0
+  ## Test if a `MacroCall[0]` (`id`) refers to a literal text "call".
+
+type MacroCall* = (Slice[int], Slice[int], Slice[int]) ## Id, Arg, whole Call
+iterator tmplParse*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall =
+  ## A text template parser converting `fmt` into macro calls encoded as
+  ## `fmt`-relative slices.  Callers resolve any calls.  Macro call syntax is
+  ## `$ID`, `%[ID]`, `${(ID)ARG}` embedded within literal text.  `$ | % | ..` is
+  ## a self-escaping `meta` char.  This generalizes most self-escaping format
+  ## string interpolation styles.  The idea is to make it easy to write
+  ## `std/strutils.%`, C/Python `printf`-like string interpolation with one
+  ## standard, but flexible syntax.
   ##
-  ## Specifically, if `[X]`:literal: => OPTIONAL X & `<Y>`:literal: => NEEDED Y, then a call is:
-  ##  - `M[B][Q]<ID>[very next q][ARGUMENT STRING][very next b]`:literal:
+  ## Specifically, if `[X]` => OPTIONAL X & `<Y>` => NEEDED Y, then a call is:
+  ##  - `M[B][Q]<ID>[next q post Q][ARGUMENT STRING][next b post B]`
   ## where
-  ##  - M is the so-called self-escaping warning meta char, like '$', '%', ..
-  ##  - B is an optional opening brace|quote (any NON-alpha_numeric)
-  ##  - b=`other[B]` is matching closer (`other[c]`==c except for bracey chars)
-  ##  - Q is a macro id brace|quote (IF non-alpha_numeric); q=`other[Q]` closes
-  ## No B => calls stop at the next NON-alpha_numeric char (eg., `:` in
-  ## `$ID:x`:literal:) and the macro gets an empty ARG.  No Q => the whole
-  ## braced fragment is ID, and ARG is empty: `${ID WITH SPACES}`:literal:.
-  ## The only escape is M self-escaping (MM -> M) {only outside calls}.  `fmt`
-  ## writers must pick non-colliding brace|quotes.
+  ##  - `M` is the so-called self-escaping warning meta char, like '$', '%', ..
+  ##  - `B` is an optional opening brace | quote (any NON-`ids`)
+  ##  - `b`=`other[B]` is closing pair (`other[c]`==c except for `([{<>}])`)
+  ##  - `Q` is a macro id brace|quote (IF non-`ids`); q=`other[Q]` closes
+  ## No `B` => calls stop at the next NON-`ids` char (eg., `:` in `$ID:x`) and
+  ## the macro gets an empty ARG.  No `Q` => ARG="" and whole post-M fragment is
+  ## `ID` (egs., `$FOO`, `$'WITH SPACES'`).  Self-escaping means MM->M (only
+  ## outside calls).  `fmt` writers must pick non-colliding brace | quotes.
   ##
-  ## RETURN VALUE is intended to be assigned like: `let (lit,id,arg,call)=sq[i]`
-  ## where `fmt[each]` is the thing.  If `lit==true`, then `arg` denotes
-  ## a literal text piece of the string and `id==call==0..0`.  This is intended
-  ## to make it easy to write `std/strutils.%` or C/Python `printf`-like string
-  ## interpolation with one standard, but flexible syntax.  See
-  ## `examples/tmpl.nim` for a fully worked out example with tests.
-  var i0,i1, a0,a1, c0,c1 = 0           # 0-start/1-end offsets: Id,Arg,Call
+  ## RETURN VALUE is intended to be assigned to an `(id, arg, call)` tuple where
+  ## `fmt[id|arg|call]` can extract that thing from `fmt`. `id.idIsLiteral` is
+  ## true for a special macro meaning `fmt[arg]` is trailing literal text.  A
+  ## fully worked out example with tests is `examples/tmpl.nim`.
+  var i0,i1, a0,a1, c0,c1: int          # 0-start/1-end offsets: I)d,A)rg,C)all
   var next = 0                          # From where to search for a meta char
   let eos = fmt.len                     # End Of String (fmt string)
   while true:
-    # `find` will use fast C `memchr`. `eos-2` to ignore M @EOS: no room for id.
-    c0 = fmt.find(meta, start=next, last=eos-2)
+    c0 = fmt.find(meta, start=next, last=eos-2) #eos-2: ignore M @EOS:No id room
     if c0 < 0: c0 = eos                 # No more meta chars => span until EOS
     if c0 != c1:                        # If the literal chunk is not empty,..
-      yield (true, 0..0, c1..<c0, 0..0) #..emit it.
-    # `== eos` (instead of reusing the already tested `< 0`) is to trick GCC
-    #..not to duplicate the code.
+      yield (0..0, c1..<c0, 0..0)       #..emit it.
+    # `==eos`(instead of reusing already tested `<0`) tricks GCC to not dup code
     if c0 == eos: break                 # If reached EOS, terminate
     i0 = c0 + 1                         # Expecting id after M
     if fmt[i0] == meta:                 # M self-escapes: MM => M
@@ -438,13 +438,13 @@ iterator tmplParse2*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall2 =
     while i1 != eos and fmt[i1] in ids: inc i1
     if i1 != i0:                        # Unbraced call: ID=[i0,i1)
       a0 = i1; a1 = i1; next = i1       #..and (a0,a1,c1) -> i1
-    else:                               # Nowhere => no ids => Braced call
-      inc i0                            # Skip the brace
+    else:                               # Zero chars in ids => Braced call
+      inc i0                            # Skip the quobrace & find its close-er
       a1 = fmt.find(other[ord(fmt[i1])], start=i0)
       if unlikely a1 < 0:               # Unterminated brace
-        c1 = c0; next = eos; continue   # Treat the rest as literal
+        c1 = c0; next = eos; continue   # Treat to EOString as literal
       next = a1 + 1                     # Skip the close brace
-      if fmt[i0] in ids or i0 == a1:    # id|close => Unquoted id => all id
+      if fmt[i0] in ids or i0 == a1:    # id|close => Unquoted id => ALL are id
         i1 = a1; a0 = a1                #..and with an empty arg.
       else:                             # Quoted id; find other/closing
         inc i0                          # Skip needed open brace
@@ -453,22 +453,10 @@ iterator tmplParse2*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall2 =
           c1 = c0; continue             # Treat the call as literal
         a0 = i1 + 1                     # Argument starts after closer
     c1 = next
-    yield (false, i0..<i1, a0..<a1, c0..<c1) # ADD THE MACRO APPLY|FALLBACK
-
-type MacroCall* = (Slice[int], Slice[int], Slice[int]) ## id,a,c
-iterator tmplParse*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall =
-  ## **Note:** This iterator is left for backward compatibility.  Please use
-  ## `tmplParse2`_ instead, which yields 4-tuples.  It produces better machine
-  ## code.
-  ##
-  ## This iterator yields `(id, arg, call)` tuples.  There is no separate
-  ## `bool`; check for `id.a == 0` to see if current chunk is a literal text.
-  ##
-  ## .. _tmplParse2: #tmplParse2.i,openArray[char],char
-  for (_, id, arg, call) in tmplParse2(fmt, meta, ids):
-    yield (id, arg, call)
+    yield (i0..<i1, a0..<a1, c0..<c1)   # ADD THE MACRO APPLY|FALLBACK
 
 proc tmplParsed*(fmt: openArray[char], meta='$', ids=alphaNum): seq[MacroCall] =
+  ## Pre-process a format string template into a `seq[MacroCall]`.
   for macCall in tmplParse(fmt, meta, ids): result.add macCall
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
@@ -537,7 +525,7 @@ proc fmtUncertainRender*(vm, ve, um, ue: string; exp: int, fmt: string,
   ##  - pm: a single `strUt.pmDfl`. You can change from "+-" to pmUnicode('±').
   template noDot = (if result[^1] == '.': result.setLen result.len - 1)
   for (id, arg, call) in parse:
-    if id == 0..0: result.add fmt[arg]
+    if id.idIsLiteral: result.add fmt[arg]
     else:
       let negAdj = if vm[0] == '-': 1 else: 0
       case fmt[id].toString
