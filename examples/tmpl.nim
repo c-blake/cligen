@@ -28,7 +28,8 @@ for (n, fmt, expect) in [ # This tests a bunch of cases.  Maybe I missed some?
   (16, "${(uc)hi} $bc" ,"HI hoo"        ),(17, "$uc ${uc} $bc","  hoo"),
   (18, "${uc hi} $bc"  ,"bar hoo"       ),(19, "${{uc}hi} $bc","${{uc}hi} hoo"),
   (20, "$::uc:hi: $bc" ,"niluc:hi: hoo" ),(21, "${.(.} $(}}{)","lparen rbrace"),
-  (22, "${(} ${a}"     ,"${(} hmm"      ),(23, "${(}) ${a}"   ,"${(}) hmm")]:
+  (22, "${(} ${a}"     ,"${(} hmm"      ),(23, "${(}) ${a}"   ,"${(}) hmm"),
+  (24, ""              , ""             ) ]:
   if (let s = render(fmt); s != expect):
     echo n, " rendered: \"", s, "\" != expected: \"", expect, "\""
 
