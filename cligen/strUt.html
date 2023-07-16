@@ -64,7 +64,6 @@
   fcExp3,                   ## 3 digit exp; 1e003 not 1e3; only for ecvt
   fcExpPlus                  ## '+' on positive exponents; 1e+3 not 1e3; only for ecvt">FloatCvtOptions</a></li>
 <li><a class="reference" href="#MacroCall" title="MacroCall = (Slice[int], Slice[int], Slice[int])">MacroCall</a></li>
-<li><a class="reference" href="#MacroCall2" title="MacroCall2 = (bool, Slice[int], Slice[int], Slice[int])">MacroCall2</a></li>
 
     </ul>
   </details>
@@ -172,6 +171,10 @@
   <li><a class="reference" href="#hashWY%2CopenArray%5Bchar%5D" title="hashWY(x: openArray[char]): uint64">hashWY(x: openArray[char]): uint64</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">idIsLiteral
+  <li><a class="reference" href="#idIsLiteral%2CSlice%5Bint%5D" title="idIsLiteral(id: Slice[int]): bool">idIsLiteral(id: Slice[int]): bool</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">joins
   <li><a class="reference" href="#joins%2Cseq%5Bseq%5BT%5D%5D%2CT" title="joins[T](sst: seq[seq[T]]; delim: T): seq[T]">joins[T](sst: seq[seq[T]]; delim: T): seq[T]</a></li>
 
@@ -210,10 +213,6 @@
     <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">tmplParse
   <li><a class="reference" href="#tmplParse.i%2CopenArray%5Bchar%5D%2Cchar" title="tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall">tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall</a></li>
-
-</ul>
-<ul class="simple nested-toc-section">tmplParse2
-  <li><a class="reference" href="#tmplParse2.i%2CopenArray%5Bchar%5D%2Cchar" title="tmplParse2(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall2">tmplParse2(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall2</a></li>
 
 </ul>
 
@@ -258,15 +257,7 @@
   <dt><pre><a href="strUt.html#MacroCall"><span class="Identifier">MacroCall</span></a> <span class="Other">=</span> <span class="Other">(</span><span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
   <dd>
     
-    id,a,c
-    
-  </dd>
-</div>
-<div id="MacroCall2">
-  <dt><pre><a href="strUt.html#MacroCall2"><span class="Identifier">MacroCall2</span></a> <span class="Other">=</span> <span class="Other">(</span><span class="Identifier">bool</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-  <dd>
-    
-    lit,id,a,c
+    Id, Arg, whole Call
     
   </dd>
 </div>
@@ -540,6 +531,17 @@
 </div>
 
 </div>
+<div id="idIsLiteral-procs-all">
+  <div id="idIsLiteral,Slice[int]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#idIsLiteral%2CSlice%5Bint%5D"><span class="Identifier">idIsLiteral</span></a><span class="Other">(</span><span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Test if a <tt class="docutils literal"><span class="pre"><span class="Identifier">MacroCall</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span></span></tt> (<tt class="docutils literal"><span class="pre"><span class="Identifier">id</span></span></tt>) refers to a literal text &quot;call&quot;.
+    
+  </dd>
+</div>
+
+</div>
 <div id="joins-procs-all">
   <div id="joins,seq[seq[T]],T">
   <dt><pre><span class="Keyword">proc</span> <a href="#joins%2Cseq%5Bseq%5BT%5D%5D%2CT"><span class="Identifier">joins</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">sst</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">delim</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
@@ -592,7 +594,7 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    
+    Pre-process a format string template into a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">MacroCall</span><span class="Punctuation">]</span></span></tt>.
     
   </dd>
 </div>
@@ -633,32 +635,18 @@
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    <p><strong>Note:</strong> This iterator is left for backward compatibility.  Please use <a class="reference external" href="#tmplParse2.i,openArray[char],char">tmplParse2</a> instead, which yields 4-tuples.  It produces better machine code.</p>
-<p>This iterator yields <tt class="docutils literal"><span class="pre"><span class="Punctuation">(</span><span class="Identifier">id</span><span class="Punctuation">,</span> <span class="Identifier">arg</span><span class="Punctuation">,</span> <span class="Identifier">call</span><span class="Punctuation">)</span></span></tt> tuples.  There is no separate <tt class="docutils literal"><span class="pre"><span class="Identifier">bool</span></span></tt>; check for <tt class="docutils literal"><span class="pre"><span class="Identifier">id</span><span class="Operator">.</span><span class="Identifier">a</span> <span class="Operator">==</span> <span class="DecNumber">0</span></span></tt> to see if current chunk is a literal text.</p>
-
-    
-  </dd>
-</div>
-
-</div>
-<div id="tmplParse2-iterators-all">
-  <div id="tmplParse2.i,openArray[char],char">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#tmplParse2.i%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParse2</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alphaNum</span><span class="Other">)</span><span class="Other">:</span> <a href="strUt.html#MacroCall2"><span class="Identifier">MacroCall2</span></a> {.
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-  <dd>
-    
-    <p>A text template parser converting <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt> into a list of macro calls encoded as <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt>-relative slices.  Callers resolve calls in rendering.  Macro call syntax is <tt class="docutils literal"><span class="pre">$ID</span></tt>, <tt class="docutils literal"><span class="pre">%[ID]</span></tt>, <tt class="docutils literal"><span class="pre">${(ID)ARG}</span></tt> with any nonIds valid braces|quotes.  This generalizes most escape-free format string interpolation styles.</p>
-<p>Specifically, if <tt class="docutils literal"><span class="pre">[X]</span></tt> =&gt; OPTIONAL X &amp; <tt class="docutils literal"><span class="pre">&lt;Y&gt;</span></tt> =&gt; NEEDED Y, then a call is:</p>
-<ul class="simple"><li><tt class="docutils literal"><span class="pre">M[B][Q]&lt;ID&gt;[very next q][ARGUMENT STRING][very next b]</span></tt></li>
+    <p>A text template parser converting <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt> into macro calls encoded as <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt>-relative slices.  Callers resolve any calls.  Macro call syntax is <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">ID</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Operator">%</span><span class="Punctuation">[</span><span class="Identifier">ID</span><span class="Punctuation">]</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Punctuation">{</span><span class="Punctuation">(</span><span class="Identifier">ID</span><span class="Punctuation">)</span><span class="Identifier">ARG</span><span class="Punctuation">}</span></span></tt> embedded within literal text.  <tt class="docutils literal"><span class="pre"><span class="Operator">$</span> <span class="Operator">|</span> <span class="Operator">%</span> <span class="Operator">|</span> <span class="Operator">..</span></span></tt> is a self-escaping <tt class="docutils literal"><span class="pre"><span class="Identifier">meta</span></span></tt> char.  This generalizes most self-escaping format string interpolation styles.  The idea is to make it easy to write <tt class="docutils literal"><span class="pre"><span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">strutils</span><span class="Operator">.%</span></span></tt>, C/Python <tt class="docutils literal"><span class="pre"><span class="Identifier">printf</span></span></tt>-like string interpolation with one standard, but flexible syntax.</p>
+<p>Specifically, if <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Identifier">X</span><span class="Punctuation">]</span></span></tt> =&gt; OPTIONAL X &amp; <tt class="docutils literal"><span class="pre"><span class="Operator">&lt;</span><span class="Identifier">Y</span><span class="Operator">&gt;</span></span></tt> =&gt; NEEDED Y, then a call is:</p>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">M</span><span class="Punctuation">[</span><span class="Identifier">B</span><span class="Punctuation">]</span><span class="Punctuation">[</span><span class="Identifier">Q</span><span class="Punctuation">]</span><span class="Operator">&lt;</span><span class="Identifier">ID</span><span class="Operator">&gt;</span><span class="Punctuation">[</span><span class="Identifier">next</span> <span class="Identifier">q</span> <span class="Identifier">post</span> <span class="Identifier">Q</span><span class="Punctuation">]</span><span class="Punctuation">[</span><span class="Identifier">ARGUMENT</span> <span class="Identifier">STRING</span><span class="Punctuation">]</span><span class="Punctuation">[</span><span class="Identifier">next</span> <span class="Identifier">b</span> <span class="Identifier">post</span> <span class="Identifier">B</span><span class="Punctuation">]</span></span></tt></li>
 </ul>
 <p>where</p>
-<ul class="simple"><li>M is the so-called self-escaping warning meta char, like '$', '%', ..</li>
-<li>B is an optional opening brace|quote (any NON-alpha_numeric)</li>
-<li>b=<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">B</span><span class="Punctuation">]</span></span></tt> is matching closer (<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">c</span><span class="Punctuation">]</span></span></tt>==c except for bracey chars)</li>
-<li>Q is a macro id brace|quote (IF non-alpha_numeric); q=<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">Q</span><span class="Punctuation">]</span></span></tt> closes</li>
+<ul class="simple"><li><tt class="docutils literal"><span class="pre"><span class="Identifier">M</span></span></tt> is the so-called self-escaping warning meta char, like '$', '%', ..</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">B</span></span></tt> is an optional opening brace | quote (any NON-<tt class="docutils literal"><span class="pre"><span class="Identifier">ids</span></span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">b</span></span></tt>=<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">B</span><span class="Punctuation">]</span></span></tt> is closing pair (<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">c</span><span class="Punctuation">]</span></span></tt>==c except for <tt class="docutils literal"><span class="pre"><span class="Punctuation">(</span><span class="Punctuation">[</span><span class="Punctuation">{</span><span class="Operator">&lt;&gt;</span><span class="Punctuation">}</span><span class="Punctuation">]</span><span class="Punctuation">)</span></span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre"><span class="Identifier">Q</span></span></tt> is a macro id brace|quote (IF non-<tt class="docutils literal"><span class="pre"><span class="Identifier">ids</span></span></tt>); q=<tt class="docutils literal"><span class="pre"><span class="Identifier">other</span><span class="Punctuation">[</span><span class="Identifier">Q</span><span class="Punctuation">]</span></span></tt> closes</li>
 </ul>
-<p>No B =&gt; calls stop at the next NON-alpha_numeric char (eg., <tt class="docutils literal"><span class="pre"><span class="Punctuation">:</span></span></tt> in <tt class="docutils literal"><span class="pre">$ID:x</span></tt>) and the macro gets an empty ARG.  No Q =&gt; the whole braced fragment is ID, and ARG is empty: <tt class="docutils literal"><span class="pre">${ID WITH SPACES}</span></tt>. The only escape is M self-escaping (MM -&gt; M) {only outside calls}.  <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt> writers must pick non-colliding brace|quotes.</p>
-<p>RETURN VALUE is intended to be assigned like: <tt class="docutils literal"><span class="pre"><span class="Keyword">let</span> <span class="Punctuation">(</span><span class="Identifier">lit</span><span class="Punctuation">,</span><span class="Identifier">id</span><span class="Punctuation">,</span><span class="Identifier">arg</span><span class="Punctuation">,</span><span class="Identifier">call</span><span class="Punctuation">)</span><span class="Operator">=</span><span class="Identifier">sq</span><span class="Punctuation">[</span><span class="Identifier">i</span><span class="Punctuation">]</span></span></tt> where <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span><span class="Punctuation">[</span><span class="Identifier">each</span><span class="Punctuation">]</span></span></tt> is the thing.  If <tt class="docutils literal"><span class="pre"><span class="Identifier">lit</span><span class="Operator">==</span><span class="Identifier">true</span></span></tt>, then <tt class="docutils literal"><span class="pre"><span class="Identifier">arg</span></span></tt> denotes a literal text piece of the string and <tt class="docutils literal"><span class="pre"><span class="Identifier">id</span><span class="Operator">==</span><span class="Identifier">call</span><span class="Operator">==</span><span class="FloatNumber">0.</span><span class="Operator">.</span><span class="DecNumber">0</span></span></tt>.  This is intended to make it easy to write <tt class="docutils literal"><span class="pre"><span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">strutils</span><span class="Operator">.%</span></span></tt> or C/Python <tt class="docutils literal"><span class="pre"><span class="Identifier">printf</span></span></tt>-like string interpolation with one standard, but flexible syntax.  See <tt class="docutils literal"><span class="pre"><span class="Identifier">examples</span><span class="Operator">/</span><span class="Identifier">tmpl</span><span class="Operator">.</span><span class="Identifier">nim</span></span></tt> for a fully worked out example with tests.</p>
+<p>No <tt class="docutils literal"><span class="pre"><span class="Identifier">B</span></span></tt> =&gt; calls stop at the next NON-<tt class="docutils literal"><span class="pre"><span class="Identifier">ids</span></span></tt> char (eg., <tt class="docutils literal"><span class="pre"><span class="Punctuation">:</span></span></tt> in <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">ID</span><span class="Punctuation">:</span><span class="Identifier">x</span></span></tt>) and the macro gets an empty ARG.  No <tt class="docutils literal"><span class="pre"><span class="Identifier">Q</span></span></tt> =&gt; ARG=&quot;&quot; and whole post-M fragment is <tt class="docutils literal"><span class="pre"><span class="Identifier">ID</span></span></tt> (egs., <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">FOO</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="CharLit">'WITH SPACES'</span></span></tt>).  Self-escaping means MM-&gt;M (only outside calls).  <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt> writers must pick non-colliding brace | quotes.</p>
+<p>RETURN VALUE is intended to be assigned to an <tt class="docutils literal"><span class="pre"><span class="Punctuation">(</span><span class="Identifier">id</span><span class="Punctuation">,</span> <span class="Identifier">arg</span><span class="Punctuation">,</span> <span class="Identifier">call</span><span class="Punctuation">)</span></span></tt> tuple where <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span><span class="Punctuation">[</span><span class="Identifier">id</span><span class="Operator">|</span><span class="Identifier">arg</span><span class="Operator">|</span><span class="Identifier">call</span><span class="Punctuation">]</span></span></tt> can extract that thing from <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span></span></tt>. <tt class="docutils literal"><span class="pre"><span class="Identifier">id</span><span class="Operator">.</span><span class="Identifier">idIsLiteral</span></span></tt> is true for a special macro meaning <tt class="docutils literal"><span class="pre"><span class="Identifier">fmt</span><span class="Punctuation">[</span><span class="Identifier">arg</span><span class="Punctuation">]</span></span></tt> is trailing literal text.  A fully worked out example with tests is <tt class="docutils literal"><span class="pre"><span class="Identifier">examples</span><span class="Operator">/</span><span class="Identifier">tmpl</span><span class="Operator">.</span><span class="Identifier">nim</span></span></tt>.</p>
 
     
   </dd>
@@ -675,7 +663,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-16 18:05:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-16 18:10:06 UTC</small>
       </div>
     </div>
   </div>
