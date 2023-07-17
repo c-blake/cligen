@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.9
+--------------
+    - Clean-ups and bug fixes for `GNUmakefile` & `cligen/[magic,unixUt,strUt]`
+      (thanks @SolitudeSF & @SirNickolas)
+    - Add `strUt.idIsLiteral` to make `MacroCall`/tmplParse[d]* more clear
+
 Version: 1.6.8
 --------------
     - cligen/mergeCfgEnv* do much more surgical `import`.  It is possible you
