@@ -663,13 +663,14 @@ proc pathToSelf*(av: cstringArray): string =
     if access(test, X_OK) == 0: return test
 
 proc findAssociated*(av: cstringArray, parentBase="etc/foo"): string =
-  ## Infer as `selfDir/../parentBase` | `selfDir/../../parentBase` | if neither
-  ## exist just `/parentBase` (i.e. rooted).
+  ## First existing of `selfDir/../parentBase`, `selfDir/../../parentBase`,
+  ## `selfDir/../../../parentBase`, or if none exist `/parentBase`.
   let self = pathToSelf(av)
   let selfDir = if (let i = rfind(self, '/'); i >= 0): self[0..<i] else: ""
-  var st: Stat
-  if   (let x = selfDir // ".."    // parentBase; lstat(x, st) == 0): x
-  elif (let x = selfDir // "../.." // parentBase; lstat(x, st) == 0): x
+  var st: Stat          # While we could loop, being more restrained seems best
+  if   (let x = selfDir // ".."       // parentBase; lstat(x, st) == 0): x
+  elif (let x = selfDir // "../.."    // parentBase; lstat(x, st) == 0): x
+  elif (let x = selfDir // "../../.." // parentBase; lstat(x, st) == 0): x
   else: "/" & parentBase
 
 when isMainModule:
