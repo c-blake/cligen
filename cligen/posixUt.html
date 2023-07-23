@@ -163,6 +163,10 @@
   <li><a class="reference" href="#fileTimeParse%2Cstring" title="fileTimeParse(code: string): tuple[tim: char, dir: int]">fileTimeParse(code: string): tuple[tim: char, dir: int]</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">findAssociated
+  <li><a class="reference" href="#findAssociated%2CcstringArray%2Cstring" title="findAssociated(av: cstringArray; parentBase = &quot;etc/foo&quot;): string">findAssociated(av: cstringArray; parentBase = &quot;etc/foo&quot;): string</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">fstatat
   <li><a class="reference" href="#fstatat%2Ccint%2Ccstring%2CStat%2Ccint" title="fstatat(dirfd: cint; path: cstring; stx: var Stat; flags: cint): cint">fstatat(dirfd: cint; path: cstring; stx: var Stat; flags: cint): cint</a></li>
 
@@ -176,8 +180,8 @@
 
 </ul>
 <ul class="simple nested-toc-section">getCreationTimeNs
-  <li><a class="reference" href="#getCreationTimeNs%2Cstring" title="getCreationTimeNs(path`gensym84: string): int">getCreationTimeNs(path`gensym84: string): int</a></li>
-<li><a class="reference" href="#getCreationTimeNs%2CStat" title="getCreationTimeNs(st`gensym84: Stat): int">getCreationTimeNs(st`gensym84: Stat): int</a></li>
+  <li><a class="reference" href="#getCreationTimeNs%2Cstring" title="getCreationTimeNs(path`gensym85: string): int">getCreationTimeNs(path`gensym85: string): int</a></li>
+<li><a class="reference" href="#getCreationTimeNs%2CStat" title="getCreationTimeNs(st`gensym85: Stat): int">getCreationTimeNs(st`gensym85: Stat): int</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">getDents
@@ -192,13 +196,13 @@
 
 </ul>
 <ul class="simple nested-toc-section">getLastAccTimeNs
-  <li><a class="reference" href="#getLastAccTimeNs%2Cstring" title="getLastAccTimeNs(path`gensym82: string): int">getLastAccTimeNs(path`gensym82: string): int</a></li>
-<li><a class="reference" href="#getLastAccTimeNs%2CStat" title="getLastAccTimeNs(st`gensym82: Stat): int">getLastAccTimeNs(st`gensym82: Stat): int</a></li>
+  <li><a class="reference" href="#getLastAccTimeNs%2Cstring" title="getLastAccTimeNs(path`gensym83: string): int">getLastAccTimeNs(path`gensym83: string): int</a></li>
+<li><a class="reference" href="#getLastAccTimeNs%2CStat" title="getLastAccTimeNs(st`gensym83: Stat): int">getLastAccTimeNs(st`gensym83: Stat): int</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">getLastModTimeNs
-  <li><a class="reference" href="#getLastModTimeNs%2Cstring" title="getLastModTimeNs(path`gensym83: string): int">getLastModTimeNs(path`gensym83: string): int</a></li>
-<li><a class="reference" href="#getLastModTimeNs%2CStat" title="getLastModTimeNs(st`gensym83: Stat): int">getLastModTimeNs(st`gensym83: Stat): int</a></li>
+  <li><a class="reference" href="#getLastModTimeNs%2Cstring" title="getLastModTimeNs(path`gensym84: string): int">getLastModTimeNs(path`gensym84: string): int</a></li>
+<li><a class="reference" href="#getLastModTimeNs%2CStat" title="getLastModTimeNs(st`gensym84: Stat): int">getLastModTimeNs(st`gensym84: Stat): int</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">getTime
@@ -277,6 +281,10 @@
 </ul>
 <ul class="simple nested-toc-section">pathId
   <li><a class="reference" href="#pathId%2Cstring" title="pathId(path: string): PathId">pathId(path: string): PathId</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">pathToSelf
+  <li><a class="reference" href="#pathToSelf%2CcstringArray" title="pathToSelf(av: cstringArray): string">pathToSelf(av: cstringArray): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">readFile
@@ -789,6 +797,18 @@
 </div>
 
 </div>
+<div id="findAssociated-procs-all">
+  <div id="findAssociated,cstringArray,string">
+  <dt><pre><span class="Keyword">proc</span> <a href="#findAssociated%2CcstringArray%2Cstring"><span class="Identifier">findAssociated</span></a><span class="Other">(</span><span class="Identifier">av</span><span class="Other">:</span> <span class="Identifier">cstringArray</span><span class="Other">;</span> <span class="Identifier">parentBase</span> <span class="Other">=</span> <span class="StringLit">&quot;etc/foo&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Infer as <tt class="docutils literal"><span class="pre"><span class="Identifier">selfDir</span><span class="Operator">/../</span><span class="Identifier">parentBase</span></span></tt> | <tt class="docutils literal"><span class="pre"><span class="Identifier">selfDir</span><span class="Operator">/../../</span><span class="Identifier">parentBase</span></span></tt> | if neither exist just <tt class="docutils literal"><span class="pre"><span class="Operator">/</span><span class="Identifier">parentBase</span></span></tt> (i.e. rooted).
+    
+  </dd>
+</div>
+
+</div>
 <div id="fstatat-procs-all">
   <div id="fstatat,cint,cstring,Stat,cint">
   <dt><pre><span class="Keyword">proc</span> <a href="#fstatat%2Ccint%2Ccstring%2CStat%2Ccint"><span class="Identifier">fstatat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Stat</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
@@ -827,7 +847,7 @@
 </div>
 <div id="getCreationTimeNs-procs-all">
   <div id="getCreationTimeNs,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNs%2Cstring"><span class="Identifier">getCreationTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym84</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNs%2Cstring"><span class="Identifier">getCreationTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym85</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -836,7 +856,7 @@
   </dd>
 </div>
 <div id="getCreationTimeNs,Stat">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNs%2CStat"><span class="Identifier">getCreationTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym84</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNs%2CStat"><span class="Identifier">getCreationTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym85</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -880,7 +900,7 @@
 </div>
 <div id="getLastAccTimeNs-procs-all">
   <div id="getLastAccTimeNs,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNs%2Cstring"><span class="Identifier">getLastAccTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym82</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNs%2Cstring"><span class="Identifier">getLastAccTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym83</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -889,7 +909,7 @@
   </dd>
 </div>
 <div id="getLastAccTimeNs,Stat">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNs%2CStat"><span class="Identifier">getLastAccTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym82</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNs%2CStat"><span class="Identifier">getLastAccTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym83</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -901,7 +921,7 @@
 </div>
 <div id="getLastModTimeNs-procs-all">
   <div id="getLastModTimeNs,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNs%2Cstring"><span class="Identifier">getLastModTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym83</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNs%2Cstring"><span class="Identifier">getLastModTimeNs</span></a><span class="Other">(</span><span class="Identifier">path`gensym84</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -910,7 +930,7 @@
   </dd>
 </div>
 <div id="getLastModTimeNs,Stat">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNs%2CStat"><span class="Identifier">getLastModTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym83</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNs%2CStat"><span class="Identifier">getLastModTimeNs</span></a><span class="Other">(</span><span class="Identifier">st`gensym84</span><span class="Other">:</span> <span class="Identifier">Stat</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1134,6 +1154,18 @@
   <dd>
     
     
+    
+  </dd>
+</div>
+
+</div>
+<div id="pathToSelf-procs-all">
+  <div id="pathToSelf,cstringArray">
+  <dt><pre><span class="Keyword">proc</span> <a href="#pathToSelf%2CcstringArray"><span class="Identifier">pathToSelf</span></a><span class="Other">(</span><span class="Identifier">av</span><span class="Other">:</span> <span class="Identifier">cstringArray</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Return the path to the executable of the currently running program.  First this tries to <tt class="docutils literal"><span class="pre"><span class="Identifier">readlink</span> <span class="Operator">/</span><span class="Keyword">proc</span><span class="Operator">/</span><span class="Identifier">PID</span><span class="Operator">/</span><span class="Punctuation">(</span><span class="Identifier">exe</span><span class="Operator">|</span><span class="Identifier">file</span><span class="Punctuation">)</span></span></tt> which is reliable (up to FS dynamics) on Linux | BSDs with /proc mounted .  If that fails &amp; <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="DecNumber">0</span></span></tt> starts with <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Operator">./</span><span class="Punctuation">]</span></span></tt>, just return that.  For full paths starting with <tt class="docutils literal"><span class="pre"><span class="Operator">/</span></span></tt> this is as reliable as /proc unless the invoker plays exec games with <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="DecNumber">0</span></span></tt>.  For <tt class="docutils literal"><span class="pre"><span class="Operator">.</span></span></tt> it relies on no <tt class="docutils literal"><span class="pre"><span class="Identifier">chdir</span></span></tt> between program start &amp; this call.  If <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="DecNumber">0</span></span></tt> starts elsewise, search <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="Identifier">PATH</span></span></tt> for <tt class="docutils literal"><span class="pre"><span class="Operator">$</span><span class="DecNumber">0</span></span></tt> like shells.  Return &quot;&quot; on no match.
     
   </dd>
 </div>
@@ -1502,7 +1534,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-23 09:24:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-23 19:08:57 UTC</small>
       </div>
     </div>
   </div>

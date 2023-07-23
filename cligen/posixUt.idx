@@ -57,12 +57,12 @@ nim	dtNs	cligen/posixUt.html#dtNs,int	proc dtNs(t0: int; clockId = CLOCK_REALTIM
 nim	fileTimeParse	cligen/posixUt.html#fileTimeParse,string	proc fileTimeParse(code: string): tuple[tim: char, dir: int]		270
 nim	fileTime	cligen/posixUt.html#fileTime,Stat,char,int	proc fileTime(st: Stat; tim: char; dir: int): int		284
 nim	fileTime	cligen/posixUt.html#fileTime,Stat,string	proc fileTime(st: Stat; code: string): int		293
-nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,Stat	proc getLastAccTimeNs(st`gensym82: Stat): int		299
-nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,string	proc getLastAccTimeNs(path`gensym82: string): int		303
-nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,Stat	proc getLastModTimeNs(st`gensym83: Stat): int		299
-nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,string	proc getLastModTimeNs(path`gensym83: string): int		304
-nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,Stat	proc getCreationTimeNs(st`gensym84: Stat): int		299
-nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,string	proc getCreationTimeNs(path`gensym84: string): int		305
+nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,Stat	proc getLastAccTimeNs(st`gensym83: Stat): int		299
+nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,string	proc getLastAccTimeNs(path`gensym83: string): int		303
+nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,Stat	proc getLastModTimeNs(st`gensym84: Stat): int		299
+nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,string	proc getLastModTimeNs(path`gensym84: string): int		304
+nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,Stat	proc getCreationTimeNs(st`gensym85: Stat): int		299
+nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,string	proc getCreationTimeNs(path`gensym85: string): int		305
 nim	strftimeCodes	cligen/posixUt.html#strftimeCodes	let strftimeCodes		307
 nim	strftime	cligen/posixUt.html#strftime,string,Timespec	proc strftime(fmt: string; ts: Timespec): string		313
 nim	PathId	cligen/posixUt.html#PathId	tuple PathId		340
@@ -99,6 +99,8 @@ nim	MADV_RANDOM	cligen/posixUt.html#MADV_RANDOM	let MADV_RANDOM		43
 nim	MADV_WILLNEED	cligen/posixUt.html#MADV_WILLNEED	let MADV_WILLNEED		43
 nim	MADV_DONTNEED	cligen/posixUt.html#MADV_DONTNEED	let MADV_DONTNEED		43
 nim	madvise	cligen/posixUt.html#madvise,pointer,int,cint	proc madvise(mem: pointer; len: int; advice: cint): int		640
+nim	pathToSelf	cligen/posixUt.html#pathToSelf,cstringArray	proc pathToSelf(av: cstringArray): string		645
+nim	findAssociated	cligen/posixUt.html#findAssociated,cstringArray,string	proc findAssociated(av: cstringArray; parentBase = "etc/foo"): string		665
 nimgrp	$	cligen/posixUt.html#$-procs-all	proc		98
 nimgrp	getlastmodtimens	cligen/posixUt.html#getLastModTimeNs-procs-all	proc		304
 nimgrp	getlastacctimens	cligen/posixUt.html#getLastAccTimeNs-procs-all	proc		303
