@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.10
+---------------
+    - Add `cligen/posixUt.pathToSelf` to help programs to find their origins.
+
+    - Add `cligen/posixUt.findAssociated` to help programs find config files
+      associated with them in a filesystem.
+
 Version: 1.6.9
 --------------
     - Clean-ups and bug fixes for `GNUmakefile` & `cligen/[magic,unixUt,strUt]`

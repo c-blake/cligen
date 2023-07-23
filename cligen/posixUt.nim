@@ -211,7 +211,7 @@ proc readlink*(path: string, err=stderr): string =
     result.setLen(nBuf)   #..not need the nBuf + 1 it would in C code.
     n = readlink(path, cast[cstring](result[0].addr), nBuf)
   if n <= 0:
-    err.write "readlink(\"", $path, "\"): ", strerror(errno), "\n"
+    if err != nil: err.write "readlink(\"", $path,"\"): ", strerror(errno), "\n"
     result.setLen(0)
   else:
     result.setLen(n)
@@ -641,3 +641,37 @@ proc madvise*(mem: pointer, len: int, advice: cint): int =
   ## Define briefer/old school `madvise` in terms of the more portable
   ## `(posix|POSIX)_` constructs.
   int(posix_madvise(mem, len, advice))
+
+proc pathToSelf*(av: cstringArray): string =
+  ## Return the path to the executable of the currently running program.  First
+  ## this tries to `readlink /proc/PID/(exe|file)` which is reliable (up to FS
+  ## dynamics) on Linux | BSDs with /proc mounted .  If that fails & `$0` starts
+  ## with `[./]`, just return that.  For full paths starting with `/` this is as
+  ## reliable as /proc unless the invoker plays exec games with `$0`.  For `.`
+  ## it relies on no `chdir` between program start & this call.  If `$0` starts
+  ## elsewise, search `$PATH` for `$0` like shells.  Return "" on no match.
+  proc getenv(env: cstring): cstring {.importc, header: "stdlib.h".}
+  if (var st: Stat; let prPID = "/proc/" & $getpid().int; lstat(prPID, st)==0):
+    if (let me = readlink(prPID//"exe" , nil); me.len > 0): return me # Linux
+    if (let me = readlink(prPID//"file", nil); me.len > 0): return me # BSDs
+  if av.isNil or av[0].isNil: return ""   # No $0 to use! Pathological, really.
+  let av0 = $av[0]                        # av0="" lurks => Do not use below
+  if av[0][0] in {'/', '.'}: return av0   # BUT this is safe since OS puts \0
+  let dirs = getEnv("PATH")
+  for d in (if dirs.isNil: "" else: $dirs).split(':'):  #NOTE What Zsh calls..
+    let test = d//av0                                   #  .. setopt PATH_DIRS.
+    if access(test, X_OK) == 0: return test
+
+proc findAssociated*(av: cstringArray, parentBase="etc/foo"): string =
+  ## Infer as `selfDir/../parentBase` | `selfDir/../../parentBase` | if neither
+  ## exist just `/parentBase` (i.e. rooted).
+  let self = pathToSelf(av)
+  let selfDir = if (let i = rfind(self, '/'); i >= 0): self[0..<i] else: ""
+  var st: Stat
+  if   (let x = selfDir // ".."    // parentBase; lstat(x, st) == 0): x
+  elif (let x = selfDir // "../.." // parentBase; lstat(x, st) == 0): x
+  else: "/" & parentBase
+
+when isMainModule:
+  let av {.importc: "cmdLine".}: cstringArray   #NOTE MUST be in main module.
+  echo av.findAssociated
