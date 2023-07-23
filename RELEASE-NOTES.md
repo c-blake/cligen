@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.11
+---------------
+    - Add one more level to the `findAssociated` search path due to the way
+      ~/.nimble tends to be set up with bin/ symlinks pointing up & then down.
+
 Version: 1.6.10
 ---------------
     - Add `cligen/posixUt.pathToSelf` to help programs to find their origins.
