@@ -651,7 +651,7 @@ proc pathToSelf*(av: cstringArray): string =
   ## it relies on no `chdir` between program start & this call.  If `$0` starts
   ## elsewise, search `$PATH` for `$0` like shells.  Return "" on no match.
   proc getenv(env: cstring): cstring {.importc, header: "stdlib.h".}
-  if (var st: Stat; let prPID = "/proc/" & $getpid().int; lstat(prPID, st)==0):
+  if (let prPID="/proc/" & $getpid().int; var st:Stat;lstat(prPID.cstring,st)==0):
     if (let me = readlink(prPID//"exe" , nil); me.len > 0): return me # Linux
     if (let me = readlink(prPID//"file", nil); me.len > 0): return me # BSDs
   if av.isNil or av[0].isNil: return ""   # No $0 to use! Pathological, really.
@@ -660,7 +660,7 @@ proc pathToSelf*(av: cstringArray): string =
   let dirs = getEnv("PATH")
   for d in (if dirs.isNil: "" else: $dirs).split(':'):  #NOTE What Zsh calls..
     let test = d//av0                                   #  .. setopt PATH_DIRS.
-    if access(test, X_OK) == 0: return test
+    if access(test.cstring, X_OK) == 0: return test
 
 proc findAssociated*(av: cstringArray, parentBase="etc/foo"): string =
   ## First existing of `selfDir/../parentBase`, `selfDir/../../parentBase`,
@@ -668,9 +668,9 @@ proc findAssociated*(av: cstringArray, parentBase="etc/foo"): string =
   let self = pathToSelf(av)
   let selfDir = if (let i = rfind(self, '/'); i >= 0): self[0..<i] else: ""
   var st: Stat          # While we could loop, being more restrained seems best
-  if   (let x = selfDir // ".."       // parentBase; lstat(x, st) == 0): x
-  elif (let x = selfDir // "../.."    // parentBase; lstat(x, st) == 0): x
-  elif (let x = selfDir // "../../.." // parentBase; lstat(x, st) == 0): x
+  if   (let x = selfDir // ".."       // parentBase; lstat(x.cstring, st)==0): x
+  elif (let x = selfDir // "../.."    // parentBase; lstat(x.cstring, st)==0): x
+  elif (let x = selfDir // "../../.." // parentBase; lstat(x.cstring, st)==0): x
   else: "/" & parentBase
 
 when isMainModule:
