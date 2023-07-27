@@ -3,15 +3,15 @@ nim	parseInt	cligen/humanUt.html#parseInt,string,int	proc parseInt(s: string; va
 nim	cmpN	cligen/humanUt.html#cmpN,string,string	proc cmpN(a, b: string): int		10
 nim	humanReadable4	cligen/humanUt.html#humanReadable4,uint	proc humanReadable4(bytes: uint; binary = false): string		29
 nim	descape	cligen/humanUt.html#descape.i,string,char	iterator descape(s: string; escape = '\\'): tuple[c: char, escaped: bool]		61
-nim	textAttrAlias	cligen/humanUt.html#textAttrAlias,string,string	proc textAttrAlias(name, value: string)		95
-nim	textAttrAliasClear	cligen/humanUt.html#textAttrAliasClear	proc textAttrAliasClear()		98
-nim	textAttrRegisterAliases	cligen/humanUt.html#textAttrRegisterAliases,seq[string]	proc textAttrRegisterAliases(colors: seq[string])		100
-nim	textAttrParse	cligen/humanUt.html#textAttrParse,string	proc textAttrParse(s: string): string		106
-nim	textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	proc textAttrOn(spec: seq[string]; plain = false): string		134
-nim	textAttrOff	cligen/humanUt.html#textAttrOff	const textAttrOff		141
-nim	specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	proc specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = '%';\n                   openBkt = "([{"; closeBkt = ")]}"; keepPct = true;\n                   termInAttr = true): string		143
-nim	humanDuration	cligen/humanUt.html#humanDuration,int,string	proc humanDuration(dt: int; fmt: string; plain = false): string		187
-nim	rstMdSGRDefault	cligen/humanUt.html#rstMdSGRDefault	let rstMdSGRDefault		223
-nim	rstMdSGR	cligen/humanUt.html#rstMdSGR	object rstMdSGR		228
-nim	initRstMdSGR	cligen/humanUt.html#initRstMdSGR	proc initRstMdSGR(attrs = rstMdSGRDefault; plain = false): rstMdSGR		231
-nim	render	cligen/humanUt.html#render,rstMdSGR,string	proc render(r: rstMdSGR; rstOrMd: string): string		295
+nim	textAttrAlias	cligen/humanUt.html#textAttrAlias,string,string	proc textAttrAlias(name, value: string)		96
+nim	textAttrAliasClear	cligen/humanUt.html#textAttrAliasClear	proc textAttrAliasClear()		99
+nim	textAttrRegisterAliases	cligen/humanUt.html#textAttrRegisterAliases,seq[string]	proc textAttrRegisterAliases(colors: seq[string])		101
+nim	textAttrParse	cligen/humanUt.html#textAttrParse,string	proc textAttrParse(s: string): string		107
+nim	textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	proc textAttrOn(spec: seq[string]; plain = false): string		135
+nim	textAttrOff	cligen/humanUt.html#textAttrOff	const textAttrOff		142
+nim	specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	proc specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = '%';\n                   openBkt = "([{"; closeBkt = ")]}"; keepPct = true;\n                   termInAttr = true): string		144
+nim	humanDuration	cligen/humanUt.html#humanDuration,int,string	proc humanDuration(dt: int; fmt: string; plain = false): string		188
+nim	rstMdSGRDefault	cligen/humanUt.html#rstMdSGRDefault	let rstMdSGRDefault		224
+nim	rstMdSGR	cligen/humanUt.html#rstMdSGR	object rstMdSGR		229
+nim	initRstMdSGR	cligen/humanUt.html#initRstMdSGR	proc initRstMdSGR(attrs = rstMdSGRDefault; plain = false): rstMdSGR		232
+nim	render	cligen/humanUt.html#render,rstMdSGR,string	proc render(r: rstMdSGR; rstOrMd: string): string		296
