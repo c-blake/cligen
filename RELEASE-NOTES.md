@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.12
+---------------
+    - Add support in cligen/humanUt for the kitty/alacritty expanded sets of
+      underbars: underdouble undercurl underdot underdash
+
 Version: 1.6.11
 ---------------
     - Add one more level to the `findAssociated` search path due to the way

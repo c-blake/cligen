@@ -77,7 +77,8 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
 
  let attrNames = {  # const compiles but needs CT-RT hash coherence for look up.
   "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
-  "blink": "5", "BLINK": "6", "inverse": "7", "struck": "9",
+  "blink": "5", "BLINK": "6", "inverse": "7", "struck":"9", "underdouble":"4:2",
+  "undercurl": "4:3", "underdot": "4:4", "underdash": "4:5",
   "NONE":   "", "-bold":"22", "-faint": "22", "-italic":"23","-underline":"24",
   "-blink":"25","-BLINK":"25","-inverse":"27","-struck":"29",
   "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
