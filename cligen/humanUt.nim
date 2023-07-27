@@ -112,7 +112,11 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
   try: result = attrNames[s]
   except KeyError:
     if s.len >= 2:
-      let prefix = if s[0] in {'b', 'B'}: "48;" else: "38;"
+      let prefix = case s[0].toUpperAscii
+                   of 'F': "38;"
+                   of 'B': "48;"
+                   of 'U': "58;"
+                   else  : ""
       if   s.len <= 3: result = prefix & "5;" & $(232 + parseInt(s[1..^1]))
       elif s[1] == 's': # color scale: [fFbB]s[gwpv]<float>[,..]
         if (var nP: int; let c = s[2..^1].parseColorScl(nP); nP == s.len - 2):
