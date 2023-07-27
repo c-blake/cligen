@@ -7,11 +7,11 @@ nim	textAttrAlias	cligen/humanUt.html#textAttrAlias,string,string	proc textAttrA
 nim	textAttrAliasClear	cligen/humanUt.html#textAttrAliasClear	proc textAttrAliasClear()		99
 nim	textAttrRegisterAliases	cligen/humanUt.html#textAttrRegisterAliases,seq[string]	proc textAttrRegisterAliases(colors: seq[string])		101
 nim	textAttrParse	cligen/humanUt.html#textAttrParse,string	proc textAttrParse(s: string): string		107
-nim	textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	proc textAttrOn(spec: seq[string]; plain = false): string		135
-nim	textAttrOff	cligen/humanUt.html#textAttrOff	const textAttrOff		142
-nim	specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	proc specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = '%';\n                   openBkt = "([{"; closeBkt = ")]}"; keepPct = true;\n                   termInAttr = true): string		144
-nim	humanDuration	cligen/humanUt.html#humanDuration,int,string	proc humanDuration(dt: int; fmt: string; plain = false): string		188
-nim	rstMdSGRDefault	cligen/humanUt.html#rstMdSGRDefault	let rstMdSGRDefault		224
-nim	rstMdSGR	cligen/humanUt.html#rstMdSGR	object rstMdSGR		229
-nim	initRstMdSGR	cligen/humanUt.html#initRstMdSGR	proc initRstMdSGR(attrs = rstMdSGRDefault; plain = false): rstMdSGR		232
-nim	render	cligen/humanUt.html#render,rstMdSGR,string	proc render(r: rstMdSGR; rstOrMd: string): string		296
+nim	textAttrOn	cligen/humanUt.html#textAttrOn,seq[string]	proc textAttrOn(spec: seq[string]; plain = false): string		139
+nim	textAttrOff	cligen/humanUt.html#textAttrOff	const textAttrOff		146
+nim	specifierHighlight	cligen/humanUt.html#specifierHighlight,string,set[char],char,string,string	proc specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = '%';\n                   openBkt = "([{"; closeBkt = ")]}"; keepPct = true;\n                   termInAttr = true): string		148
+nim	humanDuration	cligen/humanUt.html#humanDuration,int,string	proc humanDuration(dt: int; fmt: string; plain = false): string		192
+nim	rstMdSGRDefault	cligen/humanUt.html#rstMdSGRDefault	let rstMdSGRDefault		228
+nim	rstMdSGR	cligen/humanUt.html#rstMdSGR	object rstMdSGR		233
+nim	initRstMdSGR	cligen/humanUt.html#initRstMdSGR	proc initRstMdSGR(attrs = rstMdSGRDefault; plain = false): rstMdSGR		236
+nim	render	cligen/humanUt.html#render,rstMdSGR,string	proc render(r: rstMdSGR; rstOrMd: string): string		300
