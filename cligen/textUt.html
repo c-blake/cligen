@@ -140,7 +140,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">toSetChar
-  <li><a class="reference" href="#toSetChar%2Cstring" title="toSetChar(s: string): set[char]">toSetChar(s: string): set[char]</a></li>
+  <li><a class="reference" href="#toSetChar%2Cstring" title="toSetChar(s: string; unescape = false): set[char]">toSetChar(s: string; unescape = false): set[char]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">wrap
@@ -165,6 +165,10 @@
 </ul>
 <ul class="simple nested-toc-section">paragraphs
   <li><a class="reference" href="#paragraphs.i%2Cstring" title="paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]">paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">unescaped
+  <li><a class="reference" href="#unescaped.i%2Cstring" title="unescaped(s: string): char">unescaped(s: string): char</a></li>
 
 </ul>
 
@@ -398,10 +402,11 @@
 </div>
 <div id="toSetChar-procs-all">
   <div id="toSetChar,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toSetChar%2Cstring"><span class="Identifier">toSetChar</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toSetChar%2Cstring"><span class="Identifier">toSetChar</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">unescape</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    Make &amp; return character set built from a string.
+    Make &amp; return character set built from a string, maybe un-escaping.
     
   </dd>
 </div>
@@ -461,6 +466,18 @@
 </div>
 
 </div>
+<div id="unescaped-iterators-all">
+  <div id="unescaped.i,string">
+  <dt><pre><span class="Keyword">iterator</span> <a href="#unescaped.i%2Cstring"><span class="Identifier">unescaped</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">char</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                      <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Handles 1-byte octal, [abtnvfre], and xDD hex escapes
+    
+  </dd>
+</div>
+
+</div>
 
   </dl>
 </div>
@@ -471,7 +488,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-27 12:56:14 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-07-28 18:11:35 UTC</small>
       </div>
     </div>
   </div>

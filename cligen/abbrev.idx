@@ -4,8 +4,8 @@ nim	isAbstract	cligen/abbrev.html#isAbstract,Abbrev	proc isAbstract(a: Abbrev): 
 nim	update	cligen/abbrev.html#update,Abbrev	proc update(a: var Abbrev)		46
 nim	abbrev	cligen/abbrev.html#abbrev,Abbrev,string	proc abbrev(a: Abbrev; str: string): string		58
 nim	parseAbbrev	cligen/abbrev.html#parseAbbrev,string	proc parseAbbrev(s: string): Abbrev		67
-nim	uniqueAbbrevs	cligen/abbrev.html#uniqueAbbrevs,Abbrev,openArray[string]	proc uniqueAbbrevs(a: var Abbrev; strs: openArray[string]): seq[string]		124
-nim	realize	cligen/abbrev.html#realize,Abbrev,openArray[string]	proc realize(a: var Abbrev; strs: openArray[string])		174
-nim	realize	cligen/abbrev.html#realize,Abbrev,Table[T,string]	proc realize[T](a: var Abbrev; tab: Table[T, string])		198
-nim	expandFit	cligen/abbrev.html#expandFit,Abbrev,seq[string],seq[int],seq[int],seq[int],seq[int],int,int,int,int,int	proc expandFit(a: var Abbrev; strs: var seq[string];\n          ab0, ab1, wids, colWs: var seq[int]; w, jP, m, nr, nc: int)		224
-nimgrp	realize	cligen/abbrev.html#realize-procs-all	proc		174
+nim	uniqueAbbrevs	cligen/abbrev.html#uniqueAbbrevs,Abbrev,openArray[string]	proc uniqueAbbrevs(a: var Abbrev; strs: openArray[string]): seq[string]		123
+nim	realize	cligen/abbrev.html#realize,Abbrev,openArray[string]	proc realize(a: var Abbrev; strs: openArray[string])		173
+nim	realize	cligen/abbrev.html#realize,Abbrev,Table[T,string]	proc realize[T](a: var Abbrev; tab: Table[T, string])		197
+nim	expandFit	cligen/abbrev.html#expandFit,Abbrev,seq[string],seq[int],seq[int],seq[int],seq[int],int,int,int,int,int	proc expandFit(a: var Abbrev; strs: var seq[string];\n          ab0, ab1, wids, colWs: var seq[int]; w, jP, m, nr, nc: int)		223
+nimgrp	realize	cligen/abbrev.html#realize-procs-all	proc		173

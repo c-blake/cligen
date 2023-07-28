@@ -21,6 +21,7 @@ nim	match	cligen/textUt.html#match,CritBitTree[T],string,string,string	proc matc
 nim	match	cligen/textUt.html#match,CritBitTree[T],string,string	proc match[T](cb: CritBitTree[T]; key, tag: string; err = stderr): tuple[key: string,\n    val: T]		383
 nim	termAlign	cligen/textUt.html#termAlign,string,Natural,char	proc termAlign(s: string; count: Natural; padding = ' '): string		396
 nim	termAlignLeft	cligen/textUt.html#termAlignLeft,string,Natural,char	proc termAlignLeft(s: string; count: Natural; padding = ' '): string		406
-nim	toSetChar	cligen/textUt.html#toSetChar,string	proc toSetChar(s: string): set[char]		418
+nim	unescaped	cligen/textUt.html#unescaped.i,string	iterator unescaped(s: string): char		418
+nim	toSetChar	cligen/textUt.html#toSetChar,string	proc toSetChar(s: string; unescape = false): set[char]		454
 nimgrp	match	cligen/textUt.html#match-procs-all	proc		356
 nimgrp	keys	cligen/textUt.html#keys-procs-all	proc		318
