@@ -82,7 +82,7 @@ proc parseAbbrev*(s: string): Abbrev =
   result.sLen = result.sep.printedLen
   if cols.len > 4:
     result.qmark = if cols[4].len > 0: cols[4][0] else: '\0'
-    result.cset  = if cols[4].len > 1: toSetChar(cols[4][1..^1]) else: {}
+    result.cset  = if cols[4].len > 1: toSetChar(cols[4][1..^1], true) else: {}
   if result.mx != -1: result.update   #For -1 caller must call realize
 
 proc uniqueAbs(a: Abbrev, strs: openArray[string]): bool =
@@ -102,10 +102,9 @@ proc minMaxSTUnique(a: var Abbrev, strs: openArray[string], ml: int) =
     else: lo = a2.mx + 1                #not unique: bracket higher
   a.mx = lo; a.update                   #Now lo == hi; set mx & update derived
 
-#NOTE: Pattern quoting cannot be independent of pattern compression because the
-#wildcard ?/qmark is more general than any one char and may have been critical
-#to distinguish compression uniqueness.  So, this quoting is best effort only
-#and may not fully quote.
+#NOTE: Pattern "escape" cannot be independent of pattern compression because the
+# wildcard ?/qmark is more general than any one char and may have been critical
+# to distinguish compression uniqueness.  So, this escaping is best effort only.
 proc pquote(a: Abbrev; abb: string): string =
   result = abb
   if a.cset.len < 1:

@@ -3,8 +3,13 @@ RELEASE NOTES
 
 Version: 1.6.12
 ---------------
-    - Add support in cligen/humanUt for the kitty/alacritty expanded sets of
-      underbars: underdouble undercurl underdot underdash
+  - Add support in `cligen/humanUt` for the kitty/alacritty expanded sets of
+    underbar: underdouble undercurl underdot underdash
+
+  - Add special char unescape to pattern-escape subparam in `abbrev.parseAbbrev`
+    by refactoring `argcvt.unescape` into a `textUt.unescaped` iterator used by
+    a now trivial `argcvt.unescape` string builder (with `unescape=false` by
+    default for backward compatibility).
 
 Version: 1.6.11
 ---------------

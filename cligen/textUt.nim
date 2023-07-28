@@ -1,5 +1,5 @@
 from strutils import split, join, strip, repeat, replace, count, Whitespace,
-                     startsWith, toUpper
+                     startsWith, toUpper, toLowerAscii
 from terminal import terminalWidth
 import os, parseutils, critbits, math, ./mslice # math.^
 when not declared(stderr): import std/syncio
@@ -415,6 +415,43 @@ proc termAlignLeft*(s: string, count: Natural, padding = ' '): string =
   else:
     result = s
 
-proc toSetChar*(s: string): set[char] =
-  ## Make & return character set built from a string.
-  for c in s: result.incl c
+iterator unescaped*(s: string): char =
+  ## Handles 1-byte octal, \[abtnvfre], and \xDD hex escapes
+  let hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                    'a', 'b', 'c', 'd', 'e', 'f'}
+  proc toHexDig(c: char): int =
+    if c <= '9': ord(c) - ord('0') else: 10 + ord(c) - ord('a')
+  var i = 0
+  while i < s.len:
+    case s[i]
+    of '\\':
+      if i+1 >= s.len: raise newException(ValueError, "incomplete escaped char")
+      case s[i+1]
+      of '0' .. '7': yield chr(ord(s[i+1]) - ord('0')); inc i, 2
+      of 'a': yield chr(0x07); inc i, 2 # bell
+      of 'b': yield chr(0x08); inc i, 2 # backspace
+      of 't': yield chr(0x09); inc i, 2 # horizontal tab
+      of 'n': yield chr(0x0A); inc i, 2 # new line
+      of 'v': yield chr(0x0B); inc i, 2 # vertical tab
+      of 'f': yield chr(0x0C); inc i, 2 # form feed
+      of 'r': yield chr(0x0D); inc i, 2 # carriage ret
+      of '\\':yield chr(0x5C); inc i, 2 # backslash
+      of 'e': yield chr(0x1B); inc i, 2 # escape
+      else:
+        if i + 3 >= s.len:
+          raise newException(ValueError, "incomplete 2-nibble hex escape")
+        if s[i+1].toLowerAscii != 'x':
+          raise newException(ValueError, "hex escape not of form \\xHH")
+        let dhi = toLowerAscii(s[i+2])
+        let dlo = toLowerAscii(s[i+3])
+        if dhi notin hexdigits or dlo notin hexdigits:
+          raise newException(ValueError, "non-hex escape: " & s[i..i+3])
+        yield char(toHexDig(dhi)*16 + toHexDig(dlo))
+        inc i, 4
+    else:
+      yield s[i]; inc i
+
+proc toSetChar*(s: string, unescape=false): set[char] =
+  ## Make & return character set built from a string, maybe un-escaping.
+  if unescape: (for c in s.unescaped: result.incl c)
+  else: (for c in s: result.incl c)
