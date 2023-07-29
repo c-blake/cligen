@@ -111,6 +111,9 @@ proc parseColorScl*(s: MSlice | openArray[char] | string;
         val = t.parseFloat(nTmp); inc nParsed, nTmp # parse float & update
     result = rgb(x, scl, sat, val)      # Finally dispatch to `rgb`
 
+const helpColorScl* = "*[fbu]s<NAME><0.0..1.0>[,..]* = element of scale " &
+                      "(pm3d viridis gray hue[,s,v] wLen[,s,v])"
+
 when isMainModule:
   import cligen
   when not declared(stdout): import std/syncio

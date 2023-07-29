@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.13
+---------------
+  - Add help string constants for easy integration into program --help for both
+    text attribute SGR/ANSI color escapes and glob abbreviations against fixed
+    universes of alternatives.
+
 Version: 1.6.12
 ---------------
   - Add support in `cligen/humanUt` for the kitty/alacritty expanded sets of

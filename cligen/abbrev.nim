@@ -85,6 +85,10 @@ proc parseAbbrev*(s: string): Abbrev =
     result.cset  = if cols[4].len > 1: toSetChar(cols[4][1..^1], true) else: {}
   if result.mx != -1: result.update   #For -1 caller must call realize
 
+const parseAbbrevHelp* = """a\*|M,head(M/2),tail(M-hdSep),sep(\*),?chars
+a:bestPos -2:pfx -3:sfx -4:mfx -5:1\* -6:2\*
+POSITIVE_NUMBER=thatWidth/head/tail"""
+
 proc uniqueAbs(a: Abbrev, strs: openArray[string]): bool =
   ## Return true only if ``a`` yields a set of unique abbreviations for strs.
   var es = initHashSet[string]()

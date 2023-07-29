@@ -118,7 +118,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
                    of 'U': "58;"
                    else  : ""
       if   s.len <= 3: result = prefix & "5;" & $(232 + parseInt(s[1..^1]))
-      elif s[1] == 's': # color scale: [fFbB]s[gwpv]<float>[,..]
+      elif s[1] == 's': # color scale: [fFbBuU]s[gwpv]<float>[,..]
         if (var nP: int; let c = s[2..^1].parseColorScl(nP); nP == s.len - 2):
           result = prefix & (if s[0] == s[0].toUpperAscii: "5;" & c.xt256 else:
                              "2;" & c.ttc) # Leading uppercase => xt256
@@ -135,6 +135,13 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
         result = prefix & "2;" & $r & ";" & $g & ";" & $b
     if result.len == 0:
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
+
+ const textAttrHelp* = """
+*plain*, *bold*, *italic*, *underline*, *blink*, *inverse*, *struck*, *NONE*,
+*black*, *red*, *green*, *yellow*, *blue*, *purple*, *cyan*, *white*;
+UPPERCASE =>HIGH intensity; *on_* prefix => BACKGROUND color;
+xterm256: *[fbu](0-23 | 0-50-50-5)* for F)ORE/B)ACKgrnd/U)NDER (greyScale |
+6x6x6cube); True colorRGB: *[fbu]HHHHHH*.""" & helpColorScl
 
  proc textAttrOn*(spec: seq[string], plain=false): string =
   if plain: return
