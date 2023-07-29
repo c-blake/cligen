@@ -80,7 +80,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
   "blink": "5", "BLINK": "6", "inverse": "7", "struck":"9", "underdouble":"4:2",
   "undercurl": "4:3", "underdot": "4:4", "underdash": "4:5",
   "NONE":   "", "-bold":"22", "-faint": "22", "-italic":"23","-underline":"24",
-  "-blink":"25","-BLINK":"25","-inverse":"27","-struck":"29",
+  "-blink":"25","-BLINK":"25","-inverse":"27","-struck":"29","none":"","off":"",
   "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
   "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
   "BLACK"   : "90", "RED"      : "91", "GREEN"    : "92", "YELLOW"   : "93",#LiF
@@ -137,11 +137,12 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
 
  const textAttrHelp* = """
-*plain*, *bold*, *italic*, *underline*, *blink*, *inverse*, *struck*, *NONE*,
-*black*, *red*, *green*, *yellow*, *blue*, *purple*, *cyan*, *white*;
-UPPERCASE =>HIGH intensity; *on_* prefix => BACKGROUND color;
-xterm256: *[fbu](0-23 | 0-50-50-5)* for F)ORE/B)ACKgrnd/U)NDER (greyScale |
-6x6x6cube); True colorRGB: *[fbu]HHHHHH*.""" & helpColorScl
+Style: bold italic blink inverse struck under{line double dot dash curl};
+Same w/leading '-': turn that off; turn all off: plain(0) NONE none off;
+Basic Color: black red green yellow blue purple cyan white;
+UPPERCASE => HIGH intensity; "on_" prefix => BACKGROUND color;
+xterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);
+True color: {fbu}RRGGBB with RGB hex digits""" & ".\n" & helpColorScl
 
  proc textAttrOn*(spec: seq[string], plain=false): string =
   if plain: return
