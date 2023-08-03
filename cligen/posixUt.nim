@@ -360,9 +360,9 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
       buf.setLen st[].st_size         #may miss actively added; (a race anyway)
       let nRead = read(fd, buf[0].addr, st[].st_size.int)
       if nRead == st[].st_size: return
-      off = buf.len                   #fall through on a short read
+      if nRead != -1: off = nRead     #fall to loop on a short|failed read
   while true:
-    buf.setLen(buf.len + perRead)
+    buf.setLen off + perRead          # Ensure room for read()
     let nRead = read(fd, buf[off].addr, perRead)
     if nRead == -1:
       if errno == EAGAIN or errno == EINTR:
