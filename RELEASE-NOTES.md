@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.14
+---------------
+  - True end user/run-time default for `cligen/strUt.pmDfl` to `${LC_PM:- +- }`,
+  If client code wants to block that, they can just set `strUt.pmDfl` themself
+  (if they were not already).
+
 Version: 1.6.13
 ---------------
   - Add help string constants for easy integration into program --help for both
