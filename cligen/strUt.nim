@@ -461,7 +461,8 @@ proc tmplParsed*(fmt: openArray[char], meta='$', ids=alphaNum): seq[MacroCall] =
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
-import std/envvars
+when NimMajor >= 2: import std/envvars
+else: import std/os
 var pmDfl* = getEnv("LC_PM", " +- ")    ## how plus|minus is spelled
 
 proc fmtUncertainParts*(val, err: float,
