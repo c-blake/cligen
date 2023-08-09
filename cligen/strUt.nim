@@ -470,7 +470,9 @@ proc fmtUncertainParts*(val, err: float,
   ## This is a helper for nice formats.  ffScientific format `err` to `sigDigs`.
   ## Then fmt `val` so that the final decimal place of both *always* aligns.
   ## Eg., (3141.5.., 45.6..) => ("3.142", "e+03", "4.6", "e+01").  Alignment
-  ## means the difference in exponents should always be `sigDigs`.
+  ## means the difference in exponents should always be `sigDigs`.  `sigDigs=2`
+  ## as per ISO standard JCGM 100:2008(E) $7.2.6 specific guidance available at:
+  ##   https://www.bipm.org/en/committees/jc/jcgm/publications (E)
   when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
   let abs_val = abs(val)
