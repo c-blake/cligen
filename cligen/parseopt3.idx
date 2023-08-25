@@ -14,6 +14,6 @@ nim	initOptParser	cligen/parseopt3.html#initOptParser,string	proc initOptParser(
 nim	next	cligen/parseopt3.html#next,OptParser	proc next(p: var OptParser)		277
 nim	GetoptResult	cligen/parseopt3.html#GetoptResult	tuple GetoptResult		313
 nim	getopt	cligen/parseopt3.html#getopt.i,OptParser	iterator getopt(p: var OptParser): GetoptResult		315
-nim	getopt	cligen/parseopt3.html#getopt.i,set[char],seq[string],set[char],seq[string]	iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};\n       longNoVal: seq[string] = @[]; requireSeparator = false;\n       sepChars = {'=', ':'}; opChars: set[char] = {};\n       stopWords: seq[string] = @[]): GetoptResult		340
+nim	getopt	cligen/parseopt3.html#getopt.i,set[char],seq[string],set[char],seq[string]	iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};\n       longNoVal: seq[string] = @[]; requireSeparator = false;\n       sepChars = {'=', ':'}; opChars: set[char] = {};\n       stopWords: seq[string] = @[]): GetoptResult		342
 nimgrp	initoptparser	cligen/parseopt3.html#initOptParser-procs-all	proc		152
 nimgrp	getopt	cligen/parseopt3.html#getopt-iterators-all	iterator		315

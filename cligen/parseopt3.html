@@ -326,7 +326,8 @@
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
-    An convenience iterator for iterating over the given OptParser object. Example:<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">initOptParser</span><span class="Punctuation">(</span><span class="StringLit">&quot;--left --debug:3 -l=4 -r:2&quot;</span><span class="Punctuation">)</span>
+    An convenience iterator for iterating over the given OptParser object. Example:<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">filename</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="StringLit">&quot;&quot;</span>
+<span class="Keyword">var</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">initOptParser</span><span class="Punctuation">(</span><span class="StringLit">&quot;--left --debug:3 -l=4 -r:2&quot;</span><span class="Punctuation">)</span>
 <span class="Keyword">for</span> <span class="Identifier">kind</span><span class="Punctuation">,</span> <span class="Identifier">key</span><span class="Punctuation">,</span> <span class="Identifier">val</span> <span class="Keyword">in</span> <span class="Identifier">p</span><span class="Operator">.</span><span class="Identifier">getopt</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Keyword">case</span> <span class="Identifier">kind</span>
   <span class="Keyword">of</span> <span class="Identifier">cmdArgument</span><span class="Punctuation">:</span>
@@ -336,6 +337,7 @@
     <span class="Keyword">of</span> <span class="StringLit">&quot;help&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;h&quot;</span><span class="Punctuation">:</span> <span class="Identifier">writeHelp</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
     <span class="Keyword">of</span> <span class="StringLit">&quot;version&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;v&quot;</span><span class="Punctuation">:</span> <span class="Identifier">writeVersion</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
   <span class="Keyword">of</span> <span class="Identifier">cmdEnd</span><span class="Punctuation">:</span> <span class="Identifier">assert</span><span class="Punctuation">(</span><span class="Identifier">false</span><span class="Punctuation">)</span> <span class="Comment"># cannot happen</span>
+  <span class="Keyword">of</span> <span class="Identifier">cmdError</span><span class="Punctuation">:</span>  <span class="Identifier">quit</span><span class="Punctuation">(</span><span class="Identifier">p</span><span class="Operator">.</span><span class="Identifier">message</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">)</span>
 <span class="Keyword">if</span> <span class="Identifier">filename</span> <span class="Operator">==</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">:</span>
   <span class="Comment"># no filename has been given, so we show the help:</span>
   <span class="Identifier">writeHelp</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
@@ -354,7 +356,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-08-23 12:22:03 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-08-25 13:21:38 UTC</small>
       </div>
     </div>
   </div>
