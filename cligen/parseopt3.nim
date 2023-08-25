@@ -317,6 +317,7 @@ iterator getopt*(p: var OptParser): GetoptResult =
   ## Example:
   ##
   ## .. code-block:: nim
+  ##   var filename: string = ""
   ##   var p = initOptParser("--left --debug:3 -l=4 -r:2")
   ##   for kind, key, val in p.getopt():
   ##     case kind
@@ -327,6 +328,7 @@ iterator getopt*(p: var OptParser): GetoptResult =
   ##       of "help", "h": writeHelp()
   ##       of "version", "v": writeVersion()
   ##     of cmdEnd: assert(false) # cannot happen
+  ##     of cmdError:  quit(p.message, 2)
   ##   if filename == "":
   ##     # no filename has been given, so we show the help:
   ##     writeHelp()
