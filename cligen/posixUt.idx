@@ -100,7 +100,7 @@ nim	MADV_WILLNEED	cligen/posixUt.html#MADV_WILLNEED	let MADV_WILLNEED		43
 nim	MADV_DONTNEED	cligen/posixUt.html#MADV_DONTNEED	let MADV_DONTNEED		43
 nim	madvise	cligen/posixUt.html#madvise,pointer,int,cint	proc madvise(mem: pointer; len: int; advice: cint): int		640
 nim	pathToSelf	cligen/posixUt.html#pathToSelf,cstringArray	proc pathToSelf(av: cstringArray): string		645
-nim	findAssociated	cligen/posixUt.html#findAssociated,cstringArray,string	proc findAssociated(av: cstringArray; parentBase = "etc/foo"): string		665
+nim	findAssociated	cligen/posixUt.html#findAssociated,cstringArray,string	proc findAssociated(av: cstringArray; parentBase = "etc/foo"): string		663
 nimgrp	$	cligen/posixUt.html#$-procs-all	proc		98
 nimgrp	getlastmodtimens	cligen/posixUt.html#getLastModTimeNs-procs-all	proc		304
 nimgrp	getlastacctimens	cligen/posixUt.html#getLastAccTimeNs-procs-all	proc		303
