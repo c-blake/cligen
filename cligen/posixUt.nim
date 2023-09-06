@@ -643,17 +643,15 @@ proc madvise*(mem: pointer, len: int, advice: cint): int =
   int(posix_madvise(mem, len, advice))
 
 proc pathToSelf*(av: cstringArray): string =
-  ## Return the path to the executable of the currently running program.  First
-  ## this tries to `readlink /proc/PID/(exe|file)` which is reliable (up to FS
-  ## dynamics) on Linux | BSDs with /proc mounted .  If that fails & `$0` starts
-  ## with `[./]`, just return that.  For full paths starting with `/` this is as
-  ## reliable as /proc unless the invoker plays exec games with `$0`.  For `.`
-  ## it relies on no `chdir` between program start & this call.  If `$0` starts
-  ## elsewise, search `$PATH` for `$0` like shells.  Return "" on no match.
+  ## Return path to executable of the currently running program or "" if cannot.
+  ## First this tries `os.getAppFilename` - often but not always reliable.  If
+  ## that fails & `$0` starts with `[./]`, return that (giving users sh wrapper
+  ## | /path/binExec alias likely workarounds).  For `.` it relies on no `chdir`
+  ## between program start & here.  If `$0` starts elsewise, search `$PATH` for
+  ## `$0` like shells using `access` (inducing POSIX requirement).
   proc getenv(env: cstring): cstring {.importc, header: "stdlib.h".}
-  if (let prPID="/proc/" & $getpid().int; var st:Stat;lstat(prPID.cstring,st)==0):
-    if (let me = readlink(prPID//"exe" , nil); me.len > 0): return me # Linux
-    if (let me = readlink(prPID//"file", nil); me.len > 0): return me # BSDs
+  let stdlib = try: getAppFilename() except: ""
+  if stdlib.len > 0: return stdlib
   if av.isNil or av[0].isNil: return ""   # No $0 to use! Pathological, really.
   let av0 = $av[0]                        # av0="" lurks => Do not use below
   if av[0][0] in {'/', '.'}: return av0   # BUT this is safe since OS puts \0

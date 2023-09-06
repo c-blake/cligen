@@ -20,6 +20,7 @@ when defined(windows):
                                                      header: "io.h".} # get &
   proc fdClose*(fd: cint): cint {.importc: "_close", header: "io.h".} # free
   #NOTE: Like ANSI C `fclose`, `_close` also closes underlying file.
+else: export getAppFilename
 
 proc isatty(f: File): bool =
   when defined(posix):

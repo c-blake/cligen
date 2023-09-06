@@ -1,11 +1,17 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.15
+---------------
+  - Make `posixUt.pathToSelf` used by `findAssociated` config-file-search more
+    explicitly "`os.getAppFilename` + more POSIX-y specific fallbacks".  This
+    should extend the range of OSes on which such associated-file searches work.
+
 Version: 1.6.14
 ---------------
   - True end user/run-time default for `cligen/strUt.pmDfl` to `${LC_PM:- +- }`,
-  If client code wants to block that, they can just set `strUt.pmDfl` themself
-  (if they were not already).
+    If client code wants to block that, they can just set `strUt.pmDfl` themself
+    (if they were not already).
 
 Version: 1.6.13
 ---------------
