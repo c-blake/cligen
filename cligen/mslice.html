@@ -231,6 +231,10 @@
   <li><a class="reference" href="#add%2Cstring%2CMSlice" title="add(s: var string; ms: MSlice)">add(s: var string; ms: MSlice)</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">clipAtFirst
+  <li><a class="reference" href="#clipAtFirst%2CSomeString%2Cchar" title="clipAtFirst(s: var SomeString; ch: char)">clipAtFirst(s: var SomeString; ch: char)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">cmemchr
   <li><a class="reference" href="#cmemchr%2Cpointer%2Cchar%2Ccsize" title="cmemchr(s: pointer; c: char; n: csize): pointer">cmemchr(s: pointer; c: char; n: csize): pointer</a></li>
 
@@ -360,6 +364,10 @@
 <ul class="simple nested-toc-section">rfind
   <li><a class="reference" href="#rfind%2CMSlice%2Cset%5Bchar%5D%2CNatural%2Cint" title="rfind(s: MSlice; chars: set[char]; start: Natural = 0; last = -1): int">rfind(s: MSlice; chars: set[char]; start: Natural = 0; last = -1): int</a></li>
 <li><a class="reference" href="#rfind%2CMSlice%2Cchar%2CNatural%2Cint" title="rfind(s: MSlice; sub: char; start: Natural = 0; last = -1): int">rfind(s: MSlice; sub: char; start: Natural = 0; last = -1): int</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">setLen
+  <li><a class="reference" href="#setLen%2CMSlice%2Cint" title="setLen(s: var MSlice; n: int)">setLen(s: var MSlice; n: int)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">split
@@ -794,6 +802,17 @@
   <dd>
     
     Append an <tt class="docutils literal"><span class="pre"><span class="Identifier">MSlice</span></span></tt> to a Nim string
+    
+  </dd>
+</div>
+
+</div>
+<div id="clipAtFirst-procs-all">
+  <div id="clipAtFirst,SomeString,char">
+  <dt><pre><span class="Keyword">proc</span> <a href="#clipAtFirst%2CSomeString%2Cchar"><span class="Identifier">clipAtFirst</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#SomeString"><span class="Identifier">SomeString</span></a><span class="Other">;</span> <span class="Identifier">ch</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    Shorten <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span></span></tt> to stop just before first occurrence of <tt class="docutils literal"><span class="pre"><span class="Identifier">ch</span></span></tt> (e.g. '#') if any.
     
   </dd>
 </div>
@@ -1259,6 +1278,17 @@
 </div>
 
 </div>
+<div id="setLen-procs-all">
+  <div id="setLen,MSlice,int">
+  <dt><pre><span class="Keyword">proc</span> <a href="#setLen%2CMSlice%2Cint"><span class="Identifier">setLen</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Compatible with <tt class="docutils literal"><span class="pre"><span class="Identifier">setLen</span><span class="Punctuation">(</span><span class="Identifier">seq</span><span class="Operator">|</span><span class="Identifier">string</span><span class="Punctuation">)</span></span></tt>, but this one can <em>ONLY SHORTEN</em>.
+    
+  </dd>
+</div>
+
+</div>
 <div id="split-procs-all">
   <div id="split,Sep,MSlice,seq[MSlice],int">
   <dt><pre><span class="Keyword">proc</span> <a href="#split%2CSep%2CMSlice%2Cseq%5BMSlice%5D%2Cint"><span class="Identifier">split</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#Sep"><span class="Identifier">Sep</span></a><span class="Other">;</span> <span class="Identifier">line</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">cols</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">n</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span>
@@ -1593,7 +1623,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-09-11 10:09:26 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-09-26 11:11:55 UTC</small>
       </div>
     </div>
   </div>
