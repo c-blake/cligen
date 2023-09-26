@@ -93,6 +93,15 @@ proc find*(s: MSlice, sub: SomeString): int =
   let p = cmemmem(s.mem, s.len.csize_t, sub.mem, sub.len.csize_t)
   if p.isNil: -1 else: p -! s.mem
 
+proc setLen*(s: var MSlice, n: int) =
+  ## Compatible with `setLen(seq|string)`, but this one can *ONLY SHORTEN*.
+  if n > s.len: raise newException(BadIndex, "only allowed to shorten")
+  s.len = n
+
+proc clipAtFirst*(s: var SomeString, ch: char) =
+  ## Shorten `s` to stop just before first occurrence of `ch` (e.g. '#') if any.
+  if (let p = cmemchr(s.mem, ch, s.len.csize); p != nil): s.setLen p -! s.mem
+
 func high*(s: MSlice): int = s.len - 1
 
 func rfind*(s: MSlice, sub: char, start: Natural = 0, last = -1): int =
