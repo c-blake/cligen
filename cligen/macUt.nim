@@ -110,7 +110,10 @@ proc fromNimble*(nimbleContents: string, field: string): string =
   result = "unparsable nimble " & field
   for line in nimbleContents.split("\n"):
     if line.startsWith(field):
-      let cols = line.split('=')
+      var comment = line.find('#')
+      if comment < 0:
+        comment = line.len()
+      let cols = line.substr(0, comment - 1).split('=')
       result = cols[1].strip()[1..^2]
       break
 
