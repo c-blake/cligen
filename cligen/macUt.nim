@@ -106,7 +106,7 @@ proc newParam*(id: string, rhs: NimNode): NimNode =
   return newNimNode(nnkExprEqExpr).add(ident(id), rhs)
 
 proc fromNimble*(nimbleContents: string, field: string): string =
-  ## ``const x=staticRead "relPathToNimbleFile"; use fromNimble("version",x)``
+  ## ``const x=staticRead "relPathToNimbleFile"; use fromNimble(x, "version")``
   result = "unparsable nimble " & field
   for line in nimbleContents.split("\n"):
     if line.startsWith(field):
@@ -114,8 +114,7 @@ proc fromNimble*(nimbleContents: string, field: string): string =
       if comment < 0:
         comment = line.len()
       let cols = line.substr(0, comment - 1).split('=')
-      result = cols[1].strip()[1..^2]
-      break
+      return cols[1].strip()[1..^2]
 
 proc versionFromNimble*(nimbleContents: string): string {.deprecated:
      "Deprecated since v0.9.31; use fromNimble(...,\"version\") instead."} =
