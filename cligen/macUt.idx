@@ -15,12 +15,12 @@ nim	paramPresent	cligen/macUt.html#paramPresent,NimNode,string	proc paramPresent
 nim	paramVal	cligen/macUt.html#paramVal,NimNode,string	proc paramVal(n: NimNode; kwArg: string): NimNode		96
 nim	newParam	cligen/macUt.html#newParam,string,NimNode	proc newParam(id: string; rhs: NimNode): NimNode		104
 nim	fromNimble	cligen/macUt.html#fromNimble,string,string	proc fromNimble(nimbleContents: string; field: string): string		108
-nim	versionFromNimble	cligen/macUt.html#versionFromNimble,string	proc versionFromNimble(nimbleContents: string): string		117
-nim	summaryOfModule	cligen/macUt.html#summaryOfModule,string	proc summaryOfModule(sourceContents: string): string		128
-nim	summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	proc summaryOfModule(n: NimNode): string		148
-nim	docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macro docFromModuleOf(sym: typed{nkSym}): untyped		151
-nim	docFromProc	cligen/macUt.html#docFromProc.m	macro docFromProc(sym: typed{nkSym}): untyped		155
-nim	with	cligen/macUt.html#with.m,typed,untyped,untyped	macro with(ob: typed; fields: untyped; body: untyped): untyped		162
-nim	callsOn	cligen/macUt.html#callsOn.m,varargs[untyped]	macro callsOn(routineFirstsRest: varargs[untyped]): untyped		175
-nim	docCommentAdd	cligen/macUt.html#docCommentAdd.m,staticstring	macro docCommentAdd(s: static string): untyped		186
-nimgrp	summaryofmodule	cligen/macUt.html#summaryOfModule-procs-all	proc		128
+nim	versionFromNimble	cligen/macUt.html#versionFromNimble,string	proc versionFromNimble(nimbleContents: string): string		119
+nim	summaryOfModule	cligen/macUt.html#summaryOfModule,string	proc summaryOfModule(sourceContents: string): string		130
+nim	summaryOfModule	cligen/macUt.html#summaryOfModule,NimNode	proc summaryOfModule(n: NimNode): string		150
+nim	docFromModuleOf	cligen/macUt.html#docFromModuleOf.m	macro docFromModuleOf(sym: typed{nkSym}): untyped		153
+nim	docFromProc	cligen/macUt.html#docFromProc.m	macro docFromProc(sym: typed{nkSym}): untyped		157
+nim	with	cligen/macUt.html#with.m,typed,untyped,untyped	macro with(ob: typed; fields: untyped; body: untyped): untyped		164
+nim	callsOn	cligen/macUt.html#callsOn.m,varargs[untyped]	macro callsOn(routineFirstsRest: varargs[untyped]): untyped		177
+nim	docCommentAdd	cligen/macUt.html#docCommentAdd.m,staticstring	macro docCommentAdd(s: static string): untyped		188
+nimgrp	summaryofmodule	cligen/macUt.html#summaryOfModule-procs-all	proc		130
