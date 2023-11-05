@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.17
+---------------
+  - Small NimSkull compatibility changes (untested)
+
+Version: 1.6.16
+---------------
+  - Small changes to support side-'#' comments in cligen/mslice @run-time & in
+    cligen/macUt @compile-time version extraction; Release requested by @takuto
+
 Version: 1.6.15
 ---------------
   - Make `posixUt.pathToSelf` used by `findAssociated` config-file-search more

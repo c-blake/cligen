@@ -17,16 +17,17 @@ proc delete*(x: var string, i: Natural) {.noSideEffect.} =
     x[j] = move x[j+1]
   setLen(x, xl-1)
 
-iterator maybePar*(parallel: bool, a, b: int): int =
+when not defined(isNimSkull):  # No OpenMP `||` iterator | for-loop macros
+ iterator maybePar*(parallel: bool, a, b: int): int =
   ## if flag is true yield ``||(a,b)`` else ``countup(a,b)``.
   if parallel:
     for i in `||`(a, b): yield i
   else:
     for i in a .. b: yield i
 
-import core/macros
+ import core/macros
 
-macro enumerate*(x: ForLoopStmt): untyped =
+ macro enumerate*(x: ForLoopStmt): untyped =
   ## Generic enumerate macro; E.g.: ``for i,e in enumerate([3,2,1]): echo i``.
   expectKind x, nnkForStmt
   result = newStmtList()
@@ -42,7 +43,7 @@ macro enumerate*(x: ForLoopStmt): untyped =
   newFor.add body
   result.add newFor
 
-when (NimMajor,NimMinor,NimPatch) >= (0,20,0):
+ when (NimMajor,NimMinor,NimPatch) >= (0,20,0):
   macro toItr*(x: ForLoopStmt): untyped =
     ## Convert factory proc call for inline-iterator-like usage.
     ## E.g.: ``for e in toItr myFactory(parm): echo e``.
