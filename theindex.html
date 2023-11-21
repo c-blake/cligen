@@ -21,7 +21,7 @@
   <div class="document" id="documentId">
     <div class="container">
       <h1 class="title">Index</h1>
-      Modules: <a href="all.html">all</a>, <a href="cligen.html">cligen</a>, <a href="cligen/abbrev.html">cligen/abbrev</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/cfUt.html">cligen/cfUt</a>, <a href="cligen/colorScl.html">cligen/colorScl</a>, <a href="cligen/conncomp.html">cligen/conncomp</a>, <a href="cligen/dents.html">cligen/dents</a>, <a href="cligen/fileUt.html">cligen/fileUt</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/magic.html">cligen/magic</a>, <a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv</a>, <a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul</a>, <a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti</a>, <a href="cligen/mfile.html">cligen/mfile</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/osUt.html">cligen/osUt</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/posixUt.html">cligen/posixUt</a>, <a href="cligen/print.html">cligen/print</a>, <a href="cligen/procpool.html">cligen/procpool</a>, <a href="cligen/statx.html">cligen/statx</a>, <a href="cligen/strUt.html">cligen/strUt</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/tab.html">cligen/tab</a>, <a href="cligen/tern.html">cligen/tern</a>, <a href="cligen/textUt.html">cligen/textUt</a>, <a href="cligen/trie.html">cligen/trie</a>, <a href="cligen/unsafeAddr.html">cligen/unsafeAddr</a>.<br/><p /><h2>API symbols</h2>
+      Modules: <a href="all.html">all</a>, <a href="cligen.html">cligen</a>, <a href="cligen/abbrev.html">cligen/abbrev</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/cfUt.html">cligen/cfUt</a>, <a href="cligen/colorScl.html">cligen/colorScl</a>, <a href="cligen/conncomp.html">cligen/conncomp</a>, <a href="cligen/dents.html">cligen/dents</a>, <a href="cligen/fileUt.html">cligen/fileUt</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/magic.html">cligen/magic</a>, <a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv</a>, <a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul</a>, <a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti</a>, <a href="cligen/mfile.html">cligen/mfile</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/osUt.html">cligen/osUt</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/posixUt.html">cligen/posixUt</a>, <a href="cligen/print.html">cligen/print</a>, <a href="cligen/procpool.html">cligen/procpool</a>, <a href="cligen/puSig.html">cligen/puSig</a>, <a href="cligen/statx.html">cligen/statx</a>, <a href="cligen/strUt.html">cligen/strUt</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/tab.html">cligen/tab</a>, <a href="cligen/tern.html">cligen/tern</a>, <a href="cligen/textUt.html">cligen/textUt</a>, <a href="cligen/trie.html">cligen/trie</a>, <a href="cligen/unsafeAddr.html">cligen/unsafeAddr</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc `$`(ms: MSlice): string" href="cligen/mslice.html#%24%2CMSlice">mslice: proc `$`(ms: MSlice): string</a></li>
@@ -2210,6 +2210,10 @@
           <li><a class="reference external"
           data-doc-search-tag="fileUt: proc parseSlice(slcSpec: string; sz: int; a, b: var int)" href="cligen/fileUt.html#parseSlice%2Cstring%2Cint%2Cint%2Cint">fileUt: proc parseSlice(slcSpec: string; sz: int; a, b: var int)</a></li>
           </ul></dd>
+<dt><a name="parseUnixSignal" href="#parseUnixSignal"><span>parseUnixSignal:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="puSig: proc parseUnixSignal(nameOrNumber: string): cint" href="cligen/puSig.html#parseUnixSignal%2Cstring">puSig: proc parseUnixSignal(nameOrNumber: string): cint</a></li>
+          </ul></dd>
 <dt><a name="PathId" href="#PathId"><span>PathId:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="posixUt: tuple PathId" href="cligen/posixUt.html#PathId">posixUt: tuple PathId</a></li>
@@ -2489,6 +2493,10 @@
 <dt><a name="sHue" href="#sHue"><span>sHue:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="colorScl: Scale.sHue" href="cligen/colorScl.html#sHue">colorScl: Scale.sHue</a></li>
+          </ul></dd>
+<dt><a name="signum" href="#signum"><span>signum:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="puSig: let signum" href="cligen/puSig.html#signum">puSig: let signum</a></li>
           </ul></dd>
 <dt><a name="SIGPIPE_isOk" href="#SIGPIPE_isOk"><span>SIGPIPE_isOk:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -3234,7 +3242,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-05 11:14:02 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-21 12:13:45 UTC</small>
       </div>
     </div>
   </div>
