@@ -5,6 +5,8 @@ Version: 1.6.17
 ---------------
   - Small NimSkull compatibility changes (untested)
 
+  - Add `cligen/puSig` Unix Signal name|number parser
+
 Version: 1.6.16
 ---------------
   - Small changes to support side-'#' comments in cligen/mslice @run-time & in
