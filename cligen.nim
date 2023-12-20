@@ -200,7 +200,6 @@ proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
     if kid.kind == nnkFormalParams:
       return formalParamExpand(kid, n, suppress)
   error "formalParams requires a proc argument."
-  return nil                #not-reached
 
 iterator AListPairs(alist: NimNode, msg: string): (NimNode, NimNode) =
   if alist.kind == nnkSym:
