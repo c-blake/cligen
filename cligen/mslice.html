@@ -430,6 +430,10 @@
   <li><a class="reference" href="#urite%2CFile%2CMSlice" title="urite(f: File; ms: MSlice)">urite(f: File; ms: MSlice)</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">within
+  <li><a class="reference" href="#within%2CMSlice%2CMSlice" title="within(a, c: MSlice): bool">within(a, c: MSlice): bool</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">write
   <li><a class="reference" href="#write%2CFile%2CMSlice" title="write(f: File; ms: MSlice)">write(f: File; ms: MSlice)</a></li>
 
@@ -1502,6 +1506,17 @@
 </div>
 
 </div>
+<div id="within-procs-all">
+  <div id="within,MSlice,MSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#within%2CMSlice%2CMSlice"><span class="Identifier">within</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">c</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Test if <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span></span></tt> memory is entirely contained within <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span></span></tt> memory.
+    
+  </dd>
+</div>
+
+</div>
 <div id="write-procs-all">
   <div id="write,File,MSlice">
   <dt><pre><span class="Keyword">proc</span> <a href="#write%2CFile%2CMSlice"><span class="Identifier">write</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">;</span> <span class="Identifier">ms</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
@@ -1623,7 +1638,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-11-21 12:14:12 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-22 12:33:04 UTC</small>
       </div>
     </div>
   </div>
