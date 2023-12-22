@@ -600,6 +600,10 @@ proc findNot*(s: string, chars: set[char], start: Natural = 0, last = 0): int =
 proc eos*(ms: MSlice): pointer {.inline.} = ms.mem +! ms.len
   ## Address 1 past last valid byte in slice
 
+proc within*(a, c: MSlice): bool =
+  ## Test if `a` memory is entirely contained within `c` memory.
+  a.mem >= c.mem  and  a.mem +! a.len <= c.mem +! c.len
+
 proc extend*(ms: MSlice, max: int, sep = '\n'): MSlice {.inline.} =
   ## If `ms` does not end in `sep` then extend until it does or `ms.len==max`
   ## whichever comes first.

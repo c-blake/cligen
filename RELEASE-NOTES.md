@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.6.18
+---------------
+  - Add cligen/mslice.within to test if one slice entirely brackets another
+
 Version: 1.6.17
 ---------------
   - Small NimSkull compatibility changes (untested)
