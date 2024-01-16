@@ -4,6 +4,7 @@ RELEASE NOTES
 Version: 1.6.18
 ---------------
   - Add cligen/mslice.within to test if one slice entirely brackets another
+  - make CI green again & remove an old unused not-reached return
 
 Version: 1.6.17
 ---------------
