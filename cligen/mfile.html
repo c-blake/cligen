@@ -58,9 +58,8 @@
   fd*: cint                  ## open file|-1; open_osfhandle(fh,) on Win; FileHandle=cint
   fi*: FileInfo              ## File metadata at time of open
   when defined(windows):
-      fh*: cint              ## Underlying OS File Handle; fdclose(fd) auto-closes this
-      mh*: Handle            ## M)ap H)andle *CAUTION*: Windows specific public field
-    
+    fh*: cint                ## Underlying OS File Handle; fdclose(fd) auto-closes this
+    mh*: Handle              ## M)ap H)andle *CAUTION*: Windows specific public field
   prot*: cint                ## Map Protection
   flags*: cint               ## Map Flags (-1 =&gt; not open)
   mslc*: MSlice              ## (mem, len) of file">MFile</a></li>
@@ -213,13 +212,11 @@
   <span class="Identifier">fd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>                  <span class="Comment">## open file|-1; open_osfhandle(fh,) on Win; FileHandle=cint</span>
   <span class="Identifier">fi</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">FileInfo</span>              <span class="Comment">## File metadata at time of open</span>
   <span class="Keyword">when</span> <span class="Identifier">defined</span><span class="Other">(</span><span class="Identifier">windows</span><span class="Other">)</span><span class="Other">:</span>
-      <span class="Identifier">fh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>              <span class="Comment">## Underlying OS File Handle; fdclose(fd) auto-closes this</span>
-      <span class="Identifier">mh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Handle</span>            <span class="Comment">## M)ap H)andle *CAUTION*: Windows specific public field</span>
-    
+    <span class="Identifier">fh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>                <span class="Comment">## Underlying OS File Handle; fdclose(fd) auto-closes this</span>
+    <span class="Identifier">mh</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Handle</span>              <span class="Comment">## M)ap H)andle *CAUTION*: Windows specific public field</span>
   <span class="Identifier">prot</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>                <span class="Comment">## Map Protection</span>
   <span class="Identifier">flags</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>               <span class="Comment">## Map Flags (-1 =&gt; not open)</span>
-  <span class="Identifier">mslc</span><span class="Operator">*</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a>              <span class="Comment">## (mem, len) of file</span>
-  </pre></dt>
+  <span class="Identifier">mslc</span><span class="Operator">*</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a>              <span class="Comment">## (mem, len) of file</span></pre></dt>
   <dd>
     
     Like MemFile but safe in an MT-environment
@@ -570,7 +567,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-22 12:59:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-16 17:15:30 UTC</small>
       </div>
     </div>
   </div>
