@@ -965,8 +965,8 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(858, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(845, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(861, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(848, 14) template/generic instantiation of `dispatchGen` from here
 cligen.nim(291, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
