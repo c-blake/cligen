@@ -350,6 +350,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##``stopWords`` is a ``seq[string]`` of words beyond which ``-.*`` no longer
   ##signifies an option (like the common sole ``--`` command argument).
   ##
+  ##``noHdr`` is a (mostly internal) flag to suppress emitting "Usage:" header
+  ##in generated help tables (e.g. in a multi-command).
+  ##
   ##``mergeNames`` gives the ``cmdNames`` param passed to ``mergeParams``, which
   ##defaults to ``@[cmdName]`` if ``mergeNames`` is ``@[]``.
   ##
