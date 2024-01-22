@@ -1035,6 +1035,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
       `cases`)
 
 macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
+  ## An internal macro to generate the call to `dispatchGen(itsMulti)`.
   let procBrackets = if procBkts.len < 2: procBkts[0] else: procBkts
   var prefix = "multi"
   let multiId = ident(prefix)
