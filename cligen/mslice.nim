@@ -450,7 +450,8 @@ proc initSep*(seps: string): Sep =
   ## repeat-folding char set separation.  Specifically, if any char of `seps`
   ## repeats, separators fold while value diversity implies char set separation.
   ## A magic val `"white"` = folding white space chars.  E.g.: `","` = strict
-  ## CSV, `"<SPC><SPC>"` = folding spaces `" "` = strict spaces.
+  ## CSV, `"<SPC><SPC>"` = folding spaces `" "` = strict spaces.  To simply skip
+  ## maybe nested backslash-escaping, '0', 't', and 'n' mean NUL, TAB, NEWLINE.
   if seps.len == 0:
     raise newException(ValueError, "Empty seps disallowed")
   elif seps[0] == 'w':          #User can use other permutation if cset needed
@@ -459,7 +460,12 @@ proc initSep*(seps: string): Sep =
     result.setDlm = wspace
     result.n      = wspace.card #=6 unless wspace defn changes
   else:
-    for d in seps: result.setDlm.incl d
+    for d in seps:
+      case d
+      of '0': result.setDlm.incl '\0'
+      of 't': result.setDlm.incl '\t'
+      of 'n': result.setDlm.incl '\n'
+      else  : result.setDlm.incl d
     result.n = result.setDlm.card
     result.chrDlm = seps[0]
     result.repeat = result.setDlm.card < seps.len

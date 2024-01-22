@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.0
+--------------
+  - cligen/mslice.initSep allows eliding backslash for special chars: 0, t, n
+
 Version: 1.6.18
 ---------------
   - Add cligen/mslice.within to test if one slice entirely brackets another
