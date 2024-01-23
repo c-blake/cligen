@@ -3,6 +3,23 @@ RELEASE NOTES
 
 Version: 1.7.0
 --------------
+  - New global options for `dispatchMulti` subcommands; Example use shown in
+    `test/FullyAutoMulti.nim` (including a local that masks the global and a way
+    to use it in the test/FullyAutoMulti.cf).  Requested/discussed in at least:
+      https://github.com/c-blake/cligen/issues/198 &
+      https://github.com/c-blake/cligen/issues/128
+      personal communication with @ZoomRmc & @Vindaar
+    Presently, extra help for the global option is not auto-generated, but you
+    can manually document it in the `usage` for "multi" as in FullyAutoMulti.
+       I plan to let this simmer unreleased / untagged version for a while if
+    anyone has any API-changing feedback.  In particular, right now `vars` is
+    NOT at the very end of `dispatchGen` & friends (to be positional-only call
+    compatible), but rather just after a similar series of ident-as-string args
+    (`positional`, `suppress`, `implicitDefault`).  So, you may need to add an
+    `@[]` if you do call `dispatchGen`/`dispatch` positionally (which you most
+    likely do not).  This slight backward incompatibility does motivate the
+    pending minor bump, though.
+
   - cligen/mslice.initSep allows eliding backslash for special chars: 0, t, n
 
 Version: 1.6.18

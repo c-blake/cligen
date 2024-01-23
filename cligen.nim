@@ -201,6 +201,14 @@ proc formalParams(n: NimNode, suppress: seq[NimNode]= @[]): NimNode =
       return formalParamExpand(kid, n, suppress)
   error "formalParams requires a proc argument."
 
+iterator ids(vars: seq[NimNode], fpars: NimNode, posIx = 0): NimNode =
+  for v in vars: yield v              # Search vars 1st so if name collides with
+  for i in 1 ..< len(fpars):          #..formal param, more local latter wins.
+    if i != posIx: yield fpars[i][0]  # ix cannot==0 => Like ix!=0 and etc
+
+proc hasId(vars: seq[NimNode]; fpars, key: NimNode; posIx = 0): bool =
+  for id in ids(vars, fpars, posIx): (if id.maybeDestrop == key: return true)
+
 iterator AListPairs(alist: NimNode, msg: string): (NimNode, NimNode) =
   if alist.kind == nnkSym:
     let imp = alist.getImpl
@@ -218,26 +226,27 @@ iterator AListPairs(alist: NimNode, msg: string): (NimNode, NimNode) =
   else:
     for ph in alist: yield (ph[1][0], ph[1][1])
 
-proc parseHelps(helps: NimNode, proNm: auto, fpars: auto):
+proc parseHelps(helps: NimNode, proNm: auto, vars: auto, fpars: auto):
     Table[string, (string, string)] =
   result = initTable[string, (string, string)]() #help key & text for any param
   for ph in AListPairs(helps, "`help`"):
     let k = ph[0].toString.optionNormalize
-    if not fpars.containsParam(ident(k)) and k notin builtinOptions:
+    if not hasId(vars, fpars, k.ident) and k notin builtinOptions:
       error $proNm & " has no param matching `help` key \"" & k & "\""
     result[k] = (ph[0].toString, ph[1].toString)
 
-proc parseShorts(shorts: NimNode, proNm: auto, fpars: auto): Table[string,char]=
+proc parseShorts(shorts: NimNode, proNm: auto, vars: auto, fpars: auto):
+    Table[string, char] =
   result = initTable[string, char]()  #table giving user-specified short option
   for ls in AListPairs(shorts, "`short`"):
     let k = ls[0].toString.optionNormalize
-    if k.len>0 and not fpars.containsParam(k.ident) and k notin builtinOptions:
+    if k.len>0 and not hasId(vars, fpars, k.ident) and k notin builtinOptions:
       error $proNm & " has no param matching `short` key \"" & k & "\""
     if ls[1].kind notin {nnkCharLit, nnkIntLit}:
       error "`short` value for \"" & k & "\" not a `char` lit"
     result[k] = if shorts.kind==nnkSym: ls[1].toInt.char else: ls[1].intVal.char
 
-proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
+proc dupBlock(vars:auto, fpars: auto, posIx: int, userSpec: Table[string,char]):
      Table[string, char] =      # Table giving short[param] avoiding collisions
   result = initTable[string, char]()         # short option for param
   var used: set[char] = {}                   # used shorts; bit vector ok
@@ -248,19 +257,16 @@ proc dupBlock(fpars: NimNode, posIx: int, userSpec: Table[string, char]):
   for lo, sh in userSpec:
     result[lo] = sh
     used.incl sh
-  for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
-    if i == posIx: continue                  # positionals get no option char
-    let parNm = optionNormalize($fpars[i][0])
+  for id in ids(vars, fpars, posIx):         # positionals get no option char
+    let parNm = optionNormalize($id)
     if parNm.len == 1:
       if parNm notin userSpec:
         result[parNm] = parNm[0]
       if parNm[0] in used and result[parNm] != parNm[0]:
-        error "cannot use unabbreviated param name '" &
-              $parNm[0] & "' as a short option"
+       error "cannot use unabbreviated name '" & $parNm[0]&"' as a short option"
       used.incl parNm[0]
-  for i in 1 ..< len(fpars):                 # [0] is proc, not desired here
-    if i == posIx: continue                  # positionals get no option char
-    let parNm = optionNormalize($fpars[i][0])
+  for id in ids(vars, fpars, posIx):         # positionals get no option char
+    let parNm = optionNormalize($id)
     if parNm.len == 1 and parNm[0] == result["help"]:
       error "`"&parNm&"` collides with `short[\"help\"]`.  Change help short."
     let sh = parNm[0]                        # abbreviation is 1st character
@@ -302,8 +308,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   help: typed={}, short: typed={}, usage: string=clUse, cf: ClCfg=clCfg,
   echoResult=false, noAutoEcho=false, positional: static string=AUTO,
   suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
-  dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
-  stopWords: seq[string] = @[], noHdr=false,
+  vars: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
+  alias: seq[ClAlias] = @[], stopWords: seq[string] = @[], noHdr=false,
   docs: ptr var seq[string]=cgVarSeqStrNil,
   setByParse: ptr var seq[ClParse]=cgSetByParseNil): untyped =
   ##Generate command-line dispatcher for proc ``pro`` named ``dispatchName``
@@ -347,6 +353,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   ##to the Nim default value for a type, rather than becoming required, when
   ##they lack an explicit initializer.
   ##
+  ##``vars`` is a ``seq[string]`` of outer scope-declared variables bound to the
+  ##CLI (e.g., on CL, `--logLvl=X` converts & assigns to `outer.logLvl = X`).
+  ##
   ##``stopWords`` is a ``seq[string]`` of words beyond which ``-.*`` no longer
   ##signifies an option (like the common sole ``--`` command argument).
   ##
@@ -379,6 +388,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let impl = pro.getImpl
   if impl == nil: error "getImpl(" & $pro & ") returned nil."
   let fpars = formalParams(impl, toIdSeq(suppress))
+  let vrs = toIdSeq(vars)
   var cmtDoc = toString(doc)
   if cmtDoc.len == 0:                   # allow caller to override commentDoc
     collectComments(cmtDoc, impl)
@@ -388,9 +398,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let proNm = $pro                      # Name of wrapped proc
   let cName = if cmdName.toString.len == 0: proNm else: cmdName.toString
   let disNm = dispatchId(dispatchName.toString, cName, proNm) # Name of wrapper
-  let helps = parseHelps(help, proNm, fpars)
+  let helps = parseHelps(help, proNm, vrs, fpars)
   let posIx = posIxGet(positional, fpars) #param slot for positional cmd args|-1
-  let shOpt = dupBlock(fpars, posIx, parseShorts(short, proNm, fpars))
+  let shOpt = dupBlock(vrs, fpars, posIx, parseShorts(short, proNm, vrs, fpars))
   let shortH = shOpt["help"]
   var spars = copyNimTree(fpars)        # Create shadow/safe suffixed params.
   var dpars = copyNimTree(fpars)        # Create default suffixed params.
@@ -512,6 +522,19 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parReq = 0; `apId`.parRend = `helpVsn`[0]
         if `helpVsn`[1] != `cf`.hTabSuppress:
           `tabId`.add(argHelp(false, `apId`) & `helpVsn`[1]))
+    for parId in vrs:                   # Handle user-specified variables
+      let pNm = optionNormalize($parId)
+      let sh  = $shOpt.getOrDefault(pNm)      # Add to perPar helpTab
+      let hky = helps.getOrDefault(pNm)[0]
+      let hlp = helps.getOrDefault(pNm)[1]
+      result.add(quote do:
+        `apId`.parNm = `pNm`; `apId`.parSh = `sh`; `apId`.parReq = ord(false)
+        `apId`.parRend = if `hky`.len>0: `hky` else: helpCase(`pNm`, clLongOpt)
+        let descr = getDescription(`parId`, `pNm`, `hlp`)
+        if descr != `cf`.hTabSuppress:
+          `tabId`.add(argHelp(`parId`, `apId`) & mayRend(descr))
+        `cbId`.incl(`pNm`, move(`apId`.parRend))
+        `allId`.add(helpCase(`pNm`, clLongOpt)))
     if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0:
       result.add(quote do:              # add opts for user alias system
         `cbId`.incl(optionNormalize(`aliasDefL`), `aliasDefL`)
@@ -665,6 +688,34 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                                  "Cannot parse arg to " & `apId`.key, clBadVal))
         if not `prsOnlyId`:
           if not argParse(`spar`, `dpar`, `apId`):
+            stderr.write `apId`.msg
+            raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
+        discard delItem(`mandId`, `parNm`)
+      if lopt in shOpt and lopt.len > 1:      # both a long and short option
+        let parShOpt = $shOpt.getOrDefault(lopt)
+        result.add(newNimNode(nnkOfBranch).add(
+          newStrLitNode(lopt), newStrLitNode(parShOpt)).add(apCall))
+      else:                                   # only a long option
+        result.add(newNimNode(nnkOfBranch).add(newStrLitNode(lopt)).add(apCall))
+    for parId in vrs:                         # add per-var cases
+      let parNm  = $parId                     #XXX This COULD consult a saved-
+      let lopt   = optionNormalize(parNm)     # .. above table of used case
+      let apCall = quote do:                  # .. labels and give user a nicer
+        `apId`.key = `pId`.key                # .. error message than "dup case
+        `apId`.val = `pId`.val                # .. labels".
+        `apId`.sep = `pId`.sep
+        `apId`.parNm = `parNm`
+        `apId`.parRend = helpCase(`parNm`, clLongOpt)
+        `keyCountId`.inc(`parNm`)
+        `apId`.parCount = `keyCountId`[`parNm`]
+        if cast[pointer](`setByParseId`) != cgSetByParseNil:
+          if argParse(`parId`, `parId`, `apId`):
+            `setByParseId`[].add((`parNm`, move(`pId`.val), "", clOk))
+          else:
+            `setByParseId`[].add((`parNm`, move(`pId`.val),
+                                 "Cannot parse arg to " & `apId`.key, clBadVal))
+        if not `prsOnlyId`:
+          if not argParse(`parId`, `parId`, `apId`):
             stderr.write `apId`.msg
             raise newException(ParseError, "Cannot parse arg to " & `apId`.key)
         discard delItem(`mandId`, `parNm`)
@@ -841,26 +892,27 @@ macro cligenQuitAux*(cmdLine:seq[string], dispatchName: string, cmdName: string,
 template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
- dispatchName="", mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
- stopWords:seq[string] = @[],noHdr=false,cmdLine=commandLineParams()): untyped =
+ vars: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
+ alias: seq[ClAlias] = @[], stopWords:seq[string] = @[], noHdr=false,
+ cmdLine=commandLineParams()): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
-              positional, suppress, implicitDefault, dispatchName, mergeNames,
-              alias, stopWords, noHdr)
+              positional, suppress, implicitDefault, vars, dispatchName,
+              mergeNames, alias, stopWords, noHdr)
   cligenQuitAux(cmdLine, dispatchName, cmdName, pro, echoResult, noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse,echoResult=false,noAutoEcho=false,positional=AUTO,
- suppress:seq[string] = @[], implicitDefault:seq[string] = @[], dispatchName="",
- mergeNames: seq[string] = @[], alias: seq[ClAlias] = @[],
- stopWords: seq[string] = @[], noHdr=false): untyped =
+ suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
+ vars: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
+ alias: seq[ClAlias] = @[], stopWords: seq[string] = @[], noHdr=false): untyped=
   ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
   proc cligenScope(cf: ClCfg) =
    dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
-              positional, suppress, implicitDefault, dispatchName, mergeNames,
-              alias, stopWords, noHdr)
+              positional, suppress, implicitDefault, vars, dispatchName,
+              mergeNames, alias, stopWords, noHdr)
   cligenScope(clCfg)
 
 proc subCmdName(p: NimNode): string =
@@ -1009,7 +1061,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
   cases.add(newNimNode(nnkElse).add(quote do:
     if `arg0Id` == "":
       if `cmdLineId`.len > 0: ambigSubcommand(`subMchsId`, `cmdLineId`[0])
-      else: echo topLevelHelp(`doc`, `use`,`cmd`,`subCmdsId`, `subDocsId`)
+      else: echo topLevelHelp(`doc`, `use`,`cmd`, `subCmdsId`, `subDocsId`)
     elif `arg0Id` == "help":
       if ("dispatch" & `prefix`) in `multiNmsId` and `prefix` != "multi":
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
@@ -1168,7 +1220,7 @@ template initFromCLcf*[T](default: T, cmdName: string="", doc: string="",
   proc callIt(): T =
     initGen(default, T, positional, suppress, "ini")
     dispatchGen(ini, cmdName, doc, help, short, usage, cf, false, false, AUTO,
-                @[], @[], "x", mergeNames, alias)
+                @[], @[], @[], "x", mergeNames, alias)
     try: result = x()
     except HelpOnly, VersionOnly: quit(0)
     except ParseError: quits(cgParseErrorExitCode)

@@ -28,5 +28,6 @@ proc mergeParams(cmdNames: seq[string],
     result.add cfToCL(cfPath, if cmdNames.len > 1: cmdNames[1] else: "")
   result.add envToCL(strutils.toUpperAscii(strutils.join(cmdNames, "_")))
   result.add cmdLine
+  when defined(debugMergeParams): echo "mergeParams returned: ", result
 {.pop.}
 # Leave hint[Performance]=off as this seems required to avoid warnings.

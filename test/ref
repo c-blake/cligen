@@ -236,13 +236,13 @@ Options:
 ==> test/FullyAutoMulti.out <==
 Infer & generate command-line interface/option/argument parser
 Usage:
-  FullyAutoMulti {SUBCMD}  [sub-command options & parameters]
+  FullyAutoMulti [-x|--xx=int(2)] {SUBCMD} [sub-command options & parameters]
 
 SUBCMDs:
   help    print comprehensive or per-cmd help
   demo    demo entry point with varied, meaningless parameters.
-  print   show entry point with varied, meaningless parameters.
-  punt    Another entry point; here we echoResult
+  print   show entry point with varied, meaningless parameters; Local `xx`.
+  punt    Another entry point; here we echoResult & use global `xx`.
   .       . is an alias for `punt`
   nel-ly  Yet another entry point; here we block autoEcho
 
@@ -268,15 +268,16 @@ where subcommand syntaxes are as follows:
       -i=, --item=   string  ""     set item
 
   print [optional-params] [paths: string...]
-    show entry point with varied, meaningless parameters.
+    show entry point with varied, meaningless parameters; Local `xx`.
   Options:
       --version      bool   false  print version
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
+      -x=, --xx=     float  3.0    set xx
 
   punt [optional-params] [names: string...]
-    Another entry point; here we echoResult
+    Another entry point; here we echoResult & use global `xx`.
   Options:
       -z=, --zeta=  int    1      set zeta
       -e=, --eta=   float  2.0    set eta
@@ -965,9 +966,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(861, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(848, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(291, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(913, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(900, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(297, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -1030,6 +1031,20 @@ Options:
   -b=, --be-ta=   float   2.0    set be_ta
   -v, --verb      bool    false  set verb
   -i=, --item=    string  ""     set item
+
+==> test/Vars.out <==
+Usage:
+  demo [optional-params] [args: string...]
+demo entry point with varied, meaningless parameters and a global.  A Nim
+invocation might be: `bogo=2; demo(@[ "hi", "ho" ])` corresponding to the CL
+invocation "demo --bogo=2 hi ho" (assuming executable is named "demo").
+Options:
+  -h, --help                    print this cligen-erated help
+  --help-syntax                 advanced: prepend,plurals,..
+  -z=, --bOGO=   int     1      growth constant
+  --be-ta=       float   2.0    shrink target
+  -v, --verb     bool    false  set verb
+  -i=, --item=   string  ""     set item
 
 ==> test/Version.out <==
 Usage:
