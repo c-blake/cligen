@@ -60,11 +60,10 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "color":
-      stderr.write "toml parsing\n"
       if not plain:
         for k2, v2 in v1.getTable().pairs:
-          let val = textAttrOn(v2.getElems().mapIt(it.getStr()))
-          var on = ""; var off = textAttrOff
+          let val = v2.getStr()
+          var on, off: string
           if ';' in val:
             let c = val.split(';')
             if c.len != 2:
@@ -72,7 +71,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
             on  = textAttrOn(c[0].strip.split, plain)
             off = textAttrOn(c[1].strip.split, plain)
           else:
-            on = textAttrOn(val.split, plain)
+            on = textAttrOn(val.strip.split, plain); off = textAttrOff
           case k2.toLowerAscii()
           of "optkeys", "options", "switches", "optkey", "option", "switch":
             c.helpAttr["clOptKeys"] = on; c.helpAttrOff["clOptKeys"] = off

@@ -9,13 +9,13 @@
 #   includes = ["LC_THEME"] # This can define aliases like: colors = "fhot5 = RED"
 
 [color]
-  switches = ["RED"]               # These example colors are likely very ugly to you.
-  valtype = ["CYAN"]               # The full syntax for all these color/attr specs is..
-  defaultvalue = ["GREEN", "bold"] # .. implemented in `cligen/humanUt.nim:textAttrParse`
-  description = ["PURPLE"]         # .. `cligen/humanUt.nim:attrNames` is a good start.
-  command = ["bold"]               # Command name in one-liners & in multi-cmd tables
-  doc = ["YELLOW"]                 # Overall documentation
-  args = ["RED"]                   # Positional args in one-liners
+  switches = "RED"            # These example colors are likely very ugly to you.
+  valtype = "CYAN"            # The full syntax for all these color/attr specs is..
+  defaultvalue = "GREEN bold" # .. implemented in `cligen/humanUt.nim:textAttrParse`
+  description = "PURPLE"      # .. `cligen/humanUt.nim:attrNames` is a good start.
+  command = "bold"            # Command name in one-liners & in multi-cmd tables
+  doc = "YELLOW"              # Overall documentation
+  args = "RED"                # Positional args in one-liners
 
 [render]
   singleStar = "italic     ; -italic"
