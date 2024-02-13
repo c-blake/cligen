@@ -28,6 +28,9 @@ Version: 1.7.0
     Existing TOML users likely need to simplify just 1 file in a user config
     (although running under `NO_COLOR=1` is another option).
 
+  - Fix bug in the strUt.fmtUncertain family of procs where (3.99, 2.08) would
+    round to (4.00, 0.21); I.e. 10X too small error; v.bad for pseudo t-tests.
+
 Version: 1.6.18
 ---------------
   - Add cligen/mslice.within to test if one slice entirely brackets another

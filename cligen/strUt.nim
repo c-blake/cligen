@@ -262,8 +262,8 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
     n0R = p - 18
     p   = 18                            # 64 bits==19 decs but sgn & round trick
   let frac = uint64((scl - dig.float)*pow10[p] + 0.5)
-  if frac.float >= pow10[p]:            # 9.99 with prec 1 rounding up
-    inc dig; bumped = true
+  if frac.float >= pow10[p]:            # D.99 with prec 1 rounding up
+    bumped = dig==9; inc dig            # but `bumped` tracks only po10 change
   elif frac != 0:                       # post decimal digits to convert
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
@@ -612,10 +612,11 @@ when isMainModule:
     let fmt = nmFmt[1]
     if k != 0: echo ""
     echo nmFmt[0]
-    for j, p in [2, 3]:           # This all works with/without dragonbox
+    for j, p in [1, 2, 3]:         # This all works with/without dragonbox
       if j != 0: echo ""; echo ""
       for i, sd in [ 1.23456e-6, 9.9996543, 1234.56, 99996.543 ]:
-        if i != 0: echo ""
+        if i != 0: echo ""         # Show raw input & rounded output
+        else: echo "p=",p
         echo "+1.2345678e-5 ", sd, "\t\t", fmt(+1.2345678e-5, sd, p)
         echo "+12.34567890  ", sd, "\t\t", fmt(+12.34567890 , sd, p)
         echo "+123.4567890  ", sd, "\t\t", fmt(+123.4567890 , sd, p)
@@ -626,6 +627,7 @@ when isMainModule:
         echo "-123.4567890  ", sd, "\t\t", fmt(-123.4567890 , sd, p)
         echo "-9.432101234  ", sd, "\t\t", fmt(-9.432101234 , sd, p)
         echo "-9.987654321  ", sd, "\t\t", fmt(-9.987654321 , sd, p)
+        echo "-39.99        ", sd, "\t\t", fmt(-39.99       , sd, p)
   echo "\nSPECIALS FP VALUES:"
   let minf = -1.0/0.0
   let pinf = +1.0/0.0
