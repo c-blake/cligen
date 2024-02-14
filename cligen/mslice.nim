@@ -467,10 +467,8 @@ proc initSep*(seps: string): Sep =
       of 'n': result.setDlm.incl '\n'
       else  : result.setDlm.incl d
     result.n = result.setDlm.card
-    result.chrDlm = seps[0]
-    if result.chrDlm == '0': result.chrDlm = '\0'
-    if result.chrDlm == 't': result.chrDlm = '\t'
-    if result.chrDlm == 'n': result.chrDlm = '\n'
+    result.chrDlm = if   seps[0] == '0': '\0' elif seps[0] == 't': '\t'
+                    elif seps[0] == 'n': '\n' else: seps[0]
     result.repeat = result.setDlm.card < seps.len
 
 type Splitr* {.deprecated: "use Sep".} = Sep
