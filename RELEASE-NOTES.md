@@ -25,6 +25,7 @@ Version: 1.7.0
   - BREAKING CHANGE only under -d:cgCfgToml & in config.toml:[color] section
     where color specification becomes like the `[render]` section and more
     like non-TOML color specs instead of a more awkward TOML list of strings.
+    For example, `defaultvalue = ["GREEN", "bold"]` becomes `= "GREEN bold"`.
     Existing TOML users likely need to simplify just 1 file in a user config
     (although running under `NO_COLOR=1` is another option).
 
