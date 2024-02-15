@@ -139,18 +139,18 @@ func isNaN(x: SomeFloat): bool {.inline.} = # added to std/math pretty late
       proc c_isnan(x: float): bool {.importc: "isnan", header: "math.h".}
       result = c_isnan(x)
 
-type f8s {.packed.} = object
+type F8s {.packed.} = object
   frac {.bitsize: 52}: uint64
   expo {.bitsize: 11}: uint16
   sign {.bitsize:  1}: uint8
 
 func abs(x: float): float {.inline.} =
-  var x: f8s = cast[ptr f8s](x.unsafeAddr)[]
+  var x: F8s = cast[ptr F8s](x.unsafeAddr)[]
   x.sign = 0
   cast[ptr float](x.addr)[]
 
 func expo(x: float): int {.inline.} =
-  int(cast[ptr f8s](x.unsafeAddr)[].expo) - 1023
+  int(cast[ptr F8s](x.unsafeAddr)[].expo) - 1023
 
 func ceilLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
   # Give arg to pow10 such that `abs(x)*pow10[1-arg]` is on half-open `[1,10)`.
@@ -230,7 +230,7 @@ type
 
 template fcSignNonFin(s, x, xs, opts) = # clear,add sign,deal w/maybe non-finite
   s.setLen 0
-  var xs: f8s = cast[ptr f8s](x.unsafeAddr)[]
+  var xs: F8s = cast[ptr F8s](x.unsafeAddr)[]
   if xs.sign == 1: s.add '-'
   elif fcPlus in opts: s.add '+'
   xs.sign = 0
@@ -475,7 +475,7 @@ proc fmtUncertainParts*(val, err: float,
   ##   https://www.bipm.org/en/committees/jc/jcgm/publications (E)
   when isMainModule: (if pmDfl.len==0: return) # give sideEffect for proc array
   let fcOpts = {fcPad0, fcTrailDot, fcExp23, fcExpPlus}
-  let abs_val = abs(val)
+  let absVal = abs(val)
   let err = abs(err)
   if err == 0.0 or err.isNaN:           # cannot do much here format & return
     ecvt2 result[0], result[1], val, 16, fcOpts, expon=result[4]
@@ -484,11 +484,11 @@ proc fmtUncertainParts*(val, err: float,
   var expon: int
   ecvt2 result[2], result[3], err, sigDigs-1, fcOpts, expon=expon
   if result[3].len == 0:                # [+-]inf err => 0|self if val infinite
-    if abs_val < 1e-6 * err:
+    if absVal < 1e-6 * err:
       result[0] = "0."; result[1] = "e0" # <=6 sigDigs; auto result[4] = 0
     else: ecvt2 result[0], result[1], val, 16, fcOpts, expon=result[4]
     return
-  let places = abs_val.floorLog10 - expon + sigDigs - 1
+  let places = absVal.floorLog10 - expon + sigDigs - 1
   if places < 0:                        # statistical 0 -> explicit 0
     if val.isNaN or val*0.5 == val: ecvt2 result[0], result[1], val, 16, fcOpts
     else: result[0] = "0."; result[1] = "e0"; result[4] = 0
