@@ -244,6 +244,7 @@ template fcSignNonFin(s, x, xs, opts) = # clear,add sign,deal w/maybe non-finite
 
 proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
            opts={fcPad0}) {.inline.} =
+  var exactP10 = false
   i = s.len                             # MANTISSA
   s.setLen i + p + 70                   # easy bound: D.Pe-EEE=2+p+5 = p+7 B
   var decs {.noinit.}: array[24, char]
@@ -253,22 +254,21 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
   var dig = uint64(x*pow10[1 - e])      # leading digit D
   if dig == 0:                          # Want leading digit on [1,10)
     dec e; dig = uint64(x*pow10[1 - e]) # ceilLog10 inline avoids ~85% re-do's
-  if x == pow10[e - 1]:                 # Exact pows of 10 need 1 more `dec e`..
-    dec e                               #..BUT also get leadingDig==1.  So, cmp
+  if x == pow10[e - 1]:                 # Exact pows of 10 need special handling
+    exactP10 = true                     #..So, cmp above
   let scl = x*pow10[1 - e]
   var n0R = 0; var i0 = 0; var nDec = 0
   var p = p
   if p > 18:                            # clip precision to 18
     n0R = p - 18
     p   = 18                            # 64 bits==19 decs but sgn & round trick
-  let frac = uint64((scl - dig.float)*pow10[p] + 0.5)
-  if frac.float >= pow10[p]:            # D.99 with prec 1 rounding up
-    bumped = dig==9; inc dig            # but `bumped` tracks only po10 change
+  let frac = if exactP10: 0u64 else: uint64((scl - dig.float)*pow10[p] + 0.5)
+  if frac.float >= pow10[p]:            # 9.99 with prec 1 rounding up
+    inc dig
   elif frac != 0:                       # post decimal digits to convert
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
-  if dig > 9: dig = 1; inc e            # Adjust for perfect po10 scl | x
-  elif bumped and dig == 2: dig = 1; inc e; bumped = false
+  if dig > 9: dig = 1; inc e; bumped = true  # Adjust for perfect po10 scl | x
   s[i] = chr(ord('0') + dig); inc i     # format D
   if p > 0:                             # format .PPP => '.'&lead0&digits&trail0
     s[i] = '.'; inc i
@@ -599,7 +599,7 @@ proc fmtUncertainMerged*(val, err: float, sigDigs=2, e0 = -2..4): string =
 
 when isMainModule:
   when not declared(File): import std/formatfloat
-  from math as m3 import sqrt, log10    # for -nan; dup import is ok
+  from math as m3 import sqrt, log10, pow # For -nan; as m3 so no dup import wrn
   proc rnd(v, e: float; sig=2): string =  # Create 5 identical signature procs
     let (vm, ve, um, ue, _) = fmtUncertainParts(v, e, sig); vm&ve&"   "&um&ue
   proc sci(v, e: float; sig=2): string = fmtUncertainSci(v, e, sig)
@@ -696,3 +696,15 @@ when isMainModule:
   doEcho ecvt, 1.234e101, 0, {fcTrailDot}
   doEcho ecvt,-4.25e10  , 0, {fcTrailDot}
   doEcho ecvt, 8.5e1    , 0, {fcTrailDot}
+  proc roundTrip(val, err: float) = # Test round trip for 1e8 pairs near origin
+    let (vm, ve, um, ue, _) = fmtUncertainParts(val, err)
+    let vP = vm.parseFloat * pow(10.0, ve[1..^1].parseInt.float)
+    let uP = um.parseFloat * pow(10.0, ue[1..^1].parseInt.float)
+    if uP == 0.0: echo "\e[1mZERO ROUNDED UNCERTAINTY\e[m"
+    let bU = abs(uP/err - 1.0) > 0.05         # Uncertainty diff beyond rounding
+    let bS = abs(vP/uP*err/val - 1.0) > 0.4 and val/err > 0.101
+    # Rounding => 0.4; 0.39 shows why; 0.101 handles slight round off error.
+    if bU or bS: echo val," +- ",err," => ",fmtUncertainSci(val, err)," ",
+                        (if bU: "badErr" else: ""),(if bS: " badSig" else: "")
+  for v in 1..10000:    #NOTE: Compile with -d:danger or this is VERY SLOW
+    for e in 1..10000: roundTrip v.float/100.0, e.float/100.0
