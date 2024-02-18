@@ -337,21 +337,24 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   let i0 = uint64toDecimal(decs, round) # All non-0 decimal digits in the answer
   let nDec = 24 - i0
   if round == 0: n0R = p                # 0.p0s
-  var n0 = min(-clX, p - 1)
+  let exactP10 = (x == pow10[clX])
+  var n0 = min(-clX, p - (if exactP10: 0 else: 1))
   if nDec > clX + p:                    # 999.9 -> 1000
-    inc n0R
+    if   exactP10 and round == 0: n0R = p - n0
+    elif exactP10 and round != 0: discard
+    else: inc n0R
     if clX > -1: inc nI
     else       : dec n0
   var i = s.len
-  s.setLen 4 + max(0, n0) + 24 - i0 + n0R
+  s.setLen 4 + max(0, n0) + nDec + n0R
   copyMem s[i].addr, decs[i0].addr, nI; inc i, nI
   if p > 0:
     if nI == 0: s[i] = '0'; inc i       # leading '0.' for pure fractions
     s[i] = '.'; inc i
     if n0 > 0:
       copyMem s[i].addr, zeros[0].unsafeAddr, min(zeros.len, n0); inc i, n0
-    copyMem s[i].addr, decs[i0 + nI].addr, 24 - (i0 + nI)
-    inc i, 24 - (i0 + nI)
+    copyMem s[i].addr, decs[i0 + nI].addr, nDec - nI
+    inc i, nDec - nI
     if fcPad0 in opts: copyMem s[i].addr,zeros[0].unsafeAddr, n0R; inc i,n0R
     else: s.setLen i; i = 1 + s.rfind({'1'..'9', '.'})
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
@@ -658,6 +661,17 @@ when isMainModule:
   doEcho fcvt, 1.234,  9, {fcPlus}
   doEcho fcvt,-4.25 ,  9, {fcPlus}
   doEcho fcvt, 8.5  ,  9, {fcPlus}
+  echo "\e[7mfcvt exact po10; 10.; p = 1,2\e[m"
+  doEchD fcvt,10,1; doEchD fcvt,10,2
+  echo "\e[7mfcvt exact po10; 0.1; p = 1,2,3\e[m"
+  doEchD fcvt,0.1,1; doEchD fcvt,0.1,2; doEchD fcvt,0.1,3
+  echo "\e[7mfcvt exact po10; 0.01; p = 1,2,3\e[m"
+  doEchD fcvt,0.01,1; doEchD fcvt,0.01,2; doEchD fcvt,0.01,3
+  echo "\e[7mfcvt exact po10; 0.001; p = 1,2,3,4\e[m"
+  doEchD fcvt,0.001,1;doEchD fcvt,0.001,2;doEchD fcvt,0.001,3;doEchD fcvt,0.001,4
+  echo "\e[7mfcvt exact po10; 0.0001; p = 1,2,3,4,5,6\e[m"
+  doEchD fcvt,0.0001,1;doEchD fcvt,0.0001,2;doEchD fcvt,0.0001,3
+  doEchD fcvt,0.0001,4;doEchD fcvt,0.0001,5;doEchD fcvt,0.0001,6
   echo "\n\e[7mdefault ecvt\e[m"
   doEchD ecvt, 1.234e101, 15
   doEchD ecvt,-4.25e10  , 15

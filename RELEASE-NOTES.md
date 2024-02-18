@@ -30,7 +30,8 @@ Version: 1.7.0
     (although running under `NO_COLOR=1` is another option).
 
   - Fix bug in the strUt.fmtUncertain family of procs where (3.99, 2.08) would
-    round to (4.00, 0.21); I.e. 10X too small error; v.bad for pseudo t-tests.
+    round to (4.00, 0.21); I.e. 10X too small error; v.bad for pseudo t-tests
+    and some unrelated exact power-of-10 bugs in ecvt2/fcvt.
 
 Version: 1.6.18
 ---------------
