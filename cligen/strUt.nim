@@ -244,7 +244,6 @@ template fcSignNonFin(s, x, xs, opts) = # clear,add sign,deal w/maybe non-finite
 
 proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
            opts={fcPad0}) {.inline.} =
-  var exactP10 = false
   i = s.len                             # MANTISSA
   s.setLen i + p + 70                   # easy bound: D.Pe-EEE=2+p+5 = p+7 B
   var decs {.noinit.}: array[24, char]
@@ -254,8 +253,7 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
   var dig = uint64(x*pow10[1 - e])      # leading digit D
   if dig == 0:                          # Want leading digit on [1,10)
     dec e; dig = uint64(x*pow10[1 - e]) # ceilLog10 inline avoids ~85% re-do's
-  if x == pow10[e - 1]:                 # Exact pows of 10 need special handling
-    exactP10 = true                     #..So, cmp above
+  let exactP10 = x == pow10[e - 1]      # Exact pows of 10 need special handling
   let scl = x*pow10[1 - e]
   var n0R = 0; var i0 = 0; var nDec = 0
   var p = p
@@ -268,7 +266,7 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
   elif frac != 0:                       # post decimal digits to convert
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
-  if dig > 9: dig = 1; inc e; bumped = true  # Adjust for perfect po10 scl | x
+  if dig > 9: dig = 1; inc e; bumped = x != 1.0 # Adjust for perfect po10 scl|x
   s[i] = chr(ord('0') + dig); inc i     # format D
   if p > 0:                             # format .PPP => '.'&lead0&digits&trail0
     s[i] = '.'; inc i
