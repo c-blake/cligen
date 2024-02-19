@@ -17,8 +17,10 @@ Version: 1.7.0
     compatible), but rather just after a similar series of ident-as-string args
     (`positional`, `suppress`, `implicitDefault`).  So, you may need to add an
     `@[]` if you do call `dispatchGen`/`dispatch` positionally (which you most
-    likely do not).  This slight backward incompatibility does motivate the
-    pending minor bump, though.
+    likely do not).  This slight BREAKING CHANGE motivates the pending minor
+    bump, though.
+        `test/Vars.nim` is a simpler test program of the basic functionality to
+    bind CL options not to a proc parameter but to any outer scope variable.
 
   - cligen/mslice.initSep allows eliding backslash for special chars: 0, t, n
 
