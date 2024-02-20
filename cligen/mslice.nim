@@ -41,11 +41,9 @@ proc toMSlice*(a: string, keep=false): MSlice =
   ## which may be freed via ``dealloc(result.mem)``.
   result.len = a.len
   if keep:
-    let data = alloc0(a.len + 1)
-    copyMem(data, a[0].unsafeAddr, a.len)
-    result.mem = cast[cstring](data)
-  else:
-    result.mem = a.cstring
+    result.mem = cast[cstring](alloc0(result.len + 1))
+    copyMem result.mem, a[0].unsafeAddr, result.len
+  else: result.mem = a.cstring
 
 proc toCstr*(p: pointer): cstring {.inline.} =
   ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
