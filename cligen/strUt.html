@@ -64,6 +64,7 @@
   fcExp3,                   ## 3 digit exp; 1e003 not 1e3; only for ecvt
   fcExpPlus                  ## '+' on positive exponents; 1e+3 not 1e3; only for ecvt">FloatCvtOptions</a></li>
 <li><a class="reference" href="#MacroCall" title="MacroCall = (Slice[int], Slice[int], Slice[int])">MacroCall</a></li>
+<li><a class="reference" href="#MacroCallX" title="MacroCallX = (Slice[int], Slice[int], Slice[int], string)">MacroCallX</a></li>
 
     </ul>
   </details>
@@ -195,6 +196,10 @@
   <li><a class="reference" href="#tmplParsed%2CopenArray%5Bchar%5D%2Cchar" title="tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]">tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">tmplParses
+  <li><a class="reference" href="#tmplParses%2CopenArray%5Bchar%5D%2Cchar" title="tmplParses(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCallX]">tmplParses(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCallX]</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">toString
   <li><a class="reference" href="#toString%2CopenArray%5Bchar%5D" title="toString(s: openArray[char]): string">toString(s: openArray[char]): string</a></li>
 
@@ -258,6 +263,14 @@
   <dd>
     
     Id, Arg, whole Call
+    
+  </dd>
+</div>
+<div id="MacroCallX">
+  <dt><pre><a href="strUt.html#MacroCallX"><span class="Identifier">MacroCallX</span></a> <span class="Other">=</span> <span class="Other">(</span><span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    Call &amp; string
     
   </dd>
 </div>
@@ -600,6 +613,18 @@
 </div>
 
 </div>
+<div id="tmplParses-procs-all">
+  <div id="tmplParses,openArray[char],char">
+  <dt><pre><span class="Keyword">proc</span> <a href="#tmplParses%2CopenArray%5Bchar%5D%2Cchar"><span class="Identifier">tmplParses</span></a><span class="Other">(</span><span class="Identifier">fmt</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">meta</span> <span class="Other">=</span> <span class="CharLit">'$'</span><span class="Other">;</span> <span class="Identifier">ids</span> <span class="Other">=</span> <span class="Identifier">alphaNum</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <a href="strUt.html#MacroCallX"><span class="Identifier">MacroCallX</span></a><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Pre-process a format string template into a <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">MacroCallX</span><span class="Punctuation">]</span></span></tt>.
+    
+  </dd>
+</div>
+
+</div>
 <div id="toString-procs-all">
   <div id="toString,openArray[char]">
   <dt><pre><span class="Keyword">proc</span> <a href="#toString%2CopenArray%5Bchar%5D"><span class="Identifier">toString</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -663,7 +688,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-02-20 17:25:28 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-02-20 18:34:12 UTC</small>
       </div>
     </div>
   </div>

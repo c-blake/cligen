@@ -412,6 +412,7 @@
 </ul>
 <ul class="simple nested-toc-section">toMSlice
   <li><a class="reference" href="#toMSlice%2Cstring" title="toMSlice(a: string; keep = false): MSlice">toMSlice(a: string; keep = false): MSlice</a></li>
+<li><a class="reference" href="#toMSlice%2CopenArray%5Bchar%5D%2CHSlice%5BT%2CU%5D" title="toMSlice[T, U](a: openArray[char]; s: HSlice[T, U]; keep = false): MSlice">toMSlice[T, U](a: openArray[char]; s: HSlice[T, U]; keep = false): MSlice</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toOb
@@ -1456,6 +1457,14 @@
     
   </dd>
 </div>
+<div id="toMSlice,openArray[char],HSlice[T,U]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#toMSlice%2CopenArray%5Bchar%5D%2CHSlice%5BT%2CU%5D"><span class="Identifier">toMSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">keep</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a></pre></dt>
+  <dd>
+    
+    Convert string &amp; HSlice<a class="reference internal" href="#T,U">T,U</a> to an MSlice.  If <tt class="docutils literal"><span class="pre">keep</span></tt> is true, a copy is allocated which may be freed via <tt class="docutils literal"><span class="pre">dealloc(result.mem)</span></tt>.
+    
+  </dd>
+</div>
 
 </div>
 <div id="toOb-procs-all">
@@ -1637,7 +1646,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-02-20 17:25:28 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-02-20 18:34:11 UTC</small>
       </div>
     </div>
   </div>
