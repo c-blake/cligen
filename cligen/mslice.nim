@@ -73,6 +73,24 @@ proc `[]`*[T, U: Ordinal](s: MSlice, x: HSlice[T, U]): MSlice {.inline.} =
   result.mem = s.mem +! o
   result.len = (s ^^ x.b) - o + 1
 
+template BadRange: untyped =
+  when declared(RangeDefect): RangeDefect else: RangeError
+proc toMSlice*[T,U](a: openArray[char], s: HSlice[T,U], keep=false): MSlice =
+  ## Convert string & HSlice[T,U] to an MSlice.  If ``keep`` is true, a copy is
+  ## allocated which may be freed via ``dealloc(result.mem)``.
+  result.len = (when U is BackwardsIndex: a.len+1 - s.b.int else: s.b.int+1) -
+               s.a.int
+  when not declared(danger):
+    if result.len < 0:
+      raise newException(BadRange(), "value out of range: " & $result.len &
+                                     " notin 0 .. " & $result.len.type.high)
+    elif result.len + s.a.int > a.len - 1:
+      raise newException(BadIndex(), formatErrorIndexBound(a.len, a.len-1))
+  if keep:
+    result.mem = cast[cstring](alloc0(result.len + 1))
+    copyMem result.mem, a[s.a.int].unsafeAddr, result.len
+  else: result.mem = a[s.a.int].unsafeAddr
+
 proc mem*(s: openArray[char]): pointer =
   ## Make it easy to write a `SomeString` proc
   if s.len > 0: cast[pointer](s[0].unsafeAddr) else: nil
