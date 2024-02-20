@@ -2,10 +2,11 @@ from std/strutils import toUpperAscii
 import cligen/strUt     # Example/test text template/macro expand/interpolation.
 
 proc render(fmt: openArray[char]): string =
-  for (id, arg, call) in tmplParse(fmt):
+  let fmtParses = fmt.tmplParses       # or `fmt.tmplParsed|iterator tmplParse`
+  for (id, arg, call, idStr) in fmtParses: # or (id, arg, call) with..
     if id.idIsLiteral: result.add fmt[arg]
     else:
-      case fmt[id].toString
+      case idStr                           #..or `fmt[id].toString`
       of "a": result.add "hmm"
       of "bc": result.add "hoo"
       of "uc": (for i in arg: result.add fmt[i].toUpperAscii)

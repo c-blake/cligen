@@ -459,6 +459,12 @@ iterator tmplParse*(fmt: openArray[char], meta='$', ids=alphaNum): MacroCall =
 proc tmplParsed*(fmt: openArray[char], meta='$', ids=alphaNum): seq[MacroCall] =
   ## Pre-process a format string template into a `seq[MacroCall]`.
   for macCall in tmplParse(fmt, meta, ids): result.add macCall
+
+type MacroCallX* = (Slice[int], Slice[int], Slice[int], string) ## Call & string
+proc tmplParses*(fmt: openArray[char], meta='$', ids=alphaNum):seq[MacroCallX] =
+  ## Pre-process a format string template into a `seq[MacroCallX]`.
+  for mc in tmplParse(fmt, meta, ids):
+    result.add (mc[0], mc[1], mc[2], fmt[mc[0]].toString)
                                         #*** FORMATTING UNCERTAIN NUMBERS ***
 const pmUnicode* = "±"                  ## for re-assign/param passing ease
 const pmUnicodeSpaced* = " ± "          ## for re-assign/param passing ease
