@@ -218,7 +218,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
           copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
           let mayRec = maxDepth == 0 or depth + 1 < maxDepth
           lst.stx_nlink = 0                         # Mark Stat invalid
-          if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
+          if (lstats or (mayRec and d.d_type == DT_UNKNOWN)) and
              lstatxat(dfd, cast[cstring](d.d_name[0].addr), lst, 0.cint) == 0:
             d.d_type = stat2dtype(lst.stx_mode)     # Get d_type from Statx
           dt = d.d_type
@@ -249,7 +249,7 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
         copyMem path[nmAt].addr, d.d_name[0].addr, m + 1
         let mayRec = maxDepth == 0 or depth + 1 < maxDepth
         lst.stx_nlink = 0                           # Mark Stat invalid
-        if mayRec and (lstats or d.d_type == DT_UNKNOWN) and
+        if (lstats or (mayRec and d.d_type == DT_UNKNOWN)) and
            lstatxat(dfd, cast[cstring](d.d_name[0].addr), lst, 0.cint) == 0:
           d.d_type = stat2dtype(lst.stx_mode)       # Get d_type from Statx
         dt = d.d_type
