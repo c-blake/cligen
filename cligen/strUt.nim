@@ -274,6 +274,7 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
     copyMem s[i + p - nDec].addr, decs[i0].addr, nDec
     if fcPad0 in opts: inc i, p
     else: s.setLen i + p; i = 1 + s.rfind({'1'..'9', '.'}); s.setLen i + 5
+    if s[i-1] == '.' and fcTrailDot notin opts: dec i
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
   elif fcTrailDot in opts: s[i] = '.'; inc i
 
@@ -306,6 +307,7 @@ proc ecvt*(s: var string, x: float, p=17, opts={fcPad0}) {.inline.} =
   s.fcSignNonFin x, xs, opts            # `return`s for non-finite numbers
   var i, e: int; var bumped = false
   s.ecvtM x, i, e, bumped, p, opts
+  if x == 0.0: inc e, 2
   s.ecvtE i, e, opts
   s.setLen i
 
@@ -318,6 +320,7 @@ proc ecvt2*(man, exp: var string; x: float; p=17, opts={fcPad0};
   man.fcSignNonFin x, xs, opts            # `return`s for non-finite numbers
   var i, e: int
   man.ecvtM x, i, e, bumped, p, opts; man.setLen i
+  if x == 0.0: inc e, 2
   i = 0; exp.setLen 6
   exp.ecvtE i, e, opts; exp.setLen i; expon = if exp[1]=='-': -e else: e
 
@@ -714,7 +717,10 @@ when isMainModule:
   doEcho ecvt, 1.234e101, 0, {fcTrailDot}
   doEcho ecvt,-4.25e10  , 0, {fcTrailDot}
   doEcho ecvt, 8.5e1    , 0, {fcTrailDot}
-  proc roundTrip(val, err: float) = # Test round trip for 1e8 pairs near origin
+  doEcho ecvt, 0.0e0    , 1, {} #TODO Should probably loop over all possible {}
+  doEcho ecvt, 1.0e1    , 1, {}
+  when defined(roundTrip):
+   proc roundTrip(val, err: float) = # Test round trip for 1e8 pairs near origin
     let (vm, ve, um, ue, _) = fmtUncertainParts(val, err)
     let vP = vm.parseFloat * pow(10.0, ve[1..^1].parseInt.float)
     let uP = um.parseFloat * pow(10.0, ue[1..^1].parseInt.float)
@@ -724,5 +730,5 @@ when isMainModule:
     # Rounding => 0.4; 0.39 shows why; 0.101 handles slight round off error.
     if bU or bS: echo val," +- ",err," => ",fmtUncertainSci(val, err)," ",
                         (if bU: "badErr" else: ""),(if bS: " badSig" else: "")
-  for v in 1..10000:    #NOTE: Compile with -d:danger or this is VERY SLOW
+   for v in 1..10000:    #NOTE: Compile with -d:danger or this is VERY SLOW
     for e in 1..10000: roundTrip v.float/100.0, e.float/100.0
