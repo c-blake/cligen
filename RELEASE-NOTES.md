@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.1
+--------------
+  - Fix two `cligen/strUt.ecvt` bugs (NOT resulting in bad parses/round trips)
+
 Version: 1.7.0
 --------------
   - New global options for `dispatchMulti` subcommands; Example use shown in
