@@ -223,10 +223,10 @@ proc `==`*(a: string, ms: MSlice): bool {.inline.} =
   a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
 proc `==`*(ms: MSlice, b: string): bool {.inline.} = b == ms
 
-import std/hashes # hashData
+import std/hashes # hash(openArray[byte])
 proc hash*(ms: MSlice): Hash {.inline.} =
   ## hash MSlice data; With ``==`` all we need to put in a Table/Set
-  result = hashData(ms.mem, ms.len)
+  hash toOpenArray[byte](cast[ptr UncheckedArray[byte]](ms.mem), 0, ms.len - 1)
 
 proc nextSlice*(mslc, ms: var MSlice, sep='\n', eat='\0'): int =
   ## Stores everything from the start of ``mslc`` up to excluding the next
