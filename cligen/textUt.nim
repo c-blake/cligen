@@ -271,7 +271,9 @@ type C = int16      ##Type for edit cost values & totals
 const mxC = C.high
 proc distDamerau*[T](a, b: openArray[T], maxDist=mxC,
                      idC=C(1), subC=C(1), xpoC=C(1), dI: var seq[C]): C =
-  ## True Damerau(1964) distance with unrestricted transpositions.
+  ## True Damerau (1964) distance with unrestricted transpositions (not OSA) and
+  ## user cost scales for ins-del, substitute, transposition.  For details see:
+  ## https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
   var n = a.len                         #ensure 2nd arg shorter (m < n)
   var m = b.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
   if abs(n - m) * int(idC) >= int(maxDist):
