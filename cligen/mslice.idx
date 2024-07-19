@@ -92,18 +92,18 @@ nim	parseInt	cligen/mslice.html#parseInt,,int	proc parseInt(s: MSlice | openArra
 nim	parseHex	cligen/mslice.html#parseHex,,int	proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		700
 nim	pow10	cligen/mslice.html#pow10	const pow10		706
 nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		765
-nimgrp	strip	cligen/mslice.html#strip-procs-all	proc		333
-nimgrp	[]	cligen/mslice.html#[]-procs-all	proc		58
-nimgrp	split	cligen/mslice.html#split-procs-all	proc		493
-nimgrp	frame	cligen/mslice.html#frame-procs-all	proc		577
-nimgrp	msplit	cligen/mslice.html#msplit-procs-all	proc		292
-nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		24
 nimgrp	tomslice	cligen/mslice.html#toMSlice-procs-all	proc		39
 nimgrp	splitr	cligen/mslice.html#splitr-procs-all	proc		444
-nimgrp	rfind	cligen/mslice.html#rfind-procs-all	proc		123
-nimgrp	stripleading	cligen/mslice.html#stripLeading-procs-all	proc		325
+nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		24
+nimgrp	[]	cligen/mslice.html#[]-procs-all	proc		58
 nimgrp	dup	cligen/mslice.html#dup-procs-all	proc		133
 nimgrp	striptrailing	cligen/mslice.html#stripTrailing-procs-all	proc		330
+nimgrp	stripleading	cligen/mslice.html#stripLeading-procs-all	proc		325
+nimgrp	rfind	cligen/mslice.html#rfind-procs-all	proc		123
 nimgrp	==	cligen/mslice.html#==-procs-all	proc		173
+nimgrp	msplit	cligen/mslice.html#msplit-procs-all	proc		292
+nimgrp	strip	cligen/mslice.html#strip-procs-all	proc		333
+nimgrp	split	cligen/mslice.html#split-procs-all	proc		493
+nimgrp	frame	cligen/mslice.html#frame-procs-all	proc		577
 nimgrp	frame	cligen/mslice.html#frame-iterators-all	iterator		550
 nimgrp	toopenarraychar	cligen/mslice.html#toOpenArrayChar-templates-all	template		155

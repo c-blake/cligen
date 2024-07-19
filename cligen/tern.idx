@@ -33,5 +33,5 @@ nim	uniquePfxPat	cligen/tern.html#uniquePfxPat,Tern[T],string,string	proc unique
 nim	uniquePfxPats	cligen/tern.html#uniquePfxPats,openArray[string],string	proc uniquePfxPats(x: openArray[string]; sep = "*"): seq[string]		275
 nim	uniqueSfxPats	cligen/tern.html#uniqueSfxPats,openArray[string],string	proc uniqueSfxPats(x: openArray[string]; sep = "*"): seq[string]		282
 nimgrp	containsorincl	cligen/tern.html#containsOrIncl-procs-all	proc		146
-nimgrp	incl	cligen/tern.html#incl-procs-all	proc		165
 nimgrp	[]	cligen/tern.html#[]-procs-all	proc		130
+nimgrp	incl	cligen/tern.html#incl-procs-all	proc		165

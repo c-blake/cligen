@@ -34,6 +34,6 @@ nim	uniquePfxPat	cligen/trie.html#uniquePfxPat,openArray[string],string	proc uni
 nim	uniqueSfxPat	cligen/trie.html#uniqueSfxPat,openArray[string],string	proc uniqueSfxPat(x: openArray[string]; sep = "*"): seq[string]		354
 nim	toTrie	cligen/trie.html#toTrie,openArray[string]	proc toTrie(x: openArray[string]): Trie[void]		365
 nimgrp	containsorincl	cligen/trie.html#containsOrIncl-procs-all	proc		222
-nimgrp	incl	cligen/trie.html#incl-procs-all	proc		241
 nimgrp	uniquepfxpat	cligen/trie.html#uniquePfxPat-procs-all	proc		93
 nimgrp	[]	cligen/trie.html#[]-procs-all	proc		206
+nimgrp	incl	cligen/trie.html#incl-procs-all	proc		241

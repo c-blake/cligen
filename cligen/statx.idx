@@ -73,7 +73,7 @@ nim	getBirthTimeNsec	cligen/statx.html#getBirthTimeNsec,string	proc getBirthTime
 nim	fileTime	cligen/statx.html#fileTime,Statx,char,int	proc fileTime(st: Statx; kind: char; dir = 1): int64		264
 nim	fileTime	cligen/statx.html#fileTime,string,char,int	proc fileTime(path: string; kind: char; missing = int64(0); dir = 1): int64		274
 nim	doStat	cligen/statx.html#doStat,cint,string,int,Statx,bool,bool	proc doStat(dfd: cint; path: string; nmAt: int; st: var Statx; Deref, quiet: bool): bool		279
-nimgrp	getbirthtimensec	cligen/statx.html#getBirthTimeNsec-procs-all	proc		258
 nimgrp	statx	cligen/statx.html#statx-procs-all	proc		116
-nimgrp	filetime	cligen/statx.html#fileTime-procs-all	proc		264
 nimgrp	tostatxts	cligen/statx.html#toStatxTs-procs-all	proc		77
+nimgrp	filetime	cligen/statx.html#fileTime-procs-all	proc		264
+nimgrp	getbirthtimensec	cligen/statx.html#getBirthTimeNsec-procs-all	proc		258

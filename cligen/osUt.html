@@ -16,10 +16,10 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.1.1">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.1.9">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.1.1"></script>
+<script type="text/javascript" src="../dochack.js?v=2.1.9"></script>
 </head>
 <body>
   <div class="document" id="documentId">
@@ -798,7 +798,8 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#run%2CopenArray%5Bstring%5D%2CStringTableRef"><span class="Identifier">run</span></a><span class="Other">(</span><span class="Identifier">cmd</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">env</span><span class="Other">:</span> <span class="Identifier">StringTableRef</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
          <span class="Identifier">opts</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">poEchoCmd</span><span class="Other">,</span> <span class="Identifier">poUsePath</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">dryRun</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">logFile</span> <span class="Other">=</span> <span class="Identifier">stderr</span><span class="Other">;</span>
          <span class="Identifier">logWrite</span> <span class="Other">=</span> <span class="Identifier">lgBold</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">ExecIOEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+    <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">ExecIOEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span>
+                                   <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     Wrap a sync(<tt class="docutils literal"><span class="pre"><span class="Identifier">waitForExit</span></span></tt>) <tt class="docutils literal"><span class="pre"><span class="Identifier">os</span><span class="Operator">.</span><span class="Identifier">startProcess</span></span></tt> BUT only print (if <tt class="docutils literal"><span class="pre"><span class="Identifier">dryRun</span></span></tt>), default to use PATH &amp; echo &amp; allow log destination/embellishment overrides.
@@ -1179,7 +1180,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-06-23 17:37:00 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-07-19 09:14:03 UTC</small>
       </div>
     </div>
   </div>
