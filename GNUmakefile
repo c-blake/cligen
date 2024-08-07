@@ -14,7 +14,7 @@ AT := $(AT_$V)
 DIFF ?= diff # DIFF='diff -u' gmake | gmake DIFF='diff --color=auto' | etc.
 SED ?= sed
 
-.PHONY: test clean clean_cache
+.PHONY: def install test clean clean_cache
 export COLUMNS := 80
 export CLIGEN_WIDTH := 80
 export CLIGEN := /dev/null
@@ -35,6 +35,12 @@ TESTS_TOP_LVL_OUT := $(patsubst %,test/%TopLvl.out,\
 	FullyAutoMulti MultMultMult MultiMulti PassValuesMulti QualifiedMulti\
 	RangeTypes SubScope)
 OUT := test/out
+
+def: ; @echo gmake test OR make install destdir=/usr/lib/nim/site
+
+install: #For use ease,destdir should be in a nim install's default search path.
+	umask 022; mkdir -p "$(destdir)"
+	umask 022; cp -pr cligen.nim cligen "$(destdir)"
 
 test: $(OUT)
 
