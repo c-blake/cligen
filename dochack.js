@@ -1238,7 +1238,7 @@ function then__dochack_u1099(future_p0, onSuccess_p1, onReject_p2) {
 
   BeforeRet: {
     var ret_536872027 = null;
-    ret_536872027 = future_p0.then(onSuccess_p1, onReject_p2)
+    ret_536872027 = future_p0.then(onSuccess_p1, onReject_p2);
     result_536872017 = ret_536872027;
     break BeforeRet;
   };
