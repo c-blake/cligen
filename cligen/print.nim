@@ -1,9 +1,9 @@
 ## Sometimes one does much fast & furious weakly formatted echos and it can be
-## tiresome to always put in spaces or formatting.  Languages like Python
-## popularized a low ceremony auto-spacing print.  So, here you go.
+## tiresome to always put in spaces or formatting.  Python popularized a low
+## ceremony auto-spacing print.  So, here you go.
 ##
 ## Note that we *do not* try to mimic the inconvenient Python API.  In my
-## experience, traits in the flush/sep family do not vary per-call but rather
+## experience, traits in the flush/sep family do not vary per call but rather
 ## per whole program (or at least per whole `File`, but wrapping that or keeping
 ## a `Table[File,...]` also seems inconvenient/error prone).  E.g., you may want
 ## `printsFlush==true` to debug yet in production want buffering for speed.  A
@@ -12,8 +12,8 @@
 ## *not* true, it seems likely you would want to leave it `printsFlush==false`
 ## and call `flushFile` on your own.  One also rarely changes `printsSep`.  The
 ## whole point is some simple, default spacing.  If you change that you may as
-## well do a `strformat &"thing"`.  Feel free to disgree with me and write your
-## own.  If you are porting a bunch of Python code nimpylib may be more useful.
+## well do a `strformat &"thing"`.  Feel free to disagree with me and write your
+## own.  If you are porting a bunch of Python code, nimpylib may be more useful.
 ##
 ## Auto-line ending & target `File` s do vary, though.  For these we just use
 ## more proc names (there are only 3x2). These lean upon pre-established naming
