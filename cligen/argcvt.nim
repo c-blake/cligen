@@ -168,11 +168,11 @@ template doArgParse[WideT: SomeNumber, T: SomeNumber](
 
 proc argParse*[T: SomeNumber](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   when T is SomeSignedInt:
-    doArgParse[BiggestInt](parseBiggestInt, dst, dfl, a)
+    doArgParse[BiggestInt, T](parseBiggestInt, dst, dfl, a)
   elif T is SomeUnsignedInt:
-    doArgParse[BiggestUInt](parseBiggestUInt, dst, dfl, a)
+    doArgParse[BiggestUInt, T](parseBiggestUInt, dst, dfl, a)
   else:
-    doArgParse[BiggestFloat](parseBiggestFloat, dst, dfl, a)
+    doArgParse[BiggestFloat, T](parseBiggestFloat, dst, dfl, a)
 
 proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
   when T is range:
