@@ -38,7 +38,7 @@ proc perror*(x: cstring, len: int, code: OSErrorCode, err=stderr) =
   ## Clunky w/spartan msgs, but allows safe output from OpenMP || blocks.
   if err == nil: return
   let errStr = strerror(code.cint)
-  let errLen = strlen(errstr)
+  let errLen = strlen(errStr)
   try:
     discard err.writeBuffer(x.pointer, len); err.write ": "
     discard err.writeBuffer(errstr, errlen); err.write "\n"
