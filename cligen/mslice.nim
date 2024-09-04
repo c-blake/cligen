@@ -148,9 +148,8 @@ proc dup*(ms: MSlice): MSlice =
 
 proc toString*(ms: MSlice, s: var string) {.inline.} =
   ## Replace a Nim string ``s`` with data from an MSlice.
-  s.setLen(ms.len)
-  if ms.len > 0:
-    copyMem(addr(s[0]), ms.mem, ms.len)
+  s.setLen ms.len
+  copyMem s.cstring, ms.mem, ms.len
 
 template toOpenArrayChar*(ms: MSlice): untyped =
   toOpenArray(cast[ptr UncheckedArray[char]](ms.mem), 0, ms.len - 1)
