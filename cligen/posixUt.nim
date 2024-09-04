@@ -649,7 +649,7 @@ proc pathToSelf*(av: cstringArray): string =
   ## | /path/binExec alias likely workarounds).  For `.` it relies on no `chdir`
   ## between program start & here.  If `$0` starts elsewise, search `$PATH` for
   ## `$0` like shells using `access` (inducing POSIX requirement).
-  proc getenv(env: cstring): cstring {.importc, header: "stdlib.h".}
+  proc getEnv(env: cstring): cstring {.importc: "getenv", header: "stdlib.h".}
   let stdlib = try: getAppFilename() except: ""
   if stdlib.len > 0: return stdlib
   if av.isNil or av[0].isNil: return ""   # No $0 to use! Pathological, really.

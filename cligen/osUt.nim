@@ -41,7 +41,7 @@ proc perror*(x: cstring, len: int, code: OSErrorCode, err=stderr) =
   let errLen = strlen(errStr)
   try:
     discard err.writeBuffer(x.pointer, len); err.write ": "
-    discard err.writeBuffer(errStr, errlen); err.write "\n"
+    discard err.writeBuffer(errStr, errLen); err.write "\n"
   except CatchableError: discard  # This should perhaps panic
 
 proc perror*(x:cstring, len:int, err=stderr) = perror x, len, osLastError(), err
