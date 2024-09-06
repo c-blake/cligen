@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.5
+--------------
+  - `lib/pure/math.nim` has always spelled it `PI`.  For some reason, only
+    some versions of the Nim compiler trap old `Pi` usage in `cligen/colorScl`
+    imported by commonly used `cligen/humanUt` as a style error.
+
 Version: 1.7.4
 --------------
   - Fix generic instantiations of `doArgParse` (#233) on newer Nim compilers
