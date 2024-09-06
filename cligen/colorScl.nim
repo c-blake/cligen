@@ -61,7 +61,7 @@ proc rgb*(x: UnitR, scale=sWLen, sat=UnitR(0.7), val=UnitR(0.9)): Color3 =
   of sGray: (x1.gray, x1.gray, x1.gray)
   of sHue : hsv2rgb (x1, sat, val)
   of sWLen: waveLen x1, sat, val
-  of sPm3D: (x.sqrt.UnitR, UnitR(x*x*x), max(0.0, min(1.0, sin(2*Pi*x))).UnitR)
+  of sPm3D: (x.sqrt.UnitR, UnitR(x*x*x), max(0.0, min(1.0, sin(2*PI*x))).UnitR)
   of sViridis: viridis x
 
 proc scaledCompon*(x: float, lim: range[4..1024] = 256): int =
