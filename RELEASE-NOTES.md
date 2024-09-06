@@ -1,7 +1,7 @@
 RELEASE NOTES
 =============
 
-Version: 1.7.2
+Version: 1.7.4
 --------------
   - Fix generic instantiations of `doArgParse` (#233) on newer Nim compilers
 
@@ -10,6 +10,15 @@ Version: 1.7.2
 
   - Vaguely robust (if information dropping) solution to
     https://github.com/Alhadis/OSC8-Adoption/issues/13#issuecomment-2333658663
+
+Version: 1.7.3
+--------------
+  - Just a comment in nimble
+
+Version: 1.7.2
+--------------
+  - Make cligen/mslice.hash use `openArray[byte]` hash which is now more
+    reliably fast & has more uniform value distribution.
 
 Version: 1.7.1
 --------------
