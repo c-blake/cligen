@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.2
+--------------
+  - Fix generic instantiations of `doArgParse` (#233) on newer Nim compilers
+
+  - Make misc lib code compile under
+    `--hint[Name]=on --styleCheck=usages --styleCheck=error`
+
+  - Vaguely robust (if information dropping) solution to
+    https://github.com/Alhadis/OSC8-Adoption/issues/13#issuecomment-2333658663
+
 Version: 1.7.1
 --------------
   - Fix two `cligen/strUt.ecvt` bugs (NOT resulting in bad parses/round trips)
