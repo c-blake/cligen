@@ -178,21 +178,24 @@ proc stat2statx(dst: var Statx, src: Stat) {.inline.} =
   dst.stx_dev_major       = src.st_dev.st_major.uint32
   dst.stx_dev_minor       = src.st_dev.st_minor.uint32
 
-proc st_blksize*(st: Statx): Blksize {.inline.} = st.stx_blksize.Blksize
-proc st_nlink*(st: Statx): Nlink     {.inline.} = st.stx_nlink.Nlink
-proc st_uid*(st: Statx): Uid         {.inline.} = st.stx_uid.Uid
-proc st_gid*(st: Statx): Gid         {.inline.} = st.stx_gid.Gid
-proc st_mode*(st: Statx): Mode       {.inline.} = st.stx_mode.Mode
-proc st_ino*(st: Statx): Ino         {.inline.} = st.stx_ino.Ino
-proc st_size*(st: Statx): Off        {.inline.} = st.stx_size.Off
-proc st_blocks*(st: Statx): Blkcnt   {.inline.} = st.stx_blocks.Blkcnt
-proc st_atim*(st: Statx): Timespec   {.inline.} = st.stx_atime.toTimespec
-proc st_ctim*(st: Statx): Timespec   {.inline.} = st.stx_ctime.toTimespec
-proc st_mtim*(st: Statx): Timespec   {.inline.} = st.stx_mtime.toTimespec
-proc st_rmaj*(st: Statx): Dev        {.inline.} = st.stx_rdev_major.Dev
-proc st_rmin*(st: Statx): Dev        {.inline.} = st.stx_rdev_minor.Dev
-proc st_dev*(st: Statx): Dev         {.inline.} =
-  (st.stx_dev_major shl 32 or st.stx_dev_minor).Dev
+template tOr(expr, defl): untyped = # Nim compiles & mostly works on odd OSes,
+  try: expr                         # but range checks on OS API types still
+  except: defl                      # often causes trouble; -d:release helps.
+proc st_blksize*(st: Statx): Blksize = tOr st.stx_blksize.Blksize, 0.Blksize
+proc st_nlink*(st: Statx): Nlink     = tOr st.stx_nlink.Nlink, 0.Nlink
+proc st_uid*(st: Statx): Uid         = tOr st.stx_uid.Uid, 0.Uid
+proc st_gid*(st: Statx): Gid         = tOr st.stx_gid.Gid, 0.Gid
+proc st_mode*(st: Statx): Mode       = tOr st.stx_mode.Mode, 0.Mode
+proc st_ino*(st: Statx): Ino         = tOr st.stx_ino.Ino, 0.Ino
+proc st_size*(st: Statx): Off        = tOr st.stx_size.Off, 0.Off
+proc st_blocks*(st: Statx): Blkcnt   = tOr st.stx_blocks.Blkcnt, 0.Blkcnt
+proc st_atim*(st: Statx): Timespec   = st.stx_atime.toTimespec
+proc st_ctim*(st: Statx): Timespec   = st.stx_ctime.toTimespec
+proc st_mtim*(st: Statx): Timespec   = st.stx_mtime.toTimespec
+proc st_rmaj*(st: Statx): Dev        = tOr st.stx_rdev_major.Dev, 0.Dev
+proc st_rmin*(st: Statx): Dev        = tOr st.stx_rdev_minor.Dev, 0.Dev
+proc st_dev*(st: Statx): Dev =
+  tOr (st.stx_dev_major shl 32 or st.stx_dev_minor).Dev, 0.Dev
 proc `st_nlink=`*(st: var Statx, n: Nlink) {.inline.} = st.stx_nlink = uint32(n)
 
 proc st_btim*(st: Statx): Timespec {.inline.} = st.stx_btime.toTimespec
