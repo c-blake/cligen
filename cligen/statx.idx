@@ -41,39 +41,39 @@ nim	st_major	cligen/statx.html#st_major,Dev	proc st_major(dno: Dev): uint32		147
 nim	st_minor	cligen/statx.html#st_minor,Dev	proc st_minor(dno: Dev): uint32		148
 nim	toTimespec	cligen/statx.html#toTimespec,StatxTs	proc toTimespec(ts: StatxTs): Timespec		150
 nim	toStatxTs	cligen/statx.html#toStatxTs,Timespec	proc toStatxTs(ts: Timespec): StatxTs		154
-nim	st_blksize	cligen/statx.html#st_blksize,Statx	proc st_blksize(st: Statx): Blksize		184
-nim	st_nlink	cligen/statx.html#st_nlink,Statx	proc st_nlink(st: Statx): Nlink		185
-nim	st_uid	cligen/statx.html#st_uid,Statx	proc st_uid(st: Statx): Uid		186
-nim	st_gid	cligen/statx.html#st_gid,Statx	proc st_gid(st: Statx): Gid		187
-nim	st_mode	cligen/statx.html#st_mode,Statx	proc st_mode(st: Statx): Mode		188
-nim	st_ino	cligen/statx.html#st_ino,Statx	proc st_ino(st: Statx): Ino		189
-nim	st_size	cligen/statx.html#st_size,Statx	proc st_size(st: Statx): Off		190
-nim	st_blocks	cligen/statx.html#st_blocks,Statx	proc st_blocks(st: Statx): Blkcnt		191
-nim	st_atim	cligen/statx.html#st_atim,Statx	proc st_atim(st: Statx): Timespec		192
-nim	st_ctim	cligen/statx.html#st_ctim,Statx	proc st_ctim(st: Statx): Timespec		193
-nim	st_mtim	cligen/statx.html#st_mtim,Statx	proc st_mtim(st: Statx): Timespec		194
-nim	st_rmaj	cligen/statx.html#st_rmaj,Statx	proc st_rmaj(st: Statx): Dev		195
-nim	st_rmin	cligen/statx.html#st_rmin,Statx	proc st_rmin(st: Statx): Dev		196
-nim	st_dev	cligen/statx.html#st_dev,Statx	proc st_dev(st: Statx): Dev		197
-nim	st_nlink=	cligen/statx.html#st_nlink=,Statx,Nlink	proc st_nlink=(st: var Statx; n: Nlink)		199
-nim	st_btim	cligen/statx.html#st_btim,Statx	proc st_btim(st: Statx): Timespec		201
-nim	st_vtim	cligen/statx.html#st_vtim,Statx	proc st_vtim(st: Statx): Timespec		203
-nim	stat	cligen/statx.html#stat,cstring,Statx	proc stat(path: cstring; stx: var Statx): cint		207
-nim	lstat	cligen/statx.html#lstat,cstring,Statx	proc lstat(path: cstring; stx: var Statx): cint		215
-nim	fstat	cligen/statx.html#fstat,cint,Statx	proc fstat(fd: cint; stx: var Statx): cint		223
-nim	fstatat	cligen/statx.html#fstatat,cint,cstring,Statx,cint	proc fstatat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		231
-nim	statx	cligen/statx.html#statx,cint,cstring,cint,Statx	proc statx(dirfd: cint; path: cstring; flags: cint; stx: var Statx; mask = statxMask): cint		238
-nim	statxat	cligen/statx.html#statxat,cint,cstring,Statx,cint	proc statxat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		247
-nim	lstatxat	cligen/statx.html#lstatxat,cint,cstring,Statx,cint	proc lstatxat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		250
-nim	getLastAccTimeNsec	cligen/statx.html#getLastAccTimeNsec,Statx	proc getLastAccTimeNsec(stx`gensym60: Statx): int64		258
-nim	getLastModTimeNsec	cligen/statx.html#getLastModTimeNsec,Statx	proc getLastModTimeNsec(stx`gensym61: Statx): int64		259
-nim	getCreationTimeNsec	cligen/statx.html#getCreationTimeNsec,Statx	proc getCreationTimeNsec(stx`gensym62: Statx): int64		260
-nim	getBirthTimeNsec	cligen/statx.html#getBirthTimeNsec,Statx	proc getBirthTimeNsec(stx`gensym63: Statx): int64		261
-nim	getBirthTimeNsec	cligen/statx.html#getBirthTimeNsec,string	proc getBirthTimeNsec(path: string): int64		263
-nim	fileTime	cligen/statx.html#fileTime,Statx,char,int	proc fileTime(st: Statx; kind: char; dir = 1): int64		267
-nim	fileTime	cligen/statx.html#fileTime,string,char,int	proc fileTime(path: string; kind: char; missing = int64(0); dir = 1): int64		277
-nim	doStat	cligen/statx.html#doStat,cint,string,int,Statx,bool,bool	proc doStat(dfd: cint; path: string; nmAt: int; st: var Statx; Deref, quiet: bool): bool		282
+nim	st_blksize	cligen/statx.html#st_blksize,Statx	proc st_blksize(st: Statx): Blksize		181
+nim	st_nlink	cligen/statx.html#st_nlink,Statx	proc st_nlink(st: Statx): Nlink		182
+nim	st_uid	cligen/statx.html#st_uid,Statx	proc st_uid(st: Statx): Uid		183
+nim	st_gid	cligen/statx.html#st_gid,Statx	proc st_gid(st: Statx): Gid		184
+nim	st_mode	cligen/statx.html#st_mode,Statx	proc st_mode(st: Statx): Mode		185
+nim	st_ino	cligen/statx.html#st_ino,Statx	proc st_ino(st: Statx): Ino		186
+nim	st_size	cligen/statx.html#st_size,Statx	proc st_size(st: Statx): Off		187
+nim	st_blocks	cligen/statx.html#st_blocks,Statx	proc st_blocks(st: Statx): Blkcnt		188
+nim	st_atim	cligen/statx.html#st_atim,Statx	proc st_atim(st: Statx): Timespec		189
+nim	st_ctim	cligen/statx.html#st_ctim,Statx	proc st_ctim(st: Statx): Timespec		190
+nim	st_mtim	cligen/statx.html#st_mtim,Statx	proc st_mtim(st: Statx): Timespec		191
+nim	st_rmaj	cligen/statx.html#st_rmaj,Statx	proc st_rmaj(st: Statx): Dev		192
+nim	st_rmin	cligen/statx.html#st_rmin,Statx	proc st_rmin(st: Statx): Dev		193
+nim	st_dev	cligen/statx.html#st_dev,Statx	proc st_dev(st: Statx): Dev		194
+nim	st_nlink=	cligen/statx.html#st_nlink=,Statx,Nlink	proc st_nlink=(st: var Statx; n: Nlink)		196
+nim	st_btim	cligen/statx.html#st_btim,Statx	proc st_btim(st: Statx): Timespec		198
+nim	st_vtim	cligen/statx.html#st_vtim,Statx	proc st_vtim(st: Statx): Timespec		200
+nim	stat	cligen/statx.html#stat,cstring,Statx	proc stat(path: cstring; stx: var Statx): cint		204
+nim	lstat	cligen/statx.html#lstat,cstring,Statx	proc lstat(path: cstring; stx: var Statx): cint		212
+nim	fstat	cligen/statx.html#fstat,cint,Statx	proc fstat(fd: cint; stx: var Statx): cint		220
+nim	fstatat	cligen/statx.html#fstatat,cint,cstring,Statx,cint	proc fstatat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		228
+nim	statx	cligen/statx.html#statx,cint,cstring,cint,Statx	proc statx(dirfd: cint; path: cstring; flags: cint; stx: var Statx; mask = statxMask): cint		235
+nim	statxat	cligen/statx.html#statxat,cint,cstring,Statx,cint	proc statxat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		244
+nim	lstatxat	cligen/statx.html#lstatxat,cint,cstring,Statx,cint	proc lstatxat(dirfd: cint; path: cstring; stx: var Statx; flags: cint): cint		247
+nim	getLastAccTimeNsec	cligen/statx.html#getLastAccTimeNsec,Statx	proc getLastAccTimeNsec(stx`gensym49: Statx): int64		255
+nim	getLastModTimeNsec	cligen/statx.html#getLastModTimeNsec,Statx	proc getLastModTimeNsec(stx`gensym50: Statx): int64		256
+nim	getCreationTimeNsec	cligen/statx.html#getCreationTimeNsec,Statx	proc getCreationTimeNsec(stx`gensym51: Statx): int64		257
+nim	getBirthTimeNsec	cligen/statx.html#getBirthTimeNsec,Statx	proc getBirthTimeNsec(stx`gensym52: Statx): int64		258
+nim	getBirthTimeNsec	cligen/statx.html#getBirthTimeNsec,string	proc getBirthTimeNsec(path: string): int64		260
+nim	fileTime	cligen/statx.html#fileTime,Statx,char,int	proc fileTime(st: Statx; kind: char; dir = 1): int64		264
+nim	fileTime	cligen/statx.html#fileTime,string,char,int	proc fileTime(path: string; kind: char; missing = int64(0); dir = 1): int64		274
+nim	doStat	cligen/statx.html#doStat,cint,string,int,Statx,bool,bool	proc doStat(dfd: cint; path: string; nmAt: int; st: var Statx; Deref, quiet: bool): bool		279
 nimgrp	statx	cligen/statx.html#statx-procs-all	proc		116
 nimgrp	tostatxts	cligen/statx.html#toStatxTs-procs-all	proc		77
-nimgrp	filetime	cligen/statx.html#fileTime-procs-all	proc		267
-nimgrp	getbirthtimensec	cligen/statx.html#getBirthTimeNsec-procs-all	proc		261
+nimgrp	filetime	cligen/statx.html#fileTime-procs-all	proc		264
+nimgrp	getbirthtimensec	cligen/statx.html#getBirthTimeNsec-procs-all	proc		258
