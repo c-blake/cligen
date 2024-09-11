@@ -3,9 +3,11 @@ RELEASE NOTES
 
 Version: 1.7.5
 --------------
+  - Better fix for `cligen/statx` integer type narrowing shim.
+
   - `lib/pure/math.nim` has always spelled it `PI`.  For some reason, only
-    some versions of the Nim compiler trap old `Pi` usage in `cligen/colorScl`
-    imported by commonly used `cligen/humanUt` as a style error.
+    some versions of the Nim compiler trap as a style error old `Pi` usage in
+    `cligen/colorScl` imported by commonly used `cligen/humanUt`.
 
 Version: 1.7.4
 --------------
