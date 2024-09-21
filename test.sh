@@ -5,7 +5,7 @@ rm -rf $HOME/.cache/nim/*
 : ${v:="--verbosity:2"}
 h="--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off"
 h="$h --hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off"
-h="$h --hint:GCStats:off --colors:off"
+h="$h --hint:GCStats:off --colors:off --styleCheck:off"
 : ${w="--warning:Deprecated:off --warning:ProveField:off"}
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out

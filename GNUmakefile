@@ -26,7 +26,7 @@ NIM_FLAGS := \
 	--verbosity:2 --warning:Deprecated:off --warning:ProveField:off \
 	--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off \
 	--hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off \
-	--hint:GCStats:off \
+	--hint:GCStats:off --styleCheck:off \
 	--colors:off --parallelBuild:$J $(NIM_EXTRA)
 NIM_CACHE := $(HOME)/.cache/nim
 
