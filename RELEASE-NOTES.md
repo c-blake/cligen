@@ -1,6 +1,18 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.6
+--------------
+
+  - Add ability for both `multi-cmd -h` & `multi-cmd h` to interpolate in `doc`
+    from the X in `["multi", doc=X]` fragment.  This helps to explain global
+    options, available from the recent `Vars` feature (and also to describe the
+    overall program). { Yes, whole message should really be user adjustable via
+    config `[templates]` - adjustable. }
+
+  - If anyone but me uses `--styleCheck` in their user `nim.cfg`, `test.sh` &
+    `GNUmakefile` now disable that (or else tests fail).
+
 Version: 1.7.5
 --------------
   - Better fix for `cligen/statx` integer type narrowing shim.

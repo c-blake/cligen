@@ -1067,10 +1067,11 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
               "    where subsubcommand syntax is:") % [ `cmd`, `prefix` ]
       else:
-        echo ("This is a multiple-dispatch command.  -h/--help/--help-syntax " &
-              "is available\nfor top-level/all subcommands.  Usage is like:\n" &
-              "    $1 {SUBCMD} [subcommand-opts & args]\n" &
-              "where subcommand syntaxes are as follows:\n") % [ `cmd` ]
+       echo ("${doc}This is a multi-dispatch command. -h/--help/--help-syntax" &
+             " is available\nfor top-level/all subcommands. Usage is like:\n" &
+             "    $1 {SUBCMD} [subcommand-opts & args]\n" &
+             "where subcommand syntaxes are as follows:\n") % [ "cmd", `cmd`,
+                                                                "doc", `doc`]
       let `dashHelpId` = @[ "--help" ]
       let `helpSCmdId` = @[ "help" ]
       `helpDump`

@@ -253,9 +253,11 @@ Run "FullyAutoMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/FullyAutoMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    FullyAutoMulti {SUBCMD} [subcommand-opts & args]
+Infer & generate command-line interface/option/argument parser
+
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo [optional-params] [files: string...]
@@ -469,9 +471,11 @@ Run "MultMultMult help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/MultMultMultTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    MultMultMult {SUBCMD} [subcommand-opts & args]
+module doc
+
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   apple [optional-params] [cmdLine: seq...]
@@ -529,9 +533,13 @@ AUTHOR
   Charles Blake
 
 ==> test/MultiMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    MultiMulti {SUBCMD} [subcommand-opts & args]
+Test sub-sub-command CLI instantiation
+with outdented and later
+    indented (pre-formatted) comment continuation.
+
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   whoa [optional-params] [names: string...]
@@ -662,9 +670,11 @@ Run "PassValuesMulti help" to get *comprehensive* help.
 Top-level --version also available
 
 ==> test/PassValuesMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    PassValuesMulti {SUBCMD} [subcommand-opts & args]
+Infer & generate command-line interface/option/argument parser
+
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   [7mdemo [optional-params] [files: string...][m
@@ -727,9 +737,9 @@ Run "QualifiedMulti {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "QualifiedMulti help" to get *comprehensive* help.
 
 ==> test/QualifiedMultiTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    QualifiedMulti {SUBCMD} [subcommand-opts & args]
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   get [optional-params] 
@@ -762,9 +772,9 @@ Run "RangeTypes {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "RangeTypes help" to get *comprehensive* help.
 
 ==> test/RangeTypesTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    RangeTypes {SUBCMD} [subcommand-opts & args]
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   demo-int [optional-params] 
@@ -939,9 +949,9 @@ Run "SubScope {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "SubScope help" to get *comprehensive* help.
 
 ==> test/SubScopeTopLvl.out <==
-This is a multiple-dispatch command.  -h/--help/--help-syntax is available
-for top-level/all subcommands.  Usage is like:
-    SubScope {SUBCMD} [subcommand-opts & args]
+This is a multi-dispatch command. -h/--help/--help-syntax is available
+for top-level/all subcommands. Usage is like:
+    cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
 
   get [optional-params] 
