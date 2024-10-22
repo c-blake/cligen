@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.7
+--------------
+  - Long overdue simplification of config-file open in `clCfgInit`, `clCfgToml`
+    includes.  *Should be* invisible to users, though Hyrum's Law may bite.
+
 Version: 1.7.6
 --------------
 
