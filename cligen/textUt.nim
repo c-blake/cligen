@@ -151,7 +151,7 @@ iterator optimalWrap(w: openArray[int], words: openArray[string], m=80,
     yield i..r[i]
     i = r[i] + 1
 
-let ttyWidth* = terminalWidth()
+var ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
 

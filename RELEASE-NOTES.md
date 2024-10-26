@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.8
+--------------
+  - Make `cligen/textUt.ttyWidth` a `var` to enable fully draconian CLauthors
+  to hard-code any terminal wrapWidth (set `clCfg.widthEnv=""` to block any
+  run-time CLuser override).
+
 Version: 1.7.7
 --------------
   - Long overdue simplification of config-file open in `clCfgInit`, `clCfgToml`
