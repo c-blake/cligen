@@ -5,7 +5,7 @@ nim	stripEsc	cligen/textUt.html#stripEsc,openArray[char]	proc stripEsc(a: openAr
 nim	stripSGR	cligen/textUt.html#stripSGR,openArray[char]	proc stripSGR(a: openArray[char]): string		45
 nim	printedLen	cligen/textUt.html#printedLen,openArray[char]	proc printedLen(a: openArray[char]): int		65
 nim	paragraphs	cligen/textUt.html#paragraphs.i,string	iterator paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]		84
-nim	ttyWidth	cligen/textUt.html#ttyWidth	let ttyWidth		154
+nim	ttyWidth	cligen/textUt.html#ttyWidth	var ttyWidth		154
 nim	wrapWidth	cligen/textUt.html#wrapWidth,string	proc wrapWidth(envVar: string; defaultWidth = ttyWidth): int		158
 nim	wrap	cligen/textUt.html#wrap,string,int,int	proc wrap(s: string; maxWidth = ttyWidth; power = 3; prefixLen = 0): string		181
 nim	addPrefix	cligen/textUt.html#addPrefix,string,string	proc addPrefix(prefix: string; multiline = ""): string		210
