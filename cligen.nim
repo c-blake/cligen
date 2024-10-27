@@ -46,6 +46,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     render*:      proc(s: string): string ## string->string help transformer
     widthEnv*:    string         ## name of environment var for width override
     sigPIPE*:     ClSIGPIPE      ## `dispatch` use allows end-user SIGPIPE ctrl
+    minStrQuoting*: bool         ## Only quote string defaults when necessary
 
   HelpOnly*    = object of CatchableError ## Ok Ctl Flow Only For --help
   VersionOnly* = object of CatchableError ## Ok Ctl Flow Only For --version
@@ -507,6 +508,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `tabId`.add(@[ "--" & `helpSyn`[0], "", "", `helpSyn`[1] ])
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
+      `apId`.minStrQuoting = `cf`.minStrQuoting
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
       let `b0` = ha0("bad" , `cf`); let `b1` = ha1("bad" , `cf`)
       let `g0` = ha0("good", `cf`); let `g1` = ha1("good", `cf`)
