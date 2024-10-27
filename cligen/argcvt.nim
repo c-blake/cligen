@@ -49,6 +49,7 @@ type ArgcvtParams* = object ## \
   msg*: string        ## Error message from a bad parse
   shortNoVal*: set[char]  ## short options keys where value may be omitted
   longNoVal*: seq[string] ## long option keys where value may be omitted
+  minStrQuoting*: bool    ## only quote string defaults when necessary
 
 proc argKeys*(a: ArgcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
@@ -389,7 +390,13 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
     return false
 
 proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
-  result = @[ a.argKeys, "string", nimEscape(dfl) ]
+  var repr = nimEscape(dfl)
+  if a.minStrQuoting and
+      dfl.len > 0 and {' ', '\t', '\n', '*', '?', '$'} notin dfl:
+    # Remove surrounding quotes when the default value is not empty and does not
+    # include any characters that would require quoting (e.g. spaces, etc)
+    repr = repr[1 ..< ^1]
+  result = @[ a.argKeys, "string", repr ]
 
 # sets
 proc incl*[T](dst: var set[T], toIncl: openArray[T]) =
