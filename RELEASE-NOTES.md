@@ -4,8 +4,14 @@ RELEASE NOTES
 Version: 1.7.8
 --------------
   - Make `cligen/textUt.ttyWidth` a `var` to enable fully draconian CLauthors
-  to hard-code any terminal wrapWidth (set `clCfg.widthEnv=""` to block any
-  run-time CLuser override).
+    to hard-code any terminal wrapWidth (set `clCfg.widthEnv=""` to block any
+    run-time CLuser override).
+
+  - Allow CLauthors to set `clCfg.minStrQuoting = true` (& CLusers to override
+    with `[layout]minStrQuoting = true|false|etc.`) to only put string default
+    values in double quotes if "necessary" (presently containing a hard-coded
+    charset, but if activating is popular, charset should become adjustable).
+    `test/Version.nim` has a minimal example.
 
 Version: 1.7.7
 --------------
