@@ -73,7 +73,9 @@
   msg*: string               ## Error message from a bad parse
   shortNoVal*: set[char]     ## short options keys where value may be omitted
   longNoVal*: seq[string]    ## long option keys where value may be omitted
-  minStrQuoting*: bool       ## only quote string defaults when necessary">ArgcvtParams</a></li>
+  minStrQuoting*: bool       ## only quote string defaults when necessary
+  trueDefault*: string       ## How to render a default value of &quot;true&quot;
+  falseDefault*: string      ## How to render a default value of &quot;false&quot;">ArgcvtParams</a></li>
 <li><a class="reference" href="#ClHelpContext" title="ClHelpContext = enum
   clLongOpt,                ## a long option identifier
   clSubCmd,                 ## a sub-command name identifier
@@ -199,7 +201,9 @@
   <span class="Identifier">msg</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## Error message from a bad parse</span>
   <span class="Identifier">shortNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>     <span class="Comment">## short options keys where value may be omitted</span>
   <span class="Identifier">longNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>    <span class="Comment">## long option keys where value may be omitted</span>
-  <span class="Identifier">minStrQuoting</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>       <span class="Comment">## only quote string defaults when necessary</span></pre></dt>
+  <span class="Identifier">minStrQuoting</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>       <span class="Comment">## only quote string defaults when necessary</span>
+  <span class="Identifier">trueDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>       <span class="Comment">## How to render a default value of &quot;true&quot;</span>
+  <span class="Identifier">falseDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## How to render a default value of &quot;false&quot;</span></pre></dt>
   <dd>
     
     
@@ -547,7 +551,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-10-28 13:06:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-10-28 20:25:24 UTC</small>
       </div>
     </div>
   </div>
