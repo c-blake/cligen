@@ -46,6 +46,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           for tok in v2.getElems().mapIt(it.getStr()): c.hTabCols.add parseEnum[ClHelpCol](tok)
         of "nohelphelp", "skiphelphelp": c.noHelpHelp = v2.getBool()
         of "minstrquoting":              c.minStrQuoting = v2.getBool()
+        of "truedefault" : c.trueDefault  = v2.getStr()
+        of "falsedefault": c.falseDefault = v2.getStr()
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "syntax":

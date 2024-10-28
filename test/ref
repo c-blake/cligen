@@ -976,9 +976,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(915, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(902, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(298, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(922, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(909, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(303, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
@@ -1065,7 +1065,7 @@ be: demo(alpha=2, @[ "hi", "ho" ]) corresponding to the command invocation "demo
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
-  --version      bool    false  Print Version & Exit 0
+  --version      bool           Print Version & Exit 0
   -a=, --alpha=  int     1      set alpha
   -f=, --foo=    string  "h i"  set foo
   -i=, --item=   string  hi     set item

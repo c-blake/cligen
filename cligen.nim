@@ -47,6 +47,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     widthEnv*:    string         ## name of environment var for width override
     sigPIPE*:     ClSIGPIPE      ## `dispatch` use allows end-user SIGPIPE ctrl
     minStrQuoting*: bool         ## Only quote string defaults when necessary
+    trueDefault*: string         ## How to render a default value of "true"
+    falseDefault*: string        ## How to render a default value of "false"
 
   HelpOnly*    = object of CatchableError ## Ok Ctl Flow Only For --help
   VersionOnly* = object of CatchableError ## Ok Ctl Flow Only For --version
@@ -76,7 +78,10 @@ var clCfg* = ClCfg(
   helpSyntax:  syntaxHelp,
   render:      descape,     # Often set in `clCfgInit`, eg. to `rstMdToSGR`
   widthEnv:    "CLIGEN_WIDTH",
-  sigPIPE:     spIsOk)
+  sigPIPE:     spIsOk,
+  minStrQuoting: false,
+  trueDefault:   "true",
+  falseDefault:  "false")
 
 var cgParseErrorExitCode* = 1
 {.pop.}
@@ -509,6 +514,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       `apId`.minStrQuoting = `cf`.minStrQuoting
+      `apId`.trueDefault = `cf`.trueDefault
+      `apId`.falseDefault = `cf`.falseDefault
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
       let `b0` = ha0("bad" , `cf`); let `b1` = ha1("bad" , `cf`)
       let `g0` = ha0("good", `cf`); let `g1` = ha1("good", `cf`)

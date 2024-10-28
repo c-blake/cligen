@@ -11,7 +11,11 @@ Version: 1.7.8
     with `[layout]minStrQuoting = true|false|etc.`) to only put string default
     values in double quotes if "necessary" (presently containing a hard-coded
     charset, but if activating is popular, charset should become adjustable).
-    `test/Version.nim` has a minimal example.
+
+  - Allow CLauthors to set `clCfg.trueDefault = "y"` (& CLusers to override with
+    `[layout]trueDefault = "yes"`) to decide how `argHelp(bool, ..)` renders a
+    `true` default value & the very same for `falseDefault`.  `test/Version.nim`
+    has an example of both `minStrQuoting` & `falseDefault`.
 
 Version: 1.7.7
 --------------
