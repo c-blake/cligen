@@ -8,7 +8,7 @@
   `iterator(): T` on the input side, there seems no way to buffer the output
   incrementally.  So, we would need to store `seq[U]`.  Automatic read-side
   buffered parsing could still be nice, though existing procs in the wild with
-  `iterator(): T` input parameters must be far more rare than full buffered
+  `iterator(): T` input parameters must be far more rare than fully buffered
   `(openArray|seq)[T]`.  Could also generalize text IO to binary/RPC marshaled
   fmts.  If output/input fmt are compatible/inverses this might allow elegant
   construction of a multi-command of pipelinable subcommands.
@@ -20,10 +20,8 @@
   Be able to wrap procs taking `openArray[T]` by building a `seq[T]` from CL.
   This needs a different concrete vs passed type.  
 
-  Allow positionals to map to other aggregates { `set[T]`, `HashSet[T]` or
-  user-defined collections maybe via some kind of `positionalTransform=fromSeq`
-  construct where `fromSeq[T]` converts a parsed `seq[T]` to a target aggregate
-  similarly to `toSeq`.
+  Allow positionals to map to other aggregates { `set[T]`, `HashSet[T]`, .. }
+  via some kind of `std/sugar.collect`-like construct.
 
   Maybe have a smarter textUt.alignTable rendering engine that can wrap columns
   besides the final one and also wrap at punctuation, not just at whitespace.
