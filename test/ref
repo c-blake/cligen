@@ -1067,4 +1067,5 @@ Options:
   --help-syntax                 advanced: prepend,plurals,..
   --version      bool    false  Print Version & Exit 0
   -a=, --alpha=  int     1      set alpha
+  -f=, --foo=    string  "h i"  set foo
   -i=, --item=   string  hi     set item
