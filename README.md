@@ -96,7 +96,7 @@ More general user semantics for argument validation (required-ness, length,
 "sub-parsing", etc.) can be done like
 [UserError.nim](https://github.com/c-blake/cligen/blob/master/test/UserError.nim).
 
-### Custom Parameter Types or Parsing
+### Custom Parameter Types, Parsing, Or Default Renders
 
 While `cligen/argcvt` supports basic Nim types, the parsing/printing system is
 *extensible* via in-`dispatch` scope `argParse` & `argHelp` overloads for types.
@@ -127,8 +127,9 @@ detect when CLusers alter parameters from defaults, count uses, etc.
 
 This same mechanism can ***override existing*** `cligen/argcvt` parser/helpers
 if the built-ins are not what you want.  Consulting `cligen/argcvt` for examples
-is a good idea.  Ambitious CLauthors can re-define *all* conversions by creating
-their own private `cligen/argcvt.nim` in their project directories.
+is a good idea.  E.g., [test/FancyRepeats.nim](test/FancyRepeats.nim) shows how
+to change `argParse` and/or `argHelp` for `int`.  *All* conversions can be
+overridden to taste this way (or even the whole `cligen/argcvt.nim` module).
 
 ### Subcommands, dispatch to object init
 
