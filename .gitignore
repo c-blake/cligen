@@ -1,3 +1,4 @@
+.idea/
 *.swp
 *.ndb
 test/*.out
