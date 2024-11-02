@@ -63,8 +63,10 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           c.noHelpHelp = e.value.optionNormalize in yes
         of "minstrquoting":
           c.minStrQuoting = e.value.optionNormalize in yes
-        of "truedefault": c.trueDefault = e.value
+        of "truedefault" : c.trueDefault  = e.value
         of "falsedefault": c.falseDefault = e.value
+        of "wrapDoc"     : c.wrapDoc      = e.value.parseInt
+        of "wrapTable"   : c.wrapTable    = e.value.parseInt
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
             "Expecting: rowseparator columngap leastfinal required columns " &

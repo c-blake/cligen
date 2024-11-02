@@ -3,10 +3,6 @@ RELEASE NOTES
 
 Version: 1.7.8
 --------------
-  - Make `cligen/textUt.ttyWidth` a `var` to enable fully draconian CLauthors
-    to hard-code any terminal wrapWidth (set `clCfg.widthEnv=""` to block any
-    run-time CLuser override).
-
   - Allow CLauthors to set `clCfg.minStrQuoting = true` (& CLusers to override
     with `[layout]minStrQuoting = true|false|etc.`) to only put string default
     values in double quotes if "necessary" (presently containing a hard-coded
@@ -16,6 +12,18 @@ Version: 1.7.8
     `[layout]trueDefault = "yes"`) to decide how `argHelp(bool, ..)` renders a
     `true` default value & the very same for `falseDefault`.  `test/Version.nim`
     has an example of both `minStrQuoting` & `falseDefault`.
+
+  - Add 2 new fields to `ClCfg` to control word wrapping in doc-like and table-
+    like contexts, also adjustable via the two provided config-file systems.
+    0=auto terminal width as before, -1 = never wrap, else some specific wrap
+    column (in an absolute sense, including leading indents).  These also apply
+    to the top-level help & subcommand table for multi-cmds.  To truly block
+    CLusers from adjusting wrap, CLauthor must disable use of `clCfg.widthEnv`,
+    and either not include a config file system or do their own that disallows
+    [layout]wrap(Doc|Table) edit.  So, while CLauthors have "ultimate" control,
+    ease is not a priority since CLusers really know the most about what help
+    output will be used for (eg. piping output to grep, $PAGER, etc.).  Sample
+    code showing fine-grained wrap control is in `test/PassValuesMulti.nim`.
 
 Version: 1.7.7
 --------------

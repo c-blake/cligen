@@ -49,6 +49,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     minStrQuoting*: bool         ## Only quote string defaults when necessary
     trueDefault*: string         ## How to render a default value of "true"
     falseDefault*: string        ## How to render a default value of "false"
+    wrapDoc*:   int              ## Terminal column to wrap at for doc-like &..
+    wrapTable*: int              ##..Table-like sections. 0 => auto -1 => never
 
   HelpOnly*    = object of CatchableError ## Ok Ctl Flow Only For --help
   VersionOnly* = object of CatchableError ## Ok Ctl Flow Only For --version
@@ -588,8 +590,9 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if isReq:
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
-      let ww = wrapWidth(`cf`.widthEnv)
-      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), ww,
+      let wwd = wrapWidth(`cf`.widthEnv, `cf`.wrapDoc)
+      let wwt = wrapWidth(`cf`.widthEnv, `cf`.wrapTable)
+      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), wwd,
                                                  prefixLen=`prefixId`.len))
       proc hl(tag, val: string): string = # {.gcsafe.} clCfg access
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
@@ -612,7 +615,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
                                          `cf`.hTabRowSep, toInts(`cf`.hTabCols),
-                                         `cf`.onCols, `cf`.offCols, width=ww)) ]
+                                         `cf`.onCols, `cf`.offCols, width=wwt))]
       if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -970,12 +973,13 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
               clCfg.helpAttr.getOrDefault("doc", "") ]
   let off= @[ clCfg.helpAttrOff.getOrDefault("cmd", ""),
               clCfg.helpAttrOff.getOrDefault("doc", "") ]
-  let ww = wrapWidth(clCfg.widthEnv)
-  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), ww)
-               else: wrap(doc, ww)
+  let wwd = wrapWidth(clCfg.widthEnv, clCfg.wrapDoc)
+  let wwt = wrapWidth(clCfg.widthEnv, clCfg.wrapTable)
+  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), wwd)
+               else: wrap(doc, wwd)
   use % [ "doc", docUse, "command", on[0] & cmd & off[0], "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs, 2, attrOn=on,
-                                                attrOff=off, width=ww))]
+                                                attrOff=off, width=wwt))]
 
 proc docDefault(n: NimNode): NimNode =
   if   n.len > 1: newStrLitNode(summaryOfModule(n[1][0]))
