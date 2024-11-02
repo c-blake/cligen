@@ -49,6 +49,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     minStrQuoting*: bool         ## Only quote string defaults when necessary
     trueDefault*: string         ## How to render a default value of "true"
     falseDefault*: string        ## How to render a default value of "false"
+    noWrapDoc*: bool             ## Disable the automatic wrapping of the docs
+    noWrapTable*: bool           ## Disable the automatic wrapping of tables
 
   HelpOnly*    = object of CatchableError ## Ok Ctl Flow Only For --help
   VersionOnly* = object of CatchableError ## Ok Ctl Flow Only For --version
@@ -589,8 +591,12 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
           result.add(quote do: `mandId`.add(`parNm`))
     result.add(quote do:                  # build one large help string
       let ww = wrapWidth(`cf`.widthEnv)
-      let indentDoc = addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), ww,
-                                                 prefixLen=`prefixId`.len))
+      let rawDoc = addPrefix(`prefixId`, mayRend(`cmtDoc`))
+      let indentDoc = if `cf`.noWrapDoc:
+          addPrefix(`prefixId`, mayRend(`cmtDoc`))
+        else:
+          addPrefix(`prefixId`, wrap(mayRend(`cmtDoc`), ww,
+                                     prefixLen=`prefixId`.len))
       proc hl(tag, val: string): string = # {.gcsafe.} clCfg access
         (`cf`.helpAttr.getOrDefault(tag, "") & val &
          `cf`.helpAttrOff.getOrDefault(tag, ""))
@@ -606,13 +612,15 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let argStart = "[" & (if `mandatory`.len>0: `apId`.val4req&"," else: "") &
                      "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
+                           "rawdoc", hl("rawdoc", rawDoc),
                            "command", hl("cmd", `cName`),
                            "args",  hl("args",argStart & " " & posHelp.mayRend),
                            "options", addPrefix(`prefixId` & "  ",
                               alignTable(`tabId`, 2*len(`prefixId`) + 2,
                                          `cf`.hTabColGap, `cf`.hTabMinLast,
                                          `cf`.hTabRowSep, toInts(`cf`.hTabCols),
-                                         `cf`.onCols, `cf`.offCols, width=ww)) ]
+                                         `cf`.onCols, `cf`.offCols, width=ww,
+                                         noWrapTable=`cf`.noWrapTable)) ]
       if `apId`.help.len > 0 and `apId`.help[^1] != '\n':   #ensure newline @end
         `apId`.help &= "\n"
       if len(`prefixId`) > 0:             # to indent help in a multicmd context
@@ -970,12 +978,18 @@ proc topLevelHelp*(doc: auto, use: auto, cmd: auto, subCmds: auto,
               clCfg.helpAttr.getOrDefault("doc", "") ]
   let off= @[ clCfg.helpAttrOff.getOrDefault("cmd", ""),
               clCfg.helpAttrOff.getOrDefault("doc", "") ]
+  let docRender = if clCfg.render != nil: clCfg.render(doc)
+               else: doc
   let ww = wrapWidth(clCfg.widthEnv)
-  let docUse = if clCfg.render != nil: wrap(clCfg.render(doc), ww)
-               else: wrap(doc, ww)
+  let docUse = if clCfg.noWrapDoc:
+      docRender
+    else:
+      wrap(docRender, ww)
+
   use % [ "doc", docUse, "command", on[0] & cmd & off[0], "ifVersion", ifVsn,
           "subcmds", addPrefix("  ", alignTable(pairs, 2, attrOn=on,
-                                                attrOff=off, width=ww))]
+                                                attrOff=off, width=ww,
+                                                noWrapTable=clCfg.noWrapTable))]
 
 proc docDefault(n: NimNode): NimNode =
   if   n.len > 1: newStrLitNode(summaryOfModule(n[1][0]))
@@ -1194,7 +1208,7 @@ macro initGen*(default: typed, T: untyped, positional="",
                              ident(($suppress[1][0])[10..^1]) else: nil
   let posId = ident(positional.strVal)
   var params = @[ quote do: `T` ] #Return type
-  var assigns = newStmtList()     #List of assignments 
+  var assigns = newStmtList()     #List of assignments
   if   indirect == 1: assigns.add(quote do: result.new)
   elif indirect == 2: assigns.add(quote do: result=cast[`T`](`T`.sizeof.alloc))
   for kid in ti.children:         #iterate over fields

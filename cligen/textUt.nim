@@ -225,7 +225,7 @@ proc mx[T](x: openArray[T]): T =
 
 proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
     cols = @[0,1], attrOn = @["",""], attrOff = @["",""], aligns = "",
-    width=ttyWidth, measure=printedLen): string =
+    width=ttyWidth, measure=printedLen, noWrapTable=false): string =
   let colsMx = cols.mx + 1
   let aligns = if aligns.len >= colsMx: aligns else: repeat("L", colsMx)
   result = ""
@@ -256,16 +256,16 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
       result &= '\n'
       continue
     let wLast = max(minLast, wTerm - leader)
-    var wrapped = if '\n' in row[last]: row[last].split("\n")
+    var lastColText = if noWrapTable or '\n' in row[last]: row[last].split("\n")
                   else: wrap(row[last], wLast).split("\n")
-    result &= attrOn[last] & (if wrapped.len>0: wrapped[0] else: "")
-    if wrapped.len == 1:
+    result &= attrOn[last] & (if lastColText.len>0: lastColText[0] else: "")
+    if lastColText.len == 1:
       result &= attrOff[last] & "\n" & rowSep
     else:
       result &= '\n'
-      for j in 1 ..< wrapped.len - 1:
-        result &= repeat(" ", leader) & wrapped[j] & "\n"
-      result &= repeat(" ",leader) & wrapped[^1] & attrOff[last] & "\n" & rowSep
+      for j in 1 ..< lastColText.len - 1:
+        result &= repeat(" ", leader) & lastColText[j] & "\n"
+      result &= repeat(" ",leader) & lastColText[^1] & attrOff[last] & "\n" & rowSep
 
 type C = int16      ##Type for edit cost values & totals
 const mxC = C.high
