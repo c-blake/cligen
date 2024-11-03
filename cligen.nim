@@ -47,8 +47,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     widthEnv*:    string         ## name of environment var for width override
     sigPIPE*:     ClSIGPIPE      ## `dispatch` use allows end-user SIGPIPE ctrl
     minStrQuoting*: bool         ## Only quote string defaults when necessary
-    trueDefault*: string         ## How to render a default value of "true"
-    falseDefault*: string        ## How to render a default value of "false"
+    trueDefaultStr*: string      ## How to render a default value of "true"
+    falseDefaultStr*: string     ## How to render a default value of "false"
     wrapDoc*:   int              ## Terminal column to wrap at for doc-like &..
     wrapTable*: int              ##..Table-like sections. 0 => auto -1 => never
 
@@ -82,8 +82,8 @@ var clCfg* = ClCfg(
   widthEnv:    "CLIGEN_WIDTH",
   sigPIPE:     spIsOk,
   minStrQuoting: false,
-  trueDefault:   "true",
-  falseDefault:  "false")
+  trueDefaultStr:  "true",
+  falseDefaultStr: "false")
 
 var cgParseErrorExitCode* = 1
 {.pop.}
@@ -516,8 +516,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
       `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
       `apId`.minStrQuoting = `cf`.minStrQuoting
-      `apId`.trueDefault = `cf`.trueDefault
-      `apId`.falseDefault = `cf`.falseDefault
+      `apId`.trueDefaultStr = `cf`.trueDefaultStr
+      `apId`.falseDefaultStr = `cf`.falseDefaultStr
       let `setByParseId`: ptr seq[ClParse] = `setByParse`
       let `b0` = ha0("bad" , `cf`); let `b1` = ha1("bad" , `cf`)
       let `g0` = ha0("good", `cf`); let `g1` = ha1("good", `cf`)
