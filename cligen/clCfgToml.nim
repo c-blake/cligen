@@ -48,6 +48,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         of "minstrquoting":              c.minStrQuoting = v2.getBool()
         of "truedefault" : c.trueDefault  = v2.getStr()
         of "falsedefault": c.falseDefault = v2.getStr()
+        of "wrapDoc"     : c.wrapDoc      = v2.getInt()
+        of "wrapTable"   : c.wrapTable    = v2.getInt()
         else:
           stderr.write(&"{cfgFile}: unknown keyword {k2} in the [{k1}] section\n")
     of "syntax":

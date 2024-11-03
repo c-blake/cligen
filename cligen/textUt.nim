@@ -151,7 +151,7 @@ iterator optimalWrap(w: openArray[int], words: openArray[string], m=80,
     yield i..r[i]
     i = r[i] + 1
 
-var ttyWidth* = terminalWidth()
+let ttyWidth* = terminalWidth()
 var errno {.importc, header: "<errno.h>".}: cint
 errno = 0 #XXX stdlib.terminal should probably clear errno for all client code
 
@@ -181,7 +181,9 @@ proc extraSpace(w0, sep, w1: string): bool {.inline.} =
 proc wrap*(s: string; maxWidth=ttyWidth, power=3, prefixLen=0): string =
   ## Multi-paragraph with indent==>pre-formatted optimal line wrapping using
   ## the badness metric *sum excessSpace^power*.
-  let maxWidth = maxWidth  -  2 * prefixLen
+  if maxWidth == -1: return s           # -1 => wrap disabled
+  let maxW = if maxWidth == 0: ttyWidth else: maxWidth
+  let maxWidth = maxW  -  2 * prefixLen
   for tup in s.paragraphs:
     let (pre, para) = tup
     if pre:
@@ -237,7 +239,7 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
   let last = cols[^1]
   for row in tab:
     for c in cols: wCol[c] = max(wCol[c], row[c].measure)
-  var wTerm = width - prefixLen
+  let wTerm = (if width==0:ttyWidth elif width == -1:1000 else:width)-prefixLen
   var leader = (cols.len - 1) * colGap
   for c in cols[0 .. ^2]: leader += wCol[c]
   template doCol(c: int): untyped =
@@ -256,7 +258,7 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
       result &= '\n'
       continue
     let wLast = max(minLast, wTerm - leader)
-    var wrapped = if '\n' in row[last]: row[last].split("\n")
+    var wrapped = if width == -1 or '\n' in row[last]: row[last].split("\n")
                   else: wrap(row[last], wLast).split("\n")
     result &= attrOn[last] & (if wrapped.len>0: wrapped[0] else: "")
     if wrapped.len == 1:

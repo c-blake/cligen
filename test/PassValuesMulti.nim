@@ -12,7 +12,7 @@ proc show(gamma=1, iota=2.0, verb=false, paths: seq[string]): int =
   return 42
 
 proc punt(zeta=1, eta=2.0, verb=false, names: seq[string]): int =
-  ## Another entry point; here we echoResult
+  ## Another entry point; here we can echoResult
   echo "zeta:", zeta, " eta:", eta, " verb:", verb
   for i, n in names: echo "args[", i, "]: ", n
   return 12345
@@ -44,13 +44,18 @@ Run "$command help" to get *comprehensive* help.$ifVersion"""
 
   clCfg.version = "0.0.1" #or maybe nimbleFile.fromNimble("version")
   clCfg.reqSep = true
+  clCfg.widthEnv = "" # Disable CLIGEN_WIDTH CLuser override via impossible $""
 
   var noVsn = clCfg
+  clCfg.wrapDoc = 32; clCfg.wrapTable = 36
   {.pop.}
   noVsn.version = ""
+  noVsn.hTabMinLast = 1 # 11 < default=16 & code does a max(minLast, target).
+  noVsn.wrapDoc = 11; noVsn.wrapTable = -1
   const demohelp = { "verb": "on=chatty, off=quiet" }.toTable
   dispatchMulti([ "multi", doc = docLine, usage = topLvlUse ],
                 [ demo, usage=hlUse, help = demohelp ],
                 [ show, cmdName="print", usage=hlUse, short = { "gamma": 'z' }],
-                [ punt, echoResult=true, usage=hlUse, cf=noVsn ],
+                [ punt, echoResult=true, usage=hlUse, cf=noVsn, help={"zeta":
+                        "very long help string for zeta to show no-wrapping"} ],
                 [ nel_Ly, cmdName="nel-ly", usage=hlUse, noAutoEcho=true ] )

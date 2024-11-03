@@ -652,16 +652,24 @@ Options:
   -a=, --a2=      strings  {}   append 1 val to a2
 
 ==> test/PassValuesMulti.out <==
-Infer & generate command-line interface/option/argument parser
+Infer & generate command-line
+interface/option/argument parser
 Usage:
   PassValuesMulti {SUBCMD}  [sub-command options & parameters]
 
 SUBCMDs:
-  help    print comprehensive or per-cmd help
-  demo    demo entry point with varied, meaningless parameters.
-  print   show entry point with varied, meaningless parameters.
-  punt    Another entry point; here we echoResult
-  nel-ly  Yet another entry point; here we block autoEcho
+  help    print comprehensive or
+          per-cmd help
+  demo    demo entry point with
+          varied, meaningless
+          parameters.
+  print   show entry point with
+          varied, meaningless
+          parameters.
+  punt    Another entry point; here
+          we can echoResult
+  nel-ly  Yet another entry point;
+          here we block autoEcho
 
 PassValuesMulti {-h|--help} or with no args at all prints this message.
 PassValuesMulti --help-syntax gives general cligen syntax help.
@@ -678,16 +686,21 @@ for top-level/all subcommands. Usage is like:
 where subcommand syntaxes are as follows:
 
   [7mdemo [optional-params] [files: string...][m
-  [1m  demo entry point with varied, meaningless parameters.
+  [1m  demo entry point with
+    varied, meaningless
+    parameters.
   [mOptions:
       --version      bool    false  print version
       -a=, --alpha=  int     1      set alpha
       -b=, --beta=   float   2.0    set beta
-      -v, --verb     bool    false  on=chatty, off=quiet
+      -v, --verb     bool    false  on=chatty,
+                                    off=quiet
       -i=, --item=   string  ""     set item
 
   [7mprint [optional-params] [paths: string...][m
-  [1m  show entry point with varied, meaningless parameters.
+  [1m  show entry point with
+    varied, meaningless
+    parameters.
   [mOptions:
       --version      bool   false  print version
       -z=, --gamma=  int    1      set gamma
@@ -695,14 +708,20 @@ where subcommand syntaxes are as follows:
       -v, --verb     bool   false  set verb
 
   [7mpunt [optional-params] [names: string...][m
-  [1m  Another entry point; here we echoResult
+  [1m  Another
+    entry
+    point;
+    here
+    we can
+    echoResult
   [mOptions:
-      -z=, --zeta=  int    1      set zeta
+      -z=, --zeta=  int    1      very long help string for zeta to show no-wrapping
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
 
   [7mnel-ly [optional-params] [names: string...][m
-  [1m  Yet another entry point; here we block autoEcho
+  [1m  Yet another entry point;
+    here we block autoEcho
   [mOptions:
       --version      bool  false  print version
       --hooves=      int   4      set hooves
@@ -976,9 +995,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(922, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(909, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(303, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(925, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(912, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(305, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
