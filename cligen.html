@@ -85,7 +85,9 @@
   sigPIPE*: ClSIGPIPE        ## `dispatch` use allows end-user SIGPIPE ctrl
   minStrQuoting*: bool       ## Only quote string defaults when necessary
   trueDefault*: string       ## How to render a default value of &quot;true&quot;
-  falseDefault*: string      ## How to render a default value of &quot;false&quot;">ClCfg</a></li>
+  falseDefault*: string      ## How to render a default value of &quot;false&quot;
+  wrapDoc*: int              ## Terminal column to wrap at for doc-like &amp;..
+  wrapTable*: int            ## ..Table-like sections. 0 =&gt; auto -1 =&gt; never">ClCfg</a></li>
 <li><a class="reference" href="#ClHelpCol" title="ClHelpCol = enum
   clOptKeys, clValType, clDflVal, clDescrip">ClHelpCol</a></li>
 <li><a class="reference" href="#ClParse" title="ClParse = tuple[paramName: string, ## Parse status for param
@@ -414,7 +416,9 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   <span class="Identifier">sigPIPE</span><span class="Operator">*</span><span class="Other">:</span> <a href="cligen.html#ClSIGPIPE"><span class="Identifier">ClSIGPIPE</span></a>        <span class="Comment">## `dispatch` use allows end-user SIGPIPE ctrl</span>
   <span class="Identifier">minStrQuoting</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>       <span class="Comment">## Only quote string defaults when necessary</span>
   <span class="Identifier">trueDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>       <span class="Comment">## How to render a default value of &quot;true&quot;</span>
-  <span class="Identifier">falseDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## How to render a default value of &quot;false&quot;</span></pre></dt>
+  <span class="Identifier">falseDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## How to render a default value of &quot;false&quot;</span>
+  <span class="Identifier">wrapDoc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>              <span class="Comment">## Terminal column to wrap at for doc-like &amp;..</span>
+  <span class="Identifier">wrapTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>            <span class="Comment">## ..Table-like sections. 0 =&gt; auto -1 =&gt; never</span></pre></dt>
   <dd>
     
     Settings tending to be program- or CLI-author-global
@@ -1035,7 +1039,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-11-02 20:43:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-11-03 20:50:37 UTC</small>
       </div>
     </div>
   </div>

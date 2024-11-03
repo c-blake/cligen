@@ -5,23 +5,23 @@ nim	stripEsc	cligen/textUt.html#stripEsc,openArray[char]	proc stripEsc(a: openAr
 nim	stripSGR	cligen/textUt.html#stripSGR,openArray[char]	proc stripSGR(a: openArray[char]): string		45
 nim	printedLen	cligen/textUt.html#printedLen,openArray[char]	proc printedLen(a: openArray[char]): int		65
 nim	paragraphs	cligen/textUt.html#paragraphs.i,string	iterator paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]		84
-nim	ttyWidth	cligen/textUt.html#ttyWidth	var ttyWidth		154
+nim	ttyWidth	cligen/textUt.html#ttyWidth	let ttyWidth		154
 nim	wrapWidth	cligen/textUt.html#wrapWidth,string	proc wrapWidth(envVar: string; defaultWidth = ttyWidth): int		158
 nim	wrap	cligen/textUt.html#wrap,string,int,int	proc wrap(s: string; maxWidth = ttyWidth; power = 3; prefixLen = 0): string		181
-nim	addPrefix	cligen/textUt.html#addPrefix,string,string	proc addPrefix(prefix: string; multiline = ""): string		210
-nim	TextTab	cligen/textUt.html#TextTab	type TextTab		220
-nim	alignTable	cligen/textUt.html#alignTable,TextTab,int,int,int,string,string	proc alignTable(tab: TextTab; prefixLen = 0; colGap = 2; minLast = 16; rowSep = "";\n           cols = @[0, 1]; attrOn = @["", ""]; attrOff = @["", ""]; aligns = "";\n           width = ttyWidth; measure = printedLen): string		226
-nim	distDamerau	cligen/textUt.html#distDamerau,openArray[T],openArray[T],seq[C]	proc distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);\n               xpoC = C(1); dI: var seq[C]): C		272
-nim	initCritBitTree	cligen/textUt.html#initCritBitTree	proc initCritBitTree[T](): CritBitTree[T]		309
-nim	keys	cligen/textUt.html#keys,CritBitTree[T]	proc keys[T](cb: CritBitTree[T]): seq[string]		320
-nim	getAll	cligen/textUt.html#getAll,CritBitTree[T],string	proc getAll[T](cb: CritBitTree[T]; key: string): seq[tuple[key: string, val: T]]		323
-nim	keys	cligen/textUt.html#keys,seq[tuple[string,T]]	proc keys[T](x: seq[tuple[key: string, val: T]]): seq[string]		332
-nim	suggestions	cligen/textUt.html#suggestions,string,openArray[T],openArray[T],int	proc suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;\n               unrelatedDistance = C(4)): seq[string]		339
-nim	match	cligen/textUt.html#match,CritBitTree[T],string,string,string	proc match[T](cb: CritBitTree[T]; key, tag: string; msg: var string; suppress = false): tuple[\n    key: string, val: T]		358
-nim	match	cligen/textUt.html#match,CritBitTree[T],string,string	proc match[T](cb: CritBitTree[T]; key, tag: string; err = stderr): tuple[key: string,\n    val: T]		385
-nim	termAlign	cligen/textUt.html#termAlign,string,Natural,char	proc termAlign(s: string; count: Natural; padding = ' '): string		398
-nim	termAlignLeft	cligen/textUt.html#termAlignLeft,string,Natural,char	proc termAlignLeft(s: string; count: Natural; padding = ' '): string		408
-nim	unescaped	cligen/textUt.html#unescaped.i,string	iterator unescaped(s: string): char		420
-nim	toSetChar	cligen/textUt.html#toSetChar,string	proc toSetChar(s: string; unescape = false): set[char]		456
-nimgrp	match	cligen/textUt.html#match-procs-all	proc		358
-nimgrp	keys	cligen/textUt.html#keys-procs-all	proc		320
+nim	addPrefix	cligen/textUt.html#addPrefix,string,string	proc addPrefix(prefix: string; multiline = ""): string		212
+nim	TextTab	cligen/textUt.html#TextTab	type TextTab		222
+nim	alignTable	cligen/textUt.html#alignTable,TextTab,int,int,int,string,string	proc alignTable(tab: TextTab; prefixLen = 0; colGap = 2; minLast = 16; rowSep = "";\n           cols = @[0, 1]; attrOn = @["", ""]; attrOff = @["", ""]; aligns = "";\n           width = ttyWidth; measure = printedLen): string		228
+nim	distDamerau	cligen/textUt.html#distDamerau,openArray[T],openArray[T],seq[C]	proc distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);\n               xpoC = C(1); dI: var seq[C]): C		274
+nim	initCritBitTree	cligen/textUt.html#initCritBitTree	proc initCritBitTree[T](): CritBitTree[T]		311
+nim	keys	cligen/textUt.html#keys,CritBitTree[T]	proc keys[T](cb: CritBitTree[T]): seq[string]		322
+nim	getAll	cligen/textUt.html#getAll,CritBitTree[T],string	proc getAll[T](cb: CritBitTree[T]; key: string): seq[tuple[key: string, val: T]]		325
+nim	keys	cligen/textUt.html#keys,seq[tuple[string,T]]	proc keys[T](x: seq[tuple[key: string, val: T]]): seq[string]		334
+nim	suggestions	cligen/textUt.html#suggestions,string,openArray[T],openArray[T],int	proc suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;\n               unrelatedDistance = C(4)): seq[string]		341
+nim	match	cligen/textUt.html#match,CritBitTree[T],string,string,string	proc match[T](cb: CritBitTree[T]; key, tag: string; msg: var string; suppress = false): tuple[\n    key: string, val: T]		360
+nim	match	cligen/textUt.html#match,CritBitTree[T],string,string	proc match[T](cb: CritBitTree[T]; key, tag: string; err = stderr): tuple[key: string,\n    val: T]		387
+nim	termAlign	cligen/textUt.html#termAlign,string,Natural,char	proc termAlign(s: string; count: Natural; padding = ' '): string		400
+nim	termAlignLeft	cligen/textUt.html#termAlignLeft,string,Natural,char	proc termAlignLeft(s: string; count: Natural; padding = ' '): string		410
+nim	unescaped	cligen/textUt.html#unescaped.i,string	iterator unescaped(s: string): char		422
+nim	toSetChar	cligen/textUt.html#toSetChar,string	proc toSetChar(s: string; unescape = false): set[char]		458
+nimgrp	match	cligen/textUt.html#match-procs-all	proc		360
+nimgrp	keys	cligen/textUt.html#keys-procs-all	proc		322
