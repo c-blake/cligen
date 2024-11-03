@@ -84,8 +84,8 @@
   widthEnv*: string          ## name of environment var for width override
   sigPIPE*: ClSIGPIPE        ## `dispatch` use allows end-user SIGPIPE ctrl
   minStrQuoting*: bool       ## Only quote string defaults when necessary
-  trueDefault*: string       ## How to render a default value of &quot;true&quot;
-  falseDefault*: string      ## How to render a default value of &quot;false&quot;
+  trueDefaultStr*: string    ## How to render a default value of &quot;true&quot;
+  falseDefaultStr*: string   ## How to render a default value of &quot;false&quot;
   wrapDoc*: int              ## Terminal column to wrap at for doc-like &amp;..
   wrapTable*: int            ## ..Table-like sections. 0 =&gt; auto -1 =&gt; never">ClCfg</a></li>
 <li><a class="reference" href="#ClHelpCol" title="ClHelpCol = enum
@@ -127,8 +127,8 @@
     '&gt;', '?'}, longPfxOk: true, stopPfxOk: true, hTabSuppress: &quot;CLIGEN-NOHELP&quot;,
               helpAttr: initTable(32), helpAttrOff: initTable(32),
               helpSyntax: syntaxHelp, render: descape, widthEnv: &quot;CLIGEN_WIDTH&quot;,
-              sigPIPE: spIsOk, minStrQuoting: false, trueDefault: &quot;true&quot;,
-              falseDefault: &quot;false&quot;)">clCfg</a></li>
+              sigPIPE: spIsOk, minStrQuoting: false, trueDefaultStr: &quot;true&quot;,
+              falseDefaultStr: &quot;false&quot;)">clCfg</a></li>
 
     </ul>
   </details>
@@ -415,8 +415,8 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   <span class="Identifier">widthEnv</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>          <span class="Comment">## name of environment var for width override</span>
   <span class="Identifier">sigPIPE</span><span class="Operator">*</span><span class="Other">:</span> <a href="cligen.html#ClSIGPIPE"><span class="Identifier">ClSIGPIPE</span></a>        <span class="Comment">## `dispatch` use allows end-user SIGPIPE ctrl</span>
   <span class="Identifier">minStrQuoting</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>       <span class="Comment">## Only quote string defaults when necessary</span>
-  <span class="Identifier">trueDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>       <span class="Comment">## How to render a default value of &quot;true&quot;</span>
-  <span class="Identifier">falseDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## How to render a default value of &quot;false&quot;</span>
+  <span class="Identifier">trueDefaultStr</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>    <span class="Comment">## How to render a default value of &quot;true&quot;</span>
+  <span class="Identifier">falseDefaultStr</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>   <span class="Comment">## How to render a default value of &quot;false&quot;</span>
   <span class="Identifier">wrapDoc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>              <span class="Comment">## Terminal column to wrap at for doc-like &amp;..</span>
   <span class="Identifier">wrapTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>            <span class="Comment">## ..Table-like sections. 0 =&gt; auto -1 =&gt; never</span></pre></dt>
   <dd>
@@ -526,8 +526,8 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
     <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">,</span> <span class="Identifier">longPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">stopPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">hTabSuppress</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN-NOHELP&quot;</span><span class="Other">,</span>
               <span class="Identifier">helpAttr</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">helpAttrOff</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span>
               <span class="Identifier">helpSyntax</span><span class="Other">:</span> <span class="Identifier">syntaxHelp</span><span class="Other">,</span> <span class="Identifier">render</span><span class="Other">:</span> <span class="Identifier">descape</span><span class="Other">,</span> <span class="Identifier">widthEnv</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN_WIDTH&quot;</span><span class="Other">,</span>
-              <span class="Identifier">sigPIPE</span><span class="Other">:</span> <span class="Identifier">spIsOk</span><span class="Other">,</span> <span class="Identifier">minStrQuoting</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span> <span class="Identifier">trueDefault</span><span class="Other">:</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span>
-              <span class="Identifier">falseDefault</span><span class="Other">:</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">)</span></pre></dt>
+              <span class="Identifier">sigPIPE</span><span class="Other">:</span> <span class="Identifier">spIsOk</span><span class="Other">,</span> <span class="Identifier">minStrQuoting</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span> <span class="Identifier">trueDefaultStr</span><span class="Other">:</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span>
+              <span class="Identifier">falseDefaultStr</span><span class="Other">:</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">)</span></pre></dt>
   <dd>
     
     
@@ -1039,7 +1039,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-11-03 20:50:37 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-11-03 23:14:24 UTC</small>
       </div>
     </div>
   </div>
