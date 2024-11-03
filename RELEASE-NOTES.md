@@ -8,10 +8,10 @@ Version: 1.7.8
     values in double quotes if "necessary" (presently containing a hard-coded
     charset, but if activating is popular, charset should become adjustable).
 
-  - Allow CLauthors to set `clCfg.trueDefault = "y"` (& CLusers to override with
-    `[layout]trueDefault = "yes"`) to decide how `argHelp(bool, ..)` renders a
-    `true` default value & the very same for `falseDefault`.  `test/Version.nim`
-    has an example of both `minStrQuoting` & `falseDefault`.
+  - Allow CLauthors to set `clCfg.trueDefaultStr="y"` (&CLusers to override via
+    `[layout]trueDefaultStr = "yes"`) to decide how `argHelp(bool,..)` renders a
+    `true` default value & the same for `falseDefaultStr`.  `test/Version.nim`
+    has an example of both `minStrQuoting` & `falseDefaultStr`.
 
   - Add 2 new fields to `ClCfg` to control word wrapping in doc-like and table-
     like contexts, also adjustable via the two provided config-file systems.
