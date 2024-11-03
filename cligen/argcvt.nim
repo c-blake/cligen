@@ -50,8 +50,8 @@ type ArgcvtParams* = object ## \
   shortNoVal*: set[char]  ## short options keys where value may be omitted
   longNoVal*: seq[string] ## long option keys where value may be omitted
   minStrQuoting*: bool    ## only quote string defaults when necessary
-  trueDefault*: string    ## How to render a default value of "true"
-  falseDefault*: string   ## How to render a default value of "false"
+  trueDefaultStr*: string    ## How to render a default value of "true"
+  falseDefaultStr*: string   ## How to render a default value of "false"
 
 proc argKeys*(a: ArgcvtParams, argSep="="): string =
   ## `argKeys` generates the option keys column in help tables
@@ -79,7 +79,7 @@ proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
 
 proc argHelp*(dfl: bool; a: var ArgcvtParams): seq[string] =
   result = @[ a.argKeys(argSep=""), "bool",
-              if dfl: a.trueDefault else: a.falseDefault ]
+              if dfl: a.trueDefaultStr else: a.falseDefaultStr ]
   if a.parSh.len > 0:
     a.shortNoVal.incl(a.parSh[0]) # bool can elide option arguments.
   a.longNoVal.add(move(a.parNm))  # So, add to *NoVal.

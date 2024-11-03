@@ -20,7 +20,7 @@ when isMainModule:
   else:
     clCfg.version = "1.5"
     clCfg.minStrQuoting = true  # OR: [layout]minStrQuoting=true; "h i" gets ""s
-    clCfg.falseDefault = ""     # OR: [layout]falseDefault = ""
+    clCfg.falseDefaultStr = ""  # OR: [layout]falseDefaultStr = ""
     when defined(versionShort):
       dispatch(demo, short = { "version": 'V' })
     else:
