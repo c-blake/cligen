@@ -601,12 +601,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                     elif `posNm`.len == 0: ""
                     else: "[" & hl("clOptKeys", `posNm`) & ": " &
                           hl("clValType", `posTy`) & "...]"
-      let use = if `noHdrId`:
-                  if `usageId`.len > 0: `usageId` else: `cf`.use
-                else:
-                  (if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr) &
-                    (if `usageId`.len > 0: `usageId` else: `cf`.use)
       let useHdr = if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr
+      var use = if `usageId`.len > 0: `usageId` else: `cf`.use
+      if not `noHdrId` and "$usehdr" notin use and clUseHdr notin use:
+        use = useHdr & use
       let argStart = "[" & (if `mandatory`.len>0: `apId`.val4req&"," else: "") &
                      "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
