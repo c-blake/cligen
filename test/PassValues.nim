@@ -10,7 +10,7 @@ when isMainModule:
 
   const cmdName         = "myCmd"     #These are all tested via --help
   const doc             = "The" & " " & "doc"
-  const usage           = "$command $args\n${doc}Options:\n$options"
+  const usage           = "$usehdr$command $args\n${doc}Options:\n$options"
   const helpA           = "growth " & "constant"
   const paramB1         = "be-" & "ta"
   const paramB2         = "b-" & "eta"
