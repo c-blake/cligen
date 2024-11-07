@@ -604,9 +604,10 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                     else: "[" & hl("clOptKeys", `posNm`) & ": " &
                           hl("clValType", `posTy`) & "...]"
       let useHdr = if `cf`.useHdr.len > 0: `cf`.useHdr else: clUseHdr
-      var use = if `usageId`.len > 0: `usageId` else: `cf`.use
-      if not `noHdrId` and "$usehdr" notin use and clUseHdr notin use:
-        use = useHdr & use
+      var use = if `usageId`.startsWith("CG-TL") and `noHdrId`: `usageId`[5..^1]
+                elif `cf`.use.len > 0: `cf`.use else: `usageId`
+      if not `noHdrId` and not("$usehdr" in use or "${usehdr}" in use) and
+         clUseHdr notin use: use = useHdr & use
       let argStart = "[" & (if `mandatory`.len>0: `apId`.val4req&"," else: "") &
                      "optional-params]"
       `apId`.help = use % ["doc",     hl("doc", indentDoc),
@@ -1134,7 +1135,7 @@ macro dispatchMultiDG*(procBkts: varargs[untyped]): untyped =
     result[^1].add(newParam("suppress", quote do: @[ "usage", "prefix" ]))
   let subDocsId = ident(prefix & "SubDocs")
   result[^1].add(newParam("usage", quote do:
-    topLevelHelp(`doc`, `use`, `cmd`, `subCmdsId`, `subDocsId`)))
+    topLevelHelp(`doc`, "CG-TL" & `use`, `cmd`, `subCmdsId`, `subDocsId`)))
 
 macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
   ## A wrapper to generate a multi-command dispatcher, call it, and quit.  The
