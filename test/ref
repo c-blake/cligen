@@ -640,9 +640,9 @@ Options:
 
 
 ==> test/PassValues.out <==
+myCmd [optional-params] [a1: string...]
 Usage:
-  myCmd [optional-params] [a1: string...]
-The doc
+  The doc
 Options:
   -h, --help                    print this cligen-erated help
   --help-syntax                 advanced: prepend,plurals,..
