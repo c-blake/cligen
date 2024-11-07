@@ -243,7 +243,8 @@ merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with Nim stdlib's
 `cligen` programs look for `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`, e.g.
 [~/.config/cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
 which allows command-line end users to tweak colors, layout, syntax, and usage
-help templates.
+help templates and generally set things that command authors can also alter
+defaults for in the global [`cligen.clCfg`](blob/master/cligen.nim#L28C1-L56C1).
 
 ### Restrictions
 
