@@ -1,5 +1,7 @@
 when not (defined(cgCfgNone) and defined(cgNoColor)):
   {.push hint[Performance]: off.}     # Silence RstToken copy warning
+# Messages need `stderr` usually gotten by include clCfgInit|clCfgToml.
+when defined(cgCfgNone) and not declared(stderr): import std/syncio
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
 import std/[os, macros, tables, strutils, critbits], system/ansi_c,
