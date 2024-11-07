@@ -25,6 +25,11 @@ Version: 1.7.8
     output will be used for (eg. piping output to grep, $PAGER, etc.).  Sample
     code showing fine-grained wrap control is in `test/PassValuesMulti.nim`.
 
+  - Add `usehdr` variable for `usage` templates.  If $usehdr/${usehdr} is used
+    in the active template, then do not auto-prefix with "Usage:".
+
+  - Fix a bug where CLuser [template]use= / [template]usage= was ignored.
+
 Version: 1.7.7
 --------------
   - Long overdue simplification of config-file open in `clCfgInit`, `clCfgToml`
