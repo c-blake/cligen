@@ -4,66 +4,66 @@ nim	clUse	cligen.html#clUse	const clUse		6
 nim	clUseMultiGeneral	cligen.html#clUseMultiGeneral	const clUseMultiGeneral		9
 nim	clUseMulti	cligen.html#clUseMulti	const clUseMulti		15
 nim	clUseMultiPerlish	cligen.html#clUseMultiPerlish	const clUseMultiPerlish		21
-nim	clOptKeys	cligen.html#clOptKeys	ClHelpCol.clOptKeys		19
-nim	clValType	cligen.html#clValType	ClHelpCol.clValType		19
-nim	clDflVal	cligen.html#clDflVal	ClHelpCol.clDflVal		19
-nim	clDescrip	cligen.html#clDescrip	ClHelpCol.clDescrip		19
-nim	ClHelpCol	cligen.html#ClHelpCol	enum ClHelpCol		19
-nim	spRaise	cligen.html#spRaise	ClSIGPIPE.spRaise		21
-nim	spPass	cligen.html#spPass	ClSIGPIPE.spPass		21
-nim	spIsOk	cligen.html#spIsOk	ClSIGPIPE.spIsOk		21
-nim	ClSIGPIPE	cligen.html#ClSIGPIPE	enum ClSIGPIPE		21
-nim	ClAlias	cligen.html#ClAlias	tuple ClAlias		23
-nim	ClCfg	cligen.html#ClCfg	object ClCfg		26
-nim	HelpOnly	cligen.html#HelpOnly	object HelpOnly		55
-nim	VersionOnly	cligen.html#VersionOnly	object VersionOnly		56
-nim	ParseError	cligen.html#ParseError	object ParseError		57
-nim	HelpError	cligen.html#HelpError	object HelpError		58
-nim	clCfg	cligen.html#clCfg_2	var clCfg		64
-nim	cgParseErrorExitCode	cligen.html#cgParseErrorExitCode	var cgParseErrorExitCode		88
-nim	toInts	cligen.html#toInts,seq[ClHelpCol]	proc toInts(x: seq[ClHelpCol]): seq[int]		93
-nim	onCols	cligen.html#onCols,ClCfg	proc onCols(c: ClCfg): seq[string]		102
-nim	offCols	cligen.html#offCols,ClCfg	proc offCols(c: ClCfg): seq[string]		107
-nim	ha0	cligen.html#ha0,string	proc ha0(key: string; c = clCfg): string		112
-nim	ha1	cligen.html#ha1,string	proc ha1(key: string; c = clCfg): string		114
-nim	clBadKey	cligen.html#clBadKey	ClStatus.clBadKey		118
-nim	clBadVal	cligen.html#clBadVal	ClStatus.clBadVal		118
-nim	clNonOption	cligen.html#clNonOption	ClStatus.clNonOption		118
-nim	clMissing	cligen.html#clMissing	ClStatus.clMissing		118
-nim	clParseOptErr	cligen.html#clParseOptErr	ClStatus.clParseOptErr		118
-nim	clOk	cligen.html#clOk	ClStatus.clOk		118
-nim	clPositional	cligen.html#clPositional	ClStatus.clPositional		118
-nim	clHelpOnly	cligen.html#clHelpOnly	ClStatus.clHelpOnly		118
-nim	clVersionOnly	cligen.html#clVersionOnly	ClStatus.clVersionOnly		118
-nim	ClStatus	cligen.html#ClStatus	enum ClStatus		118
-nim	ClParse	cligen.html#ClParse	tuple ClParse		127
-nim	ClErrors	cligen.html#ClErrors	const ClErrors		131
-nim	ClExit	cligen.html#ClExit	const ClExit		132
-nim	ClNoCall	cligen.html#ClNoCall	const ClNoCall		133
-nim	cgSetByParseNil	cligen.html#cgSetByParseNil	let cgSetByParseNil		135
-nim	cgVarSeqStrNil	cligen.html#cgVarSeqStrNil	let cgVarSeqStrNil		136
-nim	quits	cligen.html#quits,int	proc quits(s: int)		138
-nim	SIGPIPE_isOk	cligen.html#SIGPIPE_isOk	proc SIGPIPE_isOk()		144
-nim	SIGPIPE_pass	cligen.html#SIGPIPE_pass	proc SIGPIPE_pass()		149
-nim	contains	cligen.html#contains,openArray[ClParse],string	proc contains(x: openArray[ClParse]; paramName: string): bool		156
-nim	contains	cligen.html#contains,openArray[ClParse],ClStatus	proc contains(x: openArray[ClParse]; status: ClStatus): bool		161
-nim	numOfStatus	cligen.html#numOfStatus,openArray[ClParse],set[ClStatus]	proc numOfStatus(x: openArray[ClParse]; stati: set[ClStatus]): int		166
-nim	next	cligen.html#next,openArray[ClParse],set[ClStatus],int	proc next(x: openArray[ClParse]; stati: set[ClStatus]; start = 0): int		171
-nim	dispatchGen	cligen.html#dispatchGen.m,,string,string,typed,typed,string,ClCfg,staticstring,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string],ptr.seq[string],ptr.seq[ClParse]	macro dispatchGen(pro: typed{nkSym}; cmdName: string = ""; doc: string = "";\n            help: typed = {}; short: typed = {}; usage: string = clUse;\n            cf: ClCfg = clCfg; echoResult = false; noAutoEcho = false;\n            positional: static string = AUTO; suppress: seq[string] = @[];\n            implicitDefault: seq[string] = @[]; vars: seq[string] = @[];\n            dispatchName = ""; mergeNames: seq[string] = @[];\n            alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[];\n            noHdr = false; docs: ptr var seq[string] = cgVarSeqStrNil;\n            setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped		315
-nim	cligenQuit	cligen.html#cligenQuit.t,untyped	template cligenQuit(p: untyped; echoResult = false; noAutoEcho = false): auto		872
-nim	cligenHelp	cligen.html#cligenHelp.t,untyped,untyped,untyped,untyped,untyped	template cligenHelp(p: untyped; hlp: untyped; use: untyped; pfx: untyped;\n           skipHlp: untyped; noUHdr = false): auto		890
-nim	cligenQuitAux	cligen.html#cligenQuitAux.m,seq[string],string,string,untyped,bool,bool,seq[string]	macro cligenQuitAux(cmdLine: seq[string]; dispatchName: string; cmdName: string;\n              pro: untyped; echoResult: bool; noAutoEcho: bool;\n              mergeNames: seq[string] = @[]): untyped		895
-nim	dispatchCf	cligen.html#dispatchCf.t,,string,string,typed,typed,ClCfg,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]	template dispatchCf(pro: typed{nkSym}; cmdName = ""; doc = ""; help: typed = {};\n           short: typed = {}; usage = clUse; cf: ClCfg = clCfg;\n           echoResult = false; noAutoEcho = false; positional = AUTO;\n           suppress: seq[string] = @[]; implicitDefault: seq[string] = @[];\n           vars: seq[string] = @[]; dispatchName = "";\n           mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];\n           stopWords: seq[string] = @[]; noHdr = false;\n           cmdLine = commandLineParams()): untyped		904
-nim	dispatch	cligen.html#dispatch.t,,string,string,typed,typed,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]	template dispatch(pro: typed{nkSym}; cmdName = ""; doc = ""; help: typed = {};\n         short: typed = {}; usage = clUse; echoResult = false;\n         noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];\n         implicitDefault: seq[string] = @[]; vars: seq[string] = @[];\n         dispatchName = ""; mergeNames: seq[string] = @[];\n         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped		917
-nim	unknownSubcommand	cligen.html#unknownSubcommand.t,string,seq[string]	template unknownSubcommand(cmd: string; subCmds: seq[string])		937
-nim	ambigSubcommand	cligen.html#ambigSubcommand.t,CritBitTree[string],string	template ambigSubcommand(cb: CritBitTree[string]; attempt: string)		948
-nim	topLevelHelp	cligen.html#topLevelHelp,auto,auto,auto,auto,auto	proc topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string		962
-nim	dispatchMultiGen	cligen.html#dispatchMultiGen.m,varargs[untyped]	macro dispatchMultiGen(procBkts: varargs[untyped]): untyped		989
-nim	dispatchMultiDG	cligen.html#dispatchMultiDG.m,varargs[untyped]	macro dispatchMultiDG(procBkts: varargs[untyped]): untyped		1103
-nim	dispatchMulti	cligen.html#dispatchMulti.m,varargs[untyped]	macro dispatchMulti(procBrackets: varargs[untyped]): untyped		1137
-nim	initGen	cligen.html#initGen.m,typed,untyped,string,seq[string],string	macro initGen(default: typed; T: untyped; positional = "";\n        suppress: seq[string] = @[]; name = ""): untyped		1179
-nim	initFromCLcf	cligen.html#initFromCLcf.t,T,string,string,typed,typed,string,ClCfg,string,seq[string],seq[string],seq[ClAlias]	template initFromCLcf[T](default: T; cmdName: string = ""; doc: string = "";\n                help: typed = {}; short: typed = {}; usage: string = clUse;\n                cf: ClCfg = clCfg; positional = "";\n                suppress: seq[string] = @[]; mergeNames: seq[string] = @[];\n                alias: seq[ClAlias] = @[]): T		1223
-nim	initFromCL	cligen.html#initFromCL.t,T,string,string,typed,typed,string,string,seq[string],seq[string],seq[ClAlias]	template initFromCL[T](default: T; cmdName: string = ""; doc: string = "";\n              help: typed = {}; short: typed = {}; usage: string = clUse;\n              positional = ""; suppress: seq[string] = @[];\n              mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[]): T		1243
-nim	initDispatchGen	cligen.html#initDispatchGen.m,untyped,untyped,typed,string,seq[string],untyped	macro initDispatchGen(dispName, obName: untyped; default: typed; positional = "";\n                suppress: seq[string] = @[]; body: untyped): untyped		1254
-nim	mergeParams	cligen.html#mergeParams,seq[string]	proc mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]		1297
-nimgrp	contains	cligen.html#contains-procs-all	proc		156
+nim	clOptKeys	cligen.html#clOptKeys	ClHelpCol.clOptKeys		21
+nim	clValType	cligen.html#clValType	ClHelpCol.clValType		21
+nim	clDflVal	cligen.html#clDflVal	ClHelpCol.clDflVal		21
+nim	clDescrip	cligen.html#clDescrip	ClHelpCol.clDescrip		21
+nim	ClHelpCol	cligen.html#ClHelpCol	enum ClHelpCol		21
+nim	spRaise	cligen.html#spRaise	ClSIGPIPE.spRaise		23
+nim	spPass	cligen.html#spPass	ClSIGPIPE.spPass		23
+nim	spIsOk	cligen.html#spIsOk	ClSIGPIPE.spIsOk		23
+nim	ClSIGPIPE	cligen.html#ClSIGPIPE	enum ClSIGPIPE		23
+nim	ClAlias	cligen.html#ClAlias	tuple ClAlias		25
+nim	ClCfg	cligen.html#ClCfg	object ClCfg		28
+nim	HelpOnly	cligen.html#HelpOnly	object HelpOnly		57
+nim	VersionOnly	cligen.html#VersionOnly	object VersionOnly		58
+nim	ParseError	cligen.html#ParseError	object ParseError		59
+nim	HelpError	cligen.html#HelpError	object HelpError		60
+nim	clCfg	cligen.html#clCfg_2	var clCfg		66
+nim	cgParseErrorExitCode	cligen.html#cgParseErrorExitCode	var cgParseErrorExitCode		90
+nim	toInts	cligen.html#toInts,seq[ClHelpCol]	proc toInts(x: seq[ClHelpCol]): seq[int]		95
+nim	onCols	cligen.html#onCols,ClCfg	proc onCols(c: ClCfg): seq[string]		104
+nim	offCols	cligen.html#offCols,ClCfg	proc offCols(c: ClCfg): seq[string]		109
+nim	ha0	cligen.html#ha0,string	proc ha0(key: string; c = clCfg): string		114
+nim	ha1	cligen.html#ha1,string	proc ha1(key: string; c = clCfg): string		116
+nim	clBadKey	cligen.html#clBadKey	ClStatus.clBadKey		120
+nim	clBadVal	cligen.html#clBadVal	ClStatus.clBadVal		120
+nim	clNonOption	cligen.html#clNonOption	ClStatus.clNonOption		120
+nim	clMissing	cligen.html#clMissing	ClStatus.clMissing		120
+nim	clParseOptErr	cligen.html#clParseOptErr	ClStatus.clParseOptErr		120
+nim	clOk	cligen.html#clOk	ClStatus.clOk		120
+nim	clPositional	cligen.html#clPositional	ClStatus.clPositional		120
+nim	clHelpOnly	cligen.html#clHelpOnly	ClStatus.clHelpOnly		120
+nim	clVersionOnly	cligen.html#clVersionOnly	ClStatus.clVersionOnly		120
+nim	ClStatus	cligen.html#ClStatus	enum ClStatus		120
+nim	ClParse	cligen.html#ClParse	tuple ClParse		129
+nim	ClErrors	cligen.html#ClErrors	const ClErrors		133
+nim	ClExit	cligen.html#ClExit	const ClExit		134
+nim	ClNoCall	cligen.html#ClNoCall	const ClNoCall		135
+nim	cgSetByParseNil	cligen.html#cgSetByParseNil	let cgSetByParseNil		137
+nim	cgVarSeqStrNil	cligen.html#cgVarSeqStrNil	let cgVarSeqStrNil		138
+nim	quits	cligen.html#quits,int	proc quits(s: int)		140
+nim	SIGPIPE_isOk	cligen.html#SIGPIPE_isOk	proc SIGPIPE_isOk()		146
+nim	SIGPIPE_pass	cligen.html#SIGPIPE_pass	proc SIGPIPE_pass()		151
+nim	contains	cligen.html#contains,openArray[ClParse],string	proc contains(x: openArray[ClParse]; paramName: string): bool		158
+nim	contains	cligen.html#contains,openArray[ClParse],ClStatus	proc contains(x: openArray[ClParse]; status: ClStatus): bool		163
+nim	numOfStatus	cligen.html#numOfStatus,openArray[ClParse],set[ClStatus]	proc numOfStatus(x: openArray[ClParse]; stati: set[ClStatus]): int		168
+nim	next	cligen.html#next,openArray[ClParse],set[ClStatus],int	proc next(x: openArray[ClParse]; stati: set[ClStatus]; start = 0): int		173
+nim	dispatchGen	cligen.html#dispatchGen.m,,string,string,typed,typed,string,ClCfg,staticstring,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string],ptr.seq[string],ptr.seq[ClParse]	macro dispatchGen(pro: typed{nkSym}; cmdName: string = ""; doc: string = "";\n            help: typed = {}; short: typed = {}; usage: string = clUse;\n            cf: ClCfg = clCfg; echoResult = false; noAutoEcho = false;\n            positional: static string = AUTO; suppress: seq[string] = @[];\n            implicitDefault: seq[string] = @[]; vars: seq[string] = @[];\n            dispatchName = ""; mergeNames: seq[string] = @[];\n            alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[];\n            noHdr = false; docs: ptr var seq[string] = cgVarSeqStrNil;\n            setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped		317
+nim	cligenQuit	cligen.html#cligenQuit.t,untyped	template cligenQuit(p: untyped; echoResult = false; noAutoEcho = false): auto		875
+nim	cligenHelp	cligen.html#cligenHelp.t,untyped,untyped,untyped,untyped,untyped	template cligenHelp(p: untyped; hlp: untyped; use: untyped; pfx: untyped;\n           skipHlp: untyped; noUHdr = false): auto		893
+nim	cligenQuitAux	cligen.html#cligenQuitAux.m,seq[string],string,string,untyped,bool,bool,seq[string]	macro cligenQuitAux(cmdLine: seq[string]; dispatchName: string; cmdName: string;\n              pro: untyped; echoResult: bool; noAutoEcho: bool;\n              mergeNames: seq[string] = @[]): untyped		898
+nim	dispatchCf	cligen.html#dispatchCf.t,,string,string,typed,typed,ClCfg,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]	template dispatchCf(pro: typed{nkSym}; cmdName = ""; doc = ""; help: typed = {};\n           short: typed = {}; usage = clUse; cf: ClCfg = clCfg;\n           echoResult = false; noAutoEcho = false; positional = AUTO;\n           suppress: seq[string] = @[]; implicitDefault: seq[string] = @[];\n           vars: seq[string] = @[]; dispatchName = "";\n           mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];\n           stopWords: seq[string] = @[]; noHdr = false;\n           cmdLine = commandLineParams()): untyped		907
+nim	dispatch	cligen.html#dispatch.t,,string,string,typed,typed,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]	template dispatch(pro: typed{nkSym}; cmdName = ""; doc = ""; help: typed = {};\n         short: typed = {}; usage = clUse; echoResult = false;\n         noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];\n         implicitDefault: seq[string] = @[]; vars: seq[string] = @[];\n         dispatchName = ""; mergeNames: seq[string] = @[];\n         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped		920
+nim	unknownSubcommand	cligen.html#unknownSubcommand.t,string,seq[string]	template unknownSubcommand(cmd: string; subCmds: seq[string])		940
+nim	ambigSubcommand	cligen.html#ambigSubcommand.t,CritBitTree[string],string	template ambigSubcommand(cb: CritBitTree[string]; attempt: string)		951
+nim	topLevelHelp	cligen.html#topLevelHelp,auto,auto,auto,auto,auto	proc topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string		965
+nim	dispatchMultiGen	cligen.html#dispatchMultiGen.m,varargs[untyped]	macro dispatchMultiGen(procBkts: varargs[untyped]): untyped		992
+nim	dispatchMultiDG	cligen.html#dispatchMultiDG.m,varargs[untyped]	macro dispatchMultiDG(procBkts: varargs[untyped]): untyped		1106
+nim	dispatchMulti	cligen.html#dispatchMulti.m,varargs[untyped]	macro dispatchMulti(procBrackets: varargs[untyped]): untyped		1140
+nim	initGen	cligen.html#initGen.m,typed,untyped,string,seq[string],string	macro initGen(default: typed; T: untyped; positional = "";\n        suppress: seq[string] = @[]; name = ""): untyped		1182
+nim	initFromCLcf	cligen.html#initFromCLcf.t,T,string,string,typed,typed,string,ClCfg,string,seq[string],seq[string],seq[ClAlias]	template initFromCLcf[T](default: T; cmdName: string = ""; doc: string = "";\n                help: typed = {}; short: typed = {}; usage: string = clUse;\n                cf: ClCfg = clCfg; positional = "";\n                suppress: seq[string] = @[]; mergeNames: seq[string] = @[];\n                alias: seq[ClAlias] = @[]): T		1226
+nim	initFromCL	cligen.html#initFromCL.t,T,string,string,typed,typed,string,string,seq[string],seq[string],seq[ClAlias]	template initFromCL[T](default: T; cmdName: string = ""; doc: string = "";\n              help: typed = {}; short: typed = {}; usage: string = clUse;\n              positional = ""; suppress: seq[string] = @[];\n              mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[]): T		1246
+nim	initDispatchGen	cligen.html#initDispatchGen.m,untyped,untyped,typed,string,seq[string],untyped	macro initDispatchGen(dispName, obName: untyped; default: typed; positional = "";\n                suppress: seq[string] = @[]; body: untyped): untyped		1257
+nim	mergeParams	cligen.html#mergeParams,seq[string]	proc mergeParams(cmdNames: seq[string]; cmdLine = commandLineParams()): seq[string]		1300
+nimgrp	contains	cligen.html#contains-procs-all	proc		158
