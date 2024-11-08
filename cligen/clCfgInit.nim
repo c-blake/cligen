@@ -48,7 +48,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](e.value.optionNormalize)
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-                       "Can only be \"colors\"\n"
+                       "Can only be \"colors\" or \"sigpipe\"\n"
       of "layout":
         case e.key.optionNormalize
         of "widthenv":               c.widthEnv    = e.value
@@ -63,14 +63,14 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           c.noHelpHelp = e.value.optionNormalize in yes
         of "minstrquoting":
           c.minStrQuoting = e.value.optionNormalize in yes
-        of "trueDefaultStr" : c.trueDefaultStr  = e.value
-        of "falseDefaultStr": c.falseDefaultStr = e.value
-        of "wrapDoc"     : c.wrapDoc      = e.value.parseInt
-        of "wrapTable"   : c.wrapTable    = e.value.parseInt
+        of "truedefaultstr" : c.trueDefaultStr  = e.value
+        of "falsedefaultstr": c.falseDefaultStr = e.value
+        of "wrapdoc"     : c.wrapDoc      = e.value.parseInt
+        of "wraptable"   : c.wrapTable    = e.value.parseInt
         else:
-          stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: rowseparator columngap leastfinal required columns " &
-            "nohelphelp\n"
+          stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
+            "rowsep colgap minlast required cols nohelphelp widthenv\n  " &
+            "minstrquoting truedefaultstr falsedefaultstr wrapdoc wraptable\n"
       of "syntax":
         case e.key.optionNormalize
         of "reqsep", "requireseparator":
@@ -80,8 +80,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "longprefixok": c.longPfxOk = e.value.optionNormalize in yes
         of "stopprefixok": c.stopPfxOk = e.value.optionNormalize in yes
         else:
-          stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: requireseparator separatorchars\n"
+          stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
+            "requireseparator separatorchars longprefixok stopprefixok\n"
       of "color":
         if not plain:
           var on = ""; var off = textAttrOff
@@ -135,8 +135,8 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "usemulti", "usagemulti": c.useMulti   = hl(e.value)
         of "helpsyntax"            : c.helpSyntax = hl(e.value)
         else:
-          stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: usageheader usage usagemulti\n"
+          stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: " &
+            "usehdr,usageheader use,usage usemulti,usagemulti helpsyntax\n"
       else: discard # cannot happen since we break early above
     of cfgError: echo e.msg
   close(p)
