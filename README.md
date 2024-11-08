@@ -183,8 +183,8 @@ dispatch fun, short={"bar" : 'r'}
 If you'd like to define `short` or `help` parameters outside of a `dispatch`
 call, you need an explicit conversion to a `Table` symbol:
 ```nim
-import cligen
-from std/tables import toTable
+import cligen; clCfg.longPfxOk = false  # {.define(cgCfgNone).}..
+from std/tables import toTable          #..blocks syntax config
 const
   Help  = { "foo": "the beginning", "bar": "the rate" }.toTable()
   Short = { "foo": 'f', "bar": 'r'}.toTable()
@@ -193,7 +193,8 @@ dispatch(fun, help = Help, short = Short)
 ```
 With that `"bar"` gets `'r'` while `"baz"` gets `'b'` as short options.  To
 suppress a long option getting *any* short option, specify a short key `'\0'`.
-To suppress _all_ short options, give `short` a key of `""`.
+To suppress _all_ short options, give `short` a key of `""`.  Making `longPfxOk`
+false instead of the default `true` means CLusers must say `--foo`, not `--fo`.
 
 To suppress API parameters in the CLI, pass `suppress = @["apiParam", ...]`.
 (For object init, "ALL AFTER field" stops fieldPairs iteration.)  To suppress
@@ -240,7 +241,8 @@ You can `include cligen/mergeCfgEnv` between `import cligen` & `dispatch` to
 merge `${CMD_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}}/CMD` (with Nim stdlib's
 `parsecfg` module) and then `$CMD` with `parseCmdLine` as above.
 
-`cligen` programs look for `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`, e.g.
+Unless `cgCfgNone` is defined, `cligen` programs look for
+`${XDG_CONFIG_HOME:-$HOME/.config}/cligen`, e.g.
 [~/.config/cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
 which allows command-line end users to tweak colors, layout, syntax, and usage
 help templates and generally set things that command authors can also alter
