@@ -46,14 +46,25 @@ singleBQuo = "underline  ; -underline"
 doubleBQuo = "inverse    ; -inverse"
 
 [layout] # Control presentation of the help table
-#cols = "clOptKeys clValType clDflVal clDescrip"  # Presence&order of columns
 #rowSep = "\n"  # Default is ""; "\n" => double-spaced
 colGap = 1     # colors make tighter format more tolerable; 0 possible.
 #minLast = 16   # Min printed width of rightmost help column
+#required = "\e[1mNEED\e[m" # How to render "REQUIRED" for mandatory params
+#cols = "clOptKeys clValType clDflVal clDescrip"  # Presence&order of columns
+noHelpHelp = true
+# BELOW CAN BE OVERRIDDEN BY CLauthor CUSTOM `argHelp`
+#minStrQuoting = true   # Minimize double quotes in help default values
+#trueDefaultStr  = "y"  # How to render a true default value in help
+#falseDefaultStr = ""   # How to render a false default value in help
+#widthEnv = "MY_WIDTH"  # Wrap at $MY_WIDTH
+#wrapDoc = 80           # Wrap $doc-like at this column
+#wrapTable = 80         # Wrap $options-table-like at this column
 
 [syntax] # Changing can EASILY break cfg files|script-usage of programs!
-#reqSep   = off  # This is the default
-#sepChars = ":=" # This is the default
+#reqSep   = off  # on means below separator is NOT optional
+#sepChars = ":=" # This is the default param-value separator
+#longPrefixOk = false # deny/allow unique prefix match for long options
+#stopPrefixOk = false # deny/allow unique prefix match for subcommand names
 
 [templates] # These are help formatting templates
 useHdr   = "Usage:\n  "
