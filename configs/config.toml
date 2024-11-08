@@ -26,6 +26,7 @@
 
 [layout]
   # rowsep = "\n"  # This is the default; gap between option table rows
+  # subSep = "\n"  # Default is ""; "\n" => extra blank between sub-help dumps
   colGap = 1     # colors make tighter format more tolerable
   # minlast = 16   # This is the default; min room for final column
   cols = ["clOptKeys", "clValType", "clDflVal", "clDescrip"] # The default

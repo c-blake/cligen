@@ -47,6 +47,7 @@ doubleBQuo = "inverse    ; -inverse"
 
 [layout] # Control presentation of the help table
 #rowSep = "\n"  # Default is ""; "\n" => double-spaced
+#subSep = "\n"  # Default is ""; "\n" => extra blank between sub-help dumps
 colGap = 1     # colors make tighter format more tolerable; 0 possible.
 #minLast = 16   # Min printed width of rightmost help column
 #required = "\e[1mNEED\e[m" # How to render "REQUIRED" for mandatory params

@@ -37,6 +37,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
     longPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
+    subRowSep*:   string         ## separates full help dump subcmds; Eg.: "\n"
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
     helpAttrOff*: Table[string, string] ## Text attr offs for each help area
@@ -76,6 +77,7 @@ var clCfg* = ClCfg(
                  '|', '~', '^', '$', '#', '<', '>', '?' },
   longPfxOk:   true,
   stopPfxOk:   true,
+  subRowSep:   "",
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
   helpAttrOff: initTable[string,string](),
@@ -1065,7 +1067,7 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
               add(newCall("optionNormalize", sCmdNm)).add(quote do:
       cligenQuitAux(`restId`, `disNm`, `sCmdNmS`, p[0], `sCmdEcR`.bool,
                     `sCmdNoAuEc`.bool, `mn`)))
-    let spc = if cnt + 1 < len(procBrackets): quote do: echo ""
+    let spc = if cnt+1<procBrackets.len: quote do: stdout.write clCfg.hTabRowSep
               else: newNimNode(nnkEmpty)
     helpDump.add(quote do:
       if `disNm` in `multiNmsId`:
@@ -1086,8 +1088,8 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
        echo ("${doc}This is a multi-dispatch command. -h/--help/--help-syntax" &
              " is available\nfor top-level/all subcommands. Usage is like:\n" &
              "    $1 {SUBCMD} [subcommand-opts & args]\n" &
-             "where subcommand syntaxes are as follows:\n") % [ "cmd", `cmd`,
-                                                                "doc", `doc`]
+             "where subcommand syntaxes are as follows:") % [
+               "cmd", `cmd`, "doc", `doc`], clCfg.subRowSep
       let `dashHelpId` = @[ "--help" ]
       let `helpSCmdId` = @[ "help" ]
       `helpDump`

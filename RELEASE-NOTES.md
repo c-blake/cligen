@@ -30,6 +30,11 @@ Version: 1.7.8
 
   - Fix a bug where CLuser [template]use= / [template]usage= was ignored.
 
+  - Add a new `ClCfg.subRowSep` field to control spacing of full help dumps of
+    subcommands.  "" default changes help output, but readability seems fine to
+    me given various indentations.  Add `[layout]subSep|subRowSep` for the two
+    provided config parsers to let CLusers override the default.
+
 Version: 1.7.7
 --------------
   - Long overdue simplification of config-file open in `clCfgInit`, `clCfgToml`

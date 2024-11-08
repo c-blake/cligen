@@ -38,6 +38,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         case k2.toLowerAscii()
         of "widthenv":               c.widthEnv    = v2.getStr()
         of "rowsep", "rowseparator": c.hTabRowSep  = v2.getStr()
+        of "subsep", "subrowsep":    c.subRowSep   = v2.getStr()
         of "colgap", "columngap":    c.hTabColGap  = v2.getInt()
         of "minlast", "leastfinal":  c.hTabMinLast = v2.getInt()
         of "required", "val4req":    c.hTabVal4req = v2.getStr()

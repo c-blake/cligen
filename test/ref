@@ -259,7 +259,6 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   demo [optional-params] [files: string...]
     demo entry point with varied, meaningless parameters.
   Options:
@@ -268,7 +267,6 @@ where subcommand syntaxes are as follows:
       -b=, --beta=   float   2.0    set beta
       -v, --verb     bool    false  on=chatty, off=quiet
       -i=, --item=   string  ""     set item
-
   print [optional-params] [paths: string...]
     show entry point with varied, meaningless parameters; Local `xx`.
   Options:
@@ -277,16 +275,13 @@ where subcommand syntaxes are as follows:
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
       -x=, --xx=     float  3.0    set xx
-
   punt [optional-params] [names: string...]
     Another entry point; here we echoResult & use global `xx`.
   Options:
       -z=, --zeta=  int    1      set zeta
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
-
   . is an alias for `punt`
-
   nel-ly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
   Options:
@@ -477,12 +472,10 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   apple [optional-params] [cmdLine: seq...]
     apple SUB-SUB commands
   Options:
       --version  bool  false  print version
-
   whoa [optional-params] [names: string...]
     Another entry point; here we echoResult
   Options:
@@ -490,7 +483,6 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=  int    1      set zeta
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
-
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
   Options:
@@ -541,7 +533,6 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   whoa [optional-params] [names: string...]
     Another entry point; here we echoResult
   Options:
@@ -549,10 +540,8 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=  int    1      set zeta
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
-
     apple/apple help for sub-sub commands
   
-
   nelly [optional-params] [names: string...]
     Yet another entry point; here we block autoEcho
   Options:
@@ -684,7 +673,6 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   [7mdemo [optional-params] [files: string...][m
   [1m  demo entry point with
     varied, meaningless
@@ -696,7 +684,6 @@ where subcommand syntaxes are as follows:
       -v, --verb     bool    false  on=chatty,
                                     off=quiet
       -i=, --item=   string  ""     set item
-
   [7mprint [optional-params] [paths: string...][m
   [1m  show entry point with
     varied, meaningless
@@ -706,7 +693,6 @@ where subcommand syntaxes are as follows:
       -z=, --gamma=  int    1      set gamma
       -i=, --iota=   float  2.0    set iota
       -v, --verb     bool   false  set verb
-
   [7mpunt [optional-params] [names: string...][m
   [1m  Another
     entry
@@ -718,7 +704,6 @@ where subcommand syntaxes are as follows:
       -z=, --zeta=  int    1      very long help string for zeta to show no-wrapping
       -e=, --eta=   float  2.0    set eta
       -v, --verb    bool   false  set verb
-
   [7mnel-ly [optional-params] [names: string...][m
   [1m  Yet another entry point;
     here we block autoEcho
@@ -760,11 +745,9 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   get [optional-params] 
   Options:
       -a=, --a=  int  1  set a
-
   put [optional-params] 
   Options:
       -b=, --b=  int  2  set b
@@ -795,7 +778,6 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   demo-int [optional-params] 
   Options:
       -n=, --nat=    0..       0   set nat
@@ -804,7 +786,6 @@ where subcommand syntaxes are as follows:
       --delta=       -5..5     0   set delta
       -s=, --score=  0..100    0   set score
       -q=, --q=      QuasiInt  -1  set q
-
   demo-flt [optional-params] 
   Options:
       -a=, --angle=  0.0..360.0   90.0  set angle
@@ -972,11 +953,9 @@ This is a multi-dispatch command. -h/--help/--help-syntax is available
 for top-level/all subcommands. Usage is like:
     cmd {SUBCMD} [subcommand-opts & args]
 where subcommand syntaxes are as follows:
-
   get [optional-params] 
   Options:
       -a=, --a=  int  1  set a
-
   put [optional-params] 
   Options:
       -b=, --b=  int  2  set b
@@ -995,9 +974,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(928, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(915, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(307, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(930, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(917, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(309, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.

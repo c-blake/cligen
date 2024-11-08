@@ -53,6 +53,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         case e.key.optionNormalize
         of "widthenv":               c.widthEnv    = e.value
         of "rowsep", "rowseparator": c.hTabRowSep  = e.value
+        of "subsep", "subrowsep":    c.subRowSep   = e.value
         of "colgap", "columngap":    c.hTabColGap  = parseInt(e.value)
         of "minlast", "leastfinal":  c.hTabMinLast = parseInt(e.value)
         of "required", "val4req":    c.hTabVal4req = e.value
