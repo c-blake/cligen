@@ -245,8 +245,9 @@ Unless `cgCfgNone` is defined, `cligen` programs look for
 `${XDG_CONFIG_HOME:-$HOME/.config}/cligen`, e.g.
 [~/.config/cligen/config](https://github.com/c-blake/cligen/wiki/Example-Config-File)
 which allows command-line end users to tweak colors, layout, syntax, and usage
-help templates and generally set things that command authors can also alter
-defaults for in the global [`cligen.clCfg`](cligen.nim#L28C1-L56C1).
+help templates and generally set things that command authors can also [alter
+defaults for](https://github.com/c-blake/cligen#common-overrides-program-exit-config-fileenvironment-vars)
+in the global [`cligen.clCfg`](cligen.nim#L28C1-L56C1).
 
 ### Restrictions
 
