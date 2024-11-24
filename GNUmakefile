@@ -24,6 +24,7 @@ NIM_BACKEND := $(or $(BE),c)
 
 NIM_FLAGS := \
 	--verbosity:2 --warning:Deprecated:off --warning:ProveField:off \
+	--warning:Uninit:off --warning:ProveInit:off \
 	--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off \
 	--hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off \
 	--hint:GCStats:off --styleCheck:off \

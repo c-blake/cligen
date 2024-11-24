@@ -6,7 +6,8 @@ rm -rf $HOME/.cache/nim/*
 h="--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off"
 h="$h --hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off"
 h="$h --hint:GCStats:off --colors:off --styleCheck:off"
-: ${w="--warning:Deprecated:off --warning:ProveField:off"}
+w0="--warning:Uninit:off --warning:ProveInit:off"
+: ${w="--warning:Deprecated:off --warning:ProveField:off $w0"}
 for n in test/[A-Z]*.nim; do
   o=${n%.nim}.out
   c=$HOME/.cache/nim/cache-${n%.nim}

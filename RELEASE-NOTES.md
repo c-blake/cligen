@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.0
+--------------
+  - Disable *VERY* false-positive-prone `warning:Uninit` & `warning:ProveInit`
+    in test/ things -- at least until I get around to fixing dozens of call
+    sites for `ProveInit` (which has a scary "will become an error") and put
+    `{.push warning[X]: off.}` in every needed module.
+
 Version: 1.7.8
 --------------
   - Allow CLauthors to set `clCfg.minStrQuoting = true` (& CLusers to override
