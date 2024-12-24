@@ -1,7 +1,7 @@
 nimTitle	fileUt	cligen/fileUt.html	module cligen/fileUt		0
-nim	fileEq	cligen/fileUt.html#fileEq,string,string	proc fileEq(pathA, pathB: string): bool		4
-nim	parseIx	cligen/fileUt.html#parseIx,string,int,int	proc parseIx(ixSpec: string; sz: int; x: var int): int		18
-nim	parseSlice	cligen/fileUt.html#parseSlice,string,int,int,int	proc parseSlice(slcSpec: string; sz: int; a, b: var int)		38
-nim	parseSlice	cligen/fileUt.html#parseSlice,string,int	proc parseSlice(slcSpec: string; sz: int): Slice[int]		56
-nim	parseSlice	cligen/fileUt.html#parseSlice,string	proc parseSlice(s: string): tuple[a, b: int]		61
-nimgrp	parseslice	cligen/fileUt.html#parseSlice-procs-all	proc		38
+nim	fileEq	cligen/fileUt.html#fileEq,string,string	proc fileEq(pathA, pathB: string): bool		5
+nim	parseIx	cligen/fileUt.html#parseIx,string,int,int	proc parseIx(ixSpec: string; sz: int; x: var int): int		19
+nim	parseSlice	cligen/fileUt.html#parseSlice,string,int,int,int	proc parseSlice(slcSpec: string; sz: int; a, b: var int)		39
+nim	parseSlice	cligen/fileUt.html#parseSlice,string,int	proc parseSlice(slcSpec: string; sz: int): Slice[int]		57
+nim	parseSlice	cligen/fileUt.html#parseSlice,string	proc parseSlice(s: string): tuple[a, b: int]		62
+nimgrp	parseslice	cligen/fileUt.html#parseSlice-procs-all	proc		39
