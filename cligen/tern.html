@@ -58,14 +58,7 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#7" id="57">Types</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Node" title="Node[T] = ref NodeOb[T]">Node</a></li>
-<li><a class="reference" href="#NodeOb" title="NodeOb[T] {.acyclic.} = object
-  ch*: char
-  cnt*: int
-  when T isnot void:
-    val*: T
-  kid*: array[3, ref NodeOb[T]]">NodeOb</a></li>
-<li><a class="reference" href="#Tern" title="Tern[T] = object
+      <li><a class="reference" href="#Tern" title="Tern[T] = object
   root*: Node[T]
   ## Number of elements
   ## Depth of Tree">Tern</a></li>
@@ -227,30 +220,9 @@
 <div class="section" id="7">
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
-    <div id="Node">
-  <dt><pre><a href="tern.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">ref</span> <a href="tern.html#NodeOb"><span class="Identifier">NodeOb</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
-  <dd>
-    
-    
-    
-  </dd>
-</div>
-<div id="NodeOb">
-  <dt><pre><a href="tern.html#NodeOb"><span class="Identifier">NodeOb</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> {.<span class="Identifier">acyclic</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">ch</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">char</span>
-  <span class="Identifier">cnt</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-  <span class="Keyword">when</span> <span class="Identifier">T</span> <span class="Keyword">isnot</span> <span class="Identifier">void</span><span class="Other">:</span>
-    <span class="Identifier">val</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">T</span>
-  <span class="Identifier">kid</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">3</span><span class="Other">,</span> <span class="Keyword">ref</span> <a href="tern.html#NodeOb"><span class="Identifier">NodeOb</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-  <dd>
-    
-    
-    
-  </dd>
-</div>
-<div id="Tern">
+    <div id="Tern">
   <dt><pre><a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">root</span><span class="Operator">*</span><span class="Other">:</span> <a href="tern.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
+  <span class="Identifier">root</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Node</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
   <span class="Comment">## Number of elements</span>
   <span class="Comment">## Depth of Tree</span></pre></dt>
   <dd>
@@ -404,7 +376,7 @@
 </div>
 <div id="rawGet-procs-all">
   <div id="rawGet,Tern[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#rawGet%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawGet</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="tern.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#rawGet%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawGet</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Node</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Return node for <tt class="docutils literal"><span class="pre">key</span></tt> or <tt class="docutils literal"><span class="pre">nil</span></tt> if not found
@@ -415,7 +387,7 @@
 </div>
 <div id="rawInsert-procs-all">
   <div id="rawInsert,Tern[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#rawInsert%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawInsert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="tern.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#rawInsert%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawInsert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Node</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -426,7 +398,7 @@
 </div>
 <div id="rawPfx-procs-all">
   <div id="rawPfx,Tern[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#rawPfx%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawPfx</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">pfx</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <a href="tern.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#rawPfx%2CTern%5BT%5D%2Cstring"><span class="Identifier">rawPfx</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="tern.html#Tern"><span class="Identifier">Tern</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">pfx</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Node</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Return sub-tree for all keys starting with <tt class="docutils literal"><span class="pre"><span class="Identifier">prefix</span></span></tt> or if <tt class="docutils literal"><span class="pre">longest</span></tt> then sub-tree for longest match (which need not be a complete match).
@@ -609,7 +581,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-24 14:28:16 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-24 15:08:52 UTC</small>
       </div>
     </div>
   </div>
