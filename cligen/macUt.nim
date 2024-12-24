@@ -1,6 +1,6 @@
 ## This is a module of utility procs that might be more broadly useful than only
 ## cligen.nim activity.
-
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import core/macros, std/[strutils, os]
 
 proc maybeDestrop*(id: NimNode): NimNode =

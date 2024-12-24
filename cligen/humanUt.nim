@@ -1,5 +1,6 @@
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
- {.push warning[UnusedImport]: off.} #import-inside-include confuses used-system
+  {.warning[UnusedImport]:off.}                   # import-in-include confuses.
+  {.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[strutils, parseutils]
 
 proc parseInt*(s: string, valIfNAN: int): int =

@@ -7,6 +7,7 @@
 ##``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
 ##which will be trapped by the compiler if you use kwargs).  ``CritBitTree``
 ##itself is API-compatible with the union of both ``HashSet`` and ``Table``.
+#{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/algorithm, ./sysUt # reverse, postInc
 
 const NUL* = '\0'

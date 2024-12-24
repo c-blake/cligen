@@ -2,8 +2,8 @@
 ## ``argHelp`` explains this interpretation to a command-line user.  Define new
 ## overloads in-scope of ``dispatch`` to override these or support more types.
 
-when (NimMajor,NimMinor,NimPatch) > (0,20,2):
-  {.push warning[UnusedImport]: off.} # This is only for gcarc
+when (NimMajor,NimMinor,NimPatch) > (0,20,2): # 2nd two should be verbosity:2
+  {.warning[UnusedImport]:off, warning[Uninit]:off, warning[ProveInit]:off.}
 import std/[strformat, sets, critbits, strutils], ./textUt, ./gcarc, ./parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system

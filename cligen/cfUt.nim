@@ -1,3 +1,4 @@
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[os, parsecfg, streams, strutils]
 when not declared(stderr): import std/syncio
 

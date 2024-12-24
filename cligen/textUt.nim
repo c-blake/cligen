@@ -1,3 +1,4 @@
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 from strutils import split, join, strip, repeat, replace, count, Whitespace,
                      startsWith, toUpper, toLowerAscii
 from terminal import terminalWidth

@@ -61,7 +61,8 @@
 ## E.g, a user entering "="  causes ``sep == "="`` while entering "+=" gets
 ## ``sep == "+="``, and "+/-+=" gets ``sep == "+/-+="``.
 
-import std/[os, strutils, critbits]
+{.warning[ProveField]:off, warning[Uninit]:off, warning[ProveInit]:off.}
+import std/[os, strutils, critbits] #^^^ Should all be verbosity:2 not 1
 
 proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ## Normalizes option key ``s`` to allow command syntax to be style-insensitive
@@ -96,7 +97,6 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   if j != s.len:
     setLen(result, j)
 
-{.push warning[ProveField]: off.}
 proc valsWithPfx*[T](cb: CritBitTree[T], key: string): seq[T] =
   for v in cb.valuesWithPrefix(optionNormalize(key)): result.add(v)
 
@@ -117,11 +117,10 @@ proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
   if ks.len > 1:    #No exact prefix-match above => ambiguity
     return ""       #=> of-clause that reports ambiguity in .msg.
   return n  #ks.len==0 => case-else clause suggests spelling in .msg.
-{.pop.}
 
 when not declared(TaintedString):
   type TaintedString* = string
-{.push warning[Deprecated]: off.}
+{.warning[Deprecated]: off.}
 type
   CmdLineKind* = enum         ## the detected command line token
     cmdEnd,                   ## end of command line reached
@@ -185,10 +184,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   result.requireSep = requireSeparator
   result.sepChars = sepChars
   result.opChars = opChars
-  {.push warning[ProveField]: off.}
   for w in stopWords:
     if w.len > 0: result.stopWords.incl(optionNormalize(w), w)
-  {.pop.}
   result.longPfxOk = longPfxOk
   result.stopPfxOk = stopPfxOk
   result.off = 0
@@ -273,7 +270,6 @@ proc doLong(p: var OptParser) =
     p.val = ""
     p.pos += 1
 
-{.push warning[ProveField]: off.}
 proc next*(p: var OptParser) =
   p.sep = ""
   if p.off > 0:                         #Step1: handle any remaining short opts
@@ -307,7 +303,6 @@ proc next*(p: var OptParser) =
     else:                               #Step6b: maybe a block of short options
       p.off = 1                         # skip the initial "-"
       doShort(p)
-{.pop.}
 
 type
   GetoptResult* = tuple[kind: CmdLineKind, key, val: TaintedString]
@@ -358,4 +353,3 @@ when declared(paramCount):
       next(p)
       if p.kind == cmdEnd: break
       yield (p.kind, p.key, p.val)
-{.pop.}

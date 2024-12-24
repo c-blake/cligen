@@ -1,3 +1,4 @@
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[strutils, bitops, math], cligen/[mslice, unsafeAddr]
 type                                    # Map a float "intensity" to RGB colors
   UnitR*  = range[0.0 .. 1.0]

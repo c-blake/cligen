@@ -8,7 +8,7 @@
 ##    ## a tty).  Eg., ``find -type f -print0|example -d\\x00 a b c``.
 ##    for path in both(fileStrings(file, delim), paths)(): discard
 ##  dispatch(something)
-
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 when not declared(File): import std/syncio
 include cligen/unsafeAddr
 import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]

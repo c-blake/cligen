@@ -1,6 +1,6 @@
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import cligen/[strUt, textUt], std/[re, strutils]
 when not declared(stdin): import std/syncio
-
 type
   Shell* = enum zsh, bash, fish
 
