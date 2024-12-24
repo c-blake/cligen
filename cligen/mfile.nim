@@ -3,7 +3,7 @@
 ## adds `noShrink` safety, has non-system.open-colliding type constructor, uses
 ## `.len` (not `.size`) for more Nim-wide consistency & supports WO memory, and
 ## has FileInfo in the object (for various inspections).
-
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 when not declared(File): import std/syncio
 import std/os, ./mslice, ./osUt # cmemcmp mSlices setFileSize,getDelims
 when defined(windows):

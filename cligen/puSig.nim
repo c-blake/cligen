@@ -21,7 +21,7 @@
 ##
 ## This code had been in `procs.nim`, but make sense here since there can be
 ## other reasons why a user might want a signal in a CLI, like `bu/etr` aborts.
-
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[parseutils, critbits, strutils, posix], cligen/textUt
 
 let signum* = {      # Sadly, not-const-able
