@@ -1,109 +1,109 @@
 nimTitle	posixUt	cligen/posixUt.html	module cligen/posixUt		0
-nim	openat	cligen/posixUt.html#openat,cint,cstring,cint	proc openat(dirfd: cint; path: cstring; flags: cint): cint		8
-nim	fstatat	cligen/posixUt.html#fstatat,cint,cstring,Stat,cint	proc fstatat(dirfd: cint; path: cstring; stx: var Stat; flags: cint): cint		10
-nim	faccessat	cligen/posixUt.html#faccessat,cint,cstring,cint,cint	proc faccessat(dirfd: cint; path: cstring; mode: cint; flags: cint): cint		12
-nim	fchmodat	cligen/posixUt.html#fchmodat,cint,cstring,Mode,cint	proc fchmodat(dirfd: cint; path: cstring; mode: Mode; flags: cint): cint		14
-nim	fchownat	cligen/posixUt.html#fchownat,cint,cstring,Uid,Gid,cint	proc fchownat(dirfd: cint; path: cstring; owner: Uid; group: Gid; flags: cint): cint		16
-nim	futimesat	cligen/posixUt.html#futimesat,cint,cstring,array[,Timeval]	proc futimesat(dirfd: cint; path: cstring; times: array[2, Timeval]): cint		18
-nim	utimensat	cligen/posixUt.html#utimensat,cint,cstring,array[,Timespec],cint	proc utimensat(dirfd: cint; path: cstring; times: array[2, Timespec]; flags: cint): cint		20
-nim	futimens	cligen/posixUt.html#futimens,cint,array[,Timespec]	proc futimens(fd: cint; times: array[2, Timespec]): cint		22
-nim	linkat	cligen/posixUt.html#linkat,cint,cstring,cint,cstring,cint	proc linkat(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;\n       flags: cint): cint		24
-nim	mkdirat	cligen/posixUt.html#mkdirat,cint,cstring,Mode	proc mkdirat(dirfd: cint; path: cstring; mode: Mode): cint		26
-nim	mknodat	cligen/posixUt.html#mknodat,cint,cstring,Mode,Dev	proc mknodat(dirfd: cint; path: cstring; mode: Mode; dev: Dev): cint		28
-nim	symlinkat	cligen/posixUt.html#symlinkat,cstring,cint,cstring	proc symlinkat(target: cstring; newdirfd: cint; linkpath: cstring): cint		30
-nim	readlinkat	cligen/posixUt.html#readlinkat,cint,cstring,cstring,csize	proc readlinkat(dirfd: cint; path: cstring; buf: cstring; bufsiz: csize): clong		32
-nim	unlinkat	cligen/posixUt.html#unlinkat,cint,cstring,cint	proc unlinkat(dirfd: cint; path: cstring; flags: cint): cint		34
-nim	renameat	cligen/posixUt.html#renameat,cint,cstring,cint,cstring	proc renameat(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring): cint		36
-nim	rename	cligen/posixUt.html#rename,cstring,cstring	proc rename(oldpath, newpath: cstring): cint		38
-nim	impConstAs	cligen/posixUt.html#impConstAs.t,untyped,string,,	template impConstAs(T: untyped; path: string; name, nimName): untyped		41
-nim	impConst	cligen/posixUt.html#impConst.t,untyped,string,untyped	template impConst(T: untyped; path: string; name: untyped): untyped		45
-nim	impCint	cligen/posixUt.html#impCint.t,string,untyped	template impCint(path: string; name: untyped): untyped		49
-nim	AT_FDCWD	cligen/posixUt.html#AT_FDCWD	let AT_FDCWD		47
-nim	AT_SYMLINK_NOFOLLOW	cligen/posixUt.html#AT_SYMLINK_NOFOLLOW	let AT_SYMLINK_NOFOLLOW		47
-nim	AT_REMOVEDIR	cligen/posixUt.html#AT_REMOVEDIR	let AT_REMOVEDIR		47
-nim	AT_SYMLINK_FOLLOW	cligen/posixUt.html#AT_SYMLINK_FOLLOW	let AT_SYMLINK_FOLLOW		47
-nim	AT_EACCESS	cligen/posixUt.html#AT_EACCESS	let AT_EACCESS		47
-nim	UTIME_NOW	cligen/posixUt.html#UTIME_NOW	let UTIME_NOW		47
-nim	UTIME_OMIT	cligen/posixUt.html#UTIME_OMIT	let UTIME_OMIT		47
-nim	AT_NO_AUTOMOUNT	cligen/posixUt.html#AT_NO_AUTOMOUNT	const AT_NO_AUTOMOUNT		61
-nim	AT_EMPTY_PATH	cligen/posixUt.html#AT_EMPTY_PATH	const AT_EMPTY_PATH		62
-nim	renameat2	cligen/posixUt.html#renameat2,cint,cstring,cint,cstring,cint	proc renameat2(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;\n          flags: cint): cint		63
-nim	log	cligen/posixUt.html#log,File,string	proc log(f: File; s: string)		66
-nim	localAlloc	cligen/posixUt.html#localAlloc.t,,typedesc	template localAlloc(param; typ: typedesc)		70
-nim	getTime	cligen/posixUt.html#getTime	proc getTime(clockId = CLOCK_REALTIME): Timespec		81
-nim	cmp	cligen/posixUt.html#cmp,Timespec,Timespec	proc cmp(a, b: Timespec): int		85
-nim	`<=`	cligen/posixUt.html#<=,Timespec,Timespec	proc `<=`(a, b: Timespec): bool		90
-nim	`<`	cligen/posixUt.html#<,Timespec,Timespec	proc `<`(a, b: Timespec): bool		92
-nim	`-`	cligen/posixUt.html#-,Timespec,Timespec	proc `-`(a, b: Timespec): int		94
-nim	`$`	cligen/posixUt.html#$,Timespec	proc `$`(x: Timespec): string		98
-nim	argParse	cligen/posixUt.html#argParse,Timespec,Timespec,ArgcvtParams	proc argParse(dst: var Timespec; dfl: Timespec; a: var ArgcvtParams): bool		104
-nim	argHelp	cligen/posixUt.html#argHelp,Timespec,ArgcvtParams	proc argHelp(dfl: Timespec; a: var ArgcvtParams): seq[string]		132
-nim	nsToTimeval	cligen/posixUt.html#nsToTimeval,int64	proc nsToTimeval(ns: int64): Timeval		135
-nim	toUidSet	cligen/posixUt.html#toUidSet,seq[string]	proc toUidSet(strs: seq[string]): HashSet[Uid]		139
-nim	toGidSet	cligen/posixUt.html#toGidSet,seq[string]	proc toGidSet(strs: seq[string]): HashSet[Gid]		145
-nim	getgroups	cligen/posixUt.html#getgroups,HashSet[Gid]	proc getgroups(gids: var HashSet[Gid])		151
-nim	getgroups	cligen/posixUt.html#getgroups	proc getgroups(): HashSet[Gid]		161
-nim	users	cligen/posixUt.html#users	proc users(): Table[Uid, string]		179
-nim	groups	cligen/posixUt.html#groups	proc groups(): Table[Gid, string]		180
-nim	userIds	cligen/posixUt.html#userIds	proc userIds(): Table[string, Uid]		200
-nim	groupIds	cligen/posixUt.html#groupIds	proc groupIds(): Table[string, Gid]		201
-nim	readlink	cligen/posixUt.html#readlink,string	proc readlink(path: string; err = stderr): string		203
-nim	`$`	cligen/posixUt.html#$,Stat	proc `$`(st: Stat): string		219
-nim	stat2dtype	cligen/posixUt.html#stat2dtype,Mode	proc stat2dtype(st_mode: Mode): int8		234
-nim	getDents	cligen/posixUt.html#getDents,cint,Stat,ptr.seq[int8],ptr.seq[Ino],int	proc getDents(fd: cint; st: Stat; dts: ptr seq[int8] = nil; inos: ptr seq[Ino] = nil;\n         avgLen = 24): seq[string]		238
-nim	ns	cligen/posixUt.html#ns,Timespec	proc ns(t: Timespec): int		255
-nim	getTmNs	cligen/posixUt.html#getTmNs	proc getTmNs(clockId = CLOCK_REALTIME): int		262
-nim	dtNs	cligen/posixUt.html#dtNs,int	proc dtNs(t0: int; clockId = CLOCK_REALTIME): int		266
-nim	fileTimeParse	cligen/posixUt.html#fileTimeParse,string	proc fileTimeParse(code: string): tuple[tim: char, dir: int]		270
-nim	fileTime	cligen/posixUt.html#fileTime,Stat,char,int	proc fileTime(st: Stat; tim: char; dir: int): int		284
-nim	fileTime	cligen/posixUt.html#fileTime,Stat,string	proc fileTime(st: Stat; code: string): int		293
-nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,Stat	proc getLastAccTimeNs(st`gensym83: Stat): int		299
-nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,string	proc getLastAccTimeNs(path`gensym83: string): int		303
-nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,Stat	proc getLastModTimeNs(st`gensym84: Stat): int		299
-nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,string	proc getLastModTimeNs(path`gensym84: string): int		304
-nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,Stat	proc getCreationTimeNs(st`gensym85: Stat): int		299
-nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,string	proc getCreationTimeNs(path`gensym85: string): int		305
-nim	strftimeCodes	cligen/posixUt.html#strftimeCodes	let strftimeCodes		307
-nim	strftime	cligen/posixUt.html#strftime,string,Timespec	proc strftime(fmt: string; ts: Timespec): string		313
-nim	PathId	cligen/posixUt.html#PathId	tuple PathId		340
-nim	pathId	cligen/posixUt.html#pathId,string	proc pathId(path: string): PathId		341
-nim	`==`	cligen/posixUt.html#==,PathId,PathId	proc `==`(a, b: PathId): bool		346
-nim	hash	cligen/posixUt.html#hash,PathId	proc hash(x: PathId): int		347
-nim	readFile	cligen/posixUt.html#readFile,string,string,ptr.Stat,int	proc readFile(path: string; buf: var string; st: ptr Stat = nil; perRead = 4096)		349
-nim	nanosleep	cligen/posixUt.html#nanosleep,Timespec	proc nanosleep(delay: Timespec)		376
-nim	nice	cligen/posixUt.html#nice,Pid,cint	proc nice(pid: Pid; niceIncr: cint): int		388
-nim	statOk	cligen/posixUt.html#statOk,string,ptr.Stat	proc statOk(path: string; st: ptr Stat = nil; err = stderr): bool		398
-nim	lstatOk	cligen/posixUt.html#lstatOk,string,ptr.Stat	proc lstatOk(path: string; st: ptr Stat = nil; err = stderr): bool		408
-nim	st_inode	cligen/posixUt.html#st_inode,string	proc st_inode(path: string; err = stderr): Ino		418
-nim	dirEntries	cligen/posixUt.html#dirEntries.i,string,ptr.Stat,ptr.bool,ptr.int8	iterator dirEntries(dir: string; st: ptr Stat = nil; canRec: ptr bool = nil;\n           dt: ptr int8 = nil; err = stderr; follow = false; relative = false): string		434
-nim	recEntries	cligen/posixUt.html#recEntries.i,string,ptr.Stat,ptr.int8,int	iterator recEntries(dir: string; st: ptr Stat = nil; dt: ptr int8 = nil; follow = false;\n           maxDepth = 0; err = stderr): string		481
-nim	recEntries	cligen/posixUt.html#recEntries,,ptr.Stat,ptr.int8,int	proc recEntries(it: iterator (): string; st: ptr Stat = nil; dt: ptr int8 = nil;\n           follow = false; maxDepth = 0; err = stderr): iterator (): string		535
-nim	paths	cligen/posixUt.html#paths.i,seq[string],int,string,char,ptr.Stat,ptr.int8	iterator paths(roots: seq[string]; maxDepth = 0; follow = false; file = ""; delim = '\n';\n      err = stderr; st: ptr Stat = nil; dt: ptr int8 = nil): string		542
-nim	setGroups	cligen/posixUt.html#setGroups,csize,ptr.Gid	proc setGroups(size: csize; list: ptr Gid): cint		554
-nim	initGroups	cligen/posixUt.html#initGroups,cstring,Gid	proc initGroups(user: cstring; group: Gid): cint		557
-nim	dropPrivilegeTo	cligen/posixUt.html#dropPrivilegeTo,string,string	proc dropPrivilegeTo(newUser, newGroup: string; err = stderr): bool		560
-nim	system	cligen/posixUt.html#system,cstringArray	proc system(csa: cstringArray; wait = true): cint		599
-nim	reapAnyKids	cligen/posixUt.html#reapAnyKids,cint	proc reapAnyKids(signo: cint)		613
-nim	fkFile	cligen/posixUt.html#fkFile	FileKind.fkFile		619
-nim	fkDir	cligen/posixUt.html#fkDir	FileKind.fkDir		619
-nim	fkLink	cligen/posixUt.html#fkLink	FileKind.fkLink		619
-nim	fkBlk	cligen/posixUt.html#fkBlk	FileKind.fkBlk		619
-nim	fkChr	cligen/posixUt.html#fkChr	FileKind.fkChr		619
-nim	fkPipe	cligen/posixUt.html#fkPipe	FileKind.fkPipe		619
-nim	fkSock	cligen/posixUt.html#fkSock	FileKind.fkSock		619
-nim	FileKind	cligen/posixUt.html#FileKind	enum FileKind		619
-nim	match	cligen/posixUt.html#match,,set[FileKind]	proc match(m: Mode | uint16; kinds: set[FileKind]): bool		623
-nim	MADV_NORMAL	cligen/posixUt.html#MADV_NORMAL	let MADV_NORMAL		43
-nim	MADV_SEQUENTIAL	cligen/posixUt.html#MADV_SEQUENTIAL	let MADV_SEQUENTIAL		43
-nim	MADV_RANDOM	cligen/posixUt.html#MADV_RANDOM	let MADV_RANDOM		43
-nim	MADV_WILLNEED	cligen/posixUt.html#MADV_WILLNEED	let MADV_WILLNEED		43
-nim	MADV_DONTNEED	cligen/posixUt.html#MADV_DONTNEED	let MADV_DONTNEED		43
-nim	madvise	cligen/posixUt.html#madvise,pointer,int,cint	proc madvise(mem: pointer; len: int; advice: cint): int		640
-nim	pathToSelf	cligen/posixUt.html#pathToSelf,cstringArray	proc pathToSelf(av: cstringArray): string		645
-nim	findAssociated	cligen/posixUt.html#findAssociated,cstringArray,string	proc findAssociated(av: cstringArray; parentBase = "etc/foo"): string		663
-nimgrp	getlastacctimens	cligen/posixUt.html#getLastAccTimeNs-procs-all	proc		303
-nimgrp	getlastmodtimens	cligen/posixUt.html#getLastModTimeNs-procs-all	proc		304
-nimgrp	getcreationtimens	cligen/posixUt.html#getCreationTimeNs-procs-all	proc		305
-nimgrp	$	cligen/posixUt.html#$-procs-all	proc		98
-nimgrp	getgroups	cligen/posixUt.html#getgroups-procs-all	proc		151
-nimgrp	filetime	cligen/posixUt.html#fileTime-procs-all	proc		284
+nim	openat	cligen/posixUt.html#openat,cint,cstring,cint	proc openat(dirfd: cint; path: cstring; flags: cint): cint		9
+nim	fstatat	cligen/posixUt.html#fstatat,cint,cstring,Stat,cint	proc fstatat(dirfd: cint; path: cstring; stx: var Stat; flags: cint): cint		11
+nim	faccessat	cligen/posixUt.html#faccessat,cint,cstring,cint,cint	proc faccessat(dirfd: cint; path: cstring; mode: cint; flags: cint): cint		13
+nim	fchmodat	cligen/posixUt.html#fchmodat,cint,cstring,Mode,cint	proc fchmodat(dirfd: cint; path: cstring; mode: Mode; flags: cint): cint		15
+nim	fchownat	cligen/posixUt.html#fchownat,cint,cstring,Uid,Gid,cint	proc fchownat(dirfd: cint; path: cstring; owner: Uid; group: Gid; flags: cint): cint		17
+nim	futimesat	cligen/posixUt.html#futimesat,cint,cstring,array[,Timeval]	proc futimesat(dirfd: cint; path: cstring; times: array[2, Timeval]): cint		19
+nim	utimensat	cligen/posixUt.html#utimensat,cint,cstring,array[,Timespec],cint	proc utimensat(dirfd: cint; path: cstring; times: array[2, Timespec]; flags: cint): cint		21
+nim	futimens	cligen/posixUt.html#futimens,cint,array[,Timespec]	proc futimens(fd: cint; times: array[2, Timespec]): cint		23
+nim	linkat	cligen/posixUt.html#linkat,cint,cstring,cint,cstring,cint	proc linkat(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;\n       flags: cint): cint		25
+nim	mkdirat	cligen/posixUt.html#mkdirat,cint,cstring,Mode	proc mkdirat(dirfd: cint; path: cstring; mode: Mode): cint		27
+nim	mknodat	cligen/posixUt.html#mknodat,cint,cstring,Mode,Dev	proc mknodat(dirfd: cint; path: cstring; mode: Mode; dev: Dev): cint		29
+nim	symlinkat	cligen/posixUt.html#symlinkat,cstring,cint,cstring	proc symlinkat(target: cstring; newdirfd: cint; linkpath: cstring): cint		31
+nim	readlinkat	cligen/posixUt.html#readlinkat,cint,cstring,cstring,csize	proc readlinkat(dirfd: cint; path: cstring; buf: cstring; bufsiz: csize): clong		33
+nim	unlinkat	cligen/posixUt.html#unlinkat,cint,cstring,cint	proc unlinkat(dirfd: cint; path: cstring; flags: cint): cint		35
+nim	renameat	cligen/posixUt.html#renameat,cint,cstring,cint,cstring	proc renameat(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring): cint		37
+nim	rename	cligen/posixUt.html#rename,cstring,cstring	proc rename(oldpath, newpath: cstring): cint		39
+nim	impConstAs	cligen/posixUt.html#impConstAs.t,untyped,string,,	template impConstAs(T: untyped; path: string; name, nimName): untyped		42
+nim	impConst	cligen/posixUt.html#impConst.t,untyped,string,untyped	template impConst(T: untyped; path: string; name: untyped): untyped		46
+nim	impCint	cligen/posixUt.html#impCint.t,string,untyped	template impCint(path: string; name: untyped): untyped		50
+nim	AT_FDCWD	cligen/posixUt.html#AT_FDCWD	let AT_FDCWD		48
+nim	AT_SYMLINK_NOFOLLOW	cligen/posixUt.html#AT_SYMLINK_NOFOLLOW	let AT_SYMLINK_NOFOLLOW		48
+nim	AT_REMOVEDIR	cligen/posixUt.html#AT_REMOVEDIR	let AT_REMOVEDIR		48
+nim	AT_SYMLINK_FOLLOW	cligen/posixUt.html#AT_SYMLINK_FOLLOW	let AT_SYMLINK_FOLLOW		48
+nim	AT_EACCESS	cligen/posixUt.html#AT_EACCESS	let AT_EACCESS		48
+nim	UTIME_NOW	cligen/posixUt.html#UTIME_NOW	let UTIME_NOW		48
+nim	UTIME_OMIT	cligen/posixUt.html#UTIME_OMIT	let UTIME_OMIT		48
+nim	AT_NO_AUTOMOUNT	cligen/posixUt.html#AT_NO_AUTOMOUNT	const AT_NO_AUTOMOUNT		62
+nim	AT_EMPTY_PATH	cligen/posixUt.html#AT_EMPTY_PATH	const AT_EMPTY_PATH		63
+nim	renameat2	cligen/posixUt.html#renameat2,cint,cstring,cint,cstring,cint	proc renameat2(olddirfd: cint; oldpath: cstring; newdirfd: cint; newpath: cstring;\n          flags: cint): cint		64
+nim	log	cligen/posixUt.html#log,File,string	proc log(f: File; s: string)		67
+nim	localAlloc	cligen/posixUt.html#localAlloc.t,,typedesc	template localAlloc(param; typ: typedesc)		71
+nim	getTime	cligen/posixUt.html#getTime	proc getTime(clockId = CLOCK_REALTIME): Timespec		82
+nim	cmp	cligen/posixUt.html#cmp,Timespec,Timespec	proc cmp(a, b: Timespec): int		86
+nim	`<=`	cligen/posixUt.html#<=,Timespec,Timespec	proc `<=`(a, b: Timespec): bool		91
+nim	`<`	cligen/posixUt.html#<,Timespec,Timespec	proc `<`(a, b: Timespec): bool		93
+nim	`-`	cligen/posixUt.html#-,Timespec,Timespec	proc `-`(a, b: Timespec): int		95
+nim	`$`	cligen/posixUt.html#$,Timespec	proc `$`(x: Timespec): string		99
+nim	argParse	cligen/posixUt.html#argParse,Timespec,Timespec,ArgcvtParams	proc argParse(dst: var Timespec; dfl: Timespec; a: var ArgcvtParams): bool		105
+nim	argHelp	cligen/posixUt.html#argHelp,Timespec,ArgcvtParams	proc argHelp(dfl: Timespec; a: var ArgcvtParams): seq[string]		133
+nim	nsToTimeval	cligen/posixUt.html#nsToTimeval,int64	proc nsToTimeval(ns: int64): Timeval		136
+nim	toUidSet	cligen/posixUt.html#toUidSet,seq[string]	proc toUidSet(strs: seq[string]): HashSet[Uid]		140
+nim	toGidSet	cligen/posixUt.html#toGidSet,seq[string]	proc toGidSet(strs: seq[string]): HashSet[Gid]		146
+nim	getgroups	cligen/posixUt.html#getgroups,HashSet[Gid]	proc getgroups(gids: var HashSet[Gid])		152
+nim	getgroups	cligen/posixUt.html#getgroups	proc getgroups(): HashSet[Gid]		162
+nim	users	cligen/posixUt.html#users	proc users(): Table[Uid, string]		180
+nim	groups	cligen/posixUt.html#groups	proc groups(): Table[Gid, string]		181
+nim	userIds	cligen/posixUt.html#userIds	proc userIds(): Table[string, Uid]		201
+nim	groupIds	cligen/posixUt.html#groupIds	proc groupIds(): Table[string, Gid]		202
+nim	readlink	cligen/posixUt.html#readlink,string	proc readlink(path: string; err = stderr): string		204
+nim	`$`	cligen/posixUt.html#$,Stat	proc `$`(st: Stat): string		220
+nim	stat2dtype	cligen/posixUt.html#stat2dtype,Mode	proc stat2dtype(st_mode: Mode): int8		235
+nim	getDents	cligen/posixUt.html#getDents,cint,Stat,ptr.seq[int8],ptr.seq[Ino],int	proc getDents(fd: cint; st: Stat; dts: ptr seq[int8] = nil; inos: ptr seq[Ino] = nil;\n         avgLen = 24): seq[string]		239
+nim	ns	cligen/posixUt.html#ns,Timespec	proc ns(t: Timespec): int		256
+nim	getTmNs	cligen/posixUt.html#getTmNs	proc getTmNs(clockId = CLOCK_REALTIME): int		263
+nim	dtNs	cligen/posixUt.html#dtNs,int	proc dtNs(t0: int; clockId = CLOCK_REALTIME): int		267
+nim	fileTimeParse	cligen/posixUt.html#fileTimeParse,string	proc fileTimeParse(code: string): tuple[tim: char, dir: int]		271
+nim	fileTime	cligen/posixUt.html#fileTime,Stat,char,int	proc fileTime(st: Stat; tim: char; dir: int): int		285
+nim	fileTime	cligen/posixUt.html#fileTime,Stat,string	proc fileTime(st: Stat; code: string): int		294
+nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,Stat	proc getLastAccTimeNs(st`gensym83: Stat): int		300
+nim	getLastAccTimeNs	cligen/posixUt.html#getLastAccTimeNs,string	proc getLastAccTimeNs(path`gensym83: string): int		304
+nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,Stat	proc getLastModTimeNs(st`gensym84: Stat): int		300
+nim	getLastModTimeNs	cligen/posixUt.html#getLastModTimeNs,string	proc getLastModTimeNs(path`gensym84: string): int		305
+nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,Stat	proc getCreationTimeNs(st`gensym85: Stat): int		300
+nim	getCreationTimeNs	cligen/posixUt.html#getCreationTimeNs,string	proc getCreationTimeNs(path`gensym85: string): int		306
+nim	strftimeCodes	cligen/posixUt.html#strftimeCodes	let strftimeCodes		308
+nim	strftime	cligen/posixUt.html#strftime,string,Timespec	proc strftime(fmt: string; ts: Timespec): string		314
+nim	PathId	cligen/posixUt.html#PathId	tuple PathId		341
+nim	pathId	cligen/posixUt.html#pathId,string	proc pathId(path: string): PathId		342
+nim	`==`	cligen/posixUt.html#==,PathId,PathId	proc `==`(a, b: PathId): bool		347
+nim	hash	cligen/posixUt.html#hash,PathId	proc hash(x: PathId): int		348
+nim	readFile	cligen/posixUt.html#readFile,string,string,ptr.Stat,int	proc readFile(path: string; buf: var string; st: ptr Stat = nil; perRead = 4096)		350
+nim	nanosleep	cligen/posixUt.html#nanosleep,Timespec	proc nanosleep(delay: Timespec)		377
+nim	nice	cligen/posixUt.html#nice,Pid,cint	proc nice(pid: Pid; niceIncr: cint): int		389
+nim	statOk	cligen/posixUt.html#statOk,string,ptr.Stat	proc statOk(path: string; st: ptr Stat = nil; err = stderr): bool		399
+nim	lstatOk	cligen/posixUt.html#lstatOk,string,ptr.Stat	proc lstatOk(path: string; st: ptr Stat = nil; err = stderr): bool		409
+nim	st_inode	cligen/posixUt.html#st_inode,string	proc st_inode(path: string; err = stderr): Ino		419
+nim	dirEntries	cligen/posixUt.html#dirEntries.i,string,ptr.Stat,ptr.bool,ptr.int8	iterator dirEntries(dir: string; st: ptr Stat = nil; canRec: ptr bool = nil;\n           dt: ptr int8 = nil; err = stderr; follow = false; relative = false): string		435
+nim	recEntries	cligen/posixUt.html#recEntries.i,string,ptr.Stat,ptr.int8,int	iterator recEntries(dir: string; st: ptr Stat = nil; dt: ptr int8 = nil; follow = false;\n           maxDepth = 0; err = stderr): string		482
+nim	recEntries	cligen/posixUt.html#recEntries,,ptr.Stat,ptr.int8,int	proc recEntries(it: iterator (): string; st: ptr Stat = nil; dt: ptr int8 = nil;\n           follow = false; maxDepth = 0; err = stderr): iterator (): string		536
+nim	paths	cligen/posixUt.html#paths.i,seq[string],int,string,char,ptr.Stat,ptr.int8	iterator paths(roots: seq[string]; maxDepth = 0; follow = false; file = ""; delim = '\n';\n      err = stderr; st: ptr Stat = nil; dt: ptr int8 = nil): string		543
+nim	setGroups	cligen/posixUt.html#setGroups,csize,ptr.Gid	proc setGroups(size: csize; list: ptr Gid): cint		555
+nim	initGroups	cligen/posixUt.html#initGroups,cstring,Gid	proc initGroups(user: cstring; group: Gid): cint		558
+nim	dropPrivilegeTo	cligen/posixUt.html#dropPrivilegeTo,string,string	proc dropPrivilegeTo(newUser, newGroup: string; err = stderr): bool		561
+nim	system	cligen/posixUt.html#system,cstringArray	proc system(csa: cstringArray; wait = true): cint		600
+nim	reapAnyKids	cligen/posixUt.html#reapAnyKids,cint	proc reapAnyKids(signo: cint)		614
+nim	fkFile	cligen/posixUt.html#fkFile	FileKind.fkFile		620
+nim	fkDir	cligen/posixUt.html#fkDir	FileKind.fkDir		620
+nim	fkLink	cligen/posixUt.html#fkLink	FileKind.fkLink		620
+nim	fkBlk	cligen/posixUt.html#fkBlk	FileKind.fkBlk		620
+nim	fkChr	cligen/posixUt.html#fkChr	FileKind.fkChr		620
+nim	fkPipe	cligen/posixUt.html#fkPipe	FileKind.fkPipe		620
+nim	fkSock	cligen/posixUt.html#fkSock	FileKind.fkSock		620
+nim	FileKind	cligen/posixUt.html#FileKind	enum FileKind		620
+nim	match	cligen/posixUt.html#match,,set[FileKind]	proc match(m: Mode | uint16; kinds: set[FileKind]): bool		624
+nim	MADV_NORMAL	cligen/posixUt.html#MADV_NORMAL	let MADV_NORMAL		44
+nim	MADV_SEQUENTIAL	cligen/posixUt.html#MADV_SEQUENTIAL	let MADV_SEQUENTIAL		44
+nim	MADV_RANDOM	cligen/posixUt.html#MADV_RANDOM	let MADV_RANDOM		44
+nim	MADV_WILLNEED	cligen/posixUt.html#MADV_WILLNEED	let MADV_WILLNEED		44
+nim	MADV_DONTNEED	cligen/posixUt.html#MADV_DONTNEED	let MADV_DONTNEED		44
+nim	madvise	cligen/posixUt.html#madvise,pointer,int,cint	proc madvise(mem: pointer; len: int; advice: cint): int		641
+nim	pathToSelf	cligen/posixUt.html#pathToSelf,cstringArray	proc pathToSelf(av: cstringArray): string		646
+nim	findAssociated	cligen/posixUt.html#findAssociated,cstringArray,string	proc findAssociated(av: cstringArray; parentBase = "etc/foo"): string		664
+nimgrp	getlastacctimens	cligen/posixUt.html#getLastAccTimeNs-procs-all	proc		304
+nimgrp	getlastmodtimens	cligen/posixUt.html#getLastModTimeNs-procs-all	proc		305
+nimgrp	getcreationtimens	cligen/posixUt.html#getCreationTimeNs-procs-all	proc		306
+nimgrp	$	cligen/posixUt.html#$-procs-all	proc		99
+nimgrp	getgroups	cligen/posixUt.html#getgroups-procs-all	proc		152
+nimgrp	filetime	cligen/posixUt.html#fileTime-procs-all	proc		285

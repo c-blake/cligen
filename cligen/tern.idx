@@ -1,37 +1,37 @@
 nimTitle	tern	cligen/tern.html	module cligen/tern		0
-nim	NUL	cligen/tern.html#NUL	const NUL		12
-nim	NodeOb	cligen/tern.html#NodeOb	object NodeOb		14
-nim	Node	cligen/tern.html#Node	type Node		20
-nim	Tern	cligen/tern.html#Tern	object Tern		21
-nim	len	cligen/tern.html#len,Tern[T]	proc len[T](t: Tern[T]): int		27
-nim	rawGet	cligen/tern.html#rawGet,Tern[T],string	proc rawGet[T](t: Tern[T]; key: string): Node[T]		29
-nim	rawPfx	cligen/tern.html#rawPfx,Tern[T],string	proc rawPfx[T](t: Tern[T]; pfx: string; longest = false): Node[T]		40
-nim	rawInsert	cligen/tern.html#rawInsert,Tern[T],string	proc rawInsert[T](t: var Tern[T]; key: string): Node[T]		54
-nim	contains	cligen/tern.html#contains,Tern[T],string	proc contains[T](t: Tern[T]; key: string): bool		121
-nim	`[]`	cligen/tern.html#[],Tern[T],string	proc `[]`[T](t: Tern[T]; key: string): T		130
-nim	`[]`	cligen/tern.html#[],Tern[T],string_2	proc `[]`[T](c: var Tern[T]; key: string): var T		134
-nim	mgetOrPut	cligen/tern.html#mgetOrPut,Tern[T],string,T	proc mgetOrPut[T](t: var Tern[T]; key: string; val: T): var T		138
-nim	containsOrIncl	cligen/tern.html#containsOrIncl,Tern[T],string,T	proc containsOrIncl[T](t: var Tern[T]; key: string; val: T): bool		146
-nim	containsOrIncl	cligen/tern.html#containsOrIncl,Tern[T],string	proc containsOrIncl[T](t: var Tern[T]; key: string): bool		154
-nim	inc	cligen/tern.html#inc,Tern[T],string,int	proc inc[T](t: var Tern[T]; key: string; val: int = 1)		160
-nim	incl	cligen/tern.html#incl,Tern[void],string	proc incl(t: var Tern[void]; key: string)		165
-nim	incl	cligen/tern.html#incl,Tern[T],string,T	proc incl[T](t: var Tern[T]; key: string; val: T)		169
-nim	`[]=`	cligen/tern.html#[]=,Tern[T],string,T	proc `[]=`[T](t: var Tern[T]; key: string; val: T)		174
-nim	keys	cligen/tern.html#keys.i,Tern[T]	iterator keys[T](t: Tern[T]): string		179
-nim	values	cligen/tern.html#values.i,Tern[T]	iterator values[T](t: Tern[T]): T		183
-nim	mvalues	cligen/tern.html#mvalues.i,Tern[T]	iterator mvalues[T](t: var Tern[T]): var T		188
-nim	items	cligen/tern.html#items.i,Tern[T]	iterator items[T](t: Tern[T]): string		193
-nim	pairs	cligen/tern.html#pairs.i,Tern[T]	iterator pairs[T](t: Tern[T]): tuple[key: string, val: T]		197
-nim	mpairs	cligen/tern.html#mpairs.i,Tern[T]	iterator mpairs[T](t: var Tern[T]): tuple[key: string, val: var T]		201
-nim	`$`	cligen/tern.html#$,Tern[T]	proc `$`[T](t: Tern[T]): string		205
-nim	keysWithPrefix	cligen/tern.html#keysWithPrefix.i,Tern[T],string	iterator keysWithPrefix[T](t: Tern[T]; prefix: string; longest = false): string		230
-nim	valuesWithPrefix	cligen/tern.html#valuesWithPrefix.i,Tern[T],string	iterator valuesWithPrefix[T](t: Tern[T]; prefix: string; longest = false): T		235
-nim	mvaluesWithPrefix	cligen/tern.html#mvaluesWithPrefix.i,Tern[T],string	iterator mvaluesWithPrefix[T](t: var Tern[T]; prefix: string; longest = false): var T		240
-nim	pairsWithPrefix	cligen/tern.html#pairsWithPrefix.i,Tern[T],string	iterator pairsWithPrefix[T](t: Tern[T]; prefix: string; longest = false): tuple[\n    key: string, val: T]		247
-nim	mpairsWithPrefix	cligen/tern.html#mpairsWithPrefix.i,Tern[T],string	iterator mpairsWithPrefix[T](t: var Tern[T]; prefix: string; longest = false): tuple[\n    key: string, val: var T]		253
-nim	uniquePfxPat	cligen/tern.html#uniquePfxPat,Tern[T],string,string	proc uniquePfxPat[T](t: Tern[T]; key: string; sep = "*"): string		260
-nim	uniquePfxPats	cligen/tern.html#uniquePfxPats,openArray[string],string	proc uniquePfxPats(x: openArray[string]; sep = "*"): seq[string]		275
-nim	uniqueSfxPats	cligen/tern.html#uniqueSfxPats,openArray[string],string	proc uniqueSfxPats(x: openArray[string]; sep = "*"): seq[string]		282
-nimgrp	containsorincl	cligen/tern.html#containsOrIncl-procs-all	proc		146
-nimgrp	[]	cligen/tern.html#[]-procs-all	proc		130
-nimgrp	incl	cligen/tern.html#incl-procs-all	proc		165
+nim	NUL	cligen/tern.html#NUL	const NUL		13
+nim	NodeOb	cligen/tern.html#NodeOb	object NodeOb		15
+nim	Node	cligen/tern.html#Node	type Node		21
+nim	Tern	cligen/tern.html#Tern	object Tern		22
+nim	len	cligen/tern.html#len,Tern[T]	proc len[T](t: Tern[T]): int		28
+nim	rawGet	cligen/tern.html#rawGet,Tern[T],string	proc rawGet[T](t: Tern[T]; key: string): Node[T]		30
+nim	rawPfx	cligen/tern.html#rawPfx,Tern[T],string	proc rawPfx[T](t: Tern[T]; pfx: string; longest = false): Node[T]		41
+nim	rawInsert	cligen/tern.html#rawInsert,Tern[T],string	proc rawInsert[T](t: var Tern[T]; key: string): Node[T]		55
+nim	contains	cligen/tern.html#contains,Tern[T],string	proc contains[T](t: Tern[T]; key: string): bool		122
+nim	`[]`	cligen/tern.html#[],Tern[T],string	proc `[]`[T](t: Tern[T]; key: string): T		131
+nim	`[]`	cligen/tern.html#[],Tern[T],string_2	proc `[]`[T](c: var Tern[T]; key: string): var T		135
+nim	mgetOrPut	cligen/tern.html#mgetOrPut,Tern[T],string,T	proc mgetOrPut[T](t: var Tern[T]; key: string; val: T): var T		139
+nim	containsOrIncl	cligen/tern.html#containsOrIncl,Tern[T],string,T	proc containsOrIncl[T](t: var Tern[T]; key: string; val: T): bool		147
+nim	containsOrIncl	cligen/tern.html#containsOrIncl,Tern[T],string	proc containsOrIncl[T](t: var Tern[T]; key: string): bool		155
+nim	inc	cligen/tern.html#inc,Tern[T],string,int	proc inc[T](t: var Tern[T]; key: string; val: int = 1)		161
+nim	incl	cligen/tern.html#incl,Tern[void],string	proc incl(t: var Tern[void]; key: string)		166
+nim	incl	cligen/tern.html#incl,Tern[T],string,T	proc incl[T](t: var Tern[T]; key: string; val: T)		170
+nim	`[]=`	cligen/tern.html#[]=,Tern[T],string,T	proc `[]=`[T](t: var Tern[T]; key: string; val: T)		175
+nim	keys	cligen/tern.html#keys.i,Tern[T]	iterator keys[T](t: Tern[T]): string		180
+nim	values	cligen/tern.html#values.i,Tern[T]	iterator values[T](t: Tern[T]): T		184
+nim	mvalues	cligen/tern.html#mvalues.i,Tern[T]	iterator mvalues[T](t: var Tern[T]): var T		189
+nim	items	cligen/tern.html#items.i,Tern[T]	iterator items[T](t: Tern[T]): string		194
+nim	pairs	cligen/tern.html#pairs.i,Tern[T]	iterator pairs[T](t: Tern[T]): tuple[key: string, val: T]		198
+nim	mpairs	cligen/tern.html#mpairs.i,Tern[T]	iterator mpairs[T](t: var Tern[T]): tuple[key: string, val: var T]		202
+nim	`$`	cligen/tern.html#$,Tern[T]	proc `$`[T](t: Tern[T]): string		206
+nim	keysWithPrefix	cligen/tern.html#keysWithPrefix.i,Tern[T],string	iterator keysWithPrefix[T](t: Tern[T]; prefix: string; longest = false): string		231
+nim	valuesWithPrefix	cligen/tern.html#valuesWithPrefix.i,Tern[T],string	iterator valuesWithPrefix[T](t: Tern[T]; prefix: string; longest = false): T		236
+nim	mvaluesWithPrefix	cligen/tern.html#mvaluesWithPrefix.i,Tern[T],string	iterator mvaluesWithPrefix[T](t: var Tern[T]; prefix: string; longest = false): var T		241
+nim	pairsWithPrefix	cligen/tern.html#pairsWithPrefix.i,Tern[T],string	iterator pairsWithPrefix[T](t: Tern[T]; prefix: string; longest = false): tuple[\n    key: string, val: T]		248
+nim	mpairsWithPrefix	cligen/tern.html#mpairsWithPrefix.i,Tern[T],string	iterator mpairsWithPrefix[T](t: var Tern[T]; prefix: string; longest = false): tuple[\n    key: string, val: var T]		254
+nim	uniquePfxPat	cligen/tern.html#uniquePfxPat,Tern[T],string,string	proc uniquePfxPat[T](t: Tern[T]; key: string; sep = "*"): string		261
+nim	uniquePfxPats	cligen/tern.html#uniquePfxPats,openArray[string],string	proc uniquePfxPats(x: openArray[string]; sep = "*"): seq[string]		276
+nim	uniqueSfxPats	cligen/tern.html#uniqueSfxPats,openArray[string],string	proc uniqueSfxPats(x: openArray[string]; sep = "*"): seq[string]		283
+nimgrp	containsorincl	cligen/tern.html#containsOrIncl-procs-all	proc		147
+nimgrp	[]	cligen/tern.html#[]-procs-all	proc		131
+nimgrp	incl	cligen/tern.html#incl-procs-all	proc		166
