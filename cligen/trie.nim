@@ -2,17 +2,16 @@
 ##digital search tree family.  It is drop-in compatible-ish with ``CritBitTree``
 ##itself compatible with both ``HashSet[string]`` & ``Table[string,*]``.  It was
 ##easier for me to extend this with ``match``&``nearLev`` than ``CritBitTree``.
-#{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import ./sysUt, std/[sets, algorithm, strutils] # findUO|findO, HashSet, reverse
 type
-  NodeOb[T] {.acyclic.} = object
+  Node[T] {.acyclic.} = ref object
     term*: bool
     cnt*: uint32
     when T isnot void:
       val*: T
     kidc*: string
-    kidp*: seq[ref NodeOb[T]]
-  Node*[T] = ref NodeOb[T]
+    kidp*: seq[Node[T]]
   Trie*[T] = object
     root*: Node[T]
     depth*: int         # Depth of Tree
