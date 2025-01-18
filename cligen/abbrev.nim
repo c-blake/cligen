@@ -27,7 +27,7 @@
 ##continue to shorten strings.  Each optimization level removes more context
 ##making strings harder to read & gets slower to compute.  Efficient algorithms
 ##for this case are a work in progress. This algo research area seems neglected.
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
+
 import std/[strutils, algorithm, sets, tables, math],
        ./tern, ./humanUt, ./textUt, ./trie
 

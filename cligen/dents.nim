@@ -17,7 +17,7 @@
 ## This packaged recursion is also careful to use the POSIX.2008 ``openat`` API
 ## & its sibling ``fstatat`` which largely eliminates the need to deal with full
 ## paths instead of just dirent filenames.
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
+
 when not declared(stderr): import std/syncio
 include cligen/unsafeAddr
 import std/[os, sets, posix], cligen/[osUt, posixUt, statx]

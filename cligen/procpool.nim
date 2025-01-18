@@ -40,7 +40,7 @@
 ## contend for VM edits in fast (un)map cycles, but proc-sibs have uncontended,
 ## private VM}. One case's "awkward" is another's "expresses vital ideas".  Good
 ## ecosystems should have libs for both (& also for files as named arenas).
-{.warning[ProveInit]:off, warning[Uninit]:off.} # Should be verbosity:2 not 1
+
 import std/[cpuinfo, posix, random], cligen/[mslice, sysUt, osUt]
 when not declared(flushFile): import std/syncio
 type

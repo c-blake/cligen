@@ -1,9 +1,9 @@
 when not (defined(cgCfgNone) and defined(cgNoColor)):
-  {.hint[Performance]: off.}    # Silence RstToken copy warning
+  {.push hint[Performance]: off.}     # Silence RstToken copy warning
 # Messages need `stderr` usually gotten by include clCfgInit|clCfgToml.
 when defined(cgCfgNone) and not declared(stderr): import std/syncio
-when (NimMajor,NimMinor,NimPatch) > (0,20,2): # 2nd two should be verbosity:2
-  {.warning[UnusedImport]:off, warning[ProveInit]:off, warning[Uninit]:off.}
+when (NimMajor,NimMinor,NimPatch) > (0,20,2):
+  {.push warning[UnusedImport]: off.} # This is only for gcarc
 import std/[os, macros, tables, strutils, critbits], system/ansi_c,
        cligen/[parseopt3, argcvt, textUt, sysUt, macUt, humanUt, gcarc]
 export commandLineParams, lengthen, initOptParser, next, optionNormalize,
@@ -819,7 +819,6 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
                    quote do: `docsVar`.add(`cmtDoc`)
                  else: newNimNode(nnkEmpty)
   result = quote do:                                    #Overall Structure
-    {.warning[Uninit]:off, warning[ProveInit]:off.}
     case `cf`.sigPIPE
     of spRaise: discard     # "Nim stdlib default"; Becoming raise in devel/1.6
     of spPass: SIGPIPE_pass()

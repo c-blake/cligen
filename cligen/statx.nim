@@ -2,7 +2,7 @@
 ## Linux ``statx`` call & ``Statx`` type even if it does not.  Callers simply
 ## program to the "superset" using ``Statx`` and ``statx`` and i just works.
 ## We simulate/translate ordinary ``Stat`` results when necessary.
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
+
 import std/posix, cligen/posixUt
 when not declared(stderr): import std/syncio
 

@@ -1,4 +1,3 @@
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 type csize = uint
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc

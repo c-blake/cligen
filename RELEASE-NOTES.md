@@ -3,36 +3,10 @@ RELEASE NOTES
 
 Version: 1.8.0
 --------------
-  - Disable *VERY* (>99.9% for me for any non-ref-object code) false positive-
-    prone `warning:Uninit|ProveInit` everywhere except only 2 modules of mine
-    that do ref object { `cligen/(tern|trie).nim` }.  Some details why I see
-    code to silence warning:Uninit|ProveInit as error-prone busywork are over at
-    https://github.com/c-blake/nio/commit/ccd04bc70434dd0f21d19ddbd733241e5f93a6fd .
-    TLDR: I consider this butchering code in a sterile quest for purity.
-
-  - To add other details here, long-term, I predict a fate for these diagnostics
-    similar to `ProveField` &| `CatchableError` (or else a less frivolously
-    noisy specialization of the diagnostic to `ref T`).  In hindsight, a
-    Nim-version-conditioned (for backward compatibility) blanket-disabling of
-    `CatchableError` warnings would have been a better move than all my `type
-    Ce=CatchableError` busywork.  Re-simplifying all that may happen someday.
-    Version-conditioning is not needed here since these warning labels actually
-    date back to before Nim-0.20.2, the oldest version where basic `dispatch`
-    functionality still works.
-
-  - Due to late-analysis of template/macro code, these warnings may still fire
-    in your user code.  My advice to you is to just disable the warning, but
-    maybe to re-enable it for code in non-explicit/type-aliased `ref T` modules.
-    Really, verbosity:2 would be best to make this essentially the default use.
-
-  - I am not 100% opposed to PRs to silence these warnings in user-code, but I
-    strongly believe Nim core should just move it verbosity:2 for selective, not
-    default enabling, since even 50-50 false positives bothers some people,
-    warnings are taken far too seriously in the broader culture, and the text of
-    the warning messages here is especially scary given broader prog.culture.
-    Also, sometimes things are very explicitly initialized and the analyzer does
-    not see it.  For those, I would definitely rather just wait for the analyzer
-    to get better or move to verbosity:2.
+  - Disable *VERY* false-positive-prone `warning:Uninit` & `warning:ProveInit`
+    in test/ things -- at least until I get around to fixing dozens of call
+    sites for `ProveInit` (which has a scary "will become an error") and put
+    `{.push warning[X]: off.}` in every needed module.
 
 Version: 1.7.8
 --------------

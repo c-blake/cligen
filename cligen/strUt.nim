@@ -1,4 +1,3 @@
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 include cligen/unsafeAddr
 import std/[strutils, sets, strformat]
 

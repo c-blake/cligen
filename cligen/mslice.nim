@@ -5,7 +5,6 @@
 ## styles can also be bounded by a number of splits/number of outputs and accept
 ## either ``MSlice`` or ``string`` as inputs to produce the ``seq[MSlice]``.
 
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 when not declared(File): import std/[syncio, assertions]
 include cligen/unsafeAddr
 from std/typetraits import supportsCopyMem
