@@ -1,6 +1,5 @@
-when not declared(File): import std/syncio
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[math, strutils, algorithm]
+when not declared(File): import std/syncio
 
 proc colPad*(cw: var seq[int]; fw=80, pm=999, m=1, j = -1) =
   ##Pad layout of column widths ``cw`` with up to ``pm`` spaces per major col,
