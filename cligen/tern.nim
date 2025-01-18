@@ -7,17 +7,18 @@
 ##``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
 ##which will be trapped by the compiler if you use kwargs).  ``CritBitTree``
 ##itself is API-compatible with the union of both ``HashSet`` and ``Table``.
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
+#{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/algorithm, ./sysUt # reverse, postInc
 
 const NUL* = '\0'
 type
-  Node[T] {.acyclic.} = ref object
+  NodeOb*[T] {.acyclic.} = object
     ch*: char
     cnt*: int
     when T isnot void:
       val*: T
-    kid*: array[3, Node[T]]   #0,1,2 ~ <,=,>
+    kid*: array[3, ref NodeOb[T]]   #0,1,2 ~ <,=,>
+  Node*[T] = ref NodeOb[T]
   Tern*[T] = object   ## A Tern can be used as either a mapping from strings
                       ## to type ``T`` or as a set(strings) if ``T`` is void.
     root*: Node[T]
