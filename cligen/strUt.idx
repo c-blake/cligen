@@ -1,45 +1,45 @@
 nimTitle	strUt	cligen/strUt.html	module cligen/strUt		0
-nim	hashCB	cligen/strUt.html#hashCB,openArray[char]	proc hashCB(x: openArray[char]): uint64		5
-nim	hashWY	cligen/strUt.html#hashWY,openArray[char]	proc hashWY(x: openArray[char]): uint64		56
-nim	startsWithI	cligen/strUt.html#startsWithI,string,string	proc startsWithI(s, prefix: string): bool		71
-nim	endsWithI	cligen/strUt.html#endsWithI,string,string	proc endsWithI(s, suffix: string): bool		79
-nim	`-`	cligen/strUt.html#-,openArray[string],openArray[string]	proc `-`(a, b: openArray[string]): seq[string]		88
-nim	split	cligen/strUt.html#split,seq[T],T	proc split[T](st: seq[T]; delim: T): seq[seq[T]]		96
-nim	joins	cligen/strUt.html#joins,seq[seq[T]],T	proc joins[T](sst: seq[seq[T]]; delim: T): seq[T]		108
-nim	joinS	cligen/strUt.html#joinS,string,varargs[string,]	proc joinS(sep = " "; a: varargs[string, `$`]): string		117
-nim	commentStrip	cligen/strUt.html#commentStrip,string	proc commentStrip(s: string): string		124
-nim	uint64toDecimal	cligen/strUt.html#uint64toDecimal,openArray[char],uint64	proc uint64toDecimal(res: var openArray[char]; x: uint64): int		186
-nim	fcPad0	cligen/strUt.html#fcPad0	FloatCvtOptions.fcPad0		222
-nim	fcCapital	cligen/strUt.html#fcCapital	FloatCvtOptions.fcCapital		222
-nim	fcPlus	cligen/strUt.html#fcPlus	FloatCvtOptions.fcPlus		222
-nim	fcTrailDot	cligen/strUt.html#fcTrailDot	FloatCvtOptions.fcTrailDot		222
-nim	fcTrailDot0	cligen/strUt.html#fcTrailDot0	FloatCvtOptions.fcTrailDot0		222
-nim	fcExp23	cligen/strUt.html#fcExp23	FloatCvtOptions.fcExp23		222
-nim	fcExp3	cligen/strUt.html#fcExp3	FloatCvtOptions.fcExp3		222
-nim	fcExpPlus	cligen/strUt.html#fcExpPlus	FloatCvtOptions.fcExpPlus		222
-nim	FloatCvtOptions	cligen/strUt.html#FloatCvtOptions	enum FloatCvtOptions		222
-nim	ecvt	cligen/strUt.html#ecvt,string,float,int	proc ecvt(s: var string; x: float; p = 17; opts = {fcPad0})		305
-nim	ecvt2	cligen/strUt.html#ecvt2,string,string,float,int,bool,int	proc ecvt2(man, exp: var string; x: float; p = 17; opts = {fcPad0};\n      bumped: var bool = doNotUseB; expon: var int = doNotUseI)		317
-nim	fcvt	cligen/strUt.html#fcvt,string,float,int	proc fcvt(s: var string; x: float; p: int; opts = {fcPad0})		328
-nim	find	cligen/strUt.html#find,openArray[char],char,Natural,int	proc find(s: openArray[char]; sub: char; start: Natural = 0; last = 0): int		374
-nim	toString	cligen/strUt.html#toString,openArray[char]	proc toString(s: openArray[char]): string		385
-nim	add	cligen/strUt.html#add,string,openArray[char]	proc add(result: var string; a: openArray[char])		389
-nim	alphaNum	cligen/strUt.html#alphaNum	const alphaNum		398
-nim	idIsLiteral	cligen/strUt.html#idIsLiteral,Slice[int]	proc idIsLiteral(id: Slice[int]): bool		400
-nim	MacroCall	cligen/strUt.html#MacroCall	type MacroCall		403
-nim	tmplParse	cligen/strUt.html#tmplParse.i,openArray[char],char	iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall		404
-nim	tmplParsed	cligen/strUt.html#tmplParsed,openArray[char],char	proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]		463
-nim	MacroCallX	cligen/strUt.html#MacroCallX	type MacroCallX		467
-nim	tmplParses	cligen/strUt.html#tmplParses,openArray[char],char	proc tmplParses(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCallX]		468
-nim	pmUnicode	cligen/strUt.html#pmUnicode	const pmUnicode		473
-nim	pmUnicodeSpaced	cligen/strUt.html#pmUnicodeSpaced	const pmUnicodeSpaced		474
-nim	pmDfl	cligen/strUt.html#pmDfl	var pmDfl		477
-nim	fmtUncertainParts	cligen/strUt.html#fmtUncertainParts,float,float,int	proc fmtUncertainParts(val, err: float; sigDigs = 2): (string, string, string,\n    string, int)		479
-nim	fmtUncertainRender	cligen/strUt.html#fmtUncertainRender,string,string,string,string,int,string,seq[MacroCall]	proc fmtUncertainRender(vm, ve, um, ue: string; exp: int; fmt: string;\n                   parse: seq[MacroCall]): string		533
-nim	fmtUncertainRender	cligen/strUt.html#fmtUncertainRender,float,float,string,string,seq[MacroCall],seq[MacroCall],int	proc fmtUncertainRender(val, err: float; fmt0, fmtE: string;\n                   parse0, parseE: seq[MacroCall]; e0 = -2 .. 4; sigDigs = 2): string		564
-nim	fmtUncertain	cligen/strUt.html#fmtUncertain,float,float,int	proc fmtUncertain(val, err: float; fmt0 = fmtUncertain0; fmtE = fmtUncertainE;\n             e0 = -2 .. 4; sigDigs = 2): string		576
-nim	fmtUncertainSci	cligen/strUt.html#fmtUncertainSci,float,float,int	proc fmtUncertainSci(val, err: float; sigDigs = 2): string		585
-nim	fmtUncertainVal	cligen/strUt.html#fmtUncertainVal,float,float,int	proc fmtUncertainVal(val, err: float; sigDigs = 2; e0 = -2 .. 4): string		591
-nim	fmtUncertainMergedSci	cligen/strUt.html#fmtUncertainMergedSci,float,float,int	proc fmtUncertainMergedSci(val, err: float; sigDigs = 2): string		597
-nim	fmtUncertainMerged	cligen/strUt.html#fmtUncertainMerged,float,float,int	proc fmtUncertainMerged(val, err: float; sigDigs = 2; e0 = -2 .. 4): string		605
-nimgrp	fmtuncertainrender	cligen/strUt.html#fmtUncertainRender-procs-all	proc		533
+nim	hashCB	cligen/strUt.html#hashCB,openArray[char]	proc hashCB(x: openArray[char]): uint64		4
+nim	hashWY	cligen/strUt.html#hashWY,openArray[char]	proc hashWY(x: openArray[char]): uint64		55
+nim	startsWithI	cligen/strUt.html#startsWithI,string,string	proc startsWithI(s, prefix: string): bool		70
+nim	endsWithI	cligen/strUt.html#endsWithI,string,string	proc endsWithI(s, suffix: string): bool		78
+nim	`-`	cligen/strUt.html#-,openArray[string],openArray[string]	proc `-`(a, b: openArray[string]): seq[string]		87
+nim	split	cligen/strUt.html#split,seq[T],T	proc split[T](st: seq[T]; delim: T): seq[seq[T]]		95
+nim	joins	cligen/strUt.html#joins,seq[seq[T]],T	proc joins[T](sst: seq[seq[T]]; delim: T): seq[T]		107
+nim	joinS	cligen/strUt.html#joinS,string,varargs[string,]	proc joinS(sep = " "; a: varargs[string, `$`]): string		116
+nim	commentStrip	cligen/strUt.html#commentStrip,string	proc commentStrip(s: string): string		123
+nim	uint64toDecimal	cligen/strUt.html#uint64toDecimal,openArray[char],uint64	proc uint64toDecimal(res: var openArray[char]; x: uint64): int		185
+nim	fcPad0	cligen/strUt.html#fcPad0	FloatCvtOptions.fcPad0		221
+nim	fcCapital	cligen/strUt.html#fcCapital	FloatCvtOptions.fcCapital		221
+nim	fcPlus	cligen/strUt.html#fcPlus	FloatCvtOptions.fcPlus		221
+nim	fcTrailDot	cligen/strUt.html#fcTrailDot	FloatCvtOptions.fcTrailDot		221
+nim	fcTrailDot0	cligen/strUt.html#fcTrailDot0	FloatCvtOptions.fcTrailDot0		221
+nim	fcExp23	cligen/strUt.html#fcExp23	FloatCvtOptions.fcExp23		221
+nim	fcExp3	cligen/strUt.html#fcExp3	FloatCvtOptions.fcExp3		221
+nim	fcExpPlus	cligen/strUt.html#fcExpPlus	FloatCvtOptions.fcExpPlus		221
+nim	FloatCvtOptions	cligen/strUt.html#FloatCvtOptions	enum FloatCvtOptions		221
+nim	ecvt	cligen/strUt.html#ecvt,string,float,int	proc ecvt(s: var string; x: float; p = 17; opts = {fcPad0})		304
+nim	ecvt2	cligen/strUt.html#ecvt2,string,string,float,int,bool,int	proc ecvt2(man, exp: var string; x: float; p = 17; opts = {fcPad0};\n      bumped: var bool = doNotUseB; expon: var int = doNotUseI)		316
+nim	fcvt	cligen/strUt.html#fcvt,string,float,int	proc fcvt(s: var string; x: float; p: int; opts = {fcPad0})		327
+nim	find	cligen/strUt.html#find,openArray[char],char,Natural,int	proc find(s: openArray[char]; sub: char; start: Natural = 0; last = 0): int		373
+nim	toString	cligen/strUt.html#toString,openArray[char]	proc toString(s: openArray[char]): string		384
+nim	add	cligen/strUt.html#add,string,openArray[char]	proc add(result: var string; a: openArray[char])		388
+nim	alphaNum	cligen/strUt.html#alphaNum	const alphaNum		397
+nim	idIsLiteral	cligen/strUt.html#idIsLiteral,Slice[int]	proc idIsLiteral(id: Slice[int]): bool		399
+nim	MacroCall	cligen/strUt.html#MacroCall	type MacroCall		402
+nim	tmplParse	cligen/strUt.html#tmplParse.i,openArray[char],char	iterator tmplParse(fmt: openArray[char]; meta = '$'; ids = alphaNum): MacroCall		403
+nim	tmplParsed	cligen/strUt.html#tmplParsed,openArray[char],char	proc tmplParsed(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCall]		462
+nim	MacroCallX	cligen/strUt.html#MacroCallX	type MacroCallX		466
+nim	tmplParses	cligen/strUt.html#tmplParses,openArray[char],char	proc tmplParses(fmt: openArray[char]; meta = '$'; ids = alphaNum): seq[MacroCallX]		467
+nim	pmUnicode	cligen/strUt.html#pmUnicode	const pmUnicode		472
+nim	pmUnicodeSpaced	cligen/strUt.html#pmUnicodeSpaced	const pmUnicodeSpaced		473
+nim	pmDfl	cligen/strUt.html#pmDfl	var pmDfl		476
+nim	fmtUncertainParts	cligen/strUt.html#fmtUncertainParts,float,float,int	proc fmtUncertainParts(val, err: float; sigDigs = 2): (string, string, string,\n    string, int)		478
+nim	fmtUncertainRender	cligen/strUt.html#fmtUncertainRender,string,string,string,string,int,string,seq[MacroCall]	proc fmtUncertainRender(vm, ve, um, ue: string; exp: int; fmt: string;\n                   parse: seq[MacroCall]): string		532
+nim	fmtUncertainRender	cligen/strUt.html#fmtUncertainRender,float,float,string,string,seq[MacroCall],seq[MacroCall],int	proc fmtUncertainRender(val, err: float; fmt0, fmtE: string;\n                   parse0, parseE: seq[MacroCall]; e0 = -2 .. 4; sigDigs = 2): string		563
+nim	fmtUncertain	cligen/strUt.html#fmtUncertain,float,float,int	proc fmtUncertain(val, err: float; fmt0 = fmtUncertain0; fmtE = fmtUncertainE;\n             e0 = -2 .. 4; sigDigs = 2): string		575
+nim	fmtUncertainSci	cligen/strUt.html#fmtUncertainSci,float,float,int	proc fmtUncertainSci(val, err: float; sigDigs = 2): string		584
+nim	fmtUncertainVal	cligen/strUt.html#fmtUncertainVal,float,float,int	proc fmtUncertainVal(val, err: float; sigDigs = 2; e0 = -2 .. 4): string		590
+nim	fmtUncertainMergedSci	cligen/strUt.html#fmtUncertainMergedSci,float,float,int	proc fmtUncertainMergedSci(val, err: float; sigDigs = 2): string		596
+nim	fmtUncertainMerged	cligen/strUt.html#fmtUncertainMerged,float,float,int	proc fmtUncertainMerged(val, err: float; sigDigs = 2; e0 = -2 .. 4): string		604
+nimgrp	fmtuncertainrender	cligen/strUt.html#fmtUncertainRender-procs-all	proc		532

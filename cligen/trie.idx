@@ -1,38 +1,39 @@
 nimTitle	trie	cligen/trie.html	module cligen/trie		0
-nim	Trie	cligen/trie.html#Trie	object Trie		15
-nim	missingOrExcl	cligen/trie.html#missingOrExcl,Trie[T],string	proc missingOrExcl[T](t: var Trie[T]; key: string): bool		64
-nim	excl	cligen/trie.html#excl,Trie[T],string	proc excl[T](t: var Trie[T]; key: string)		88
-nim	uniquePfxPat	cligen/trie.html#uniquePfxPat,Trie[T],string,string	proc uniquePfxPat[T](t: Trie[T]; key: string; sep = "*"): string		92
-nim	simplifyPattern	cligen/trie.html#simplifyPattern,string,char,char	proc simplifyPattern(pat: string; a1 = '?'; aN = '*'): string		137
-nim	match	cligen/trie.html#match,Trie[T],string,int,char,char	proc match[T](t: Trie[T]; pat = ""; limit = 0; a1 = '?'; aN = '*'): seq[string]		149
-nim	nearLev	cligen/trie.html#nearLev,Trie[T],string,int,int	proc nearLev[T](t: Trie[T]; key: string; dmax = 1; limit = 6): seq[\n    tuple[d: int, k: string]]		172
-nim	len	cligen/trie.html#len,Trie[T]	proc len[T](t: Trie[T]): int		193
-nim	contains	cligen/trie.html#contains,Trie[T],string	proc contains[T](t: Trie[T]; key: string): bool		196
-nim	`[]`	cligen/trie.html#[],Trie[T],string	proc `[]`[T](t: Trie[T]; key: string): T		205
-nim	`[]`	cligen/trie.html#[],Trie[T],string_2	proc `[]`[T](t: var Trie[T]; key: string): var T		209
-nim	mgetOrPut	cligen/trie.html#mgetOrPut,Trie[T],string,T	proc mgetOrPut[T](t: var Trie[T]; key: string; val: T): var T		213
-nim	containsOrIncl	cligen/trie.html#containsOrIncl,Trie[T],string,T	proc containsOrIncl[T](t: var Trie[T]; key: string; val: T): bool		221
-nim	containsOrIncl	cligen/trie.html#containsOrIncl,Trie[T],string	proc containsOrIncl[T](t: var Trie[T]; key: string): bool		229
-nim	inc	cligen/trie.html#inc,Trie[T],string,int	proc inc[T](t: var Trie[T]; key: string; val: int = 1)		235
-nim	incl	cligen/trie.html#incl,Trie[void],string	proc incl(t: var Trie[void]; key: string)		240
-nim	incl	cligen/trie.html#incl,Trie[T],string,T	proc incl[T](t: var Trie[T]; key: string; val: T)		244
-nim	`[]=`	cligen/trie.html#[]=,Trie[T],string,T	proc `[]=`[T](t: var Trie[T]; key: string; val: T)		249
-nim	keys	cligen/trie.html#keys.i,Trie[T]	iterator keys[T](t: Trie[T]): string		254
-nim	values	cligen/trie.html#values.i,Trie[T]	iterator values[T](t: Trie[T]): T		258
-nim	mvalues	cligen/trie.html#mvalues.i,Trie[T]	iterator mvalues[T](t: var Trie[T]): var T		263
-nim	items	cligen/trie.html#items.i,Trie[T]	iterator items[T](t: Trie[T]): string		268
-nim	pairs	cligen/trie.html#pairs.i,Trie[T]	iterator pairs[T](t: Trie[T]): tuple[key: string, val: T]		272
-nim	mpairs	cligen/trie.html#mpairs.i,Trie[T]	iterator mpairs[T](t: var Trie[T]): tuple[key: string, val: var T]		276
-nim	`$`	cligen/trie.html#$,Trie[T]	proc `$`[T](t: Trie[T]): string		280
-nim	keysWithPrefix	cligen/trie.html#keysWithPrefix.i,Trie[T],string	iterator keysWithPrefix[T](t: Trie[T]; prefix: string; longest = false): string		305
-nim	valuesWithPrefix	cligen/trie.html#valuesWithPrefix.i,Trie[T],string	iterator valuesWithPrefix[T](t: Trie[T]; prefix: string; longest = false): T		312
-nim	mvaluesWithPrefix	cligen/trie.html#mvaluesWithPrefix.i,Trie[T],string	iterator mvaluesWithPrefix[T](t: var Trie[T]; prefix: string; longest = false): var T		319
-nim	pairsWithPrefix	cligen/trie.html#pairsWithPrefix.i,Trie[T],string	iterator pairsWithPrefix[T](t: Trie[T]; prefix: string; longest = false): tuple[\n    key: string, val: T]		328
-nim	mpairsWithPrefix	cligen/trie.html#mpairsWithPrefix.i,Trie[T],string	iterator mpairsWithPrefix[T](t: var Trie[T]; prefix: string; longest = false): tuple[\n    key: string, val: var T]		336
-nim	uniquePfxPat	cligen/trie.html#uniquePfxPat,openArray[string],string	proc uniquePfxPat(x: openArray[string]; sep = "*"): seq[string]		346
-nim	uniqueSfxPat	cligen/trie.html#uniqueSfxPat,openArray[string],string	proc uniqueSfxPat(x: openArray[string]; sep = "*"): seq[string]		353
-nim	toTrie	cligen/trie.html#toTrie,openArray[string]	proc toTrie(x: openArray[string]): Trie[void]		364
-nimgrp	containsorincl	cligen/trie.html#containsOrIncl-procs-all	proc		221
-nimgrp	uniquepfxpat	cligen/trie.html#uniquePfxPat-procs-all	proc		92
-nimgrp	[]	cligen/trie.html#[]-procs-all	proc		205
-nimgrp	incl	cligen/trie.html#incl-procs-all	proc		240
+nim	Node	cligen/trie.html#Node	type Node		15
+nim	Trie	cligen/trie.html#Trie	object Trie		16
+nim	missingOrExcl	cligen/trie.html#missingOrExcl,Trie[T],string	proc missingOrExcl[T](t: var Trie[T]; key: string): bool		65
+nim	excl	cligen/trie.html#excl,Trie[T],string	proc excl[T](t: var Trie[T]; key: string)		89
+nim	uniquePfxPat	cligen/trie.html#uniquePfxPat,Trie[T],string,string	proc uniquePfxPat[T](t: Trie[T]; key: string; sep = "*"): string		93
+nim	simplifyPattern	cligen/trie.html#simplifyPattern,string,char,char	proc simplifyPattern(pat: string; a1 = '?'; aN = '*'): string		138
+nim	match	cligen/trie.html#match,Trie[T],string,int,char,char	proc match[T](t: Trie[T]; pat = ""; limit = 0; a1 = '?'; aN = '*'): seq[string]		150
+nim	nearLev	cligen/trie.html#nearLev,Trie[T],string,int,int	proc nearLev[T](t: Trie[T]; key: string; dmax = 1; limit = 6): seq[\n    tuple[d: int, k: string]]		173
+nim	len	cligen/trie.html#len,Trie[T]	proc len[T](t: Trie[T]): int		194
+nim	contains	cligen/trie.html#contains,Trie[T],string	proc contains[T](t: Trie[T]; key: string): bool		197
+nim	`[]`	cligen/trie.html#[],Trie[T],string	proc `[]`[T](t: Trie[T]; key: string): T		206
+nim	`[]`	cligen/trie.html#[],Trie[T],string_2	proc `[]`[T](t: var Trie[T]; key: string): var T		210
+nim	mgetOrPut	cligen/trie.html#mgetOrPut,Trie[T],string,T	proc mgetOrPut[T](t: var Trie[T]; key: string; val: T): var T		214
+nim	containsOrIncl	cligen/trie.html#containsOrIncl,Trie[T],string,T	proc containsOrIncl[T](t: var Trie[T]; key: string; val: T): bool		222
+nim	containsOrIncl	cligen/trie.html#containsOrIncl,Trie[T],string	proc containsOrIncl[T](t: var Trie[T]; key: string): bool		230
+nim	inc	cligen/trie.html#inc,Trie[T],string,int	proc inc[T](t: var Trie[T]; key: string; val: int = 1)		236
+nim	incl	cligen/trie.html#incl,Trie[void],string	proc incl(t: var Trie[void]; key: string)		241
+nim	incl	cligen/trie.html#incl,Trie[T],string,T	proc incl[T](t: var Trie[T]; key: string; val: T)		245
+nim	`[]=`	cligen/trie.html#[]=,Trie[T],string,T	proc `[]=`[T](t: var Trie[T]; key: string; val: T)		250
+nim	keys	cligen/trie.html#keys.i,Trie[T]	iterator keys[T](t: Trie[T]): string		255
+nim	values	cligen/trie.html#values.i,Trie[T]	iterator values[T](t: Trie[T]): T		259
+nim	mvalues	cligen/trie.html#mvalues.i,Trie[T]	iterator mvalues[T](t: var Trie[T]): var T		264
+nim	items	cligen/trie.html#items.i,Trie[T]	iterator items[T](t: Trie[T]): string		269
+nim	pairs	cligen/trie.html#pairs.i,Trie[T]	iterator pairs[T](t: Trie[T]): tuple[key: string, val: T]		273
+nim	mpairs	cligen/trie.html#mpairs.i,Trie[T]	iterator mpairs[T](t: var Trie[T]): tuple[key: string, val: var T]		277
+nim	`$`	cligen/trie.html#$,Trie[T]	proc `$`[T](t: Trie[T]): string		281
+nim	keysWithPrefix	cligen/trie.html#keysWithPrefix.i,Trie[T],string	iterator keysWithPrefix[T](t: Trie[T]; prefix: string; longest = false): string		306
+nim	valuesWithPrefix	cligen/trie.html#valuesWithPrefix.i,Trie[T],string	iterator valuesWithPrefix[T](t: Trie[T]; prefix: string; longest = false): T		313
+nim	mvaluesWithPrefix	cligen/trie.html#mvaluesWithPrefix.i,Trie[T],string	iterator mvaluesWithPrefix[T](t: var Trie[T]; prefix: string; longest = false): var T		320
+nim	pairsWithPrefix	cligen/trie.html#pairsWithPrefix.i,Trie[T],string	iterator pairsWithPrefix[T](t: Trie[T]; prefix: string; longest = false): tuple[\n    key: string, val: T]		329
+nim	mpairsWithPrefix	cligen/trie.html#mpairsWithPrefix.i,Trie[T],string	iterator mpairsWithPrefix[T](t: var Trie[T]; prefix: string; longest = false): tuple[\n    key: string, val: var T]		337
+nim	uniquePfxPat	cligen/trie.html#uniquePfxPat,openArray[string],string	proc uniquePfxPat(x: openArray[string]; sep = "*"): seq[string]		347
+nim	uniqueSfxPat	cligen/trie.html#uniqueSfxPat,openArray[string],string	proc uniqueSfxPat(x: openArray[string]; sep = "*"): seq[string]		354
+nim	toTrie	cligen/trie.html#toTrie,openArray[string]	proc toTrie(x: openArray[string]): Trie[void]		365
+nimgrp	containsorincl	cligen/trie.html#containsOrIncl-procs-all	proc		222
+nimgrp	uniquepfxpat	cligen/trie.html#uniquePfxPat-procs-all	proc		93
+nimgrp	[]	cligen/trie.html#[]-procs-all	proc		206
+nimgrp	incl	cligen/trie.html#incl-procs-all	proc		241

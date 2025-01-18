@@ -6,30 +6,30 @@ nim	`<`	cligen/statx.html#<,StatxTs,StatxTs	proc `<`(x, y: StatxTs): bool		67
 nim	`<=`	cligen/statx.html#<=,StatxTs,StatxTs	proc `<=`(x, y: StatxTs): bool		70
 nim	toInt64	cligen/statx.html#toInt64,StatxTs	proc toInt64(t: StatxTs): int64		73
 nim	toStatxTs	cligen/statx.html#toStatxTs,int64	proc toStatxTs(t: int64): StatxTs		77
-nim	AT_STATX_SYNC_TYPE	cligen/statx.html#AT_STATX_SYNC_TYPE	let AT_STATX_SYNC_TYPE		48
-nim	AT_STATX_SYNC_AS_STAT	cligen/statx.html#AT_STATX_SYNC_AS_STAT	let AT_STATX_SYNC_AS_STAT		48
-nim	AT_STATX_FORCE_SYNC	cligen/statx.html#AT_STATX_FORCE_SYNC	let AT_STATX_FORCE_SYNC		48
-nim	AT_STATX_DONT_SYNC	cligen/statx.html#AT_STATX_DONT_SYNC	let AT_STATX_DONT_SYNC		48
-nim	STATX_TYPE	cligen/statx.html#STATX_TYPE	let STATX_TYPE		48
-nim	STATX_MODE	cligen/statx.html#STATX_MODE	let STATX_MODE		48
-nim	STATX_NLINK	cligen/statx.html#STATX_NLINK	let STATX_NLINK		48
-nim	STATX_UID	cligen/statx.html#STATX_UID	let STATX_UID		48
-nim	STATX_GID	cligen/statx.html#STATX_GID	let STATX_GID		48
-nim	STATX_ATIME	cligen/statx.html#STATX_ATIME	let STATX_ATIME		48
-nim	STATX_MTIME	cligen/statx.html#STATX_MTIME	let STATX_MTIME		48
-nim	STATX_CTIME	cligen/statx.html#STATX_CTIME	let STATX_CTIME		48
-nim	STATX_INO	cligen/statx.html#STATX_INO	let STATX_INO		48
-nim	STATX_SIZE	cligen/statx.html#STATX_SIZE	let STATX_SIZE		48
-nim	STATX_BLOCKS	cligen/statx.html#STATX_BLOCKS	let STATX_BLOCKS		48
-nim	STATX_BASIC_STATS	cligen/statx.html#STATX_BASIC_STATS	let STATX_BASIC_STATS		48
-nim	STATX_ALL	cligen/statx.html#STATX_ALL	let STATX_ALL		48
-nim	STATX_BTIME	cligen/statx.html#STATX_BTIME	let STATX_BTIME		48
-nim	STATX_ATTR_COMPRESSED	cligen/statx.html#STATX_ATTR_COMPRESSED	let STATX_ATTR_COMPRESSED		48
-nim	STATX_ATTR_IMMUTABLE	cligen/statx.html#STATX_ATTR_IMMUTABLE	let STATX_ATTR_IMMUTABLE		48
-nim	STATX_ATTR_APPEND	cligen/statx.html#STATX_ATTR_APPEND	let STATX_ATTR_APPEND		48
-nim	STATX_ATTR_NODUMP	cligen/statx.html#STATX_ATTR_NODUMP	let STATX_ATTR_NODUMP		48
-nim	STATX_ATTR_ENCRYPTED	cligen/statx.html#STATX_ATTR_ENCRYPTED	let STATX_ATTR_ENCRYPTED		48
-nim	STATX_ATTR_AUTOMOUNT	cligen/statx.html#STATX_ATTR_AUTOMOUNT	let STATX_ATTR_AUTOMOUNT		48
+nim	AT_STATX_SYNC_TYPE	cligen/statx.html#AT_STATX_SYNC_TYPE	let AT_STATX_SYNC_TYPE		47
+nim	AT_STATX_SYNC_AS_STAT	cligen/statx.html#AT_STATX_SYNC_AS_STAT	let AT_STATX_SYNC_AS_STAT		47
+nim	AT_STATX_FORCE_SYNC	cligen/statx.html#AT_STATX_FORCE_SYNC	let AT_STATX_FORCE_SYNC		47
+nim	AT_STATX_DONT_SYNC	cligen/statx.html#AT_STATX_DONT_SYNC	let AT_STATX_DONT_SYNC		47
+nim	STATX_TYPE	cligen/statx.html#STATX_TYPE	let STATX_TYPE		47
+nim	STATX_MODE	cligen/statx.html#STATX_MODE	let STATX_MODE		47
+nim	STATX_NLINK	cligen/statx.html#STATX_NLINK	let STATX_NLINK		47
+nim	STATX_UID	cligen/statx.html#STATX_UID	let STATX_UID		47
+nim	STATX_GID	cligen/statx.html#STATX_GID	let STATX_GID		47
+nim	STATX_ATIME	cligen/statx.html#STATX_ATIME	let STATX_ATIME		47
+nim	STATX_MTIME	cligen/statx.html#STATX_MTIME	let STATX_MTIME		47
+nim	STATX_CTIME	cligen/statx.html#STATX_CTIME	let STATX_CTIME		47
+nim	STATX_INO	cligen/statx.html#STATX_INO	let STATX_INO		47
+nim	STATX_SIZE	cligen/statx.html#STATX_SIZE	let STATX_SIZE		47
+nim	STATX_BLOCKS	cligen/statx.html#STATX_BLOCKS	let STATX_BLOCKS		47
+nim	STATX_BASIC_STATS	cligen/statx.html#STATX_BASIC_STATS	let STATX_BASIC_STATS		47
+nim	STATX_ALL	cligen/statx.html#STATX_ALL	let STATX_ALL		47
+nim	STATX_BTIME	cligen/statx.html#STATX_BTIME	let STATX_BTIME		47
+nim	STATX_ATTR_COMPRESSED	cligen/statx.html#STATX_ATTR_COMPRESSED	let STATX_ATTR_COMPRESSED		47
+nim	STATX_ATTR_IMMUTABLE	cligen/statx.html#STATX_ATTR_IMMUTABLE	let STATX_ATTR_IMMUTABLE		47
+nim	STATX_ATTR_APPEND	cligen/statx.html#STATX_ATTR_APPEND	let STATX_ATTR_APPEND		47
+nim	STATX_ATTR_NODUMP	cligen/statx.html#STATX_ATTR_NODUMP	let STATX_ATTR_NODUMP		47
+nim	STATX_ATTR_ENCRYPTED	cligen/statx.html#STATX_ATTR_ENCRYPTED	let STATX_ATTR_ENCRYPTED		47
+nim	STATX_ATTR_AUTOMOUNT	cligen/statx.html#STATX_ATTR_AUTOMOUNT	let STATX_ATTR_AUTOMOUNT		47
 nim	statxFlags	cligen/statx.html#statxFlags	var statxFlags		113
 nim	statxMask	cligen/statx.html#statxMask	var statxMask		114
 nim	statx	cligen/statx.html#statx,cint,cstring,cint,cint,ptr.Statx	proc statx(dirfd: cint; path: cstring; flags: cint; mask: cint; stx: ptr Statx): cint		116

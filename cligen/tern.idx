@@ -1,5 +1,7 @@
 nimTitle	tern	cligen/tern.html	module cligen/tern		0
-nim	NUL	cligen/tern.html#NUL	const NUL		13
+nim	NUL	cligen/tern.html#NUL	const NUL		12
+nim	NodeOb	cligen/tern.html#NodeOb	object NodeOb		14
+nim	Node	cligen/tern.html#Node	type Node		20
 nim	Tern	cligen/tern.html#Tern	object Tern		21
 nim	len	cligen/tern.html#len,Tern[T]	proc len[T](t: Tern[T]): int		27
 nim	rawGet	cligen/tern.html#rawGet,Tern[T],string	proc rawGet[T](t: Tern[T]; key: string): Node[T]		29
