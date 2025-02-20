@@ -19,12 +19,9 @@ proc cmemcpy*(a, b: pointer, n: csize): cint {.
   importc: "memcpy", header: "<string.h>", noSideEffect.}
 proc cmemmem*(h: pointer, nH: csize, s: pointer, nS: csize): pointer {.
   importc: "memmem", header: "string.h".}
-proc `-!`*(p, q: pointer): int {.inline.} =
-  (cast[uint](p) - cast[uint](q)).int
-proc `+!`*(p: pointer, i: int): pointer {.inline.} =
-  cast[pointer](cast[uint](p) + i.uint)
-proc `+!`*(p: pointer, i: uint64): pointer {.inline.} =
-  cast[pointer](cast[uint64](p) + i)
+proc `-!`*(p, q: pointer): int = cast[int](p) -% cast[int](q)
+proc `+!`*(p: pointer, i: int): pointer = cast[pointer](cast[int](p) +% i)
+proc `+!`*(p: pointer, i: uint64): pointer = cast[pointer](cast[uint64](p) + i)
 
 type
   MSlice* = object
