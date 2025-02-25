@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.7.9
+--------------
+  - There is no substantive change here, but it is helpful in my "do I need
+    to release" scripted workflow for the VC tip to be the latest release.
+
 Version: 1.7.8
 --------------
   - Allow CLauthors to set `clCfg.minStrQuoting = true` (& CLusers to override
