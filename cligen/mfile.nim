@@ -93,7 +93,7 @@ proc mopen*(fd,fh: cint; fi:FileInfo, prot=PROT_READ, flags=MAP_SHARED, a=0.Off,
 
 proc mopen*(fh: cint, prot=PROT_READ, flags=MAP_SHARED, a=0, b = Off(-1),
             allowRemap=false, noShrink=false, err=stderr): MFile =
-  ## Init map for already open `fh`.  See `mopen(cint, Stat)` for details.
+  ## Init map for already open `fh`.  `mopen(cint, cint, FileInfo)` has details.
   if fh == -1:  #NOTE: It is important to initialize .fd,.fh so that mopen(path)
     return      #      does NOT close(0 {default init}).
   result.fd = when defined(windows): open_osfhandle(fh, 0).cint else: fh
