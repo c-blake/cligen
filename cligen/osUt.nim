@@ -55,33 +55,28 @@ proc useStdin*(path: string): bool =
   path in ["-", "/dev/stdin"] or (path.len == 0 and not stdin.isatty)
 
 proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
-  importc: "getdelim", header: "<stdio.h>".}
-when defined(windows):
+  importc:"getdelim",header:"stdio.h".} # MS CRT *should* but does not provide
+when defined(windows):                  # more efficient; So, inject C here.
   {.emit: """#include <stdio.h>
 ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
   char *ptr, *end;
   if (*buf == NULL || *nBuf == 0) {
     *nBuf = BUFSIZ;
     if ((*buf = malloc(*nBuf)) == NULL)
-      return -1;
-  }
+      return -1; }
   for (ptr = *buf, end = *buf + *nBuf;;) {
-    int c = fgetc(fp);
+    int c = fgetc(fp);          /* No idea if MS makes this is a Cpp macro */
     if (c == -1) {
       if (feof(fp)) {
         ssize_t diff = (ssize_t)(ptr - *buf);
         if (diff != 0) {
           *ptr = '\0';
-          return diff;
-        }
-      }
-      return -1;
-    }
+          return diff; } }
+      return -1; }
     *ptr++ = c;
     if (c == delim) {
       *ptr = '\0';
-      return ptr - *buf;
-    }
+      return ptr - *buf; }
     if (ptr + 2 >= end) {
       char *nbuf;
       size_t nBufSz = *nBuf * 2;
@@ -91,10 +86,7 @@ ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
       *buf = nbuf;
       *nBuf = nBufSz;
       end = nbuf + nBufSz;
-      ptr = nbuf + d;
-    }
-  }
-}""".}
+      ptr = nbuf + d; } } }""".}
 
 proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
 iterator getDelim*(f: File, dlm: char='\n'): string =
