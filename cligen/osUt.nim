@@ -11,7 +11,7 @@
 
 when not declared(File): import std/syncio
 include cligen/unsafeAddr
-import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math]
+import std/[os, osproc, strtabs, strutils, dynlib, times, stats, math, hashes]
 type csize = uint
 type Ce* = CatchableError
 when defined(windows):
@@ -412,6 +412,17 @@ proc pclose*(f: File, cmd: string): cint =
   when defined(Windows):
     proc pclose(a: File): cint {.importc: "_pclose".}
   if cmd.len > 0: f.pclose else: (f.close; 0.cint) # WEXITSTATUS(result)
+
+proc writeContAddrTempFile*(path, extension, content: string): string =
+  ## For `path` "/tmp/x/y/z/fooXXXX" and `extension` ".txt", create "/tmp/x/y/z"
+  ## if needed & write `content` to "fooHASH.txt" with HASH = a hash(content).
+  let digs = count(path, 'X')       # temp file rigamarole
+  let hsh  = toHex(content.hash and ((1 shl 16*digs) - 1), digs)
+  let oNm  = if digs > 0: path[0 ..< ^digs] & hsh else: path
+  let f = mkdirOpen(oNm & extension, fmWrite)
+  f.write content
+  f.close
+  oNm
 
 proc fileNewerThan*(a, b: string): bool =
   ## True if both path `a` & `b` exist and `a` is newer

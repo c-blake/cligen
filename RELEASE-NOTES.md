@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.0
+--------------
+  - Add `cligen/osUt.writeContAddrTempFile` for a common-ish situation that
+    wants reproducibly named yet non-colliding temp files in some cache dir.
+
 Version: 1.7.9
 --------------
   - There is no substantive change here, but it is helpful in my "do I need
