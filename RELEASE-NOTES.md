@@ -6,6 +6,10 @@ Version: 1.8.0
   - Add `cligen/osUt.writeContAddrTempFile` for a common-ish situation that
     wants reproducibly named yet non-colliding temp files in some cache dir.
 
+  - Add SGR attributes "conceal/-conceal".  Like BLINK/-BLINK this is so rarely
+    supported that it is not documented.  If your terminal has it, 99% chances
+    you know it & can read source code { or at least release notes ;-). }
+
 Version: 1.7.9
 --------------
   - There is no substantive change here, but it is helpful in my "do I need

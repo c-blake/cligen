@@ -75,20 +75,21 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
- let attrNames = {  # const compiles but needs CT-RT hash coherence for look up.
-  "plain": "0", "bold":  "1", "faint":   "2", "italic": "3", "underline": "4",
-  "blink": "5", "BLINK": "6", "inverse": "7", "struck":"9", "underdouble":"4:2",
-  "undercurl": "4:3", "underdot": "4:4", "underdash": "4:5",
-  "NONE":   "", "-bold":"22", "-faint": "22", "-italic":"23","-underline":"24",
-  "-blink":"25","-BLINK":"25","-inverse":"27","-struck":"29","none":"","off":"",
-  "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
-  "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
-  "BLACK"   : "90", "RED"      : "91", "GREEN"    : "92", "YELLOW"   : "93",#LiF
-  "BLUE"    : "94", "PURPLE"   : "95", "CYAN"     : "96", "WHITE"    : "97",
-  "on_black": "40", "on_red"   : "41", "on_green" : "42", "on_yellow": "43",#DkB
-  "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
-  "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
-  "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
+ # const compiles but needs CT-RT hash coherence for look up.
+ let attrNames = {"off":"","none":"", # Regular but for -bold=22v21 -BLINK=25v26
+  "bold":  "1",  "faint":  "2",  "italic": "3", "underline": "4",  "blink": "5",
+ "-bold": "22", "-faint": "22", "-italic":"23","-underline":"24", "-blink":"25",
+  "BLINK": "6", "inverse": "7", "conceal": "8", "struck":    "9",  "plain": "0",
+ "-BLINK":"25","-inverse":"27","-conceal":"28","-struck":   "29",  "NONE" : "",
+ "underdouble":"4:2", "undercurl":"4:3", "underdot":"4:4", "underdash":"4:5",
+ "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
+ "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
+ "BLACK"   : "90", "RED"      : "91", "GREEN"    : "92", "YELLOW"   : "93",#LiF
+ "BLUE"    : "94", "PURPLE"   : "95", "CYAN"     : "96", "WHITE"    : "97",
+ "on_black": "40", "on_red"   : "41", "on_green" : "42", "on_yellow": "43",#DkB
+ "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
+ "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
+ "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
  }.toTable
 
  var textAttrAliases = initTable[string, string]()
@@ -137,8 +138,8 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
 
  const textAttrHelp* = """
-Style: bold italic blink inverse struck under{line double dot dash curl};
-Same w/leading '-': turn that off; turn all off: plain(0) NONE none off;
+STYLE: bold italic blink inverse struck under{line double curl dot dash};
+Same w/leading '-': turn that ONE off; turn all off: plain(0) NONE none off;
 Basic Color: black red green yellow blue purple cyan white;
 UPPERCASE => HIGH intensity; "on_" prefix => BACKGROUND color;
 xterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);
