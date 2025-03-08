@@ -41,10 +41,13 @@ especially in technical fields, and a help message is in some ways a very terse
 textbook / manual.[^3]
 
 [^1]: In fact, as per the [main README](../README.md), `Plac` in June 2010 &
-right on its heels `argh` in November 2010 (according to PyPI release history
-anyway) inspired `cligen.nim`.  I imagine all were after the `inspect` module
-introduced in January 2001, though.  Happy to provide a more accurate origin
-story if someone knows it.  IIRC, Plac may go back to 2006.
+right on its heels `argh` in November 2010 (according to both PyPI release
+history and these
+[two](https://www.thecodingforums.com/threads/plac-the-easiest-command-line-arguments-parser-in-the-world.724602/)
+[URIs](https://www.reddit.com/r/Python/comments/e5nag/argh_a_simple_argparse_wrapper_that_doesnt_make/)
+anyway) inspired `cligen.nim`.  The `inspect` module began in January 2001, with
+`getargspec`-like ability from the start.  So, there may be 9 year earlier cases
+or some other Plang thing.  Happy to give credit where it's due if anyone knows.
 
 [^2]: If this turns out to be popular, I can add a few more things like `$PQ`
 and put it on PyPI or some such.
