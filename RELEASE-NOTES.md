@@ -10,6 +10,9 @@ Version: 1.8.0
     supported that it is not documented.  If your terminal has it, 99% chances
     you know it & can read source code { or at least release notes ;-). }
 
+  - Add `python/cg.py`, its documentation `/cg.md`, a demo program `/pq`,
+    a help screenshot & a test script `/testPq.sh`.
+
 Version: 1.7.9
 --------------
   - There is no substantive change here, but it is helpful in my "do I need

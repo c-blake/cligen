@@ -1,0 +1,85 @@
+#!/usr/bin/env -S python3
+import os; from sys import argv, stdin, stderr, exit; e = stderr.write
+def ji(sq, n=0): return ("\n" + (" "*n)).join(sq) # j)oin & i)ndent
+
+def toDef(fields, delim, genF):
+  nms = set()       # Prevent duplicate def errors & warn users about collision.
+  result = f'pqNmFields = {repr(fields)}\n  ('
+  for j, f in enumerate(fields.split(delim)):
+    nm = genF % f   #Q: Parse injected code for max used field to infer MaxCols?
+    if nm not in nms: result += nm + ", "; nms.add(nm)
+    else: e("pq: WARNING: ", nm, " collides with earlier field; Using first\n")
+  return result + (") = range(%d)" % len(nms))
+
+def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
+       fields="", MaxCols=-1, genF="%s", input="", uncheck=False, src=False):
+  delim = None if delim == "None" else delim
+  check = ""
+  if len(match) > 0:
+    prelude = ["from re import compile as re_compile"] + prelude
+    begin = [f'pqRx = re_compile("{match}")'] + begin
+    check = "if not pqRx.search(row): nr += 1; continue\n    "
+  if len(fields) > 0 and not uncheck:
+    check += """if nr == 0:                     # "Type check" SV input
+      if row == pqNmFields: nr+=1; continue; # [fields] [!uncheck]
+      else: e(f"row0 {repr(row)} != {repr(pqNmFields)}\\n"); exit(1)\n    """
+  if len(stmts) == 0: stmts = ["print(row)"]
+  if len(input) == 0:   # null input eases invokes like: pq -b'print(2)'
+    nul = 'NUL:' if os.name=="nt" else'/dev/null'
+    inp = f'open("{nul}")' if stdin.isatty() else "stdin"
+  else: inp = f"open({input})"
+  if len(fields) > 0: fields = toDef(fields, delim, genF)
+  prog = f"""def main():
+  from sys import stdin
+  {ji(prelude, 2)} # end of [pre]
+  {fields} # end of [fields]
+  s = []                # CREATE TERSE NOTATION: row/s/i/f/nr/nf
+  def i(j): return int(s[j])
+  def f(j): return float(s[j])
+  nr = 0
+  {ji(begin, 2)} # end of [begin]
+  for row in {inp}: # [input] from `input`
+    row = row[:-1]
+    {check}s = row.split({repr(delim)}, {MaxCols}) # [MaxCols]
+    nf = len(s)
+    if {where}: # [where] auto ()s?\n"""
+  for i, stmt in enumerate(stmts):
+    prog += "      " + stmt + " # [stmt" + str(i) + "]\n"
+  prog +=  f"    nr += 1\n  {ji(epilog, 2)} # [epilog]\nmain()\n"
+  if src: print(prog, end=''); exit(0)
+  exec(prog)    # Can we tell PyPy to spend more time compiling this?
+
+if __name__ == '__main__': import cg; cg.dispatch(pq,
+ usage='%(prog)s [*options*] [*PythonStatements*] **< input**',
+ description="""
+Generate & Run prelude, begin, where, stmts on rows, epilog against input.
+
+Guarded by ``where``, defined in ``stmts`` are AWK-ish BUT 0-origin `fieldIdx`:
+  `s[fieldIdx]` is a string field {'s' ~ '$'}
+  `(i|f)(fieldIdx)` are the same converted to Python `int` | `float`.
+  `nf` & `nr` - number of f)ields & r)ecords; `stdin` from `sys`.
+  if ``match`` is given, `pqRx`, the corresponding compiled regex.
+  If ``fields`` is given, `pqNmFields` & var names ``genF`` `% field` = index.""",
+epilog="""**EXAMPLES**:
+  seq 0 1000000|pq -w'len(row)<2'          **# Print short rows**
+  pq 'print(s[1],s[0])'                    **# Swap field order**
+  pq -bt=0 t+=nf -e'print(t)'              **# Print total field count**
+  pq -bt=0 -w'i(0)>0' t+=i(0) -e'print(t)' **# Total >0 field0 ints**
+  pq 'x=f(0)' 'print((1+x)/x)'             **# cache field 0 parse**
+  pq -d, -fa,b,c 'print(s[a],f(b)+i(c))'   **# named fields (CSV)**
+  pq -mfoo 'print(s[2])'                   **# column of row matches**""",
+types={"prelude": (str, '*'), "begin": (str, '*'), "epilog": (str, '*'),
+       "delim": (str, None) }, help={
+   "stmts"  : "per-input row Py statements",
+   "prelude": "Py prelude section",
+   "begin"  : "Py pre-loop section",
+   "match"  : "row must match this regex",
+   "where"  : "Test for row inclusion",
+   "epilog" : "Py epilog section",
+   "delim"  : "delim chars for `''.split`",
+   "fields" : "delim'd field names; Check row0",
+   "MaxCols": "max split; 0=>unbounded",
+   "genF"   : "field name format; Eg c%%s",
+   "input"  : 'path to process; ""=`stdin`',
+   "uncheck": "Don't check&skip hdrRow V.``fields``",
+   "src"    : 'print gen.code & exit'})
