@@ -20,7 +20,7 @@ Python2 & Python3.  It uses the Python `ast` module to parse both `cligen` and
 program config files which is clever & concise, but also means that MANY invalid
 config files only fail at run-time.  It supports the same sections & style/color
 specification sub-languages that `cligen/humanUt.nim` uses and the basic env.var
-`CLIGEN=/dev/null` or `CONFIG_PQ=/my/pq.ini` protocols.[^2]
+`NO_COLOR=`, `CLIGEN=/dev/null` or `CONFIG_PQ=/my/pq.ini` protocols.[^2]
 
 To make all this more concrete, here is some example output (with my personal
 dark background color scheme) from the included demo program [pq](pq) which is
@@ -50,7 +50,8 @@ anyway) inspired `cligen.nim`.  The `inspect` module began in January 2001, with
 or some other Plang thing.  Happy to give credit where it's due if anyone knows.
 
 [^2]: If this turns out to be popular, I can add a few more things like `$PQ`
-and put it on PyPI or some such.
+and put it on PyPI or some such.  `NO_COLOR` after https://nocolor.org/ (since
+almost anything can be usefully piped to `less -r`).
 
 [^3]: In math&physics, folks even switch to Greek & "double struck" Latin fonts
 like symbols for sets of numbers, such as complex numbers, ℂ.  That domain has
