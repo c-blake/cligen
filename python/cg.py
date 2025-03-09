@@ -160,11 +160,11 @@ class HelpFmt(ap.RawDescriptionHelpFormatter):
     K,k = cf["kind"].get("optKey", ("", ""))
     T,t = cf["kind"].get("valType", ("", ""))
     D,d = cf["kind"].get("dflVal", ("", ""))
-    f   = "%s%%s, %%-%ds%s %s%%-%ds%s %s%%-%ds%s" % \
-          (K, HelpFmt.wK, k,  T, HelpFmt.wT, t,  D, HelpFmt.wDV, d)
-    keys = act.option_strings
-    if len(keys) > 1: return \
-      (f if HelpFmt.wK>0 else "%s, %s %s %s") % (keys[0], keys[1], tn(act),
+    f   = "%s%%-%ds%s %s%%-%ds%s %s%%-%ds%s" % \
+          (K, HelpFmt.wK+4, k,  T, HelpFmt.wT, t,  D, HelpFmt.wDV, d)
+    keys = ", ".join(act.option_strings)
+    if len(keys) > 0: return \
+      (f if HelpFmt.wK>0 else "%s %s %s") % (keys, tn(act),
         repr(act.default) if act.default != ap.SUPPRESS else "")
     return super(C,o)._format_action_invocation(act)
   def _split_lines(o, text, width):
@@ -222,19 +222,18 @@ def dispatch(func, help={}, short={}, types={}, wKTDv=42, **kw):
   doc = I.getdoc(func)
   p = AP(formatter_class=HelpFmt, **dict(kw, description=doc)) \
     if "description" not in kw and doc else AP(formatter_class=HelpFmt, **kw)
-  a = p.add_argument
-  for i, arg in enumerate(A):
+  def a(nm, **kw):
+    sk = short.get(nm, nm[0])
+    if len(sk)>0: p.add_argument('-'+sk, "--"+nm, **kw)
+    else        : p.add_argument("--" + nm, **kw)
+  for i, nm in enumerate(A):
     if sys.version[0]=='2': dv = D[i]
-    else: dv = D[arg]
-    ty, nAr = types.get(arg, (type(dv), None))
-    if ty == type(True): #XXX Could toggle not just store_true like cligen.nim
-      a('-'+short.get(arg, arg[0]), "--" + arg, action='store_true',
-        help=help.get(arg, "set " + arg))
-    else:
-      a('-'+short.get(arg, arg[0]), "--" + arg, type=ty, nargs=nAr, default=dv,
-        help=help.get(arg, "set " + arg))
+    else: dv = D[nm]
+    ty, nAr = types.get(nm, (type(dv), None)) #XXX store_true->toggle like Nim?
+    if ty==type(True): a(nm, action='store_true', help=help.get(nm, "set "+nm))
+    else: a(nm, type=ty, nargs=nAr, default=dv, help=help.get(nm, "set "+nm))
   if V is not None:    # Yank out of `merge` output; ap.REMAINDER is tail only
-    a(V, nargs='*', default=[], help=help.get(V, "set " + V))
+    p.add_argument(V, nargs='*', default=[], help=help.get(V, "set "+V))
   fn = func.__name__
   mrg = merge(p, "CONFIG_" + fn.upper(), fn, wKTDv)
   if sys.version[0] != '2':
