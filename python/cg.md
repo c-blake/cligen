@@ -1,4 +1,4 @@
-# Motivation
+## Motivation
 
 Nim is better than Python in most respects, not delaying many common errors
 until run-time and generating fast running native code with powerful abstraction
@@ -16,15 +16,17 @@ get nicer help formatting.  So, my own _personal_ "convenience" is that I have
 many scripts that use them and "re-binding" to a `cg.py` is much less work than
 porting these scripts (and all they rely upon) to Nim.
 
+## Solution
+
 This situation inspired me to write [`cg.py`](cg.py) included here which can
 work off of the same config file setups as `cligen.nim`.  It works under both
-Python2 & Python3.  It uses the Python `ast` module to parse both `cligen` and
-program config files which is clever & concise, but also means that MANY invalid
-config files only fail at run-time.  It supports the same sections & style/color
-specification sub-languages that `cligen/humanUt.nim` uses and the basic env.var
-`NO_COLOR=`, `CLIGEN=/dev/null` or `CONFIG_PQ=/my/pq.ini` protocols.[^2]
+Python2 & Python3.  It uses the Python `ast` module to parse both `cligen` &
+program config files which is clever & concise, but makes for more easily
+invalid configs.  It supports the same sections & style/color specification
+sub-languages that `cligen/humanUt.nim` uses & the basic env.var `NO_COLOR=`,
+`CLIGEN=/dev/null` or `CONFIG_PQ=/my/pq.ini` protocols.[^2]
 
-# Example
+## Example
 
 To make all this more concrete, here is some example output (with my personal
 dark background color scheme) from the included demo program [pq](pq) which is
