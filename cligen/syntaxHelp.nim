@@ -15,8 +15,8 @@ BASIC CHEAT SHEET:
      synonyms for "true":  "on",  "yes", "t", "y", and "1"
      synonyms for "false": "off", "no",  "f", "n", and "0"
  * Multiple bool flags can combine: "-bfgVAL" means "-b -f -gVAL"
- * Non-option numbers < 0 are ok but must be distinguished from options by
-   leading white space (usually needing command shell escaping or quotes).
+ * Non-option numbers < 0 are ok but so are digital keys.  -f1 == -f -1 != -f-1.
+   `--` end-of-opts indicator before non-options of unknown sign is also useful.
 
 Unlike most CLI frameworks, cligen directly supports managing PLURAL TYPES like
 "strings" with UPDATING OPERATIONS: prepend ("^="), subtract/delete ("-="), as
