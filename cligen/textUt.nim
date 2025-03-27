@@ -81,6 +81,40 @@ proc printedLen*(a: openArray[char]): int =
       else:
         skip = runeBytes[c.int]
 
+iterator printedChars*(s:openArray[char],skip=0,lim=int.high): (Slice[int],int)=
+  ## 1-pass iterate over SGR-embellished utf8 `s` yielding slices rendering to
+  ## 0|1|2 terminal char cells & number of cells rendered.  Includes trailing
+  ## SGR codes & allows skipping `skip` cells & limiting to <= `lim` cells.
+  const eoSGR = {'m', 'K'}  # More precise termination condition than noCSI_OSC.
+  const inSGR = {'0'..'9', ';'} + eoSGR
+  let lim = if lim >= 0: skip + lim else: int.high
+  var pastLim = false
+  var i, wDid: int
+  while i < s.len:
+    let i0 = i; var isSGR = false; var w = 1
+    if s[i] == '\e':                    # ANSI SGR seqs match \e[[0-9;]*m
+      if i+1 < s.len and s[i+1] == '[':
+        i += 2
+        while i < s.len and (s[i] in inSGR):
+          if s[i] in eoSGR: isSGR = true; break
+          i += 1
+        i += 1                          # Include 'm'
+    elif (let c = s[i].uint; c > 127):  # UTF8 multi-byte input
+      let x = if   c shr 5 == 0b110:     1 elif c shr 4 == 0b1110:   2
+              elif c shr 3 == 0b11110:   3 elif c shr 2 == 0b111110: 4
+              elif c shr 1 == 0b1111110: 5 else: 0
+      if x == 0 or i + x >= s.len: raise newException(IOError, "Bad UTF8")
+      i += x
+#     w = 2;    # 2-cell output chars, eg. CJK; Doing this right needs something
+    else:       #..like Python's unicodedata (or Nim's unicodedb.nimble).
+      i += 1                    # US-ASCII; Do not worry about unprintable < 32
+    if not isSGR and wDid + w > lim:
+      pastLim = true
+    if wDid >= skip and (not pastLim or isSGR):
+      yield (i0..<i, if isSGR: 0 else: w)
+    if not isSGR and not pastLim:
+      wDid += w
+
 iterator paragraphs*(s: string, indent = {' ', '\t'}):
     tuple[pre: bool, para: string] =
   ## This iterator frames paragraphs in `s` delimited either by double-newline

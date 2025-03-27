@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.1
+--------------
+  - Improve default --help-syntax output
+
+  - Add a `textUt.printedChars` iterator that is more one-stop shopping than its
+    `noCSI_OSC` & `printedLen` cousins.
+
 Version: 1.8.0
 --------------
   - Add `cligen/osUt.writeContAddrTempFile` for a common-ish situation that
