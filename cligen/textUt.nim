@@ -100,11 +100,11 @@ iterator printedChars*(s:openArray[char],skip=0,lim=int.high): (Slice[int],int)=
           i += 1
         i += 1                          # Include 'm'
     elif (let c = s[i].uint; c > 127):  # UTF8 multi-byte input
-      let x = if   c shr 5 == 0b110:     1 elif c shr 4 == 0b1110:   2
-              elif c shr 3 == 0b11110:   3 elif c shr 2 == 0b111110: 4
-              elif c shr 1 == 0b1111110: 5 else: 0
+      let x = if   c shr 5 == 0b110:     2 elif c shr 4 == 0b1110:   3
+              elif c shr 3 == 0b11110:   4 elif c shr 2 == 0b111110: 5
+              elif c shr 1 == 0b1111110: 6 else: 0
       if x == 0 or i + x >= s.len: raise newException(IOError, "Bad UTF8")
-      i += x
+      i += x    #NOTE: the below else: - this has to skip the full utf8 char.
 #     w = 2;    # 2-cell output chars, eg. CJK; Doing this right needs something
     else:       #..like Python's unicodedata (or Nim's unicodedb.nimble).
       i += 1                    # US-ASCII; Do not worry about unprintable < 32
