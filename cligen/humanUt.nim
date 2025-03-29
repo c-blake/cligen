@@ -75,12 +75,12 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
- # const compiles but needs CT-RT hash coherence for look up.
- let attrNames = {"off":"","none":"", # Regular but for -bold=22v21 -BLINK=25v26
+ # Fairly Regular "Syntax", but for -bold=22v21 -BLINK=25v26 & overline 53/55.
+ const attrNames = {"off":"","none":"", # Must have same hash function @CT&@RT.
   "bold":  "1",  "faint":  "2",  "italic": "3", "underline": "4",  "blink": "5",
  "-bold": "22", "-faint": "22", "-italic":"23","-underline":"24", "-blink":"25",
-  "BLINK": "6", "inverse": "7", "conceal": "8", "struck":    "9",  "plain": "0",
- "-BLINK":"25","-inverse":"27","-conceal":"28","-struck":   "29",  "NONE" : "",
+  "BLINK": "6", "inverse": "7", "conceal": "8", "struck": "9",  "overline":"53",
+ "-BLINK":"25","-inverse":"27","-conceal":"28","-struck":"29", "-overline":"55",
  "underdouble":"4:2", "undercurl":"4:3", "underdot":"4:4", "underdash":"4:5",
  "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
  "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
@@ -89,8 +89,8 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
  "on_black": "40", "on_red"   : "41", "on_green" : "42", "on_yellow": "43",#DkB
  "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
  "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
- "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107"
- }.toTable
+ "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107",
+ "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "NONE": ""}.toTable
 
  var textAttrAliases = initTable[string, string]()
 
