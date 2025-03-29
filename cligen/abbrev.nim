@@ -233,7 +233,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
   template expandBy(amt: int) {.dirty.} =
     pat = sepExp(pat, src[si], a.sep, amt, ext[si], loc[si])
     strs[ti] = strs[ti][0 ..< ab0[si]] & pat & strs[ti][ab1[si]..^1]
-    a.abbOf[src[si]] = pat[0..^1] #COPY
+    a.abbOf[src[si][0..^1]] = pat[0..^1] #COPY
     wids[m*si+jP] = wids[m*si+jP].sgn * (wids[m*si+jP].abs + amt) #Fix rend wids
     ab1[si].inc amt                                 #Fix Abbrev Bracket/Slice
 
@@ -281,7 +281,7 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
                 let quo = a.pquote(abb)
                 if quo != abb:
                   strs[ti] = strs[ti][0..<ab0[si]] & quo & strs[ti][ab1[si]..^1]
-                  a.abbOf[src[si]] = strs[ti][0..^1] #COPY
+                  a.abbOf[src[si][0..^1]] = strs[ti][0..^1] #COPY
           return
 
 when isMainModule:
