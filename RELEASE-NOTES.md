@@ -15,6 +15,8 @@ Version: 1.8.1
     unless someone besides me was fiddling with a run-time `hash(string)` that
     differed from the stdlib compile-time `hash(string)`.
 
+  - Silence "implicit copy" `cligen/abbrev.nim` performance warning.
+
 Version: 1.8.0
 --------------
   - Add `cligen/osUt.writeContAddrTempFile` for a common-ish situation that
