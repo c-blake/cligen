@@ -8,6 +8,13 @@ Version: 1.8.1
   - Add a `textUt.printedChars` iterator that is more one-stop shopping than its
     `noCSI_OSC` & `printedLen` cousins.
 
+  - Add a few more [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code) codes
+    to `attrNames`.  Notably -fg,-bg may be helpful for managing independent
+    attribute "layers" when bold/italic/underX vary from fg/bg color fiddling.
+    Also, make `attrNames` a `const Table`, although this should be unnoticed
+    unless someone besides me was fiddling with a run-time `hash(string)` that
+    differed from the stdlib compile-time `hash(string)`.
+
 Version: 1.8.0
 --------------
   - Add `cligen/osUt.writeContAddrTempFile` for a common-ish situation that
