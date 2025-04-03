@@ -1,6 +1,19 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.2
+--------------
+  - Rename long present but never documented (and also probably pretty useless)
+    "conceal"/"-conceal" SGR to simply "hid".  Also rename undocumented very
+    recently added "overline" SGR to just "over".  This is a small namespace,
+    but it might still be nicer to put these in a CritBitTree for prefix match.
+
+  - Document -fg/-bg/hid/-hid/over/-over in `humanUt.textAttrHelp`
+
+  - Add a convenience `textAttr` to do oft needed specification -> attr string.
+    { No on/off distinction here since many specs have explicit context anyway
+    &| parity can also be a bit subjective. E.g. (inverse)not(inverse)not.) }
+
 Version: 1.8.1
 --------------
   - Improve default --help-syntax output

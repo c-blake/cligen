@@ -75,12 +75,12 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if p != s.len or p == 0:
       raise newException(ValueError, "invalid hex integer: " & s)
 
- # Fairly Regular "Syntax", but for -bold=22v21 -BLINK=25v26 & overline 53/55.
+ # Fairly Regular "Syntax", but for -bold=22v21 -BLINK=25v26 & overLine 53/55.
  const attrNames = {"off":"","none":"", # Must have same hash function @CT&@RT.
   "bold":  "1",  "faint":  "2",  "italic": "3", "underline": "4",  "blink": "5",
  "-bold": "22", "-faint": "22", "-italic":"23","-underline":"24", "-blink":"25",
-  "BLINK": "6", "inverse": "7", "conceal": "8", "struck": "9",  "overline":"53",
- "-BLINK":"25","-inverse":"27","-conceal":"28","-struck":"29", "-overline":"55",
+  "BLINK": "6", "inverse": "7",     "hid": "8", "struck"   : "9",   "over":"53",
+ "-BLINK":"25","-inverse":"27",    "-hid":"28","-struck"   :"29",  "-over":"55",
  "underdouble":"4:2", "undercurl":"4:3", "underdot":"4:4", "underdash":"4:5",
  "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
  "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
@@ -138,9 +138,9 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
 
  const textAttrHelp* = """
-STYLE: bold italic blink inverse struck under{line double curl dot dash};
-Same w/leading '-': turn that ONE off; turn all off: plain(0) NONE none off;
-Basic Color: black red green yellow blue purple cyan white;
+ILK bold italic blink inverse hid struck under{line double curl dot dash} over
+Same w/leading '-': turn JUST THAT off; plain NONE none off: turn ALL off
+Basic Color: black red green yellow blue purple cyan white; -fg/-bg turn OFF
 UPPERCASE => HIGH intensity; "on_" prefix => BACKGROUND color;
 xterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);
 True color: {fbu}RRGGBB with RGB hex digits""" & ".\n" & helpColorScl
@@ -151,6 +151,8 @@ True color: {fbu}RRGGBB with RGB hex digits""" & ".\n" & helpColorScl
   for word in spec: components.add(textAttrParse(word))
   if components.len>0 and "" notin components: "\x1b["&components.join(";")&"m"
   else: ""
+
+ proc textAttr*(s: string, plain=false): string=textAttrOn(s.strip.split, plain)
 
  const textAttrOff* = "\x1b[m"
 
