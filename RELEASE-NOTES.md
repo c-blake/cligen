@@ -14,6 +14,8 @@ Version: 1.8.2
     { No on/off distinction here since many specs have explicit context anyway
     &| parity can also be a bit subjective. E.g. (inverse)not(inverse)not.) }
 
+  - Update python/cg.py for above changes
+
 Version: 1.8.1
 --------------
   - Improve default --help-syntax output

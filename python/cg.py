@@ -25,8 +25,8 @@ taAliases = {}                          # ta = t)ext a)ttribute
 taNames = { "off": "", "none": "",  # Regular but for -bold=22v21, -BLINK=25v26
   "bold":  "1",  "faint":  "2",  "italic": "3", "underline": "4",  "blink": "5",
  "-bold": "22", "-faint": "22", "-italic":"23","-underline":"24", "-blink":"25",
-  "BLINK": "6", "inverse": "7", "conceal": "8", "struck":    "9",  "plain": "0",
- "-BLINK":"25","-inverse":"27","-conceal":"28","-struck":   "29",  "NONE" : "",
+  "BLINK": "6", "inverse": "7", "hid": "8", "struck":    "9",       "over":"53",
+ "-BLINK":"25","-inverse":"27","-hid":"28","-struck":   "29",      "-over":"55",
  "underdouble":"4:2", "undercurl":"4:3", "underdot":"4:4", "underdash":"4:5",
  "black"   : "30", "red"      : "31", "green"    : "32", "yellow"   : "33",#DkF
  "blue"    : "34", "purple"   : "35", "cyan"     : "36", "white"    : "37",
@@ -35,7 +35,8 @@ taNames = { "off": "", "none": "",  # Regular but for -bold=22v21, -BLINK=25v26
  "on_black": "40", "on_red"   : "41", "on_green" : "42", "on_yellow": "43",#DkB
  "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
  "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
- "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107" }
+ "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107",
+ "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "NONE": ""}
 def taParse(s):
   result = ""
   if len(s) == 0: return result
