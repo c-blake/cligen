@@ -106,6 +106,17 @@ proc find*(s: MSlice, sub: SomeString): int =
   let p = cmemmem(s.mem, s.len.csize_t, sub.mem, sub.len.csize_t)
   if p.isNil: -1 else: p -! s.mem
 
+proc find*(s, sub: MSlice, start: Natural = 0): int =
+  ## Like `strutils.find`.
+  let (hay, nHay) = (s.mem +! start, s.len - start)
+  let p = cmemmem(hay, nHay.csize_t, sub.mem, sub.len.csize_t)
+  if p.isNil: -1 else: p -! s.mem
+
+proc rebase*(ms: MSlice; origin0, origin1: pointer): MSlice =
+  ## Adapt ms from base origin0 to new base, origin1.
+  result.len = ms.len
+  result.mem = origin1 +! (ms.mem -! origin0)
+
 proc setLen*(s: var MSlice, n: int) =
   ## Compatible with `setLen(seq|string)`, but this one can *ONLY SHORTEN*.
   if n > s.len: raise newException(BadIndex, "only allowed to shorten")
