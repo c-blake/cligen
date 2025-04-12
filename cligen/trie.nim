@@ -3,7 +3,7 @@
 ##itself compatible with both ``HashSet[string]`` & ``Table[string,*]``.  It was
 ##easier for me to extend this with ``match``&``nearLev`` than ``CritBitTree``.
 
-import ./sysUt, std/[sets, algorithm, strutils] # findUO|findO, HashSet, reverse
+import cligen/sysUt, std/[sets, algorithm, strutils] # HashSet, reverse
 type
   NodeOb[T] {.acyclic.} = object
     term*: bool
@@ -24,7 +24,7 @@ proc rawPfx[T](t: Trie[T], key: string, nPfx: var int, longest=false): Node[T] =
     return nil
   var p = n
   for j, ch in key:
-    let h = n.kidc.findUO ch
+    let h = n.kidc.find ch
     if h >= 0:
       p = n
       n = n.kidp[h]
@@ -47,7 +47,7 @@ proc rawInsert[T](t: var Trie[T], key: string): Node[T] =
   cntps.add n.cnt.addr        #root node effectively an empty string pfx to all
   var p: Node[T]
   for ch in key:
-    let h = n.kidc.findUO ch  #XXX To preserve order add findO returning -iSpot
+    let h = n.kidc.find ch    #XXX To preserve order add findO returning -iSpot
     if h >= 0:
       p = n.kidp[h]
     else:
@@ -130,7 +130,7 @@ proc match[T](a: var HashSet[string], n: Node[T], pat="", i=0, key: var string,
     elif n.term and i + 1 == pat.len:
       a.incl move(key)
       if a.len >= limit: raise newException(IOError, "done")
-  elif (h := n.kidc.findUO(pat[i])) >= 0:
+  elif (h := n.kidc.find(pat[i])) >= 0:
     let p = n.kidp[h]
     key.add n.kidc[h]
     a.match(p, pat, i + 1, key, a1, aN, limit)

@@ -4,7 +4,7 @@ proc `:=`*[T](x: var T, y: T): T =
   x = y
   x
 
-proc findUO*(s: string, c: char): int {.noSideEffect.} =
+proc findUO*(s: string, c: char): int {.deprecated: "use strutils.find".} =
   proc memchr(s: pointer, c: char, n: csize): pointer {.importc:"memchr",
                                                         header:"<string.h>".}
   let p = memchr(s.cstring.pointer, c, s.len.csize)
