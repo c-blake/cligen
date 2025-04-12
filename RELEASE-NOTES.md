@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.3
+--------------
+  - Rename `template cligen/sysUt.!` to `!!` { lone '!' oft arises in comments
+    &| other operators; Control flow is less innocent & doubled looks less so. }
+    After a lot of edits, I do like this terse notation, though.
+
 Version: 1.8.2
 --------------
   - Rename long present but never documented (and also probably pretty useless)
