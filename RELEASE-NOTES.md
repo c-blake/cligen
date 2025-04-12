@@ -19,6 +19,10 @@ Version: 1.8.2
   - A couple minor helpers in `cligen/mslice` for more `find` circumstances and
     a perhaps less common than it should be `MSlice.rebase`.
 
+  - Add `template cligen/sysUt.!` since `raise newException(,)` is verbose for
+    so common a use case among CL utils & `sysUt` is for such. (Nim code should
+    "get to the point" quickly, IMO.)  Call site adaptation is pending/WIP.
+
 Version: 1.8.1
 --------------
   - Improve default --help-syntax output

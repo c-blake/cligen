@@ -115,3 +115,10 @@ proc incSat*[T: Ordinal](x: var T) = (if x < T.high: inc x)
   ## Like `inc`, but saturating & only +1; Never raises | panics.
 proc decSat*[T: Ordinal](x: var T) =  (if x > T.low: dec x)
   ## Like `dec`, but saturating & only -1; Never raises | panics.
+
+template `!`*(exceptKind; exceptMsg: string) =
+  ## Shorthand since most code initiates rather than propagates `raise`.  This
+  ## lets `raise newException(IOError, "")` become just `IO!""`.  It first tries
+  ## `excKind Error` and, if that is not in scope, falls back to `excKind`.
+  raise newException((when declared(`exceptKind Error`): `exceptKind Error`
+                      else: `exceptKind`), exceptMsg)
