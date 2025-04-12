@@ -23,7 +23,9 @@ Version: 1.8.2
     so common a use case among CL utils & `sysUt` is for such. (Nim code should
     "get to the point" quickly, IMO.)  Call site adaptation is pending/WIP.
 
-  - Deprecate `sysUt.findUO` since `strutils.find` has long used `memchr`
+  - Add `sysUt.pua` & `toPua` shorthands (that pair naturally with `toOa`).
+
+  - Deprecate `sysUt.findUO` since `strutils.find` has long used `memchr`.
 
 Version: 1.8.1
 --------------
