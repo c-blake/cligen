@@ -177,6 +177,15 @@ proc add*(s: var string, ms: MSlice) {.inline.} =
   s.setLen len0 + ms.len
   copyMem s[len0].addr, ms.mem, ms.len
 
+func join*(a: openArray[MSlice], sep: string = ""): string =
+  ## Concatenates all MSlice in container `a`, separating them with `sep`.
+  if a.len > 0:
+    var t = sep.len*(a.len - 1)
+    for i in a.low..a.high: inc t, a[i].len
+    result = newStringOfCap(t)
+    result.add a[0]
+    for i in 1..high(a): result.add sep; result.add a[i]
+
 proc `==`*(x, y: MSlice): bool {.inline.} =
   ## Compare a pair of MSlice for strict equality.
   x.len == y.len and equalMem(x.mem, y.mem, x.len)
