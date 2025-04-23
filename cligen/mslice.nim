@@ -112,6 +112,14 @@ proc find*(s, sub: MSlice, start: Natural = 0): int =
   let p = cmemmem(hay, nHay.csize_t, sub.mem, sub.len.csize_t)
   if p.isNil: -1 else: p -! s.mem
 
+func find*(s: MSlice, sub: char, start: Natural = 0, last = -1): int =
+  ## Like `strutils.find`, but always uses C `memchr`.
+  result = -1
+  let len = if last < 0: s.len - start else: last - start + 1
+  if len > 0:
+    let found = cmemchr(s.mem +! start, sub, cast[csize](len))
+    if not found.isNil: return cast[int](found) -% cast[int](s.mem)
+
 proc rebase*(ms: MSlice; origin0, origin1: pointer): MSlice =
   ## Adapt ms from base origin0 to new base, origin1.
   result.len = ms.len
