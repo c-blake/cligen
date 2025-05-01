@@ -220,6 +220,7 @@ func uint64toDecimal*(res: var openArray[char], x: uint64): int =
 type
   FloatCvtOptions* =  ## The many options of binary -> string float conversion.
     enum fcPad0,      ## Pad with '0' to the right (based upon precision `p`)
+         fcLead0,     ## Fractions get a leading zero in fcvt's
          fcCapital,   ## Use E|INF|NAN not default e|inf|nan
          fcPlus,      ## Leading '+' for positive numbers, not default ""
          fcTrailDot,  ## Trailing '.' for round integers (to signify "FP")
@@ -324,7 +325,7 @@ proc ecvt2*(man, exp: var string; x: float; p=17, opts={fcPad0};
   i = 0; exp.setLen 6
   exp.ecvtE i, e, opts; exp.setLen i; expon = if exp[1]=='-': -e else: e
 
-proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
+proc fcvt*(s: var string, x: float, p: int, opts={fcPad0, fcLead0}) {.inline.} =
   ## ANSI C/Unix fcvt: float -> DDD.PPPP; Most conversion in integer arithmetic.
   ## Accurate to ~52 bits with p=17.
   fcSignNonFin(s, x, xs, opts)          # `return`s for non-finite numbers
@@ -352,7 +353,7 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   s.setLen 4 + max(0, n0) + nDec + n0R
   copyMem s[i].addr, decs[i0].addr, nI; inc i, nI
   if p > 0:
-    if nI == 0: s[i] = '0'; inc i       # leading '0.' for pure fractions
+    if nI==0 and fcLead0 in opts: s[i] = '0'; inc i # Leading '0' for pure frac
     s[i] = '.'; inc i
     if n0 > 0:
       copyMem s[i].addr, zeros[0].unsafeAddr, min(zeros.len, n0); inc i, n0
@@ -363,6 +364,31 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
   elif fcTrailDot0 in opts: s[i] = '.'; s[i+1] = '0'; inc i, 2
   elif fcTrailDot in opts: s[i] = '.'; inc i
   s.setLen i
+
+proc nearUnity4*(f: float): string =
+  ## `cligen/humanUt.humanReadable4` is nice for high dynamic range numbers
+  ## where 3 order-of-magnitude metric banks are ok, but sometimes numbers
+  ## parsing as floats is nice (%CPU, sort -g, a calculator, ..).  This proc can
+  ## help then.  It formats positive floats with as much accuracy as 4 terminal
+  ## cols allow (with f<0 using 1 more column) - enough for many situations.  It
+  ## uses, as appropriate, fmts: 0 De-N .DDD D.DD DD.D DDDD DDeN DeNN inf.  One
+  ## figure repr range is 9e99/1e-9=9e108, ~109 OOMs, >=2 figs for .01..99e9 &
+  ## 3..4 figs near 1 (hence the name).  (`strutils.alignLeft` right pads w/0.)
+  var s: string; let g = f.abs          # Do NaN, maybe with `,nan="nan")`?
+  if   g <   5e-10:  s = "0"            # Round @5e-10 since the basic promise
+  elif g <    1e-9:  s = "1e-9"         #.. here is that the number is either:
+  elif g < 0.00095:  ecvt(s, g, 0)      #.. A) non-finite OR B) within 2X of the
+  elif g <  0.9995:  fcvt(s, g, 3, {})  #.. precise number.  The 2X follows from
+  elif g <  9.995 :  fcvt(s, g, 2, {})  #.. '[12]' in either single digit repr.
+  elif g <  99.95 :  fcvt(s, g, 1, {})  #.. This promise is confirmed by a test
+  elif g <  9999.5:  fcvt(s, g, 0, {})  #.. at the bottom of this very module.
+  elif g <  99.5e9: (ecvt(s, g, 1);     
+                     s[1] = s[2]; s[2] = 'e'
+                     s[3] = if s.len==6: '9' else: chr(ord(s[4]) - 1)
+                     s.setLen 4)        # D.De10 -> DDe9
+  elif g <  9.5e99:  ecvt(s, g, 0)
+  else: s = "inf"
+  if f < 0: "-" & s else: s
 
 when not (defined(js) or defined(nimdoc) or defined(nimscript)):
   func cmemchr(x: pointer, c: char, n: csize_t): pointer {.importc: "memchr",
@@ -732,3 +758,14 @@ when isMainModule:
                         (if bU: "badErr" else: ""),(if bS: " badSig" else: "")
    for v in 1..10000:    #NOTE: Compile with -d:danger or this is VERY SLOW
     for e in 1..10000: roundTrip v.float/100.0, e.float/100.0
+  import cligen/mslice
+  var f = 5e-10
+  while f < 9.5e+99:
+    var s = nearUnity4(f)
+    if s.len > 4: echo s
+    if s.startsWith('.'): s = "0" & s
+    if s.endsWith('.'): s.add "0"
+    let p = s.toMSlice.parseFloat
+    let r = p / f
+    if r < 0.5 or r > 2.0: echo f," \"",s,"\" \"",p,"\""
+    f *= 1.001
