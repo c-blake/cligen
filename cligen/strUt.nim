@@ -346,8 +346,8 @@ proc fcvt*(s: var string, x: float, p: int, opts={fcPad0}) {.inline.} =
     if   exactP10 and round == 0: n0R = p - n0
     elif exactP10 and round != 0: discard
     else: inc n0R
-    if clX > -1: inc nI
-    else       : dec n0
+    if clX > -1: inc nI                     # clX + p == 0 means .00975->".01"
+    else       : dec n0, (clX + p != 0).int #.. & these need to keep this `n0`.
   var i = s.len
   s.setLen 4 + max(0, n0) + nDec + n0R
   copyMem s[i].addr, decs[i0].addr, nI; inc i, nI
