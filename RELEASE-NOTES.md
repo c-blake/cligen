@@ -1,6 +1,16 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.4
+--------------
+  - Add a strutils.join/find(string, sub: char)-alikes but for `MSlice`.
+
+  - Fix bad bug in cligen/strUt.fcvt rounding that only really occurs when
+    eliminating most precision.
+
+  - Add `cligen/strUt.nearUnity4` - a new "unitless" concept for 4-column
+    float formatting. (It might be fruitfully extended to 5,6,..N columns.)
+
 Version: 1.8.3
 --------------
   - Rename `template cligen/sysUt.!` to `!!` { lone '!' oft arises in comments
