@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.5
+--------------
+
+  - Minor bug fix in `cligen/posixUt.readFile` when read() can fail.
+
 Version: 1.8.4
 --------------
   - Add a strutils.join/find(string, sub: char)-alikes but for `MSlice`.
