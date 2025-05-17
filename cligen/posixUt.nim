@@ -367,6 +367,7 @@ proc readFile*(path: string, buf: var string, st: ptr Stat=nil, perRead=4096) =
     if nRead == -1:
       if errno == EAGAIN or errno == EINTR:
         continue
+      buf.setLen off                  # Unwind `buf` growth on rare failed read
       return
     elif nRead < perRead:
       buf.setLen(off + nRead)
