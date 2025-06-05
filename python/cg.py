@@ -179,10 +179,10 @@ class HelpFmt(ap.RawDescriptionHelpFormatter):
 
 def maxLen(xs): return 0 if len(xs) == 0 else max(len(x) for x in xs)
 
+def Len(s): return sum(0 if ord(c) < 32 else 1 for c in s)
 Esc = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-def printedLen(s):
-  if isinstance(s, str) or isinstance(s, bytes): return len(Esc.sub('',s))
-  else: return len(s)
+def printedLen(s):              # Ctrl-[H..M] => -1,8-ish,cursor motions..?
+  return Len(Esc.sub('',s))if isinstance(s,str)or isinstance(s,bytes)else len(s)
 ap.len = printedLen
 
 def merge(p, varNm, cfNm, wKTDv): # vars(merge(p, "CONFIG_F", "F"))

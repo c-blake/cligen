@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.6
+--------------
+
+  - For `printedLen` & `printedChars`, do something rather than nothing for
+    unprintable ASCII. { Cursor motion chars (\\[btnvfr]) still have no natural
+    assignment.  They'd break any visual table structure if ever written to most
+    terminals anyway.  `system.addEscapedChar` is the only answer there. }
+
 Version: 1.8.5
 --------------
 

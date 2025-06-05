@@ -69,6 +69,7 @@ proc printedLen*(a: openArray[char]): int =
   for c in a.noCSI_OSC:
     if skip > 0: dec skip
     else:
+     if c.ord >= 32: # Not contin.byte&<32 =>Unprintable ASCII, Len0; \[btnvfr]?
       inc result
       when defined(branchyRuneLen):
         skip = if   c.uint <= 127: 0
@@ -91,12 +92,12 @@ iterator printedChars*(s:openArray[char],skip=0,lim=int.high): (Slice[int],int)=
   var pastLim = false
   var i, wDid: int
   while i < s.len:
-    let i0 = i; var isSGR = false; var w = 1
+    let i0 = i; var is0 = false; var w = 1
     if s[i] == '\e':                    # ANSI SGR seqs match \e[[0-9;]*m
       if i+1 < s.len and s[i+1] == '[':
         i += 2
         while i < s.len and (s[i] in inSGR):
-          if s[i] in eoSGR: isSGR = true; break
+          if s[i] in eoSGR: is0 = true; break
           i += 1
         i += 1                          # Include 'm'
     elif (let c = s[i].uint; c > 127):  # UTF8 multi-byte input
@@ -107,12 +108,13 @@ iterator printedChars*(s:openArray[char],skip=0,lim=int.high): (Slice[int],int)=
       i += x    #NOTE: the below else: - this has to skip the full utf8 char.
 #     w = 2;    # 2-cell output chars, eg. CJK; Doing this right needs something
     else:       #..like Python's unicodedata (or Nim's unicodedb.nimble).
-      i += 1                    # US-ASCII; Do not worry about unprintable < 32
-    if not isSGR and wDid + w > lim:
+      is0 = s[i].ord < 32       # Unprintable => Len0, \b=-1; \[tnvfr]?
+      i += 1                    # US-ASCII
+    if not is0 and wDid + w > lim:
       pastLim = true
-    if wDid >= skip and (not pastLim or isSGR):
-      yield (i0..<i, if isSGR: 0 else: w)
-    if not isSGR and not pastLim:
+    if wDid >= skip and (not pastLim or is0):
+      yield (i0..<i, if is0: 0 else: w)
+    if not is0 and not pastLim:
       wDid += w
 
 iterator paragraphs*(s: string, indent = {' ', '\t'}):
