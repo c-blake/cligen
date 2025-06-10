@@ -9,6 +9,9 @@ Version: 1.8.6
     assignment.  They'd break any visual table structure if ever written to most
     terminals anyway.  `system.addEscapedChar` is the only answer there. }
 
+  - Change [0].(unsafeAddr|addr) to .cstring for string -> address conversions
+    in a few places which mostly matters if `""` turns up.
+
 Version: 1.8.5
 --------------
 

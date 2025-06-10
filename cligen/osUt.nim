@@ -99,7 +99,7 @@ iterator getDelim*(f: File, dlm: char='\n'): string =
     if length == -1: break
     res.setLen(length - 1)      #-1 => remove dlm char like system.lines()
     if length > 1:
-      copyMem(addr res[0], cline, length - 1)
+      copyMem(res.cstring, cline, length - 1)
     yield res
   free(cline)
 
@@ -196,7 +196,7 @@ proc replacingUrite*(f: File, s: string, eor: char, subEor: string) =
   while true:
     if (let ix = s.find(eor, start=off); ix >= 0):
       discard f.uriteBuffer(s[off].unsafeAddr, ix - off)
-      discard f.uriteBuffer(subEor[0].unsafeAddr, subEor.len)
+      discard f.uriteBuffer(subEor.cstring, subEor.len)
       off = ix + 1
     else:
       discard f.uriteBuffer(s[off].unsafeAddr, s.len - off)

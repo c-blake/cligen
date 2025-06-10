@@ -39,7 +39,7 @@ proc toMSlice*(a: string, keep=false): MSlice =
   result.len = a.len
   if keep:
     result.mem = cast[cstring](alloc0(result.len + 1))
-    copyMem result.mem, a[0].unsafeAddr, result.len
+    copyMem result.mem, a.cstring, result.len
   else: result.mem = a.cstring
 
 proc toCstr*(p: pointer): cstring {.inline.} =
@@ -172,7 +172,7 @@ template toOpenArrayChar*(ms: MSlice): untyped =
 
 template toOpenArrayChar*(s: string): untyped =
   ## This is so you can call `toOpenArrayChar` on a `SomeString` parameter.
-  toOpenArray(cast[ptr UncheckedArray[char]](s[0].addr), 0, s.len - 1)
+  toOpenArray(cast[ptr UncheckedArray[char]](s.cstring), 0, s.len - 1)
 
 proc `$`*(ms: MSlice): string {.inline.} =
   ## Return a Nim string built from an MSlice.
@@ -244,7 +244,7 @@ proc toSeq*[T](m: MSlice, s: var seq[T]) =
     {.error: "`ob` type does not support copyMem".}
 
 proc `==`*(a: string, ms: MSlice): bool {.inline.} =
-  a.len == ms.len and cmemcmp(unsafeAddr a[0], ms.mem, a.len.csize) == 0
+  a.len == ms.len and cmemcmp(a.cstring, ms.mem, a.len.csize) == 0
 proc `==`*(ms: MSlice, b: string): bool {.inline.} = b == ms
 
 import std/hashes # hash(openArray[byte])
