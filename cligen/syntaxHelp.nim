@@ -31,8 +31,10 @@ well as the usual append ("+=", "=", or repetition, as in "cc -Ipath1 -Ipath2").
  * Singular "string" is special;  For option "foo" defaulting to string "bar":
    --foo=val     => val      ; clobbers with "val"
    --foo=        => ""       ; clears the string
-   --foo+=val    => barval   ; appends to the string
+   --foo+=val    => barval   ; appends to the string (also &=)
    --foo^=val    => valbar   ; prepends to the string
+   --foo/=find/replace       ; change `find` to `replace` in current value; '/'
+                             ;..can be anything without other special meaning.
 
 Plural types also support a ','-prefixed family of Delimiter-Prefixed Separated
 Value (DPSV) operators that allow passing MULTIPLE SLOTS to the above operators

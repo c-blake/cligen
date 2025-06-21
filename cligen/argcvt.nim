@@ -389,8 +389,11 @@ proc argParse*(dst: var string, dfl: string, a: var ArgcvtParams): bool =
   of '+', '&': dst.add(a.val)         # Append
   of '^': dst = a.val & dst           # Prepend
   else:
-    a.msg = "Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key]
-    return false
+    if (let ix = a.val.find(a.sep[0]); ix >= 0): # /=xyz/pdq, @=xyz@pdq, etc.
+      if ix > 0: dst = dst.replace(a.val[0..<ix], a.val[ix + 1 .. ^1])
+    else:
+      a.msg = "Bad operator (\"$1\") for strings, param $2\n" % [a.sep, a.key]
+      return false
 
 proc argHelp*(dfl: string; a: var ArgcvtParams): seq[string] =
   var repr = nimEscape(dfl)
