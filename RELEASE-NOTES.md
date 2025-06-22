@@ -7,7 +7,8 @@ Version: 1.8.6
   - `cligen/argcvt.argParse(dst: var string,..)` grows find-replace substitution
     ability on top of long existing append/prepend.  Syntax is -i/=FIND/REPLACE,
     but '/' is any user-chosen char (besides [+&^]).  Among other things, this
-    is nice to change out fragments of format strings, e.g. `pd -f/=b/E`.
+    is nice to change out fragments of format strings, e.g. `pd -f/=b/E` for
+    the format strings of https://github.com/c-blake/procs display.
 
   - For `printedLen` & `printedChars`, do something rather than nothing for
     unprintable ASCII. { Cursor motion chars (\\[btnvfr]) still have no natural
