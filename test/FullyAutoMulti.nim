@@ -5,6 +5,7 @@
 ##
 ## Some more description.
 
+{.define(cgCfgToml).}
 when not declared(addFloat): import std/formatfloat
 var xx = 3  # An outer scope variable, e.g. logLvl
 
