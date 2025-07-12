@@ -1,6 +1,6 @@
 #!/bin/sh
 exec < /dev/null
-export COLUMNS="80" CLIGEN_WIDTH="80" CLIGEN=/dev/null
+export COLUMNS="80" CLIGEN_WIDTH="80" CLIGEN=/dev/null PATH=/bin:/usr/bin:$PATH
 rm -rf $HOME/.cache/nim/*
 : ${v:="--verbosity:2"}
 h="--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off"
