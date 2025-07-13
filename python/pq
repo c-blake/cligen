@@ -1,34 +1,45 @@
 #!/usr/bin/env -S python3
 import os; from sys import argv, stdin, stderr, exit; e = stderr.write
+from re import split as re_split
 def ji(sq, n=0): return ("\n" + (" "*n)).join(sq) # j)oin & i)ndent
+def fim(s): return [i for i,p in enumerate(s) if i%2==0 and len(p)] #FieldIdxMap
 
-def toDef(fields, delim, genF):
+def toDef(fields, delim, genF, xpr):
   nms = set()       # Prevent duplicate def errors & warn users about collision.
-  result = f'pqNmFields = {repr(fields)}\n  ('
-  for j, f in enumerate(fields.split(delim)):
-    nm = genF % f   #Q: Parse injected code for max used field to infer MaxCols?
-    if nm not in nms: result += nm + ", "; nms.add(nm)
-    else: e("pq: WARNING: ", nm, " collides with earlier field; Using first\n")
-  return result + (") = range(%d)" % len(nms))
+  result = [f"pqNmFields = {repr(fields)}"]
+  if xpr: fs = re_split(delim, fields, maxsplit=0); js = fim(fs)
+  else: fs = fields.split(delim); js = [j for j in range(len(fs))]
+  for j in js:      #Q: Parse injected code for max used field to infer MaxCols?
+    nm = genF % fs[j].rstrip(r"""(<)=[*>\!+?]{",@^|#-_}$.`~%/&:';""")
+    if nm not in nms: result.append(f"{nm} = {j}"); nms.add(nm)
+    else: e("pq: WARNING: "+nm+" collides with earlier field\n")
+  return ';'.join(result)
 
 def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
-       fields="", MaxCols=-1, genF="%s", input="", uncheck=False, src=False):
+ fields="", MaxCols=-1, genF="%s", input="", xpr="", uncheck=False, src=False):
   delim = None if delim == "None" else delim
+  da = "print(row)"
+  if xpr:           # Adjust da (default action), delim & MaxCols defaults
+    da = "print(''.join(s))"
+    if delim is None: delim = r"(\s+)"  # Insert '(' if missing in non-None one?
+    if MaxCols == -1: MaxCols = 0
   check = ""
   if len(match) > 0:
-    prelude = ["from re import compile as re_compile"] + prelude
+    prelude = ["from re import compile as re_compile,split as re_split"]+prelude
     begin = [f'pqRx = re_compile("{match}")'] + begin
     check = "if not pqRx.search(row): nr += 1; continue\n    "
   if len(fields) > 0 and not uncheck:
     check += """if nr == 0:                     # "Type check" SV input
       if row == pqNmFields: nr+=1; continue; # [fields] [!uncheck]
       else: e(f"row0 {repr(row)} != {repr(pqNmFields)}\\n"); exit(1)\n    """
-  if len(stmts) == 0: stmts = ["print(row)"]
+  if len(stmts) == 0: stmts = [da]
   if len(input) == 0:   # null input eases invokes like: pq -b'print(2)'
-    nul = 'NUL:' if os.name=="nt" else'/dev/null'
+    nul = 'NUL:' if os.name=="nt" else '/dev/null'
     inp = f'open("{nul}")' if stdin.isatty() else "stdin"
   else: inp = f"open({input})"
-  if len(fields) > 0: fields = toDef(fields, delim, genF)
+  if len(fields) > 0: fields = toDef(fields, delim, genF, xpr)
+  doS=f"{check}s = re_split({repr(delim)},row,maxsplit={MaxCols});{xpr}=fim(s)"\
+    if xpr else f"{check}s = row.split({repr(delim)}, {MaxCols})"
   prog = f"""def main():
   from sys import stdin
   {ji(prelude, 2)} # end of [pre]
@@ -39,12 +50,13 @@ def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
   nr = 0
   {ji(begin, 2)} # end of [begin]
   for row in {inp}: # [input] from `input`
-    row = row[:-1]
-    {check}s = row.split({repr(delim)}, {MaxCols}) # [MaxCols]
+    row = row.rstrip('\\n')
+    {doS}
     nf = len(s)
     if {where}: # [where] auto ()s?\n"""
   for i, stmt in enumerate(stmts):
-    prog += "      " + stmt + " # [stmt" + str(i) + "]\n"
+    if stmt=="da": prog+="      " + da + " # [stmt" + str(i) + "]; DefaultAct\n"
+    else         : prog+="      " + stmt + " # [stmt" + str(i) + "]\n"
   prog +=  f"    nr += 1\n  {ji(epilog, 2)} # [epilog]\nmain()\n"
   if src: print(prog, end=''); exit(0)
   exec(prog)    # Can we tell PyPy to spend more time compiling this?
@@ -67,19 +79,22 @@ epilog="""**EXAMPLES**:
   pq -bt=0 -w'i(0)>0' t+=i(0) -e'print(t)' **# Total >0 field0 ints**
   pq 'x=f(0)' 'print((1+x)/x)'             **# cache field 0 parse**
   pq -d, -fa,b,c 'print(s[a],f(b)+i(c))'   **# named fields (CSV)**
-  pq -mfoo 'print(s[2])'                   **# column of row matches**""",
+  pq -mfoo 'print(s[2])'                   **# column of row matches**
+  seq 1 9|pq -xx 's[x[0]]+=A"' da          **# add sfx preserving space**""",
 types={"prelude": (str, '*'), "begin": (str, '*'), "epilog": (str, '*'),
        "delim": (str, None) }, help={
    "stmts"  : "per-input row Py statements",
    "prelude": "Py prelude section",
    "begin"  : "Py pre-loop section",
    "match"  : "row must match this regex",
+   "xpr"    : "!''=>re.split; Set `this` for s[x[ix]];" + \
+              " da=DefaultAct -> print(''.join(s))",
    "where"  : "Test for row inclusion",
    "epilog" : "Py epilog section",
-   "delim"  : "delim chars for `''.split`",
+   "delim"  : "delim for `(str|re).split`; re needs ()",
    "fields" : "delim'd field names; Check row0",
    "MaxCols": "max split; 0=>unbounded",
-   "genF"   : "field name format; Eg c%%s",
+   "genF"   : "field name format; Eg c_%%s",
    "input"  : 'path to process; ""=`stdin`',
    "uncheck": "Don't check&skip hdrRow V.``fields``",
    "src"    : 'print gen.code & exit'})
