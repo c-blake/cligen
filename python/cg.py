@@ -232,6 +232,8 @@ def dispatch(func, help={}, short={}, types={}, wKTDv=42, **kw):
     else: dv = D[nm]
     ty, nAr = types.get(nm, (type(dv), None)) #XXX store_true->toggle like Nim?
     if ty==type(True): a(nm, action='store_true', help=help.get(nm, "set "+nm))
+    elif type(nAr)==int and nAr == -1:
+      a(nm, type=ty, action='append', default=dv, help=help.get(nm, "set "+nm))
     else: a(nm, type=ty, nargs=nAr, default=dv, help=help.get(nm, "set "+nm))
   if V is not None:    # Yank out of `merge` output; ap.REMAINDER is tail only
     p.add_argument(V, nargs='*', default=[], help=help.get(V, "set "+V))

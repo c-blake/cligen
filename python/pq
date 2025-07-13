@@ -81,7 +81,7 @@ epilog="""**EXAMPLES**:
   pq -d, -fa,b,c 'print(s[a],f(b)+i(c))'   **# named fields (CSV)**
   pq -mfoo 'print(s[2])'                   **# column of row matches**
   seq 1 9|pq -rX 's[X[0]]+=A"' da          **# field append,keep space**""",
-types={"prelude": (str, '*'), "begin": (str, '*'), "epilog": (str, '*'),
+types={"prelude": (str, -1), "begin": (str, -1), "epilog": (str, -1),
        "delim": (str, None)}, help={
    "stmts"  : "per-input row Py statements",
    "prelude": "Py prelude section",
