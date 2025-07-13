@@ -3,8 +3,8 @@ import sys, os, re, argparse as ap, ast; E=os.environ.get; e=sys.stderr.write
 def load(f): # CfFile [SECT] -> Expr(value=List(elts=[Name(id='SECT', ..)],..))
   try: t=ast.parse(f.read()) # Assign(targets=[Name(id='KEY', ..)], value=VAL),
   except: e("could not parse '%s' as Python\n" % f.name)
-  true ,yes,on  = True ,True ,True      # Works for me but doesn't handle much.
-  false,no ,off = False,False,False     # E.g., same name section merging, etc.
+  true , yes, on  = True , True , True  # Works for me but doesn't handle much.
+  false, no , off = False, False, False # E.g., same name section merging, etc.
   section = "global"; sections = {}     # Any implicit [global] must be early
   sections[section] = sectionDict = {}
   for n in ast.walk(t):
@@ -81,15 +81,15 @@ def taOnOff(s, plain):
   return (on, off)
 
 colorSection = {}
-for k,vs in [("optKey",("optkeys","options", "optkey","option")),
- ("valType",("valtypes","valuetypes","types", "valtype","valuetype","type")),
- ("dflVal" ,("dflvals","defaultvalues", "dflval","defaultvalue")),
- ("descrip",("descrips", "descriptions", "paramdescriptions")),
- ("cmd"    ,("cmd", "command", "cmdname", "commandname")),
- ("doc"    ,("doc", "documentation", "overalldocumentation")),
- ("args"   ,("args", "arguments", "argsonlinewithcmd")),
- ("bad"    ,("bad", "errbad", "errorbad")),
- ("good"   ,("good", "errgood", "errorgood"))]:
+for k,vs in [("optKey", ("optkeys", "options", "optkey", "option")),
+    ("valType", ("valtypes","valuetypes","types","valtype","valuetype","type")),
+    ("dflVal" , ("dflvals", "defaultvalues", "dflval", "defaultvalue")),
+    ("descrip", ("descrips", "descriptions", "paramdescriptions")),
+    ("cmd"    , ("cmd", "command", "cmdname", "commandname")),
+    ("doc"    , ("doc", "documentation", "overalldocumentation")),
+    ("args"   , ("args", "arguments", "argsonlinewithcmd")),
+    ("bad"    , ("bad", "errbad", "errorbad")),
+    ("good"   , ("good", "errgood", "errorgood"))]:
   for v in vs: colorSection[v] = k
 
 def apply(cf=dict(), path="", plain=False):
@@ -157,25 +157,25 @@ class HelpFmt(ap.RawDescriptionHelpFormatter):
   wKTDv = 42        # Total max width of Keys, Types, Def.Vals before wrapping
   def __init__(o,prog):super(C,o).__init__(prog,max_help_position=HelpFmt.wKTDv)
   def _format_action_invocation(o, act):
-    if not act.option_strings: return super(C,o)._format_action_invocation(act)
-    K,k = cf["kind"].get("optKey", ("", ""))
-    T,t = cf["kind"].get("valType", ("", ""))
-    D,d = cf["kind"].get("dflVal", ("", ""))
+    if not act.option_strings: return super(C, o)._format_action_invocation(act)
+    K, k = cf["kind"].get("optKey" , ("", ""))
+    T, t = cf["kind"].get("valType", ("", ""))
+    D, d = cf["kind"].get("dflVal" , ("", ""))
     f   = "%s%%-%ds%s %s%%-%ds%s %s%%-%ds%s" % \
           (K, HelpFmt.wK+4, k,  T, HelpFmt.wT, t,  D, HelpFmt.wDV, d)
     keys = ", ".join(act.option_strings)
     if len(keys) > 0: return \
       (f if HelpFmt.wK>0 else "%s %s %s") % (keys, tn(act),
         repr(act.default) if act.default != ap.SUPPRESS else "")
-    return super(C,o)._format_action_invocation(act)
+    return super(C, o)._format_action_invocation(act)
   def _split_lines(o, text, width):
     D1,D0 = cf["kind"].get("descrip", ("", "")) # Escapes For 1st&last POST-wrap
-    result = super(C,o)._split_lines(uMark(text), width)
+    result = super(C, o)._split_lines(uMark(text), width)
     result[0]  = D1 + result[0]; result[-1] = result[-1] + D0
     return result
-  def _format_text(o, text): return super(C,o)._format_text(uMark(text))
+  def _format_text(o, text): return super(C, o)._format_text(uMark(text))
   def _format_usage(o, usage, actions, groups, prefix):
-    return super(C,o)._format_usage(uMark(usage), actions, groups, prefix)
+    return super(C, o)._format_usage(uMark(usage), actions, groups, prefix)
 
 def maxLen(xs): return 0 if len(xs) == 0 else max(len(x) for x in xs)
 
@@ -217,9 +217,9 @@ def both(a, b): return a if b is None else (b if a is None else a + b)
 def dispatch(func, help={}, short={}, types={}, wKTDv=42, **kw):
   if sys.version[0]=='2': b=I.getargspec(func);V=b.varargs;A=b.args;D=b.defaults
   else:
-      b=I.getfullargspec(func); V=b.varargs; A=both(b.args, b.kwonlyargs)
-      D=b.kwonlydefaults if b.kwonlydefaults is not None else {}
-      if len(b.args)>0: D.update(zip(b.args, b.defaults))
+    b = I.getfullargspec(func); V = b.varargs; A = both(b.args, b.kwonlyargs)
+    D = b.kwonlydefaults if b.kwonlydefaults is not None else {}
+    if len(b.args) > 0: D.update(zip(b.args, b.defaults))
   doc = I.getdoc(func)
   p = AP(formatter_class=HelpFmt, **dict(kw, description=doc)) \
     if "description" not in kw and doc else AP(formatter_class=HelpFmt, **kw)
@@ -238,7 +238,7 @@ def dispatch(func, help={}, short={}, types={}, wKTDv=42, **kw):
   fn = func.__name__
   mrg = merge(p, "CONFIG_" + fn.upper(), fn, wKTDv)
   if sys.version[0] != '2':
-      va = mrg.get(V)
-      if va is not None and len(va)>0: return func(*va, **dictBut(mrg,V))
-      else: return func(**dictBut(mrg, V))
+    va = mrg.get(V)
+    if va is not None and len(va) > 0: return func(*va, **dictBut(mrg, V))
+    else: return func(**dictBut(mrg, V))
   else: return func(*tuple([mrg[k] for k in A] + mrg.get(V, [])))
