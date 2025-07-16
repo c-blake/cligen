@@ -152,7 +152,7 @@ when not compiles($range[0'u32 .. 1'u32](0)):
 
 template doArgParse[WideT: SomeNumber, T: SomeNumber](
     parse: untyped, dst: var T, dfl: T, a: var ArgcvtParams): bool =
-  ## Auxilary template that performs `argParse` for numeric types.
+  ## Auxiliary template that performs `argParse` for numeric types.
   ## Required because we cannot store symbols `parseBiggestInt/UInt` in
   ## a `const` (limitation of Nim's VM). However, we can pass them to
   ## an `untyped` parameter of a template without problems.
