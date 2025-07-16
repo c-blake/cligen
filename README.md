@@ -260,11 +260,12 @@ in the global [`cligen.clCfg`](cligen.nim#L28C1-L56C1).
 
 ## Even More Controls and Details
 
-`cligen` grew many features upon request & usage.  The [test
-suite](https://github.com/c-blake/cligen/tree/master/test/) has suggestively
-named examples.  There's also [a Wiki](https://github.com/c-blake/cligen/wiki),
-[generated docs for various modules](https://c-blake.github.io/cligen/) (which
-include various system interfaces useful in writing CLIs) and a [set of fully
-worked utilities](https://github.com/c-blake/bu) which may be useful to you in
-their own right.  I also try to mention breaking changes & new features in
+`cligen` grew many features upon request & usage and discussed many others in
+[closed issues](/c-blake/cligen/issues?q=is%3Aissue).  The [test
+suite](/c-blake/cligen/tree/master/test/) has suggestively named examples.
+There's also [a Wiki](https://github.com/c-blake/cligen/wiki), [generated docs
+for various modules](https://c-blake.github.io/cligen/) (which include various
+system interfaces useful in writing CLIs) and a [set of fully worked
+utilities](https://github.com/c-blake/bu) which may be useful to you in their
+own right.  I also try to mention breaking changes & new features in
 [RELEASE-NOTES](https://github.com/c-blake/cligen/tree/master/RELEASE-NOTES.md).
