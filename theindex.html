@@ -26,7 +26,11 @@
     <div class="container">
       <h1 class="title">Index</h1>
       Modules: <a href="all.html">all</a>, <a href="cligen.html">cligen</a>, <a href="cligen/abbrev.html">cligen/abbrev</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/cfUt.html">cligen/cfUt</a>, <a href="cligen/colorScl.html">cligen/colorScl</a>, <a href="cligen/conncomp.html">cligen/conncomp</a>, <a href="cligen/dents.html">cligen/dents</a>, <a href="cligen/fileUt.html">cligen/fileUt</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/magic.html">cligen/magic</a>, <a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv</a>, <a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul</a>, <a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti</a>, <a href="cligen/mfile.html">cligen/mfile</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/osUt.html">cligen/osUt</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/posixUt.html">cligen/posixUt</a>, <a href="cligen/print.html">cligen/print</a>, <a href="cligen/procpool.html">cligen/procpool</a>, <a href="cligen/puSig.html">cligen/puSig</a>, <a href="cligen/statx.html">cligen/statx</a>, <a href="cligen/strUt.html">cligen/strUt</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/tab.html">cligen/tab</a>, <a href="cligen/tern.html">cligen/tern</a>, <a href="cligen/textUt.html">cligen/textUt</a>, <a href="cligen/trie.html">cligen/trie</a>, <a href="cligen/unsafeAddr.html">cligen/unsafeAddr</a>.<br/><p /><h2>API symbols</h2>
-<dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
+<dl><dt><a name="%60%21%21%60" href="#%60%21%21%60"><span>`!!`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sysUt: template `!!`(exceptKind; exceptMsg: string)" href="cligen/sysUt.html#%21%21.t%2C%2Cstring">sysUt: template `!!`(exceptKind; exceptMsg: string)</a></li>
+          </ul></dd>
+<dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc `$`(ms: MSlice): string" href="cligen/mslice.html#%24%2CMSlice">mslice: proc `$`(ms: MSlice): string</a></li>
           <li><a class="reference external"
@@ -870,6 +874,10 @@
 <li><a class="reference external"
           data-doc-search-tag="posixUt: proc fchownat(dirfd: cint; path: cstring; owner: Uid; group: Gid; flags: cint): cint" href="cligen/posixUt.html#fchownat%2Ccint%2Ccstring%2CUid%2CGid%2Ccint">posixUt: proc fchownat(dirfd: cint; path: cstring; owner: Uid; group: Gid; flags: cint): cint</a></li>
           </ul></dd>
+<dt><a name="fcLead0" href="#fcLead0"><span>fcLead0:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="strUt: FloatCvtOptions.fcLead0" href="cligen/strUt.html#fcLead0">strUt: FloatCvtOptions.fcLead0</a></li>
+          </ul></dd>
 <dt><a name="fcPad0" href="#fcPad0"><span>fcPad0:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="strUt: FloatCvtOptions.fcPad0" href="cligen/strUt.html#fcPad0">strUt: FloatCvtOptions.fcPad0</a></li>
@@ -888,7 +896,7 @@
           </ul></dd>
 <dt><a name="fcvt" href="#fcvt"><span>fcvt:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="strUt: proc fcvt(s: var string; x: float; p: int; opts = {fcPad0})" href="cligen/strUt.html#fcvt%2Cstring%2Cfloat%2Cint">strUt: proc fcvt(s: var string; x: float; p: int; opts = {fcPad0})</a></li>
+          data-doc-search-tag="strUt: proc fcvt(s: var string; x: float; p: int; opts = {fcPad0, fcLead0})" href="cligen/strUt.html#fcvt%2Cstring%2Cfloat%2Cint">strUt: proc fcvt(s: var string; x: float; p: int; opts = {fcPad0, fcLead0})</a></li>
           </ul></dd>
 <dt><a name="fdClose" href="#fdClose"><span>fdClose:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -947,6 +955,10 @@
           data-doc-search-tag="dents: proc find(roots: seq[string]; recurse = 0; stats = false; chase = false;
      xdev = false; eof0 = false; zero = false)" href="cligen/dents.html#find%2Cseq%5Bstring%5D%2Cint">dents: proc find(roots: seq[string]; recurse = 0; stats = false; chase = false;
      xdev = false; eof0 = false; zero = false)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="mslice: proc find(s: MSlice; sub: char; start: Natural = 0; last = -1): int" href="cligen/mslice.html#find%2CMSlice%2Cchar%2CNatural%2Cint">mslice: proc find(s: MSlice; sub: char; start: Natural = 0; last = -1): int</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="mslice: proc find(s, sub: MSlice; start: Natural = 0): int" href="cligen/mslice.html#find%2CMSlice%2CMSlice%2CNatural">mslice: proc find(s, sub: MSlice; start: Natural = 0): int</a></li>
           <li><a class="reference external"
           data-doc-search-tag="mslice: proc find(s: MSlice; sub: SomeString): int" href="cligen/mslice.html#find%2CMSlice%2CSomeString">mslice: proc find(s: MSlice; sub: SomeString): int</a></li>
           <li><a class="reference external"
@@ -1487,6 +1499,10 @@
           data-doc-search-tag="tern: iterator items[T](t: Tern[T]): string" href="cligen/tern.html#items.i%2CTern%5BT%5D">tern: iterator items[T](t: Tern[T]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="trie: iterator items[T](t: Trie[T]): string" href="cligen/trie.html#items.i%2CTrie%5BT%5D">trie: iterator items[T](t: Trie[T]): string</a></li>
+          </ul></dd>
+<dt><a name="join" href="#join"><span>join:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="mslice: proc join(a: openArray[MSlice]; sep: string = &quot;&quot;): string" href="cligen/mslice.html#join%2CopenArray%5BMSlice%5D%2Cstring">mslice: proc join(a: openArray[MSlice]; sep: string = &quot;&quot;): string</a></li>
           </ul></dd>
 <dt><a name="joins" href="#joins"><span>joins:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2034,6 +2050,10 @@
     tuple[d: int, k: string]]" href="cligen/trie.html#nearLev%2CTrie%5BT%5D%2Cstring%2Cint%2Cint">trie: proc nearLev[T](t: Trie[T]; key: string; dmax = 1; limit = 6): seq[
     tuple[d: int, k: string]]</a></li>
           </ul></dd>
+<dt><a name="nearUnity4" href="#nearUnity4"><span>nearUnity4:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="strUt: proc nearUnity4(f: float): string" href="cligen/strUt.html#nearUnity4%2Cfloat">strUt: proc nearUnity4(f: float): string</a></li>
+          </ul></dd>
 <dt><a name="newParam" href="#newParam"><span>newParam:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="macUt: proc newParam(id: string; rhs: NimNode): NimNode" href="cligen/macUt.html#newParam%2Cstring%2CNimNode">macUt: proc newParam(id: string; rhs: NimNode): NimNode</a></li>
@@ -2296,6 +2316,10 @@
 <li><a class="reference external"
           data-doc-search-tag="print: proc print(a: varargs[string, `$`])" href="cligen/print.html#print%2Cvarargs%5Bstring%2C%5D">print: proc print(a: varargs[string, `$`])</a></li>
           </ul></dd>
+<dt><a name="printedChars" href="#printedChars"><span>printedChars:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="textUt: iterator printedChars(s: openArray[char]; skip = 0; lim = int.high): (Slice[int], int)" href="cligen/textUt.html#printedChars.i%2CopenArray%5Bchar%5D%2Cint">textUt: iterator printedChars(s: openArray[char]; skip = 0; lim = int.high): (Slice[int], int)</a></li>
+          </ul></dd>
 <dt><a name="printedLen" href="#printedLen"><span>printedLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="textUt: proc printedLen(a: openArray[char]): int" href="cligen/textUt.html#printedLen%2CopenArray%5Bchar%5D">textUt: proc printedLen(a: openArray[char]): int</a></li>
@@ -2319,6 +2343,10 @@
 <dt><a name="PROT_RW" href="#PROT_RW"><span>PROT_RW:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mfile: let PROT_RW" href="cligen/mfile.html#PROT_RW">mfile: let PROT_RW</a></li>
+          </ul></dd>
+<dt><a name="pua" href="#pua"><span>pua:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sysUt: template pua(T: typedesc): untyped" href="cligen/sysUt.html#pua.t%2Ctypedesc">sysUt: template pua(T: typedesc): untyped</a></li>
           </ul></dd>
 <dt><a name="putchar" href="#putchar"><span>putchar:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2369,6 +2397,10 @@
 <dt><a name="reapAnyKids" href="#reapAnyKids"><span>reapAnyKids:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="posixUt: proc reapAnyKids(signo: cint)" href="cligen/posixUt.html#reapAnyKids%2Ccint">posixUt: proc reapAnyKids(signo: cint)</a></li>
+          </ul></dd>
+<dt><a name="rebase" href="#rebase"><span>rebase:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="mslice: proc rebase(ms: MSlice; origin0, origin1: pointer): MSlice" href="cligen/mslice.html#rebase%2CMSlice%2Cpointer%2Cpointer">mslice: proc rebase(ms: MSlice; origin0, origin1: pointer): MSlice</a></li>
           </ul></dd>
 <dt><a name="recEntries" href="#recEntries"><span>recEntries:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2886,6 +2918,10 @@
 <li><a class="reference external"
           data-doc-search-tag="tern: object Tern" href="cligen/tern.html#Tern">tern: object Tern</a></li>
           </ul></dd>
+<dt><a name="textAttr" href="#textAttr"><span>textAttr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="humanUt: proc textAttr(s: string; plain = false): string" href="cligen/humanUt.html#textAttr%2Cstring">humanUt: proc textAttr(s: string; plain = false): string</a></li>
+          </ul></dd>
 <dt><a name="textAttrAlias" href="#textAttrAlias"><span>textAttrAlias:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="humanUt: proc textAttrAlias(name, value: string)" href="cligen/humanUt.html#textAttrAlias%2Cstring%2Cstring">humanUt: proc textAttrAlias(name, value: string)</a></li>
@@ -2995,6 +3031,10 @@
 <dt><a name="topLevelHelp" href="#topLevelHelp"><span>topLevelHelp:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="cligen: proc topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string" href="cligen.html#topLevelHelp%2Cauto%2Cauto%2Cauto%2Cauto%2Cauto">cligen: proc topLevelHelp(doc: auto; use: auto; cmd: auto; subCmds: auto; subDocs: auto): string</a></li>
+          </ul></dd>
+<dt><a name="toPua" href="#toPua"><span>toPua:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sysUt: template toPua[T](x: openArray[T]): untyped" href="cligen/sysUt.html#toPua.t%2CopenArray%5BT%5D">sysUt: template toPua[T](x: openArray[T]): untyped</a></li>
           </ul></dd>
 <dt><a name="toSeq" href="#toSeq"><span>toSeq:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -3222,6 +3262,10 @@
       m, nr, nc, widest: int; pfx: string)" href="cligen/tab.html#write%2CFile%2Cseq%5Bstring%5D%2Cseq%5Bint%5D%2Cseq%5Bint%5D%2Cint%2Cint%2Cint%2Cint%2Cstring">tab: proc write(f: File; strs: seq[string]; lens: seq[int]; ws: seq[int];
       m, nr, nc, widest: int; pfx: string)</a></li>
           </ul></dd>
+<dt><a name="writeContAddrTempFile" href="#writeContAddrTempFile"><span>writeContAddrTempFile:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="osUt: proc writeContAddrTempFile(path, extension, content: string): string" href="cligen/osUt.html#writeContAddrTempFile%2Cstring%2Cstring%2Cstring">osUt: proc writeContAddrTempFile(path, extension, content: string): string</a></li>
+          </ul></dd>
 <dt><a name="writeNumberToFile" href="#writeNumberToFile"><span>writeNumberToFile:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="osUt: proc writeNumberToFile(path: string; num: int)" href="cligen/osUt.html#writeNumberToFile%2Cstring%2Cint">osUt: proc writeNumberToFile(path: string; num: int)</a></li>
@@ -3262,7 +3306,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-01 15:13:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 12:54:26 UTC</small>
       </div>
     </div>
   </div>

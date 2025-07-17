@@ -171,6 +171,10 @@
   <li><a class="reference" href="#paragraphs.i%2Cstring" title="paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]">paragraphs(s: string; indent = {' ', '\t'}): tuple[pre: bool, para: string]</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">printedChars
+  <li><a class="reference" href="#printedChars.i%2CopenArray%5Bchar%5D%2Cint" title="printedChars(s: openArray[char]; skip = 0; lim = int.high): (Slice[int], int)">printedChars(s: openArray[char]; skip = 0; lim = int.high): (Slice[int], int)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">unescaped
   <li><a class="reference" href="#unescaped.i%2Cstring" title="unescaped(s: string): char">unescaped(s: string): char</a></li>
 
@@ -469,6 +473,18 @@
 </div>
 
 </div>
+<div id="printedChars-iterators-all">
+  <div id="printedChars.i,openArray[char],int">
+  <dt><pre><span class="Keyword">iterator</span> <a href="#printedChars.i%2CopenArray%5Bchar%5D%2Cint"><span class="Identifier">printedChars</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">skip</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lim</span> <span class="Other">=</span> <span class="Identifier">int</span><span class="Other">.</span><span class="Identifier">high</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span>
+    <span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    1-pass iterate over SGR-embellished utf8 <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span></span></tt> yielding slices rendering to 0|1|2 terminal char cells &amp; number of cells rendered.  Includes trailing SGR codes &amp; allows skipping <tt class="docutils literal"><span class="pre"><span class="Identifier">skip</span></span></tt> cells &amp; limiting to &lt;= <tt class="docutils literal"><span class="pre"><span class="Identifier">lim</span></span></tt> cells.
+    
+  </dd>
+</div>
+
+</div>
 <div id="unescaped-iterators-all">
   <div id="unescaped.i,string">
   <dt><pre><span class="Keyword">iterator</span> <a href="#unescaped.i%2Cstring"><span class="Identifier">unescaped</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">char</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -491,7 +507,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-01 15:13:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 12:54:26 UTC</small>
       </div>
     </div>
   </div>

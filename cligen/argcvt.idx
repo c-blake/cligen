@@ -29,13 +29,13 @@ nim	argAggHelp	cligen/argcvt.html#argAggHelp,seq[string],string,string,string	pr
 nim	argParse	cligen/argcvt.html#argParse,seq[T],seq[T],ArgcvtParams	proc argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool		342
 nim	argHelp	cligen/argcvt.html#argHelp,seq[T],ArgcvtParams	proc argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]		376
 nim	argParse	cligen/argcvt.html#argParse,string,string,ArgcvtParams	proc argParse(dst: var string; dfl: string; a: var ArgcvtParams): bool		384
-nim	argHelp	cligen/argcvt.html#argHelp,string,ArgcvtParams	proc argHelp(dfl: string; a: var ArgcvtParams): seq[string]		395
-nim	incl	cligen/argcvt.html#incl,set[T],openArray[T]	proc incl[T](dst: var set[T]; toIncl: openArray[T])		405
-nim	excl	cligen/argcvt.html#excl,set[T],openArray[T]	proc excl[T](dst: var set[T]; toExcl: openArray[T])		408
-nim	argParse	cligen/argcvt.html#argParse,set[T],set[T],ArgcvtParams	proc argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool		412
-nim	argHelp	cligen/argcvt.html#argHelp,set[T],ArgcvtParams	proc argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]		434
-nim	argParse	cligen/argcvt.html#argParse,HashSet[T],HashSet[T],ArgcvtParams	proc argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool		445
-nim	argHelp	cligen/argcvt.html#argHelp,HashSet[T],ArgcvtParams	proc argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]		468
+nim	argHelp	cligen/argcvt.html#argHelp,string,ArgcvtParams	proc argHelp(dfl: string; a: var ArgcvtParams): seq[string]		398
+nim	incl	cligen/argcvt.html#incl,set[T],openArray[T]	proc incl[T](dst: var set[T]; toIncl: openArray[T])		408
+nim	excl	cligen/argcvt.html#excl,set[T],openArray[T]	proc excl[T](dst: var set[T]; toExcl: openArray[T])		411
+nim	argParse	cligen/argcvt.html#argParse,set[T],set[T],ArgcvtParams	proc argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool		415
+nim	argHelp	cligen/argcvt.html#argHelp,set[T],ArgcvtParams	proc argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]		437
+nim	argParse	cligen/argcvt.html#argParse,HashSet[T],HashSet[T],ArgcvtParams	proc argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool		448
+nim	argHelp	cligen/argcvt.html#argHelp,HashSet[T],ArgcvtParams	proc argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]		471
 nimgrp	arghelp	cligen/argcvt.html#argHelp-procs-all	proc		80
 nimgrp	argparse	cligen/argcvt.html#argParse-procs-all	proc		67
 heading	PARSING AGGREGATES (set,seq,..)	cligen/argcvt.html#parsing-aggregates-set-seq-dotdot	 PARSING AGGREGATES (set,seq,..)		0

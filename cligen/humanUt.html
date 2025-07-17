@@ -80,7 +80,7 @@
   <details open>
     <summary><a class="reference reference-toplevel" href="#10" id="60">Consts</a></summary>
     <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#textAttrHelp" title="textAttrHelp = &quot;Style: bold italic blink inverse struck under{line double dot dash curl};\nSame w/leading \'-\': turn that off; turn all off: plain(0) NONE none off;\nBasic Color: black red green yellow blue purple cyan white;\nUPPERCASE =&gt; HIGH intensity; \&quot;on_\&quot; prefix =&gt; BACKGROUND color;\nxterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);\nTrue color: {fbu}RRGGBB with RGB hex digits.\n{fbu}sNAME&lt;0.-1&gt;[,..]: element of NAME: viridis hue[,s,v] wLen[,s,v] gray pm3d&quot;">textAttrHelp</a></li>
+      <li><a class="reference" href="#textAttrHelp" title="textAttrHelp = &quot;ILK bold italic blink inverse hid struck under{line double curl dot dash} over\nSame w/leading \'-\': turn JUST THAT off; plain NONE none off: turn ALL off\nBasic Color: black red green yellow blue purple cyan white; -fg/-bg turn OFF\nUPPERCASE =&gt; HIGH intensity; \&quot;on_\&quot; prefix =&gt; BACKGROUND color;\nxterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);\nTrue color: {fbu}RRGGBB with RGB hex digits.\n{fbu}sNAME&lt;0.-1&gt;[,..]: element of NAME: viridis hue[,s,v] wLen[,s,v] gray pm3d&quot;">textAttrHelp</a></li>
 <li><a class="reference" href="#textAttrOff" title="textAttrOff = &quot;\e[m&quot;">textAttrOff</a></li>
 
     </ul>
@@ -120,6 +120,10 @@
                    termInAttr = true): string">specifierHighlight(fmt: string; pctTerm: set[char]; plain = false; pct = '%';
                    openBkt = &quot;([{&quot;; closeBkt = &quot;)]}&quot;; keepPct = true;
                    termInAttr = true): string</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">textAttr
+  <li><a class="reference" href="#textAttr%2Cstring" title="textAttr(s: string; plain = false): string">textAttr(s: string; plain = false): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">textAttrAlias
@@ -209,7 +213,7 @@
   <h1><a class="toc-backref" href="#10">Consts</a></h1>
   <dl class="item">
     <div id="textAttrHelp">
-  <dt><pre><a href="humanUt.html#textAttrHelp"><span class="Identifier">textAttrHelp</span></a> <span class="Other">=</span> <span class="StringLit">&quot;Style: bold italic blink inverse struck under{line double dot dash curl};\nSame w/leading \'-\': turn that off; turn all off: plain(0) NONE none off;\nBasic Color: black red green yellow blue purple cyan white;\nUPPERCASE =&gt; HIGH intensity; \&quot;on_\&quot; prefix =&gt; BACKGROUND color;\nxterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);\nTrue color: {fbu}RRGGBB with RGB hex digits.\n{fbu}sNAME&lt;0.-1&gt;[,..]: element of NAME: viridis hue[,s,v] wLen[,s,v] gray pm3d&quot;</span></pre></dt>
+  <dt><pre><a href="humanUt.html#textAttrHelp"><span class="Identifier">textAttrHelp</span></a> <span class="Other">=</span> <span class="StringLit">&quot;ILK bold italic blink inverse hid struck under{line double curl dot dash} over\nSame w/leading \'-\': turn JUST THAT off; plain NONE none off: turn ALL off\nBasic Color: black red green yellow blue purple cyan white; -fg/-bg turn OFF\nUPPERCASE =&gt; HIGH intensity; \&quot;on_\&quot; prefix =&gt; BACKGROUND color;\nxterm256: {fbu}(0-23|0-50-50-5) for F)ORE B)ACKgrnd U)NDER (greyLevel|6cube);\nTrue color: {fbu}RRGGBB with RGB hex digits.\n{fbu}sNAME&lt;0.-1&gt;[,..]: element of NAME: viridis hue[,s,v] wLen[,s,v] gray pm3d&quot;</span></pre></dt>
   <dd>
     
     
@@ -315,6 +319,18 @@
 </div>
 
 </div>
+<div id="textAttr-procs-all">
+  <div id="textAttr,string">
+  <dt><pre><span class="Keyword">proc</span> <a href="#textAttr%2Cstring"><span class="Identifier">textAttr</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">plain</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+
+</div>
 <div id="textAttrAlias-procs-all">
   <div id="textAttrAlias,string,string">
   <dt><pre><span class="Keyword">proc</span> <a href="#textAttrAlias%2Cstring%2Cstring"><span class="Identifier">textAttrAlias</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">,</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
@@ -401,7 +417,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-01 15:13:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 12:54:26 UTC</small>
       </div>
     </div>
   </div>

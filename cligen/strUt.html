@@ -60,6 +60,7 @@
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#FloatCvtOptions" title="FloatCvtOptions = enum      ## The many options of binary -&gt; string float conversion.
   fcPad0,                   ## Pad with '0' to the right (based upon precision `p`)
+  fcLead0,                  ## Fractions get a leading zero in fcvt's
   fcCapital,                ## Use E|INF|NAN not default e|inf|nan
   fcPlus,                   ## Leading '+' for positive numbers, not default &quot;&quot;
   fcTrailDot,               ## Trailing '.' for round integers (to signify &quot;FP&quot;)
@@ -124,7 +125,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">fcvt
-  <li><a class="reference" href="#fcvt%2Cstring%2Cfloat%2Cint" title="fcvt(s: var string; x: float; p: int; opts = {fcPad0})">fcvt(s: var string; x: float; p: int; opts = {fcPad0})</a></li>
+  <li><a class="reference" href="#fcvt%2Cstring%2Cfloat%2Cint" title="fcvt(s: var string; x: float; p: int; opts = {fcPad0, fcLead0})">fcvt(s: var string; x: float; p: int; opts = {fcPad0, fcLead0})</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">find
@@ -188,6 +189,10 @@
   <li><a class="reference" href="#joinS%2Cstring%2Cvarargs%5Bstring%2C%5D" title="joinS(sep = &quot; &quot;; a: varargs[string, `$`]): string">joinS(sep = &quot; &quot;; a: varargs[string, `$`]): string</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">nearUnity4
+  <li><a class="reference" href="#nearUnity4%2Cfloat" title="nearUnity4(f: float): string">nearUnity4(f: float): string</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">split
   <li><a class="reference" href="#split%2Cseq%5BT%5D%2CT" title="split[T](st: seq[T]; delim: T): seq[seq[T]]">split[T](st: seq[T]; delim: T): seq[seq[T]]</a></li>
 
@@ -249,6 +254,7 @@
     <div id="FloatCvtOptions">
   <dt><pre><a href="strUt.html#FloatCvtOptions"><span class="Identifier">FloatCvtOptions</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>      <span class="Comment">## The many options of binary -&gt; string float conversion.</span>
   <span class="Identifier">fcPad0</span><span class="Other">,</span>                   <span class="Comment">## Pad with '0' to the right (based upon precision `p`)</span>
+  <span class="Identifier">fcLead0</span><span class="Other">,</span>                  <span class="Comment">## Fractions get a leading zero in fcvt's</span>
   <span class="Identifier">fcCapital</span><span class="Other">,</span>                <span class="Comment">## Use E|INF|NAN not default e|inf|nan</span>
   <span class="Identifier">fcPlus</span><span class="Other">,</span>                   <span class="Comment">## Leading '+' for positive numbers, not default &quot;&quot;</span>
   <span class="Identifier">fcTrailDot</span><span class="Other">,</span>               <span class="Comment">## Trailing '.' for round integers (to signify &quot;FP&quot;)</span>
@@ -402,7 +408,7 @@
 </div>
 <div id="fcvt-procs-all">
   <div id="fcvt,string,float,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fcvt%2Cstring%2Cfloat%2Cint"><span class="Identifier">fcvt</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">p</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">opts</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">fcPad0</span><span class="Other">}</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#fcvt%2Cstring%2Cfloat%2Cint"><span class="Identifier">fcvt</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">p</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">opts</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">fcPad0</span><span class="Other">,</span> <span class="Identifier">fcLead0</span><span class="Other">}</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span>
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -582,6 +588,17 @@
 </div>
 
 </div>
+<div id="nearUnity4-procs-all">
+  <div id="nearUnity4,float">
+  <dt><pre><span class="Keyword">proc</span> <a href="#nearUnity4%2Cfloat"><span class="Identifier">nearUnity4</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    <tt class="docutils literal"><span class="pre"><span class="Identifier">cligen</span><span class="Operator">/</span><span class="Identifier">humanUt</span><span class="Operator">.</span><span class="Identifier">humanReadable4</span></span></tt> is nice for high dynamic range numbers where 3 order-of-magnitude metric banks are ok, but sometimes numbers parsing as floats is nice (%CPU, sort -g, a calculator, ..).  This proc can help then.  It formats positive floats with as much accuracy as 4 terminal cols allow (with f&lt;0 using 1 more column) - enough for many situations.  It uses, as appropriate, fmts: 0 De-N .DDD D.DD DD.D DDDD DDeN DeNN inf.  One figure repr range is 9e99/1e-9=9e108, ~109 OOMs, &gt;=2 figs for .01..99e9 &amp; 3..4 figs near 1 (hence the name).  (<tt class="docutils literal"><span class="pre"><span class="Identifier">strutils</span><span class="Operator">.</span><span class="Identifier">alignLeft</span></span></tt> right pads w/0.)
+    
+  </dd>
+</div>
+
+</div>
 <div id="split-procs-all">
   <div id="split,seq[T],T">
   <dt><pre><span class="Keyword">proc</span> <a href="#split%2Cseq%5BT%5D%2CT"><span class="Identifier">split</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">delim</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
@@ -692,7 +709,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-01 15:13:52 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 12:54:26 UTC</small>
       </div>
     </div>
   </div>

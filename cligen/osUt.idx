@@ -48,27 +48,28 @@ nim	mkdirOpen	cligen/osUt.html#mkdirOpen,string,int	proc mkdirOpen(path: string;
 nim	popenr	cligen/osUt.html#popenr,string,string,int	proc popenr(cmd: string; path = ""; bufSize = -1): File		398
 nim	popenw	cligen/osUt.html#popenw,string,string,int	proc popenw(cmd: string; path = ""; bufSize = -1): File		404
 nim	pclose	cligen/osUt.html#pclose,File,string	proc pclose(f: File; cmd: string): cint		410
-nim	fileNewerThan	cligen/osUt.html#fileNewerThan,string,string	proc fileNewerThan(a, b: string): bool		416
-nim	fileOlderThan	cligen/osUt.html#fileOlderThan,string,string	proc fileOlderThan(a, b: string): bool		421
-nim	clearDir	cligen/osUt.html#clearDir,string	proc clearDir(dir: string)		426
-nim	walkPatSorted	cligen/osUt.html#walkPatSorted,string	proc walkPatSorted(pattern: string): seq[string]		433
-nim	touch	cligen/osUt.html#touch,string	proc touch(path: string)		439
-nim	autoOpen	cligen/osUt.html#autoOpen,string,int	proc autoOpen(path: string; mode = fmWrite; bufSize = -1): File		451
-nim	autoClose	cligen/osUt.html#autoClose	proc autoClose()		458
-nim	rdRecs	cligen/osUt.html#rdRecs,cint,string,char,int	proc rdRecs(fd: cint; buf: var string; eor = '\x00'; n = 16384): int		464
-nim	uRd	cligen/osUt.html#uRd,File,T	proc uRd[T](f: File; ob: var T): bool		473
-nim	uWr	cligen/osUt.html#uWr,File,T	proc uWr[T](f: File; ob: var T): bool		477
-nim	wrOb	cligen/osUt.html#wrOb,cint,T	proc wrOb[T](fd: cint; ob: T): int		481
-nim	wr	cligen/osUt.html#wr,cint,T	proc wr[T](fd: cint; ob: T): int		484
-nim	wr0term	cligen/osUt.html#wr0term,cint,string	proc wr0term(fd: cint; buf: string): int		486
-nim	wrLine	cligen/osUt.html#wrLine,cint,string	proc wrLine(fd: cint; buf: string): int		491
-nim	wrLenBuf	cligen/osUt.html#wrLenBuf,cint,string	proc wrLenBuf(fd: cint; buf: string): int		498
-nim	wrLenSeq	cligen/osUt.html#wrLenSeq,cint,seq[T]	proc wrLenSeq[T](fd: cint; s: seq[T]): int		505
-nim	lgBold	cligen/osUt.html#lgBold,File,string	proc lgBold(f: File; s: string)		514
-nim	lgInv	cligen/osUt.html#lgInv,File,string	proc lgInv(f: File; s: string)		517
-nim	run	cligen/osUt.html#run,openArray[string],StringTableRef	proc run(cmd: openArray[string]; env: StringTableRef = nil;\n    opts = {poEchoCmd, poUsePath}; dryRun = false; logFile = stderr;\n    logWrite = lgBold): int		520
-nim	findPathPattern	cligen/osUt.html#findPathPattern,string	proc findPathPattern(pathPattern: string): string		530
-nim	setFileSize	cligen/osUt.html#setFileSize,FileHandle,int64,int64	proc setFileSize(fh: FileHandle; currSize, newSize: int64): OSErrorCode		557
+nim	writeContAddrTempFile	cligen/osUt.html#writeContAddrTempFile,string,string,string	proc writeContAddrTempFile(path, extension, content: string): string		416
+nim	fileNewerThan	cligen/osUt.html#fileNewerThan,string,string	proc fileNewerThan(a, b: string): bool		427
+nim	fileOlderThan	cligen/osUt.html#fileOlderThan,string,string	proc fileOlderThan(a, b: string): bool		432
+nim	clearDir	cligen/osUt.html#clearDir,string	proc clearDir(dir: string)		437
+nim	walkPatSorted	cligen/osUt.html#walkPatSorted,string	proc walkPatSorted(pattern: string): seq[string]		444
+nim	touch	cligen/osUt.html#touch,string	proc touch(path: string)		450
+nim	autoOpen	cligen/osUt.html#autoOpen,string,int	proc autoOpen(path: string; mode = fmWrite; bufSize = -1): File		462
+nim	autoClose	cligen/osUt.html#autoClose	proc autoClose()		469
+nim	rdRecs	cligen/osUt.html#rdRecs,cint,string,char,int	proc rdRecs(fd: cint; buf: var string; eor = '\x00'; n = 16384): int		475
+nim	uRd	cligen/osUt.html#uRd,File,T	proc uRd[T](f: File; ob: var T): bool		484
+nim	uWr	cligen/osUt.html#uWr,File,T	proc uWr[T](f: File; ob: var T): bool		488
+nim	wrOb	cligen/osUt.html#wrOb,cint,T	proc wrOb[T](fd: cint; ob: T): int		492
+nim	wr	cligen/osUt.html#wr,cint,T	proc wr[T](fd: cint; ob: T): int		495
+nim	wr0term	cligen/osUt.html#wr0term,cint,string	proc wr0term(fd: cint; buf: string): int		497
+nim	wrLine	cligen/osUt.html#wrLine,cint,string	proc wrLine(fd: cint; buf: string): int		502
+nim	wrLenBuf	cligen/osUt.html#wrLenBuf,cint,string	proc wrLenBuf(fd: cint; buf: string): int		509
+nim	wrLenSeq	cligen/osUt.html#wrLenSeq,cint,seq[T]	proc wrLenSeq[T](fd: cint; s: seq[T]): int		516
+nim	lgBold	cligen/osUt.html#lgBold,File,string	proc lgBold(f: File; s: string)		525
+nim	lgInv	cligen/osUt.html#lgInv,File,string	proc lgInv(f: File; s: string)		528
+nim	run	cligen/osUt.html#run,openArray[string],StringTableRef	proc run(cmd: openArray[string]; env: StringTableRef = nil;\n    opts = {poEchoCmd, poUsePath}; dryRun = false; logFile = stderr;\n    logWrite = lgBold): int		531
+nim	findPathPattern	cligen/osUt.html#findPathPattern,string	proc findPathPattern(pathPattern: string): string		541
+nim	setFileSize	cligen/osUt.html#setFileSize,FileHandle,int64,int64	proc setFileSize(fh: FileHandle; currSize, newSize: int64): OSErrorCode		568
 nimgrp	urite	cligen/osUt.html#urite-procs-all	proc		180
 nimgrp	both	cligen/osUt.html#both-procs-all	proc		152
 nimgrp	perror	cligen/osUt.html#perror-procs-all	proc		37
