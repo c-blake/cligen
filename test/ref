@@ -613,6 +613,32 @@ Options:
   -c=, --c=      string  "bad name"  set c
   -g=, --g=      string  "ho"        set g
 
+==> test/OptionT.out <==
+Usage:
+  demo [optional-params] 
+Show how to use `Option[T]`.  It unusual since, in order to not add time to
+compiles for all clients, we condition upon `cgDoOptions`.  `OptionT.nim` source
+shows how to activate this with `{.define(cgDoOptions).}`.
+
+Please note that the basic binding already provides for input optionality
+via simpler mechanisms of (at least) default values, user `mergeParams`
+protocols & `argParse` overloads.  See (at least!) `test/FancyRepeats.nim`,
+`test/FancyRepeats2.nim`, and `test/ParseOnly.nim`.
+
+At its core, this makes the value-if-none-given a CLauthor-implemented idea,
+outside the proc signature which induces a need to really document it in
+`help[optInt]`.  Also, complex wrapped types like `Option[seq[T]]` will probably
+not work fully at the CLuser level while they would with the `FancyRepeats.nim`
+cligen/issues/212 So, this is more intended
+for wrapping Nim APIs using `Option[T]` for other reasons (typically return
+values, not inputs).
+
+All that said, running this with -o1 vs. nothing produces distinct outputs.
+Options:
+  -h, --help              print this cligen-erated help
+  --help-syntax           advanced: prepend,plurals,..
+  -o=, --optInt=  int  ?  1 if not specified
+
 ==> test/ParseOnly.out <==
 fooParse:
   (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [REQUIRED,optional-params] [rest: int...]\nOptions:\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)

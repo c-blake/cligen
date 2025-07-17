@@ -8,6 +8,13 @@ Version: 1.8.7
 
   - Make `python/pq` more useful to post-process terminal-column aligned tables.
 
+  - Add `cligen/argcvt.arg(Parse|Help)` for `Option[T]`, but conditioned upon a
+  define.  So, `{.define(cgDoOptions).}` before `import cligen`.  NOTE that the
+  basic binding already provides this ability via various type-simpler mechanisms,
+  but at the very least wrapping Nim APIs that use `Option[T]` for other reasons
+  (typically return values, not inputs) strictly needs this. `test/OptionT.nim`
+  has more details.
+
 Version: 1.8.6
 --------------
 
