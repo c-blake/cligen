@@ -1,6 +1,13 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.7
+--------------
+  - Show how to force `parsetoml` in `test/FullyAutoMulti.nim` which can use the
+  same `.cf` file as always (exhibiting how close parsecfg/ini & TOML are).
+
+  - Make `python/pq` more useful to post-process terminal-column aligned tables.
+
 Version: 1.8.6
 --------------
 
