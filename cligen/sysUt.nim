@@ -115,6 +115,9 @@ template toPua*[T](x: openArray[T]): untyped =
   ## "safe" (if returning `nil` can be viewed as "safe") conversion.
   if x.len > 0: cast[pua T](x[0].addr) else: cast[pua T](nil)
 
+template toPua*[T](p: ptr T): untyped = cast[pua T](p)
+  ## "Unsafe" conversion just based on a `ptr`.
+
 # Defect => panic means arith can panic. So, cannot just try-except:set to high.
 # Saturating arith is most useful (to me) when moves are by +-1.  Full work can
 # be added later with a `,y=1` default when/if more general cases arise.
