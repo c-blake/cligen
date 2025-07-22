@@ -170,7 +170,8 @@
 
 </ul>
 <ul class="simple nested-toc-section">toPua
-  <li><a class="reference" href="#toPua.t%2CopenArray%5BT%5D" title="toPua[T](x: openArray[T]): untyped">toPua[T](x: openArray[T]): untyped</a></li>
+  <li><a class="reference" href="#toPua.t%2Cptr.T" title="toPua[T](p: ptr T): untyped">toPua[T](p: ptr T): untyped</a></li>
+<li><a class="reference" href="#toPua.t%2CopenArray%5BT%5D" title="toPua[T](x: openArray[T]): untyped">toPua[T](x: openArray[T]): untyped</a></li>
 
 </ul>
 
@@ -449,7 +450,15 @@
 
 </div>
 <div id="toPua-templates-all">
-  <div id="toPua.t,openArray[T]">
+  <div id="toPua.t,ptr.T">
+  <dt><pre><span class="Keyword">template</span> <a href="#toPua.t%2Cptr.T"><span class="Identifier">toPua</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+  <dd>
+    
+    &quot;Unsafe&quot; conversion just based on a <tt class="docutils literal"><span class="pre"><span class="Keyword">ptr</span></span></tt>.
+    
+  </dd>
+</div>
+<div id="toPua.t,openArray[T]">
   <dt><pre><span class="Keyword">template</span> <a href="#toPua.t%2CopenArray%5BT%5D"><span class="Identifier">toPua</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
@@ -469,7 +478,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 13:56:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-22 09:41:23 UTC</small>
       </div>
     </div>
   </div>

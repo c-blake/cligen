@@ -110,6 +110,7 @@
 <li><a class="reference" href="#argHelp%2CT%2CArgcvtParams" title="argHelp[T: enum](dfl: T; a: var ArgcvtParams): seq[string]">argHelp[T: enum](dfl: T; a: var ArgcvtParams): seq[string]</a></li>
 <li><a class="reference" href="#argHelp%2CT%2CArgcvtParams_2" title="argHelp[T: SomeNumber](dfl: T; a: var ArgcvtParams): seq[string]">argHelp[T: SomeNumber](dfl: T; a: var ArgcvtParams): seq[string]</a></li>
 <li><a class="reference" href="#argHelp%2CHashSet%5BT%5D%2CArgcvtParams" title="argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]">argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]</a></li>
+<li><a class="reference" href="#argHelp%2COption%5BT%5D%2CArgcvtParams" title="argHelp[T](dfl: Option[T]; a: var ArgcvtParams): seq[string]">argHelp[T](dfl: Option[T]; a: var ArgcvtParams): seq[string]</a></li>
 <li><a class="reference" href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams" title="argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]">argHelp[T](dfl: seq[T]; a: var ArgcvtParams): seq[string]</a></li>
 <li><a class="reference" href="#argHelp%2Cset%5BT%5D%2CArgcvtParams" title="argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]">argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]</a></li>
 
@@ -127,6 +128,7 @@
 <li><a class="reference" href="#argParse%2CT%2CT%2CArgcvtParams" title="argParse[T: enum](dst: var T; dfl: T; a: var ArgcvtParams): bool">argParse[T: enum](dst: var T; dfl: T; a: var ArgcvtParams): bool</a></li>
 <li><a class="reference" href="#argParse%2CT%2CT%2CArgcvtParams_2" title="argParse[T: SomeNumber](dst: var T; dfl: T; a: var ArgcvtParams): bool">argParse[T: SomeNumber](dst: var T; dfl: T; a: var ArgcvtParams): bool</a></li>
 <li><a class="reference" href="#argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams" title="argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool">argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool</a></li>
+<li><a class="reference" href="#argParse%2COption%5BT%5D%2COption%5BT%5D%2CArgcvtParams" title="argParse[T](dst: var Option[T]; dfl: Option[T]; a: var ArgcvtParams): bool">argParse[T](dst: var Option[T]; dfl: Option[T]; a: var ArgcvtParams): bool</a></li>
 <li><a class="reference" href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams" title="argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool">argParse[T](dst: var seq[T]; dfl: seq[T]; a: var ArgcvtParams): bool</a></li>
 <li><a class="reference" href="#argParse%2Cset%5BT%5D%2Cset%5BT%5D%2CArgcvtParams" title="argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool">argParse[T](dst: var set[T]; dfl: set[T]; a: var ArgcvtParams): bool</a></li>
 
@@ -344,6 +346,14 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
     
   </dd>
 </div>
+<div id="argHelp,Option[T],ArgcvtParams">
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
 <div id="argHelp,seq[T],ArgcvtParams">
   <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
@@ -438,6 +448,14 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argParse,HashSet[T],HashSet[T],ArgcvtParams">
   <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+<div id="argParse,Option[T],Option[T],ArgcvtParams">
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2COption%5BT%5D%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -551,7 +569,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-17 13:56:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-22 09:41:23 UTC</small>
       </div>
     </div>
   </div>

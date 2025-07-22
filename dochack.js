@@ -1363,7 +1363,7 @@ function fuzzyMatch__fuzzysearch_u16(pattern_p0, str_p1) {
             if ((!(headerMatched_704643095) && (strChar_704643104 == 58))) {
             headerMatched_704643095 = true;
             scoreState_704643094 = (-100);
-            score_704643100 = ((Math.floor((0.5 * score_704643100))) | 0);
+            score_704643100 = chckRange(Number(BigInt(Math.trunc(Math.floor((0.5 * score_704643100))))), (-2147483648), 2147483647);
             patIndex_704643099 = 0;
             strIndex_704643098 = addInt(strIndex_704643098, 1);
             break Label3;

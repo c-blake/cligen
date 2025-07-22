@@ -36,6 +36,8 @@ nim	argParse	cligen/argcvt.html#argParse,set[T],set[T],ArgcvtParams	proc argPars
 nim	argHelp	cligen/argcvt.html#argHelp,set[T],ArgcvtParams	proc argHelp[T](dfl: set[T]; a: var ArgcvtParams): seq[string]		437
 nim	argParse	cligen/argcvt.html#argParse,HashSet[T],HashSet[T],ArgcvtParams	proc argParse[T](dst: var HashSet[T]; dfl: HashSet[T]; a: var ArgcvtParams): bool		448
 nim	argHelp	cligen/argcvt.html#argHelp,HashSet[T],ArgcvtParams	proc argHelp[T](dfl: HashSet[T]; a: var ArgcvtParams): seq[string]		471
+nim	argParse	cligen/argcvt.html#argParse,Option[T],Option[T],ArgcvtParams	proc argParse[T](dst: var Option[T]; dfl: Option[T]; a: var ArgcvtParams): bool		479
+nim	argHelp	cligen/argcvt.html#argHelp,Option[T],ArgcvtParams	proc argHelp[T](dfl: Option[T]; a: var ArgcvtParams): seq[string]		485
 nimgrp	arghelp	cligen/argcvt.html#argHelp-procs-all	proc		80
 nimgrp	argparse	cligen/argcvt.html#argParse-procs-all	proc		67
 heading	PARSING AGGREGATES (set,seq,..)	cligen/argcvt.html#parsing-aggregates-set-seq-dotdot	 PARSING AGGREGATES (set,seq,..)		0
