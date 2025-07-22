@@ -4,7 +4,7 @@
 
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import std/[strformat, sets, critbits, strutils], ./textUt, ./gcarc, ./parseopt3
+import std/[strformat, sets, critbits, strutils, options], ./textUt, ./gcarc, ./parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system
 when not declared(assert): import std/[assertions, formatfloat]; export `$`
@@ -476,16 +476,14 @@ proc argHelp*[T](dfl: HashSet[T], a: var ArgcvtParams): seq[string]=
   result = @[ a.argKeys, typ, df ]
 
 # Option[T]; Only simple/scalar wrapped types work well.
-when defined cgDoOptions: # To have client code in charge of std/options import,
-  import std/options      #..cligen & argcvt would need to be `include`s.
-  proc argParse*[T](dst:var Option[T], dfl:Option[T], a:var ArgcvtParams): bool=
-    var uw: T             # An unwrapped value
-    if argParse(uw, (if dfl.isSome: dfl.get else: uw), a):
-      dst = option(uw)
-      return true
+proc argParse*[T](dst: var Option[T], dfl: Option[T], a:var ArgcvtParams): bool=
+  var uw: T             # An unwrapped value
+  if argParse(uw, (if dfl.isSome: dfl.get else: uw), a):
+    dst = option(uw)
+    return true
 
-  proc argHelp*[T](dfl: Option[T], a: var ArgcvtParams): seq[string] =
-    @[a.argKeys, $T, (if dfl.isSome: $dfl.get else: "?")]
+proc argHelp*[T](dfl: Option[T], a: var ArgcvtParams): seq[string] =
+  @[a.argKeys, $T, (if dfl.isSome: $dfl.get else: "?")]
 
 #import tables # Tables XXX need 2D delimiting convention
 #? intsets, lists, deques, queues, etc?

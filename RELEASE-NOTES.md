@@ -1,6 +1,15 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.8
+--------------
+  - Relax `-d=cgDoOptions` condition to get std/options in `cligen/argcvt` as
+  the extra compile-time cost seems to be under 1 ms.  It's now just always
+  provided.  Delete the define at your leisure.  Sorry for the hassle.  Thank
+  @SolitudeSF for showing me the error of my ways.
+
+  - Add a simple `toPua` overload in cligen/sysUt for `ptr T`.
+
 Version: 1.8.7
 --------------
   - Show how to force `parsetoml` in `test/FullyAutoMulti.nim` which can use the
