@@ -11,8 +11,6 @@ from std/typetraits import supportsCopyMem
 type csize = uint
 proc cmemchr*(s: pointer, c: char, n: csize): pointer {.
   importc: "memchr", header: "<string.h>" .}
-proc cmemrchr*(s: pointer, c: char, n: csize): pointer {.
-  importc: "memrchr", header: "string.h" .}
 proc cmemcmp*(a, b: pointer, n: csize): cint {. #Exported by system/ansi_c??
   importc: "memcmp", header: "<string.h>", noSideEffect.}
 proc cmemcpy*(a, b: pointer, n: csize): cint {.
@@ -22,6 +20,13 @@ proc cmemmem*(h: pointer, nH: csize, s: pointer, nS: csize): pointer {.
 proc `-!`*(p, q: pointer): int = cast[int](p) -% cast[int](q)
 proc `+!`*(p: pointer, i: int): pointer = cast[pointer](cast[int](p) +% i)
 proc `+!`*(p: pointer, i: uint64): pointer = cast[pointer](cast[uint64](p) + i)
+when defined(linux):
+  proc cmemrchr*(s: pointer, c: char, n: csize): pointer {.
+    importc: "memrchr", header: "string.h" .}
+else:
+  proc cmemrchr*(s: pointer, c: char, n: csize): pointer =
+    for i in countdown(n - 1, 0):
+      if cast[ptr char](s +! i)[] == c: return s +! i
 
 type
   MSlice* = object
