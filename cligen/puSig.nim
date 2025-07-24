@@ -27,7 +27,7 @@ import std/[parseutils, critbits, strutils, posix], cligen/textUt
 template declOr(s, n): untyped = (when declared(s): s else: n.cint)
 let signum* = {
   "NIL"   : 0.cint , #0 # FYI: Just adopting SIGNIL here, since 0 does nothing.
-  "HUP"   : declOr(SIGPOLL  , 1),
+  "HUP"   : declOr(SIGHUP   , 1),
   "INT"   : declOr(SIGINT   , 2),
   "QUIT"  : declOr(SIGQUIT  , 3),
   "ILL"   : declOr(SIGILL   , 4),
@@ -56,7 +56,7 @@ let signum* = {
   "VTALRM": declOr(SIGVTALRM,26),
   "PROF"  : declOr(SIGPROF  ,27),
   "WINCH" : declOr(SIGWINCH ,28), #shells/terms need; stdlib should get
-  "POLL"  : declOr(SIGPOLL  ,29),
+  "POLL"  : when defined osx: 7.int else: declOr(SIGPOLL, 29),
   "PWR"   : declOr(SIGPWR   ,30),
   "SYS"   : declOr(SIGSYS   ,31),
   "UNUSED": 32.cint }.toCritBitTree ##[ Bind strings to numeric constants; A
