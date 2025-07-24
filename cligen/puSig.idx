@@ -1,3 +1,3 @@
 nimTitle	puSig	cligen/puSig.html	module cligen/puSig		0
-nim	signum	cligen/puSig.html#signum	let signum		27
-nim	parseUnixSignal	cligen/puSig.html#parseUnixSignal,string	proc parseUnixSignal(nameOrNumber: string): cint		63
+nim	signum	cligen/puSig.html#signum	let signum		28
+nim	parseUnixSignal	cligen/puSig.html#parseUnixSignal,string	proc parseUnixSignal(nameOrNumber: string): cint		66
