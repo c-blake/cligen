@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.8.9
+--------------
+  - Make `cligen/puSig` more robust to whatever stdlib declares for whatever
+  target platform is active.
+
 Version: 1.8.8
 --------------
   - Relax `-d=cgDoOptions` condition to get std/options in `cligen/argcvt` as

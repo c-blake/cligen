@@ -24,41 +24,44 @@
 
 import std/[parseutils, critbits, strutils, posix], cligen/textUt
 
-let signum* = {      # Sadly, not-const-able
-  "NIL"   : 0.cint , #0 # FYI: Just adopting SIGNONE here, since 0 does nothing.
-  "HUP"   : SIGHUP , #1 # Bind strings to numeric constants; A long history of
-  "INT"   : SIGINT , #2 # people just using literal numbers here makes this set
-  "QUIT"  : SIGQUIT, #3 # of 32 essentially as standard numerically their names.
-  "ILL"   : SIGILL , #4
-  "TRAP"  : SIGTRAP, #5
-  "ABRT"  : SIGABRT, #6
-  "BUS"   : SIGBUS , #7
-  "FPE"   : SIGFPE , #8
-  "KILL"  : SIGKILL, #9
-  "USR1"  : SIGUSR1, #10
-  "SEGV"  : SIGSEGV, #11
-  "USR2"  : SIGUSR2, #12
-  "PIPE"  : SIGPIPE, #13
-  "ALRM"  : SIGALRM, #14
-  "TERM"  : SIGTERM, #15
-  "TKFLT" : 16.cint, #16 Archaic SIGSTKFLT; spelled weird so "ST" can => STOP
-  "CHLD"  : SIGCHLD, #17  Alias newer BSD/POSIX "CHLD"..
-  "CLD"   : SIGCHLD, #17 ..with AT&T SysV "CLD".
-  "CONT"  : SIGCONT, #18
-  "STOP"  : SIGSTOP, #19
-  "TSTP"  : SIGTSTP, #20
-  "TTIN"  : SIGTTIN, #21
-  "TTOU"  : SIGTTOU, #22
-  "URG"   : SIGURG , #23
-  "XCPU"  : SIGXCPU, #24
-  "XFSZ"  : SIGXFSZ, #25
-  "VTALRM":SIGVTALRM,#26
-  "PROF"  : SIGPROF, #27
-  "WINCH" : 28.cint, #28 Any shell/term needs this; Should be added to stdlib.
-  "POLL"  : SIGPOLL, #29
-  "PWR"   : 30.cint, #30
-  "SYS"   : SIGSYS , #31
-  "UNUSED": 31.cint }.toCritBitTree
+template declOr(s, n): untyped = (when declared(s): s else: n.cint)
+let signum* = {
+  "NIL"   : 0.cint , #0 # FYI: Just adopting SIGNIL here, since 0 does nothing.
+  "HUP"   : declOr(SIGPOLL  , 1),
+  "INT"   : declOr(SIGINT   , 2),
+  "QUIT"  : declOr(SIGQUIT  , 3),
+  "ILL"   : declOr(SIGILL   , 4),
+  "TRAP"  : declOr(SIGTRAP  , 5),
+  "ABRT"  : declOr(SIGABRT  , 6),
+  "BUS"   : declOr(SIGBUS   , 7),
+  "FPE"   : declOr(SIGFPE   , 8),
+  "KILL"  : declOr(SIGKILL  , 9),
+  "USR1"  : declOr(SIGUSR1  ,10),
+  "SEGV"  : declOr(SIGSEGV  ,11),
+  "USR2"  : declOr(SIGUSR2  ,12),
+  "PIPE"  : declOr(SIGPIPE  ,13),
+  "ALRM"  : declOr(SIGALRM  ,14),
+  "TERM"  : declOr(SIGTERM  ,15),
+  "TKFLT" : declOr(SIGSTKFLT,16), #Spelled so "ST" can => STOP
+  "CHLD"  : declOr(SIGCHLD  ,17), # Alias newer BSD/POSIX "CHLD"..
+  "CLD"   : declOr(SIGCHLD  ,17), #..with AT&T SysV "CLD".
+  "CONT"  : declOr(SIGCONT  ,18),
+  "STOP"  : declOr(SIGSTOP  ,19),
+  "TSTP"  : declOr(SIGTSTP  ,20),
+  "TTIN"  : declOr(SIGTTIN  ,21),
+  "TTOU"  : declOr(SIGTTOU  ,22),
+  "URG"   : declOr(SIGURG   ,23),
+  "XCPU"  : declOr(SIGXCPU  ,24),
+  "XFSZ"  : declOr(SIGXFSZ  ,25),
+  "VTALRM": declOr(SIGVTALRM,26),
+  "PROF"  : declOr(SIGPROF  ,27),
+  "WINCH" : declOr(SIGWINCH ,28), #shells/terms need; stdlib should get
+  "POLL"  : declOr(SIGPOLL  ,29),
+  "PWR"   : declOr(SIGPWR   ,30),
+  "SYS"   : declOr(SIGSYS   ,31),
+  "UNUSED": 32.cint }.toCritBitTree ##[ Bind strings to numeric constants; A
+  history of folks just using literal numbers here makes common ones about as
+  standard numerically their names. ]##
 
 proc parseUnixSignal*(nameOrNumber: string): cint =
   ## Accepts numbers as-is & otherwise case-insensitively prefix-matches against
