@@ -38,6 +38,6 @@ for (n, fmt, expect) in [ # This tests a bunch of cases.  Maybe I missed some?
 ## with another renderer to do: `${(SELECT)x,y FROM Points *** <tr> <td>$1</td>
 ## <td>$2</td> </tr>}` [ the idea being SELECT splits on "***" then loops over
 ## query output rendering a post-*** tmpl to fill an HTML table].  That this can
-## work is no accident.  Call syntax was designed to minimize lexical commitments
+## work is no accident. Call syntax was designed to minimize lexical commitments
 ## to mingle well with surrounding syntax & to let macros define any sub-syntax
 ## in ARG.  Semantics/interpretation/render was also intentionally deferred.

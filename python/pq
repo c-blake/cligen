@@ -71,7 +71,7 @@ Guarded by ``where``, defined in ``stmts`` are AWK-ish BUT 0-origin `fieldIdx`:
   `(i|f)(fieldIdx)` are the same converted to Python `int` | `float`.
   `nf` & `nr` - number of f)ields & r)ecords; `stdin` from `sys`.
   if ``match`` is given, `pqRx`, the corresponding compiled regex.
-  If ``fields`` is given, `pqNmFields` & var names ``genF`` `% field` = index.""",
+  If ``fields`` is given, `pqNmFields` & var names ``genF`` `% field`=index.""",
 epilog="""**EXAMPLES**:
   seq 0 1000000|pq -w'len(row)<2'          **# Print short rows**
   pq 'print(s[1],s[0])'                    **# Swap field order**

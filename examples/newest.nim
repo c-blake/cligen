@@ -6,12 +6,12 @@ type TimePath = tuple[tm: int64, path: string]
 proc printNewest*(n=1, time="m", recurse=1, chase=false, Deref=false,
                   kinds={fkFile}, quiet=false, xdev=false, outEnd="\n",
                   file="", delim='\n', eof0=false, paths: seq[string]) =
-  ## Echo ended by *outEnd* <= *n* newest files in file *time* order
-  ## `{-}[bamcv]` for Birth, Access, Mod, Ctime, Version=max(MC); { `-` | CAPITAL
-  ## means ***oldest*** }.  Examined files = UNION of *paths* + optional
-  ## *delim*-delimited input *file* ( ``stdin`` if `"-"`|if `""` & ``stdin`` is
-  ## not a terminal ), **maybe recursed** as roots.  E.g. to echo the 3 oldest
-  ## regular files by m-time under the CWD: ``newest -n3 -t-m -r0 .``.
+  ##[ Echo ended by *outEnd* <= *n* newest files in file *time* order
+  `{-}[bamcv]` for Birth, Access, Mod, Ctime, Version=max(MC); { `-` | CAPITAL
+  means ***oldest*** }.  Examined files = UNION of *paths* + optional
+  *delim*-delimited input *file* ( ``stdin`` if `"-"`|if `""` & ``stdin`` is
+  not a terminal ), **maybe recursed** as roots.  E.g. to echo the 3 oldest
+  regular files by m-time under the CWD: ``newest -n3 -t-m -r0 .``.]##
   let err = if quiet: nil else: stderr
   let tO = fileTimeParse(time)                  #- or CAPITAL=oldest
   let it = both(paths, fileStrings(file, delim))
