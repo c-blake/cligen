@@ -21,5 +21,5 @@ nim	toPua	cligen/sysUt.html#toPua.t,openArray[T]	template toPua[T](x: openArray[
 nim	toPua	cligen/sysUt.html#toPua.t,ptr.T	template toPua[T](p: ptr T): untyped		118
 nim	incSat	cligen/sysUt.html#incSat,T	proc incSat[T: Ordinal](x: var T)		124
 nim	decSat	cligen/sysUt.html#decSat,T	proc decSat[T: Ordinal](x: var T)		126
-nim	`!!`	cligen/sysUt.html#!!.t,,string	template `!!`(exceptKind; exceptMsg: string)		129
+nim	`!!`	cligen/sysUt.html#!!.t,,string	template `!!`(kind; msg: string)		129
 nimgrp	topua	cligen/sysUt.html#toPua-templates-all	template		114

@@ -94,8 +94,10 @@ nim	parseBin	cligen/mslice.html#parseBin,,int	proc parseBin(s: MSlice | openArra
 nim	parseOct	cligen/mslice.html#parseOct,,int	proc parseOct(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		719
 nim	parseInt	cligen/mslice.html#parseInt,,int	proc parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		724
 nim	parseHex	cligen/mslice.html#parseHex,,int	proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		729
-nim	pow10	cligen/mslice.html#pow10	const pow10		735
-nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		794
+nim	parseHSlice	cligen/mslice.html#parseHSlice	proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]		734
+nim	parseHSlice	cligen/mslice.html#parseHSlice,string	proc parseHSlice[T, U](s: string): HSlice[T, U]		750
+nim	pow10	cligen/mslice.html#pow10	const pow10		753
+nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		812
 nimgrp	tomslice	cligen/mslice.html#toMSlice-procs-all	proc		41
 nimgrp	splitr	cligen/mslice.html#splitr-procs-all	proc		473
 nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		21
@@ -108,6 +110,7 @@ nimgrp	rfind	cligen/mslice.html#rfind-procs-all	proc		144
 nimgrp	==	cligen/mslice.html#==-procs-all	proc		202
 nimgrp	msplit	cligen/mslice.html#msplit-procs-all	proc		321
 nimgrp	strip	cligen/mslice.html#strip-procs-all	proc		362
+nimgrp	parsehslice	cligen/mslice.html#parseHSlice-procs-all	proc		734
 nimgrp	split	cligen/mslice.html#split-procs-all	proc		522
 nimgrp	frame	cligen/mslice.html#frame-procs-all	proc		606
 nimgrp	frame	cligen/mslice.html#frame-iterators-all	iterator		579

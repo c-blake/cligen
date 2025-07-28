@@ -363,6 +363,11 @@
   <li><a class="reference" href="#parseHex%2C%2Cint" title="parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int">parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">parseHSlice
+  <li><a class="reference" href="#parseHSlice" title="parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]">parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]</a></li>
+<li><a class="reference" href="#parseHSlice%2Cstring" title="parseHSlice[T, U](s: string): HSlice[T, U]">parseHSlice[T, U](s: string): HSlice[T, U]</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">parseInt
   <li><a class="reference" href="#parseInt%2C%2Cint" title="parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int">parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int</a></li>
 
@@ -1281,6 +1286,25 @@
 </div>
 
 </div>
+<div id="parseHSlice-procs-all">
+  <div id="parseHSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#parseHSlice"><span class="Identifier">parseHSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> <span class="Operator">|</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into <tt class="docutils literal"><span class="pre"><span class="Identifier">HSlice</span></span></tt>. Interpretation is up to caller/slice user.  Missing sides|non-numeric -&gt; 0.
+    
+  </dd>
+</div>
+<div id="parseHSlice,string">
+  <dt><pre><span class="Keyword">proc</span> <a href="#parseHSlice%2Cstring"><span class="Identifier">parseHSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+
+</div>
 <div id="parseInt-procs-all">
   <div id="parseInt,,int">
   <dt><pre><span class="Keyword">proc</span> <a href="#parseInt%2C%2Cint"><span class="Identifier">parseInt</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> <span class="Operator">|</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">eoNum</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Identifier">doNotUse</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
@@ -1700,7 +1724,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-28 10:40:36 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-28 23:56:56 UTC</small>
       </div>
     </div>
   </div>

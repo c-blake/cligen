@@ -28,7 +28,7 @@
       Modules: <a href="all.html">all</a>, <a href="cligen.html">cligen</a>, <a href="cligen/abbrev.html">cligen/abbrev</a>, <a href="cligen/argcvt.html">cligen/argcvt</a>, <a href="cligen/cfUt.html">cligen/cfUt</a>, <a href="cligen/colorScl.html">cligen/colorScl</a>, <a href="cligen/conncomp.html">cligen/conncomp</a>, <a href="cligen/dents.html">cligen/dents</a>, <a href="cligen/fileUt.html">cligen/fileUt</a>, <a href="cligen/gcarc.html">cligen/gcarc</a>, <a href="cligen/humanUt.html">cligen/humanUt</a>, <a href="cligen/macUt.html">cligen/macUt</a>, <a href="cligen/magic.html">cligen/magic</a>, <a href="cligen/mergeCfgEnv.html">cligen/mergeCfgEnv</a>, <a href="cligen/mergeCfgEnvMulMul.html">cligen/mergeCfgEnvMulMul</a>, <a href="cligen/mergeCfgEnvMulti.html">cligen/mergeCfgEnvMulti</a>, <a href="cligen/mfile.html">cligen/mfile</a>, <a href="cligen/mslice.html">cligen/mslice</a>, <a href="cligen/osUt.html">cligen/osUt</a>, <a href="cligen/parseopt3.html">cligen/parseopt3</a>, <a href="cligen/posixUt.html">cligen/posixUt</a>, <a href="cligen/print.html">cligen/print</a>, <a href="cligen/procpool.html">cligen/procpool</a>, <a href="cligen/puSig.html">cligen/puSig</a>, <a href="cligen/statx.html">cligen/statx</a>, <a href="cligen/strUt.html">cligen/strUt</a>, <a href="cligen/sysUt.html">cligen/sysUt</a>, <a href="cligen/tab.html">cligen/tab</a>, <a href="cligen/tern.html">cligen/tern</a>, <a href="cligen/textUt.html">cligen/textUt</a>, <a href="cligen/trie.html">cligen/trie</a>, <a href="cligen/unsafeAddr.html">cligen/unsafeAddr</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%21%21%60" href="#%60%21%21%60"><span>`!!`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sysUt: template `!!`(exceptKind; exceptMsg: string)" href="cligen/sysUt.html#%21%21.t%2C%2Cstring">sysUt: template `!!`(exceptKind; exceptMsg: string)</a></li>
+          data-doc-search-tag="sysUt: template `!!`(kind; msg: string)" href="cligen/sysUt.html#%21%21.t%2C%2Cstring">sysUt: template `!!`(kind; msg: string)</a></li>
           </ul></dd>
 <dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2222,6 +2222,12 @@
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int" href="cligen/mslice.html#parseHex%2C%2Cint">mslice: proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int</a></li>
           </ul></dd>
+<dt><a name="parseHSlice" href="#parseHSlice"><span>parseHSlice:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="mslice: proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]" href="cligen/mslice.html#parseHSlice">mslice: proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="mslice: proc parseHSlice[T, U](s: string): HSlice[T, U]" href="cligen/mslice.html#parseHSlice%2Cstring">mslice: proc parseHSlice[T, U](s: string): HSlice[T, U]</a></li>
+          </ul></dd>
 <dt><a name="parseInt" href="#parseInt"><span>parseInt:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="humanUt: proc parseInt(s: string; valIfNAN: int): int" href="cligen/humanUt.html#parseInt%2Cstring%2Cint">humanUt: proc parseInt(s: string; valIfNAN: int): int</a></li>
@@ -3312,7 +3318,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-28 10:40:36 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-07-28 23:56:56 UTC</small>
       </div>
     </div>
   </div>
