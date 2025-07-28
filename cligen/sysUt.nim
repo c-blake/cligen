@@ -130,5 +130,5 @@ template `!!`*(exceptKind; exceptMsg: string) =
   ## Shorthand since most code initiates rather than propagates `raise`.  This
   ## lets `raise newException(IOError, "")` become just `IO!""`.  It first tries
   ## `excKind Error` and, if that is not in scope, falls back to `excKind`.
-  raise newException((when declared(`exceptKind Error`): `exceptKind Error`
-                      else: `exceptKind`), exceptMsg)
+  let e=when declared(`exceptKind Error`): `exceptKind Error` else: `exceptKind`
+  raise newException(e, exceptMsg)

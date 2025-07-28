@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.0
+--------------
+  - Make some lib support more compatible with nim-1.2 era Nim again.
+
 Version: 1.8.9
 --------------
   - Make `cligen/puSig` more robust to whatever stdlib declares for whatever

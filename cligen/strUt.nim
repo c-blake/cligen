@@ -383,8 +383,8 @@ proc nearUnity4*(f: float): string =
   elif g <  99.95 :  fcvt(s, g, 1, {})  #.. This promise is confirmed by a test
   elif g <  9999.5:  fcvt(s, g, 0, {})  #.. at the bottom of this very module.
   elif g <  99.5e9: (ecvt(s, g, 1);     
-                     s[1] = s[2]; s[2] = 'e'
-                     s[3] = if s.len==6: '9' else: chr(ord(s[4]) - 1)
+                     s[1] = s[2]; s[2] = 'e';
+                     s[3] = if s.len==6: '9' else: chr(ord(s[4]) - 1);
                      s.setLen 4)        # D.De10 -> DDe9
   elif g <  9.5e99:  ecvt(s, g, 0)
   else: s = "inf"
