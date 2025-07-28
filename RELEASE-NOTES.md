@@ -5,6 +5,9 @@ Version: 1.9.0
 --------------
   - Make some lib support more compatible with nim-1.2 era Nim again.
 
+  - Add cligen/mslice.parseHSlice as cligen/argcvt.argParse(HSlice) partner
+    for when slice specifications may be "inside" strings, not whole params.
+
 Version: 1.8.9
 --------------
   - Make `cligen/puSig` more robust to whatever stdlib declares for whatever

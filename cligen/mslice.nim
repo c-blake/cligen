@@ -731,6 +731,24 @@ proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
   ## Passing some `eoNum` & checking `eoNum==s.len` tests this condition.
   parseInts(s, 16'u, digits16, eoNum)
 
+proc parseHSlice*[T,U](s: MSlice|openArray[char]): HSlice[T,U] =
+  ## Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into `HSlice`.
+  ## Interpretation is up to caller/slice user.  Missing sides|non-numeric -> 0.
+  let s = s.strip
+  let fieldI = s.msplit('.')
+  let fieldX = s.msplit(':')
+  if fieldI.len>3 or fieldX.len>2 or s.len==0:
+    raise newException(IOError, "Bad slice: \"$1\" "%[$s])
+  if fieldX.len > 1:
+    result.a = fieldX[0].parseInt.T; result.b = fieldX[1].parseInt.U
+    result.b -= 1                       # make exclusive
+  elif fieldI.len > 2:
+    result.a = fieldI[0].parseInt.T; result.b = fieldI[2].parseInt.U
+  elif s.len > 0:
+    result.a = s.parseInt.T; result.b = result.a.U
+
+proc parseHSlice*[T,U](s: string): HSlice[T,U] = s.toMSlice.parseHSlice
+
 # May seem big, BUT <15% of L1 & real life cache line usage light (sim OOMags).
 const pow10*: array[-308..308, float] = [
  1e-308, 1e-307, 1e-306, 1e-305, 1e-304, 1e-303, 1e-302, 1e-301, 1e-300, 1e-299,
