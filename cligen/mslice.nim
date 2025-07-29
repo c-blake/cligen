@@ -734,18 +734,16 @@ proc parseHex*(s: MSlice|openArray[char]; eoNum: var int = doNotUse): int =
 proc parseHSlice*[T,U](s: MSlice|openArray[char]): HSlice[T,U] =
   ## Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into `HSlice`.
   ## Interpretation is up to caller/slice user.  Missing sides|non-numeric -> 0.
-  let s = s.strip
-  let fieldI = s.msplit('.')
-  let fieldX = s.msplit(':')
-  if fieldI.len>3 or fieldX.len>2 or s.len==0:
+  let s  = s.strip
+  let fI = s.msplit('.')        # I)nclusive syntax f)ield
+  let fX = s.msplit(':')        # X)clusive syntax f)ield
+  if s.len==0 or fI.len>3 or fX.len>2 or (fI.len>2 and fI[1].len != 0):
     raise newException(IOError, "Bad slice: \"$1\" "%[$s])
-  if fieldX.len > 1:
-    result.a = fieldX[0].parseInt.T; result.b = fieldX[1].parseInt.U
-    result.b -= 1                       # make exclusive
-  elif fieldI.len > 2:
-    result.a = fieldI[0].parseInt.T; result.b = fieldI[2].parseInt.U
-  elif s.len > 0:
-    result.a = s.parseInt.T; result.b = result.a.U
+  if fX.len > 1:
+    result.a = fX[0].parseInt.T; result.b = fX[1].parseInt.U
+    result.b -= 1               # Make exclusive
+  elif fI.len > 2: result.a = fI[0].parseInt.T; result.b = fI[2].parseInt.U
+  elif s.len > 0: result.a = s.parseInt.T; result.b = result.a.U
 
 proc parseHSlice*[T,U](s: string): HSlice[T,U] = s.toMSlice.parseHSlice
 
