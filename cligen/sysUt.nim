@@ -131,3 +131,15 @@ template `!!`*(kind; msg: string) =
   ## lets `raise newException(IOError, "")` become just `IO !! ""`.  It first
   ## tries `kind Error` and, if that is not in scope, falls back to `kind`.
   raise newException((when declared(`kind Error`):`kind Error` else:`kind`),msg)
+
+template cfor*(init, test, update, body: untyped) =
+  ## C-like for loop template.  May need () around arguments at call site.
+  ## Usage is like: `cfor (var i = 0), i < 16, i += 2: body`
+  block:
+    init                    #NOTE: Simpler `init; while test: body; update`
+    var updated = false     #      is a leaky abstraction; User must know to
+    while true:             #      not use `update`-skipping `continue`.
+      if updated: update    # Skip first update to be "top test; bottom update"
+      else: updated = true
+      if test: body
+      else: break
