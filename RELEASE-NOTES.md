@@ -8,6 +8,14 @@ Version: 1.9.0
   - Add cligen/mslice.parseHSlice as cligen/argcvt.argParse(HSlice) partner
     for when slice specifications may be "inside" strings, not whole params.
 
+  - Move `cfor` from `adix/xlang` to `cligen/sysUt`; Former is going away.
+
+  - Harden converting `MSlice(nil, 0)` -> Nim `""`
+
+Version: 1.8.10
+---------------
+  - Kind of a mistake - sorry.
+
 Version: 1.8.9
 --------------
   - Make `cligen/puSig` more robust to whatever stdlib declares for whatever
