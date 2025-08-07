@@ -128,6 +128,6 @@ proc decSat*[T: Ordinal](x: var T) =  (if x > T.low: dec x)
 
 template `!!`*(kind; msg: string) =
   ## Shorthand since most code initiates rather than propagates `raise`.  This
-  ## lets `raise newException(IOError, "")` become just `IO!""`.  It first tries
-  ## `kind Error` and, if that is not in scope, falls back to `kind`.
+  ## lets `raise newException(IOError, "")` become just `IO !! ""`.  It first
+  ## tries `kind Error` and, if that is not in scope, falls back to `kind`.
   raise newException((when declared(`kind Error`):`kind Error` else:`kind`),msg)
