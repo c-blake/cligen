@@ -56,7 +56,7 @@ proc rp(prelude="", begin="", where="true", stmts:seq[string], epilog="",
   var program = """import cligen/[mfile, mslice]
 $1 # {prelude}
 # {fields}
-$2 
+$2
 proc main() =
   var s: seq[MSlice] # CREATE TERSE NOTATION: row/s/i/f/nr/nf
   proc i(j: int): int   {.used.} = parseInt(s[j])

@@ -9,7 +9,7 @@ proc work(td: ThrDat) {.thread.} =
   var tot = td.subp[]                   # subp[] is part of a dense array
   for s in td.part[].mSlices('\n'):     #..ENSURING cache thrashing.  So,
     tot.inc                             #..shadow w/local updated only once.
-  td.subp[] = tot                 
+  td.subp[] = tot
 
 proc lc(path: string, n: int, untermOk=true, pparts=false): int =
   if (var (mf, parts) = n.nSplit(path); mf) != nil:     # file & sections

@@ -161,7 +161,7 @@ func ceilLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
     dec result                  # Want leading digit on [1,10)
   if x == pow10[result - 1]:    # Exact powers of 10 need 1 more `dec result`..
     dec result                  #..BUT also get leadingDig == 1.  So, cmp
-    
+
 func floorLog10(x: float): int {.inline.} = #NOTE: must clear x.sign first!
   if x == 0: return 0           # FPUs basically put int(log_2(x)) in exponent
   result = int(0.30102999566398119521 * float(x.expo + 1))
@@ -382,7 +382,7 @@ proc nearUnity4*(f: float): string =
   elif g <  9.995 :  fcvt(s, g, 2, {})  #.. '[12]' in either single digit repr.
   elif g <  99.95 :  fcvt(s, g, 1, {})  #.. This promise is confirmed by a test
   elif g <  9999.5:  fcvt(s, g, 0, {})  #.. at the bottom of this very module.
-  elif g <  99.5e9: (ecvt(s, g, 1);     
+  elif g <  99.5e9: (ecvt(s, g, 1);
                      s[1] = s[2]; s[2] = 'e';
                      s[3] = if s.len==6: '9' else: chr(ord(s[4]) - 1);
                      s.setLen 4)        # D.De10 -> DDe9

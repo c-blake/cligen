@@ -6,7 +6,7 @@ import core/macros, std/[strutils, os]
 proc maybeDestrop*(id: NimNode): NimNode =
   ## Used to remove stropping backticks \`\`, if present, from an ident node
   case id.kind
-  of nnkAccQuoted: id[0] 
+  of nnkAccQuoted: id[0]
   of nnkSym: newIdentNode($id)
   else: id
 

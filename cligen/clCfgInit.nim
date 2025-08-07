@@ -34,7 +34,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         case sec
         of "global","aliases","layout","syntax","color","render","templates":
           activeSection = sec
-        else:                   
+        else:
           stderr.write path & ":" & " unknown section " & e.section & "\n" &
             "Expecting: global aliases layout syntax color render templates\n"
           break

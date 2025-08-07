@@ -10,17 +10,17 @@ proc mask(es: set[Event]): uint32 =
   template `|=`(r, f) = r = r or f
   for e in es:
     case e
-    of inAccess    : result |= IN_ACCESS    
-    of inAttrib    : result |= IN_ATTRIB    
-    of inModify    : result |= IN_MODIFY    
-    of inOpen      : result |= IN_OPEN      
+    of inAccess    : result |= IN_ACCESS
+    of inAttrib    : result |= IN_ATTRIB
+    of inModify    : result |= IN_MODIFY
+    of inOpen      : result |= IN_OPEN
     of inCloseWr   : result |= IN_CLOSE_WRITE
     of inCloseNoWr : result |= IN_CLOSE_NOWRITE
-    of inMovedFrom : result |= IN_MOVED_FROM 
-    of inMovedTo   : result |= IN_MOVED_TO   
-    of inMoveSelf  : result |= IN_MOVE_SELF  
-    of inCreate    : result |= IN_CREATE    
-    of inDelete    : result |= IN_DELETE    
+    of inMovedFrom : result |= IN_MOVED_FROM
+    of inMovedTo   : result |= IN_MOVED_TO
+    of inMoveSelf  : result |= IN_MOVE_SELF
+    of inCreate    : result |= IN_CREATE
+    of inDelete    : result |= IN_DELETE
     of inDeleteSelf: result |= IN_DELETE_SELF
 
 iterator dqueue*(dir: string; events={inMovedTo, inCloseWr}):
