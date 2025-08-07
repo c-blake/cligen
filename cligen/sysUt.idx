@@ -22,4 +22,5 @@ nim	toPua	cligen/sysUt.html#toPua.t,ptr.T	template toPua[T](p: ptr T): untyped		
 nim	incSat	cligen/sysUt.html#incSat,T	proc incSat[T: Ordinal](x: var T)		124
 nim	decSat	cligen/sysUt.html#decSat,T	proc decSat[T: Ordinal](x: var T)		126
 nim	`!!`	cligen/sysUt.html#!!.t,,string	template `!!`(kind; msg: string)		129
+nim	cfor	cligen/sysUt.html#cfor.t,untyped,untyped,untyped,untyped	template cfor(init, test, update, body: untyped)		135
 nimgrp	topua	cligen/sysUt.html#toPua-templates-all	template		114

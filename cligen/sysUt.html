@@ -161,6 +161,10 @@
   <li><a class="reference" href="#%21%21.t%2C%2Cstring" title="`!!`(kind; msg: string)">`!!`(kind; msg: string)</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">cfor
+  <li><a class="reference" href="#cfor.t%2Cuntyped%2Cuntyped%2Cuntyped%2Cuntyped" title="cfor(init, test, update, body: untyped)">cfor(init, test, update, body: untyped)</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">pua
   <li><a class="reference" href="#pua.t%2Ctypedesc" title="pua(T: typedesc): untyped">pua(T: typedesc): untyped</a></li>
 
@@ -427,6 +431,17 @@
 </div>
 
 </div>
+<div id="cfor-templates-all">
+  <div id="cfor.t,untyped,untyped,untyped,untyped">
+  <dt><pre><span class="Keyword">template</span> <a href="#cfor.t%2Cuntyped%2Cuntyped%2Cuntyped%2Cuntyped"><span class="Identifier">cfor</span></a><span class="Other">(</span><span class="Identifier">init</span><span class="Other">,</span> <span class="Identifier">test</span><span class="Other">,</span> <span class="Identifier">update</span><span class="Other">,</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    C-like for loop template.  May need () around arguments at call site. Usage is like: <tt class="docutils literal"><span class="pre"><span class="Identifier">cfor</span> <span class="Punctuation">(</span><span class="Keyword">var</span> <span class="Identifier">i</span> <span class="Operator">=</span> <span class="DecNumber">0</span><span class="Punctuation">)</span><span class="Punctuation">,</span> <span class="Identifier">i</span> <span class="Operator">&lt;</span> <span class="DecNumber">16</span><span class="Punctuation">,</span> <span class="Identifier">i</span> <span class="Operator">+=</span> <span class="DecNumber">2</span><span class="Punctuation">:</span> <span class="Identifier">body</span></span></tt>
+    
+  </dd>
+</div>
+
+</div>
 <div id="pua-templates-all">
   <div id="pua.t,typedesc">
   <dt><pre><span class="Keyword">template</span> <a href="#pua.t%2Ctypedesc"><span class="Identifier">pua</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
@@ -478,7 +493,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-08-07 14:59:59 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-08-07 17:52:57 UTC</small>
       </div>
     </div>
   </div>
