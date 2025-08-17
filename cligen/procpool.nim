@@ -219,3 +219,34 @@ template eval*(pp, reqGen, onReply: untyped) {.deprecated: "use `eval0term`".} =
   eval0term(pp, reqGen, onReply)
 template evalp*(pp, reqGen, onReply: untyped) {.deprecated:"use `evalLenPfx`".}=
   evalLenPfx(pp, reqGen, onReply)
+
+proc nSplit*(length, nPart: int): seq[Slice[int]] =
+  ##[Make `seq[Slice]` w/equal len slices from ONLY `length` & number of parts.
+  `[^1]` catches any non-divisible remainder.  Like `(mfile|mslice).nSplit`.]##
+  let m = length div nPart
+  for j in 0 ..< nPart:
+    result.add j*m ..< j*m + m
+  result[^1].b = length - 1     # Any remainder -> final slice
+
+template forkJoin*(parts, kid, part, work) =
+  ##[ Manifest fork-join model via Unix fork.  Since it shares "set up" memory,
+  this is maybe easier than the IPC-to-workers model of the rest of `procpool`.
+  It forks kids to `work` on `kid`, `part` in each of `pairs`-iterable `parts`.
+  The loop waits for the slowest ("join").  So, nearly balanced real-time costs
+  maximizes utilization.  Example:
+
+   .. code-block:: nim
+      let ns = collect(for j in 1..100: j)  # You probably get this elsewhere
+      ns.len.nSplit(5).forkJoin(p, part):   # Break into 5 chunks; Odd->Last
+        let o = open(&"o.{p:02d}", fmWrite) # Part-private output
+        for j in ns[part]: o.write j, "\n"  # Do something on `ns[slice]` ]##
+  var pids: seq[Pid]
+  for kid, part in parts:
+    if (let pid = fork(); pid != 0):
+      pids.add pid
+    else:
+      work          # Can use idents passed for `kid` and `slice`
+      quit 0
+  var st: cint      # Could perhaps query time here and warn on..
+  for pid in pids:  #..highly unbalanced loads across parts.
+    discard waitpid(pid, st, 0.cint)

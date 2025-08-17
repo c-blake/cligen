@@ -1,6 +1,12 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.1
+--------------
+  - Add a simple to use, Unix-only `procpool.forkJoin` template and a new
+    `nSplit` like `(mfile|mslice).nSplit` but using only length & nPart.
+    This can be nice for a special case of even real-time costs for each part.
+
 Version: 1.9.0
 --------------
   - Make some lib support more compatible with nim-1.2 era Nim again.
