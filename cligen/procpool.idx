@@ -20,3 +20,5 @@ nim	evalLines	cligen/procpool.html#evalLines.t,,,	template evalLines(pp, reqGen,
 nim	frames0	cligen/procpool.html#frames0,Filter	proc frames0(f: var Filter): (iterator (): MSlice)		216
 nim	eval	cligen/procpool.html#eval.t,untyped,untyped,untyped	template eval(pp, reqGen, onReply: untyped)		218
 nim	evalp	cligen/procpool.html#evalp.t,untyped,untyped,untyped	template evalp(pp, reqGen, onReply: untyped)		220
+nim	nSplit	cligen/procpool.html#nSplit,int,int	proc nSplit(length, nPart: int): seq[Slice[int]]		223
+nim	forkJoin	cligen/procpool.html#forkJoin.t,,,,	template forkJoin(parts, kid, part, work)		231

@@ -112,6 +112,10 @@
   <li><a class="reference" href="#noop%2CMSlice" title="noop(s: MSlice)">noop(s: MSlice)</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">nSplit
+  <li><a class="reference" href="#nSplit%2Cint%2Cint" title="nSplit(length, nPart: int): seq[Slice[int]]">nSplit(length, nPart: int): seq[Slice[int]]</a></li>
+
+</ul>
 
     </ul>
   </details>
@@ -158,6 +162,10 @@
 </ul>
 <ul class="simple nested-toc-section">evalp
   <li><a class="reference" href="#evalp.t%2Cuntyped%2Cuntyped%2Cuntyped" title="evalp(pp, reqGen, onReply: untyped)">evalp(pp, reqGen, onReply: untyped)</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">forkJoin
+  <li><a class="reference" href="#forkJoin.t%2C%2C%2C%2C" title="forkJoin(parts, kid, part, work)">forkJoin(parts, kid, part, work)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">wrReq
@@ -341,6 +349,18 @@
 </div>
 
 </div>
+<div id="nSplit-procs-all">
+  <div id="nSplit,int,int">
+  <dt><pre><span class="Keyword">proc</span> <a href="#nSplit%2Cint%2Cint"><span class="Identifier">nSplit</span></a><span class="Other">(</span><span class="Identifier">length</span><span class="Other">,</span> <span class="Identifier">nPart</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Make <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">Slice</span><span class="Punctuation">]</span></span></tt> w/equal len slices from ONLY <tt class="docutils literal"><span class="pre"><span class="Identifier">length</span></span></tt> &amp; number of parts. <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Operator">^</span><span class="DecNumber">1</span><span class="Punctuation">]</span></span></tt> catches any non-divisible remainder.  Like <tt class="docutils literal"><span class="pre"><span class="Punctuation">(</span><span class="Identifier">mfile</span><span class="Operator">|</span><span class="Identifier">mslice</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">nSplit</span></span></tt>.
+    
+  </dd>
+</div>
+
+</div>
 
   </dl>
 </div>
@@ -449,6 +469,18 @@
 </div>
 
 </div>
+<div id="forkJoin-templates-all">
+  <div id="forkJoin.t,,,,">
+  <dt><pre><span class="Keyword">template</span> <a href="#forkJoin.t%2C%2C%2C%2C"><span class="Identifier">forkJoin</span></a><span class="Other">(</span><span class="Identifier">parts</span><span class="Other">,</span> <span class="Identifier">kid</span><span class="Other">,</span> <span class="Identifier">part</span><span class="Other">,</span> <span class="Identifier">work</span><span class="Other">)</span></pre></dt>
+  <dd>
+    
+    Manifest fork-join model via Unix fork.  Since it shares &quot;set up&quot; memory, this is maybe easier than the IPC-to-workers model of the rest of <tt class="docutils literal"><span class="pre"><span class="Identifier">procpool</span></span></tt>. It forks kids to <tt class="docutils literal"><span class="pre"><span class="Identifier">work</span></span></tt> on <tt class="docutils literal"><span class="pre"><span class="Identifier">kid</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">part</span></span></tt> in each of <tt class="docutils literal"><span class="pre"><span class="Identifier">pairs</span></span></tt>-iterable <tt class="docutils literal"><span class="pre"><span class="Identifier">parts</span></span></tt>. The loop waits for the slowest (&quot;join&quot;).  So, nearly balanced real-time costs maximizes utilization.  Example:<p>let ns = collect(for j in 1..100: j)  # You probably get this elsewhere ns.len.nSplit(5).forkJoin(p, part):   # Break into 5 chunks; Odd-&gt;Last let o = open(&amp;&quot;o.{p:02d}&quot;, fmWrite) # Part-private output for j in ns<a class="reference internal" href="#part">part</a>: o.write j, &quot;n&quot;  # Do something on <tt class="docutils literal"><span class="pre"><span class="Identifier">ns</span><span class="Punctuation">[</span><span class="Identifier">slice</span><span class="Punctuation">]</span></span></tt> </p>
+
+    
+  </dd>
+</div>
+
+</div>
 <div id="wrReq-templates-all">
   <div id="wrReq.t,,,,,">
   <dt><pre><span class="Keyword">template</span> <a href="#wrReq.t%2C%2C%2C%2C%2C"><span class="Identifier">wrReq</span></a><span class="Other">(</span><span class="Identifier">fds</span><span class="Other">,</span> <span class="Identifier">i0</span><span class="Other">,</span> <span class="Identifier">pp</span><span class="Other">,</span> <span class="Identifier">wr</span><span class="Other">,</span> <span class="Identifier">rq</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
@@ -470,7 +502,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-08-07 18:33:12 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-08-17 12:31:27 UTC</small>
       </div>
     </div>
   </div>
