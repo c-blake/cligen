@@ -104,12 +104,12 @@ proc newSeqNoInit*[T: CopyMemable](len: Natural): seq[T] =
   when defined(nimSeqsV2): cast[ptr int](addr result)[] = len
   else: result.setLen len
 
-template toOa*[T](p: pointer; a, b: int): untyped =
-  ## Make an openArray from ptr, range triple.
-  toOpenArray[T](cast[ptr UncheckedArray[T]](p), a, b)
-
 template pua*(T: typedesc): untyped = ptr UncheckedArray[T]
   ## Shorthand for verbose `ptr Unchecked Array`.
+
+template toOa*[T](p: pointer; a, b: int): untyped =
+  ## Make an openArray from ptr, range triple.
+  toOpenArray[T](cast[pua T](p), a, b)
 
 template toPua*[T](x: openArray[T]): untyped =
   ## "safe" (if returning `nil` can be viewed as "safe") conversion.
