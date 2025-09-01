@@ -1230,26 +1230,26 @@ function groupBy(value_p0) {
   
 }
 
-function HEX5BHEX5D__pureZstrutils_u1307(s_p0, x_p1) {
-  var result_721421600 = [];
+function HEX5BHEX5D__pureZstrutils_u1308(s_p0, x_p1) {
+  var result_721421601 = [];
 
-    var a_721421602 = x_p1.a;
-    var L_721421604 = addInt(subInt(subInt((s_p0).length, x_p1.b), a_721421602), 1);
-    result_721421600 = nimCopy(null, mnewString(chckRange(L_721421604, 0, 2147483647)), NTI33554449);
+    var a_721421603 = x_p1.a;
+    var L_721421605 = addInt(subInt(subInt((s_p0).length, x_p1.b), a_721421603), 1);
+    result_721421601 = nimCopy(null, mnewString(chckRange(L_721421605, 0, 2147483647)), NTI33554449);
     Label1: {
-      var i_721421609 = 0;
+      var i_721421610 = 0;
       var i_553649430 = 0;
       Label2: {
           Label3: while (true) {
-          if (!(i_553649430 < L_721421604)) break Label3;
-            i_721421609 = i_553649430;
-            result_721421600[chckIndx(i_721421609, 0, (result_721421600).length - 1)] = s_p0[chckIndx(addInt(i_721421609, a_721421602), 0, (s_p0).length - 1)];
+          if (!(i_553649430 < L_721421605)) break Label3;
+            i_721421610 = i_553649430;
+            result_721421601[chckIndx(i_721421610, 0, (result_721421601).length - 1)] = s_p0[chckIndx(addInt(i_721421610, a_721421603), 0, (s_p0).length - 1)];
             i_553649430 = addInt(i_553649430, 1);
           }
       };
     };
 
-  return result_721421600;
+  return result_721421601;
 
 }
 
@@ -1266,7 +1266,7 @@ async function loadIndex__dochack_u928() {
 
   BeforeRet: {
     var indexURL_553649064 = document.getElementById("indexLink").getAttribute("href");
-    var rootURL_553649090 = HEX5BHEX5D__pureZstrutils_u1307(cstrToNimstr(indexURL_553649064), HEX2EHEX2E__stdZenumutils_u105(0, 14));
+    var rootURL_553649090 = HEX5BHEX5D__pureZstrutils_u1308(cstrToNimstr(indexURL_553649064), HEX2EHEX2E__stdZenumutils_u105(0, 14));
     var resp_553649102 = (await (await fetch(indexURL_553649064)).text());
     var indexElem_553649103 = document.createElement("div");
     indexElem_553649103.innerHTML = resp_553649102;
@@ -1314,17 +1314,17 @@ function then__dochack_u1107(future_p0, onSuccess_p1, onReject_p2) {
 }
 
 function nsuToLowerAsciiChar(c_p0) {
-  var result_721420374 = 0;
+  var result_721420375 = 0;
 
     if ((ConstSet2[c_p0] != undefined)) {
-    result_721420374 = (c_p0 ^ 32);
+    result_721420375 = (c_p0 ^ 32);
     }
     else {
-      result_721420374 = c_p0;
+      result_721420375 = c_p0;
     }
     
 
-  return result_721420374;
+  return result_721420375;
 
 }
 
