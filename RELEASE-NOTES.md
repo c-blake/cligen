@@ -7,6 +7,22 @@ Version: 1.9.1
     `nSplit` like `(mfile|mslice).nSplit` but using only length & nPart.
     This can be nice for a special case of even real-time costs for each part.
 
+  - Fix long-standing deficit of `HSlice[T, U]` parsing in `cligen/argcvt` which
+    got imitated in the new `mslice.parseHSlice`.  This version changes those
+    conventions in a potentially BREAKING way (but also maybe unnoticeable).
+    Specifically, prior to this change, ":" => `.a=0,.b=0`, but so encoding the
+    "all slice" blocks interpreting "0:1", "0..0" or "0", priorly undocumented)
+    which all parse to the very same object.  After this change we encode the
+    "all slice" as instead `.a=0.T, .b=U.high`.  For floats this can even be
+    `.b=Inf`.  Bounding range from above within remains up to the caller.  A
+    common use of such slices as index ranges does something like this:
+```Nim
+let a = max(0, min(X.len-1, if slice.a < 0: X.len + slice.a else: slice.a))
+let b = max(0, min(X.len-1, if slice.b < 0: X.len + slice.b else: slice.b))
+```
+    (but depending on context, you might want `X.len`, not `X.len-1` or it may
+    only be getting used as a "range", not for indexing, etc.)
+
 Version: 1.9.0
 --------------
   - Make some lib support more compatible with nim-1.2 era Nim again.

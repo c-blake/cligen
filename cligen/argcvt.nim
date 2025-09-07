@@ -207,8 +207,9 @@ proc argHelp*[T: SomeNumber](dfl: T, a: var ArgcvtParams): seq[string] =
 
 proc argParse*[T,U](dst: var HSlice[T,U], dfl: HSlice[T,U],
                     a: var ArgcvtParams): bool =
-  ## Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into `HSlice`.
-  ## Interpretation is up to caller/slice user.  Missing sides get 0.
+  ## Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into `HSlice`. Call
+  ## site must interpret, but missing LHS -> `0` & missing RHS -> `U.high`.
+  ## No operator at all (e.g. "1") parses to the unit-length slice 1..1.
   let inp = a.val.strip
   let fieldI = inp.split("..")
   let fieldX = inp.split(":")
@@ -222,9 +223,9 @@ proc argParse*[T,U](dst: var HSlice[T,U], dfl: HSlice[T,U],
     else: dst.a = 0
     if fieldX[1].len > 0:
       a.val = fieldX[1]
-      if not argParse(dst.b, dfl.b, a): return
+      if not argParse(dst.b, dfl.b, a): dst.b = U.high; return
       dst.b -= 1                        # make exclusive
-    else: dst.b = 0
+    else: dst.b = U.high
   elif fieldI.len > 1:
     if fieldI[0].len > 0:
       a.val = fieldI[0]
@@ -232,8 +233,8 @@ proc argParse*[T,U](dst: var HSlice[T,U], dfl: HSlice[T,U],
     else: dst.a = 0
     if fieldI[1].len > 0:
       a.val = fieldI[1]
-      if not argParse(dst.b, dfl.b, a): return
-    else: dst.b = 0
+      if not argParse(dst.b, dfl.b, a): dst.b = U.high; return
+    else: dst.b = U.high
   elif inp.len > 0:
     a.val = inp
     if not argParse(dst.a, dfl.a, a): return
