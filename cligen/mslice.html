@@ -1291,7 +1291,7 @@
   <dt><pre><span class="Keyword">proc</span> <a href="#parseHSlice"><span class="Identifier">parseHSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> <span class="Operator">|</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span></pre></dt>
   <dd>
     
-    Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into <tt class="docutils literal"><span class="pre"><span class="Identifier">HSlice</span></span></tt>. Interpretation is up to caller/slice user.  Missing sides|non-numeric -&gt; 0.
+    Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into <tt class="docutils literal"><span class="pre"><span class="Identifier">HSlice</span></span></tt>. Call site must interpret, but missing LHS -&gt; <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt> &amp; missing RHS -&gt; <tt class="docutils literal"><span class="pre"><span class="Identifier">U</span><span class="Operator">.</span><span class="Identifier">high</span></span></tt>. No operator at all (e.g. &quot;1&quot;) parses to the unit-length slice 1..1.
     
   </dd>
 </div>
@@ -1724,7 +1724,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-01 13:08:23 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-07 16:49:37 UTC</small>
       </div>
     </div>
   </div>

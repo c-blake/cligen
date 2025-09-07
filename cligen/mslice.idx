@@ -95,9 +95,9 @@ nim	parseOct	cligen/mslice.html#parseOct,,int	proc parseOct(s: MSlice | openArra
 nim	parseInt	cligen/mslice.html#parseInt,,int	proc parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		724
 nim	parseHex	cligen/mslice.html#parseHex,,int	proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		729
 nim	parseHSlice	cligen/mslice.html#parseHSlice	proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]		734
-nim	parseHSlice	cligen/mslice.html#parseHSlice,string	proc parseHSlice[T, U](s: string): HSlice[T, U]		748
-nim	pow10	cligen/mslice.html#pow10	const pow10		751
-nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		810
+nim	parseHSlice	cligen/mslice.html#parseHSlice,string	proc parseHSlice[T, U](s: string): HSlice[T, U]		755
+nim	pow10	cligen/mslice.html#pow10	const pow10		758
+nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		817
 nimgrp	tomslice	cligen/mslice.html#toMSlice-procs-all	proc		41
 nimgrp	splitr	cligen/mslice.html#splitr-procs-all	proc		473
 nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		21
