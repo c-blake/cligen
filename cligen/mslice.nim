@@ -99,22 +99,22 @@ proc mem*(s: openArray[char]): pointer =
 
 proc startsWith*(s: MSlice, pfx: SomeString): bool =
   ## Like `strutils.startsWith`.
-  pfx.len>0 and s.len>pfx.len and cmemcmp(s.mem, pfx.mem, pfx.len.csize_t) == 0
+  pfx.len>0 and s.len>pfx.len and cmemcmp(s.mem, pfx.mem, pfx.len.csize) == 0
 
 proc endsWith*(s: MSlice, sfx: SomeString): bool =
   ## Like `strutils.endsWith`.
   sfx.len>0 and s.len>sfx.len and
-    cmemcmp(s.mem +! (s.len - sfx.len), sfx.mem, sfx.len.csize_t) == 0
+    cmemcmp(s.mem +! (s.len - sfx.len), sfx.mem, sfx.len.csize) == 0
 
 proc find*(s: MSlice, sub: SomeString): int =
   ## Like `strutils.find`.
-  let p = cmemmem(s.mem, s.len.csize_t, sub.mem, sub.len.csize_t)
+  let p = cmemmem(s.mem, s.len.csize, sub.mem, sub.len.csize)
   if p.isNil: -1 else: p -! s.mem
 
 proc find*(s, sub: MSlice, start: Natural = 0): int =
   ## Like `strutils.find`.
   let (hay, nHay) = (s.mem +! start, s.len - start)
-  let p = cmemmem(hay, nHay.csize_t, sub.mem, sub.len.csize_t)
+  let p = cmemmem(hay, nHay.csize, sub.mem, sub.len.csize)
   if p.isNil: -1 else: p -! s.mem
 
 func find*(s: MSlice, sub: char, start: Natural = 0, last = -1): int =

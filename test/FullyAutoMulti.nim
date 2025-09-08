@@ -5,7 +5,7 @@
 ##
 ## Some more description.
 
-{.define(cgCfgToml).}
+# {.define(cgCfgToml).}  # Uncomment shows similarity of parsecfg&TOML .cf files
 when not declared(addFloat): import std/formatfloat
 var xx = 3  # An outer scope variable, e.g. logLvl
 

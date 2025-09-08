@@ -100,7 +100,7 @@ iterator printedChars*(s:openArray[char],skip=0,lim=int.high): (Slice[int],int)=
           if s[i] in eoSGR: is0 = true; break
           i += 1
         i += 1                          # Include 'm'
-    elif (let c = s[i].uint; c > 127):  # UTF8 multi-byte input
+    elif (let c = s[i].uint; c > 127'u):  # UTF8 multi-byte input
       let x = if   c shr 5 == 0b110:     2 elif c shr 4 == 0b1110:   3
               elif c shr 3 == 0b11110:   4 elif c shr 2 == 0b111110: 5
               elif c shr 1 == 0b1111110: 6 else: 0
