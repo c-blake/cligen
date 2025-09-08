@@ -90,9 +90,9 @@
 
 </ul>
 <ul class="simple nested-toc-section">distDamerau
-  <li><a class="reference" href="#distDamerau%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cseq%5BC%5D" title="distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);
-               xpoC = C(1); dI: var seq[C]): C">distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);
-               xpoC = C(1); dI: var seq[C]): C</a></li>
+  <li><a class="reference" href="#distDamerau%2CopenArray%5Bchar%5D%2CopenArray%5Bchar%5D%2Cint%2Cint%2Cint%2Cint%2Cseq%5BC%5D" title="distDamerau[C: SomeInteger](a, b: openArray[char]; maxDist = -1; idC = 1;
+                            subC = 1; xpoC = 1; dI: var seq[C]): C">distDamerau[C: SomeInteger](a, b: openArray[char]; maxDist = -1; idC = 1;
+                            subC = 1; xpoC = 1; dI: var seq[C]): C</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">getAll
@@ -130,9 +130,9 @@
 
 </ul>
 <ul class="simple nested-toc-section">suggestions
-  <li><a class="reference" href="#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint" title="suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
-               unrelatedDistance = C(4)): seq[string]">suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
-               unrelatedDistance = C(4)): seq[string]</a></li>
+  <li><a class="reference" href="#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint%2Cint16" title="suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
+               unrelatedDistance = 4'i16): seq[string]">suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
+               unrelatedDistance = 4'i16): seq[string]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">termAlign
@@ -265,12 +265,12 @@
 
 </div>
 <div id="distDamerau-procs-all">
-  <div id="distDamerau,openArray[T],openArray[T],seq[C]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#distDamerau%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cseq%5BC%5D"><span class="Identifier">distDamerau</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">maxDist</span> <span class="Other">=</span> <span class="Identifier">mxC</span><span class="Other">;</span> <span class="Identifier">idC</span> <span class="Other">=</span> <span class="Identifier">C</span><span class="Other">(</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">subC</span> <span class="Other">=</span> <span class="Identifier">C</span><span class="Other">(</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">;</span>
-                    <span class="Identifier">xpoC</span> <span class="Other">=</span> <span class="Identifier">C</span><span class="Other">(</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">dI</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">C</span></pre></dt>
+  <div id="distDamerau,openArray[char],openArray[char],int,int,int,int,seq[C]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#distDamerau%2CopenArray%5Bchar%5D%2CopenArray%5Bchar%5D%2Cint%2Cint%2Cint%2Cint%2Cseq%5BC%5D"><span class="Identifier">distDamerau</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">:</span> <span class="Identifier">SomeInteger</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">maxDist</span> <span class="Other">=</span> <span class="DecNumber">-1</span><span class="Other">;</span> <span class="Identifier">idC</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span>
+                                 <span class="Identifier">subC</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">xpoC</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">dI</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">C</span></pre></dt>
   <dd>
     
-    True Damerau (1964) distance with unrestricted transpositions (not OSA) and user cost scales for ins-del, substitute, transposition.  For details see: <a class="reference external" href="https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance">https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance</a>
+    True Damerau (1964) distance with unrestricted transpositions (not OSA) &amp; user costs for ins-del(<tt class="docutils literal"><span class="pre"><span class="Identifier">idC</span></span></tt>), substitution(<tt class="docutils literal"><span class="pre"><span class="Identifier">subC</span></span></tt>), transposition(<tt class="docutils literal"><span class="pre"><span class="Identifier">xpoC</span></span></tt>). This is basically just a translation to Nim of the algo at: en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#Distance_with_adjacent_transpositions but here we add cost weight &amp; allow <tt class="docutils literal"><span class="pre"><span class="Identifier">dI</span></span></tt>, a single workspace to be re-used by outer loop distance matrix/list purposes.  <tt class="docutils literal"><span class="pre"><span class="Identifier">C</span></span></tt> needs to be a wide enough integer to hold the maximum distance which is <tt class="docutils literal"><span class="pre"><span class="Operator">&gt;=</span> <span class="DecNumber">0</span> <span class="Operator">&amp;</span> <span class="Operator">==</span><span class="Punctuation">(</span><span class="Identifier">n</span><span class="Operator">+</span><span class="Identifier">m</span><span class="Punctuation">)</span><span class="Operator">*</span><span class="Identifier">maxCost</span></span></tt>.
     
   </dd>
 </div>
@@ -372,9 +372,9 @@
 
 </div>
 <div id="suggestions-procs-all">
-  <div id="suggestions,string,openArray[T],openArray[T],int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint"><span class="Identifier">suggestions</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">wrong</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">match</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span>
-                    <span class="Identifier">enoughResults</span> <span class="Other">=</span> <span class="DecNumber">3</span><span class="Other">;</span> <span class="Identifier">unrelatedDistance</span> <span class="Other">=</span> <span class="Identifier">C</span><span class="Other">(</span><span class="DecNumber">4</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <div id="suggestions,string,openArray[T],openArray[T],int,int16">
+  <dt><pre><span class="Keyword">proc</span> <a href="#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint%2Cint16"><span class="Identifier">suggestions</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">wrong</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">match</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span>
+                    <span class="Identifier">enoughResults</span> <span class="Other">=</span> <span class="DecNumber">3</span><span class="Other">;</span> <span class="Identifier">unrelatedDistance</span> <span class="Other">=</span> <span class="DecNumber">4'i16</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Return entries from <tt class="docutils literal"><span class="pre"><span class="Identifier">right</span></span></tt> if the parallel entry in <tt class="docutils literal"><span class="pre"><span class="Identifier">match</span></span></tt> is &quot;close&quot; to <tt class="docutils literal"><span class="pre"><span class="Identifier">wrong</span></span></tt> in order of (in Damerau distance units).  Considering further distances is halted once result has <tt class="docutils literal"><span class="pre"><span class="Identifier">enoughResults</span></span></tt> (but all suggestions for a given distance are included).  Matches &gt;= <tt class="docutils literal"><span class="pre"><span class="Identifier">unrelatedDistance</span></span></tt> are not considered.
@@ -507,7 +507,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-08 18:19:45 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-08 23:37:46 UTC</small>
       </div>
     </div>
   </div>

@@ -694,9 +694,9 @@
           </ul></dd>
 <dt><a name="distDamerau" href="#distDamerau"><span>distDamerau:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="textUt: proc distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);
-               xpoC = C(1); dI: var seq[C]): C" href="cligen/textUt.html#distDamerau%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cseq%5BC%5D">textUt: proc distDamerau[T](a, b: openArray[T]; maxDist = mxC; idC = C(1); subC = C(1);
-               xpoC = C(1); dI: var seq[C]): C</a></li>
+          data-doc-search-tag="textUt: proc distDamerau[C: SomeInteger](a, b: openArray[char]; maxDist = -1; idC = 1;
+                            subC = 1; xpoC = 1; dI: var seq[C]): C" href="cligen/textUt.html#distDamerau%2CopenArray%5Bchar%5D%2CopenArray%5Bchar%5D%2Cint%2Cint%2Cint%2Cint%2Cseq%5BC%5D">textUt: proc distDamerau[C: SomeInteger](a, b: openArray[char]; maxDist = -1; idC = 1;
+                            subC = 1; xpoC = 1; dI: var seq[C]): C</a></li>
           </ul></dd>
 <dt><a name="docCommentAdd" href="#docCommentAdd"><span>docCommentAdd:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2901,8 +2901,8 @@
 <dt><a name="suggestions" href="#suggestions"><span>suggestions:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="textUt: proc suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
-               unrelatedDistance = C(4)): seq[string]" href="cligen/textUt.html#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint">textUt: proc suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
-               unrelatedDistance = C(4)): seq[string]</a></li>
+               unrelatedDistance = 4'i16): seq[string]" href="cligen/textUt.html#suggestions%2Cstring%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2Cint%2Cint16">textUt: proc suggestions[T](wrong: string; match, right: openArray[T]; enoughResults = 3;
+               unrelatedDistance = 4'i16): seq[string]</a></li>
           </ul></dd>
 <dt><a name="summaryOfModule" href="#summaryOfModule"><span>summaryOfModule:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -3328,7 +3328,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-08 18:19:45 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-09-08 23:37:47 UTC</small>
       </div>
     </div>
   </div>
