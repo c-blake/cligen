@@ -305,44 +305,50 @@ proc alignTable*(tab: TextTab, prefixLen=0, colGap=2, minLast=16, rowSep="",
         result &= repeat(" ", leader) & wrapped[j] & "\n"
       result &= repeat(" ",leader) & wrapped[^1] & attrOff[last] & "\n" & rowSep
 
-type C = int16      ##Type for edit cost values & totals
-const mxC = C.high
-proc distDamerau*[T](a, b: openArray[T], maxDist=mxC,
-                     idC=C(1), subC=C(1), xpoC=C(1), dI: var seq[C]): C =
-  ## True Damerau (1964) distance with unrestricted transpositions (not OSA) and
-  ## user cost scales for ins-del, substitute, transposition.  For details see:
-  ## https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
-  var n = a.len                         #ensure 2nd arg shorter (m < n)
-  var m = b.len     #XXX Ukkonen/Berghel or even faster Myers/Hyyro?
-  if abs(n - m) * int(idC) >= int(maxDist):
-    return maxDist
-  let subCeff = min(C(2) * idC, subC)   #effective cost; Can sub w/del+ins
-  template d(i, j: C): auto = dI[(C(m) + C(2))*(i) + (j)]
-  template dA(i: C): auto = dI[(C(m) + C(2))*(C(n) + C(2)) + (i)]
-  let big = C(n + m) * idC
-  dI.setLen((n + 2) * (m + 2) + 256)
-  zeroMem(addr dA(0), 256 * sizeof(C))
-  d(C(0), C(0)) = big
-  for i in C(0) .. C(n):
-    d(i+C(1), C(1)) = C(i) * idC
-    d(i+C(1), C(0)) = big
-  for j in C(0) .. C(m):
-    d(C(1), j+1) = C(j) * idC
-    d(C(0), j+1) = big
-  for i in C(1) .. C(n):
-    var dB = C(0)
-    for j in C(1) .. C(m):
-      let i1 = dA(C(b[j - 1]))
-      let j1 = dB
-      let cost = if a[i-1] == b[j-1]: C(0) else: C(1)
-      if cost == 0:
-        dB = j
-      d(i+C(1), j+C(1)) = min(d(i1, j1) + (i-i1-C(1) + C(1) + j-j1-C(1)) * xpoC,
-                            min(d(i, j) + cost * subCeff,
-                                min(d(i+1, j) + idC,
-                                    d(i  , j+1) + idC)))
-    dA(C(a[i-1])) = i
-  return min(maxDist, d(C(n)+C(1), C(m)+C(1)))
+proc distDamerau*[C: SomeInteger](a, b: openArray[char], maxDist = -1,
+                                  idC=1, subC=1, xpoC=1, dI: var seq[C]): C =
+  ## True Damerau (1964) distance with unrestricted transpositions (not OSA) &
+  ## user costs for ins-del(`idC`), substitution(`subC`), transposition(`xpoC`).
+  ## This is basically just a translation to Nim of the algo at:
+  ##   en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#Distance_with_adjacent_transpositions
+  ## but here we add cost weight & allow `dI`, a single workspace to be re-used
+  ## by outer loop distance matrix/list purposes.  `C` needs to be a wide enough
+  ## integer to hold the maximum distance which is `>= 0 & ==(n+m)*maxCost`.
+  let maxDist = if maxDist == -1: high(C) else: C(maxDist)
+  var n = a.len; var m = b.len
+  if abs(n - m)*idC >= int(maxDist):    # Fast early return if distance ..
+    return maxDist                      #.. MUST be >= maxDist due to δlen.
+  if (let dMax = (n + m)*max(idC, max(xpoC, subC)); dMax > int(high(C))):
+    raise newException(ValueError, "max distance " & $dMax & " too big for " &
+                       " `C` whose max is " & $high(C))
+  let subC = min(subC, idC + idC)       # sub cannot cost > 1delete+1insert
+  let N = n + 2; let M = m + 2          # These 2 templates implement ..
+  template d(i, j): auto = dI[M*i + j]  #.. char-by-char distance matrix &
+  template dA(k)  : auto = dI[M*N + k]  #.. per-char last row for ch array.
+# `d(i,j)` -> dist.between a's prefix of len `i-1` & b's prefix of len `j-1`
+  dI.setLen(N*M + 256)                  # Alphabet-sized array; 256 here is
+  zeroMem(addr dA(0), 256*sizeof(C))    #..the only dependence on `char`.
+  let big = C((n + m)*max(idC, max(xpoC, subC))) # A sentinel > any organic dist
+  d(0, 0) = big                         # Establish boundary conds/base case
+  for i in 0..n: d(i+1, 0) = big; d(i+1, 1) = C(i*idC) # Too big; Del from a
+  for j in 0..m: d(0, j+1) = big; d(1, j+1) = C(j*idC) # Too big; Ins into b
+  for i in 1..n:        # Rows (chars of a);  MAIN UNPACKED, MEMOIZED RECURSION
+    var dB = C(0)       # Last col `j` in this row where a[i-1] was found in b
+    for j in 1..m:      # Columns (chars of b)
+# Find the last time current chars appeared to set up a potential transposition.
+      let i1 = dA(int(b[j-1]))          # Last row where `b[j-1]` seen in `a`
+      let j1 = dB                       # Last col where `a[i-1]` seen in `b`
+      let diff = C(if a[i-1]==b[j-1]: 0 else: 1) # "differs" flag/cost; Same->0
+      if diff == 0: dB = C(j)           # Save spot for next `j1`
+      let nIns = i - i1 - 1
+      let nDel = j - j1 - 1
+      #                 Old cost      New Cost; 4-way cost minimization:
+      d(i+1, j+1) = min(d(i1 , j1 ) + C((nIns + diff + nDel)*xpoC), # transpose
+                    min(d( i ,  j ) + C(diff*subC),                 # substitute
+                    min(d(i+1,  j ) + C(idC),                       # insert
+                        d( i , j+1) + C(idC))))                     # delete
+    dA(int(a[i-1])) = C(i)              # Update last row for char (future `i1`)
+  return min(maxDist, d(N-1, M-1))
 
 proc initCritBitTree*[T](): CritBitTree[T] =
   ##A constructor sometimes helpful when replacing ``Table[string,T]`` with
@@ -375,18 +381,18 @@ proc keys*[T](x: seq[tuple[key: string, val: T]]): seq[string] =
   {.pop.}
 
 proc suggestions*[T](wrong: string; match, right: openArray[T],
-                     enoughResults=3, unrelatedDistance=C(4)): seq[string] =
+                     enoughResults=3, unrelatedDistance=4'i16): seq[string] =
   ## Return entries from `right` if the parallel entry in `match` is "close"
   ## to `wrong` in order of (in Damerau distance units).  Considering further
   ## distances is halted once result has `enoughResults` (but all suggestions
   ## for a given distance are included).  Matches >= `unrelatedDistance` are
   ## not considered.
-  var dI, dist: seq[C]        #dI for Damerau & seq parallel to `match`,`right`
+  var dI, dist: seq[int16]    #dI for Damerau & seq parallel to `match`,`right`
   if match.len != right.len:
     raise newException(ValueError, "match.len must equal right.len")
   for m in match:                         #Distance calc slow => save answers
-    dist.add(distDamerau(wrong, m, maxDist=C(unrelatedDistance), dI=dI))
-  for d in C(0) ..< C(unrelatedDistance):  #Expanding distances from zero
+    dist.add(distDamerau(wrong, m, maxDist=int16(unrelatedDistance), dI=dI))
+  for d in 0'i16 ..< int16(unrelatedDistance):  #Expanding distances from zero
     for i in 0 ..< match.len:
       if right[i] notin result and dist[i] <= d:
         result.add(right[i])
@@ -495,3 +501,7 @@ proc toSetChar*(s: string, unescape=false): set[char] =
   ## Make & return character set built from a string, maybe un-escaping.
   if unescape: (for c in s.unescaped: result.incl c)
   else: (for c in s: result.incl c)
+
+when isMainModule:
+  if paramCount() > 1:
+    var dI: seq[uint16]; echo distDamerau(paramStr(1), paramStr(2), dI=dI)
