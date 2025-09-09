@@ -336,9 +336,9 @@ proc distDamerau*[C: SomeInteger](a, b: openArray[char], maxDist = -1,
     var dB = C(0)       # Last col `j` in this row where a[i-1] was found in b
     for j in 1..m:      # Columns (chars of b)
 # Find the last time current chars appeared to set up a potential transposition.
-      let i1 = dA(int(b[j-1]))          # Last row where `b[j-1]` seen in `a`
-      let j1 = dB                       # Last col where `a[i-1]` seen in `b`
-      let diff = C(if a[i-1]==b[j-1]: 0 else: 1) # "differs" flag/cost; Same->0
+      let i1 = int(dA(int(b[j-1])))     # Last row where `b[j-1]` seen in `a`
+      let j1 = int(dB)                  # Last col where `a[i-1]` seen in `b`
+      let diff = if a[i-1]==b[j-1]: 0 else: 1 # "differs" flag/cost; Same->0
       if diff == 0: dB = C(j)           # Save spot for next `j1`
       let nIns = i - i1 - 1
       let nDel = j - j1 - 1
