@@ -23,6 +23,11 @@ let b = max(0, min(X.len-1, if slice.b < 0: X.len + slice.b else: slice.b))
     (but depending on context, you might want `X.len`, not `X.len-1` or it may
     only be getting used as a "range", not for indexing, etc.)
 
+  - Fix long-standing not quite right `distDamerau` as part of overhaul to make
+    that API less reliant on short strings & more adaptable to long ones.  The
+    change should be noticeable as only slight changes to the set of suggestions
+    provided to users on mis-typed long options, subcommand names & enum tags.
+
 Version: 1.9.0
 --------------
   - Make some lib support more compatible with nim-1.2 era Nim again.
