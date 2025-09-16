@@ -132,7 +132,9 @@ def apply(cf=dict(), path="", plain=False):
 try:
   cgPath = E("CLIGEN", os.path.expanduser("~/.config/cligen"))
   if os.path.isdir(cgPath): cgPath += "/config"
-  cf = apply({}, cgPath, "NO_COLOR" in os.environ)
+  cf = apply({}, cgPath, "NO_COLOR" in os.environ \
+             and os.environ["NO_COLOR"] not in ["0", "no", "off", "false"])
+
 except: e("\x1b[1mcg.py: PROBLEM WITH %s\x1b[m\n" % cgPath)
 
 def uMark(s): # micro-mark is just font changing (-> SGR on terminals).

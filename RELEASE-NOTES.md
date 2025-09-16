@@ -1,6 +1,17 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.2
+--------------
+  - Minor enhancement to default `cligen/clCfgInit.nim`, `cligen/clCfgToml.nim`,
+    and `python/cg.py` behavior to allow `NO_COLOR` "double negative" values to
+    easily override inherited values.  Specifically, `NO_COLOR=no cmd` is the
+    same as `(unset NO_COLOR cmd)`.  Besides `"no"`, `"0"`, `"off"` & `"false"`
+    mean the same thing.  True values are limited only by those & your
+    imagination, but in particular *do* include the empty string `""` as in the
+    original 2019 no-color spec since `NO_COLOR= cmd` is so easy to type that
+    this is what I personally have been using the most for almost 6 years now.
+
 Version: 1.9.1
 --------------
   - Add a simple to use, Unix-only `procpool.forkJoin` template and a new
