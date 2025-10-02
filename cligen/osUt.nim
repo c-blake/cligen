@@ -124,9 +124,9 @@ iterator getDelims*(f: File, dlm: char='\n'): (cstring, int) =
 
 iterator getDelims*(path: string, dlm: char='\n'): (cstring, int) =
   ## Like `getDelims` but take a path instead of an open File.
-  let f = open(path)
+  let f = if path.len == 0: stdin else: open(path)
   for (s, n) in f.getDelims(dlm): yield (s, n)
-  f.close
+  if path.len != 0: f.close
 
 iterator getLenPfx*[T: SomeNumber](f: File): string =
   ## Like `getDelim` but "parse" length-prefixed values where a native-endian
