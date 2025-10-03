@@ -1,6 +1,17 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.4
+--------------
+
+
+Version: 1.9.3
+--------------
+
+  - `osUt.getDelims(path: string)` can convert `"" path` -> `stdin` use
+
+  - `mfile.mSlices` has a better error message
+
 Version: 1.9.2
 --------------
   - Minor enhancement to default `cligen/clCfgInit.nim`, `cligen/clCfgToml.nim`,
