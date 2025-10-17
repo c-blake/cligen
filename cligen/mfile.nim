@@ -298,7 +298,7 @@ iterator mSlices*(path: string, sep='\n', eat='\r', keep=false,
         else:
           yield MSlice(mem: cs, len: n)
       if f!=stdin: f.close() # stdin.close frees fd=0;Could be re-opened&confuse
-    except IOError: perror "fopen(\"" & path & "\")", err
+    except IOError: (let s = "fopen(\"" & path & "\")"; perror s.cstring, err)
 
 proc nSplit*(n: int, path: string, sep='\n', prot=PROT_READ, flags=MAP_SHARED):
        tuple[mf: MFile; parts: seq[MSlice]] =

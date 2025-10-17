@@ -4,6 +4,7 @@ RELEASE NOTES
 Version: 1.9.4
 --------------
 
+  - Fix implicit conversion to 'cstring' cligen/mfile warning
 
 Version: 1.9.3
 --------------
