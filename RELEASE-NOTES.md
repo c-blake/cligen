@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.5
+--------------
+  - Add newly necessary in nim-devel explicit generic for mslice.parseHSlice
+
 Version: 1.9.4
 --------------
 

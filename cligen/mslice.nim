@@ -752,7 +752,7 @@ proc parseHSlice*[T,U](s: MSlice|openArray[char]): HSlice[T,U] =
     if eoNum == 0: result.b = U.high    # Missing RHS -> U.high
   elif s.len > 0: result.a = s.parseInt.T; result.b = result.a.U
 
-proc parseHSlice*[T,U](s: string): HSlice[T,U] = s.toMSlice.parseHSlice
+proc parseHSlice*[T,U](s: string): HSlice[T,U] = parseHSlice[T,U](s.toMSlice)
 
 # May seem big, BUT <15% of L1 & real life cache line usage light (sim OOMags).
 const pow10*: array[-308..308, float] = [
