@@ -6,6 +6,7 @@ const
                "/usr/lib64/libmagic.so",
                "/usr/lib/libmagic.so.1",
                "/usr/lib/libmagic.so",
+               "/lib/x86_64-linux-gnu/libmagic.so.1",
                "/usr/lib/x86_64-linux-gnu/libmagic.so.1",
                "/usr/lib/x86_64-linux-gnu/libmagic.so",
                "/lib/aarch64-linux-gnu/libmagic.so.1",
