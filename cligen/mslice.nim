@@ -17,6 +17,28 @@ proc cmemcpy*(a, b: pointer, n: csize): cint {.
   importc: "memcpy", header: "<string.h>", noSideEffect.}
 proc cmemmem*(h: pointer, nH: csize, s: pointer, nS: csize): pointer {.
   importc: "memmem", header: "string.h".}
+when defined(windows):  # memmem is GNU extension, not available on Windows
+  {.emit: """/*INCLUDESECTION*/
+#include <string.h>
+#ifndef _MEMMEM_DEFINED
+#define _MEMMEM_DEFINED
+void* memmem(const void* haystack, size_t haystacklen,
+             const void* needle, size_t needlelen);
+#endif
+""".}
+  {.emit: """
+void* memmem(const void* haystack, size_t haystacklen,
+             const void* needle, size_t needlelen) {
+  const char* h = (const char*)haystack;
+  const char* n = (const char*)needle;
+  if (needlelen == 0) return (void*)haystack;
+  if (haystacklen < needlelen) return NULL;
+  for (size_t i = 0; i <= haystacklen - needlelen; i++) {
+    if (memcmp(h + i, n, needlelen) == 0)
+      return (void*)(h + i);
+  }
+  return NULL;
+}""".}
 proc `-!`*(p, q: pointer): int = cast[int](p) -% cast[int](q)
 proc `+!`*(p: pointer, i: int): pointer = cast[pointer](cast[int](p) +% i)
 proc `+!`*(p: pointer, i: uint64): pointer = cast[pointer](cast[uint64](p) + i)
