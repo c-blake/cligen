@@ -54,67 +54,44 @@ proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
   path in ["-", "/dev/stdin"] or (path.len == 0 and not stdin.isatty)
 
-when not defined(windows):
+when not defined(windows) and not defined(cgGetDelim):
   proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
-    importc:"getdelim",header:"stdio.h".}
-else:  # MS CRT *should* but does not provide getdelim; inject C here.
-  {.emit: """/*INCLUDESECTION*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp);
-""".}
-  {.emit: """
-ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
-  char *ptr, *end;
-  if (!buf || !nBuf || !fp) {
-    errno = EINVAL;
-    return -1;
-  }
-  if (*buf == NULL || *nBuf == 0) {
-    *nBuf = BUFSIZ;
-    if ((*buf = malloc(*nBuf)) == NULL) {
-      errno = ENOMEM;
-      return -1;
-    }
-  }
-  ptr = *buf;
-  end = *buf + *nBuf;
-  for (;;) {
-    int c = fgetc(fp);
-    if (c == EOF) {
-      if (ferror(fp))
-        return -1;
-      ssize_t nread = ptr - *buf;
-      if (nread > 0) {
-        *ptr = '\0';
-        return nread;
-      }
-      return -1;
-    }
-    if (ptr + 2 >= end) {
-      size_t nBufSz = *nBuf * 2;
+    importc: "getdelim", header: "stdio.h".}
+else: # MS CRT fallback impl; Must declare|define BEFORE Nim decl.
+  {.emit: """#include <stdio.h> /* INCLUDESECTION; See `cligen/osUt.nim`. */
+#include <stdlib.h> /* SIMD memchr(stdio bufs) is way faster, but MS doesn't..*/
+#include <errno.h>  /*..do getdelim since "Most paying customers use C++". :( */
+ssize_t cgGetDelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
+  char *ptr, *end;      /* pointer pair (ptr < end) framing output data */
+  if (!buf || !nBuf || !fp) { errno = EINVAL; return -1; } /* Validate input */
+/* 2017 POSIX: "If *n is non-zero, the application shall ensure that *lineptr
+     either points to an object of size at least *n bytes, OR IS A NULL POINTER"
+implying *nBuf && !*buf CAN use a passed *nBuf.  We instead follow glibc, musl &
+FreeBSD which DON'T do that (focusing on a prior lineptr condition in spec?). */
+  if (!*nBuf || !*buf){ /* Must both set line size-guess & alloc out buffer. */
+    *nBuf = 240;        /* Both 256-16B malloc header size-ish & 3*80 bytes. */
+    if (!(*buf = (char *)malloc(*nBuf))) { errno = ENOMEM; return -1; } }
+  for (ptr = *buf, end = *buf + *nBuf; /**/; /**/) { /* safe *ptr++ = fgetc() */
+    int c = fgetc(fp);                  /* fgetc() */
+    if (feof(fp)) {                     /* EOF */
+      if (ferror(fp)) return -1;            /* Error return; Bubble up errno */
+      if (ptr > *buf) { *ptr = '\0'; return ptr - *buf; } /* Ok return */
+      return -1; }                          /* No error, but also no data */
+    if (ptr + 2 >= end) {               /* Ensure space (ch|DELIM+NUL) | fail */
       ssize_t offset = ptr - *buf;
-      char *nbuf = (char*)realloc(*buf, nBufSz);
-      if (!nbuf) {
-        errno = ENOMEM;
-        return -1;
-      }
-      *buf = nbuf;
-      *nBuf = nBufSz;
-      ptr = nbuf + offset;
-      end = nbuf + nBufSz;
-    }
-    *ptr++ = (char)c;
-    if (c == delim) {
-      *ptr = '\0';
-      return ptr - *buf;
-    }
-  }
-}
-""".}
+      size_t  nBufSz = *nBuf * 2;           /* Grow the output buffer by 2x */
+      char   *tmp;                          /* temporary rVal of realloc */
+      if (!(tmp = (char *)realloc(*buf, nBufSz))) { errno = ENOMEM; return -1; }
+      *buf  = tmp;                          /* Did not fail; Apply edit */
+      *nBuf = nBufSz;   /* This&4 lines above would be a nice stdC lib macro */
+      ptr = tmp + offset;
+      end = tmp + nBufSz; }
+    *ptr++ = (char)c;                   /* Add char, inc delims to out buffer */
+    if (c == delim) {   /*NOTE: "\0\0" tail wastes 1 byte if delim == '\0' */
+      *ptr = '\0';                          /* Terminate & return */
+      return ptr - *buf; } } }""".}
   proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
-    importc:"getdelim".}
+    importc: "cgGetDelim".} # Thanks to @elijahr for help improving this impl.
 
 proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
 iterator getDelim*(f: File, dlm: char='\n'): string =
