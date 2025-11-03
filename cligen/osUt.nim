@@ -54,39 +54,67 @@ proc useStdin*(path: string): bool =
   ## Decide if ``path`` means stdin ("-" or "" and ``not isatty(stdin)``).
   path in ["-", "/dev/stdin"] or (path.len == 0 and not stdin.isatty)
 
-proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
-  importc:"getdelim",header:"stdio.h".} # MS CRT *should* but does not provide
-when defined(windows):                  # more efficient; So, inject C here.
-  {.emit: """#include <stdio.h>
+when not defined(windows):
+  proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
+    importc:"getdelim",header:"stdio.h".}
+else:  # MS CRT *should* but does not provide getdelim; inject C here.
+  {.emit: """/*INCLUDESECTION*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp);
+""".}
+  {.emit: """
 ssize_t getdelim(char **buf, size_t *nBuf, int delim, FILE *fp) {
   char *ptr, *end;
+  if (!buf || !nBuf || !fp) {
+    errno = EINVAL;
+    return -1;
+  }
   if (*buf == NULL || *nBuf == 0) {
     *nBuf = BUFSIZ;
-    if ((*buf = malloc(*nBuf)) == NULL)
-      return -1; }
-  for (ptr = *buf, end = *buf + *nBuf;;) {
-    int c = fgetc(fp);          /* No idea if MS makes this is a Cpp macro */
-    if (c == -1) {
-      if (feof(fp)) {
-        ssize_t diff = (ssize_t)(ptr - *buf);
-        if (diff != 0) {
-          *ptr = '\0';
-          return diff; } }
-      return -1; }
-    *ptr++ = c;
-    if (c == delim) {
-      *ptr = '\0';
-      return ptr - *buf; }
-    if (ptr + 2 >= end) {
-      char *nbuf;
-      size_t nBufSz = *nBuf * 2;
-      ssize_t d = ptr - *buf;
-      if ((nbuf = realloc(*buf, nBufSz)) == NULL)
+    if ((*buf = malloc(*nBuf)) == NULL) {
+      errno = ENOMEM;
+      return -1;
+    }
+  }
+  ptr = *buf;
+  end = *buf + *nBuf;
+  for (;;) {
+    int c = fgetc(fp);
+    if (c == EOF) {
+      if (ferror(fp))
         return -1;
+      ssize_t nread = ptr - *buf;
+      if (nread > 0) {
+        *ptr = '\0';
+        return nread;
+      }
+      return -1;
+    }
+    if (ptr + 2 >= end) {
+      size_t nBufSz = *nBuf * 2;
+      ssize_t offset = ptr - *buf;
+      char *nbuf = (char*)realloc(*buf, nBufSz);
+      if (!nbuf) {
+        errno = ENOMEM;
+        return -1;
+      }
       *buf = nbuf;
       *nBuf = nBufSz;
+      ptr = nbuf + offset;
       end = nbuf + nBufSz;
-      ptr = nbuf + d; } } }""".}
+    }
+    *ptr++ = (char)c;
+    if (c == delim) {
+      *ptr = '\0';
+      return ptr - *buf;
+    }
+  }
+}
+""".}
+  proc c_getdelim*(p: ptr cstring, nA: ptr csize, dlm: cint, f: File): int {.
+    importc:"getdelim".}
 
 proc free(pointr: cstring) {.importc: "free", header: "<stdlib.h>".}
 iterator getDelim*(f: File, dlm: char='\n'): string =

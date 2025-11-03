@@ -1,53 +1,59 @@
 name: gh-pages
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 jobs:
-  skip:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skip job"
-
-  before:
-    runs-on: ubuntu-latest
-    if: "! contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - run: echo "not contains '[skip ci]'"
-
   docs:
     runs-on: ubuntu-latest
-    continue-on-error: true
-    needs: before
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v4
 
       - name: Set cache-key
         id: vars
-        run: echo ::set-output name=cache-key::$(date +%Y-%m-%d)
+        run: echo "cache-key=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
 
-      - name: Cache choosenim
-        id: cache-choosenim
-        uses: actions/cache@v4
-        with:
-          path: ~/.choosenim
-          key: ${{ runner.os }}-choosenim-${{ steps.vars.outputs.cache-key }}
       - name: Cache nimble
         id: cache-nimble
         uses: actions/cache@v4
         with:
           path: ~/.nimble
           key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
-      - uses: jiro4989/setup-nim-action@v1
+
+      - name: Download and setup Nim DLLs (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          curl -L -o dlls.zip https://nim-lang.org/download/dlls.zip
+          unzip dlls.zip -d nim-dlls
+          echo "$GITHUB_WORKSPACE/nim-dlls" >> $GITHUB_PATH
+          echo "SSL_CERT_FILE=$GITHUB_WORKSPACE/nim-dlls/cacert.pem" >> $GITHUB_ENV
+
+      - uses: nim-lang/setup-nimble-action@v1
         with:
-          nim-version: 'devel --latest'
+          nimble-version: '0.20.1'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nim and add to PATH
+        run: |
+          nimble install nim --latest -y
+          # Find where nimble actually installed nim (in .nimble/nimbinaries/nim-VERSION/bin/)
+          NIM_BIN=$(find $HOME/.nimble/nimbinaries -name nim -type f 2>/dev/null | head -1)
+          if [ -n "$NIM_BIN" ]; then
+            NIM_BIN_DIR=$(dirname "$NIM_BIN")
+            echo "Found nim at: $NIM_BIN"
+            echo "$NIM_BIN_DIR" >> $GITHUB_PATH
+          fi
+          echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+
+      - name: Verify Nim installation
+        run: nim --version
 
       - name: Generate API documents
         run: (echo 'cligen'; grep -rl '##' cligen | grep -v clCfg) | sed -e's/.nim//' -e's/^/import /' > all.nim; nim doc --path=. --project --outdir:docs all.nim
 
       - name: Deploy documents
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs

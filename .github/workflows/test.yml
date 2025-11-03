@@ -1,45 +1,89 @@
 name: test
 
-on:
-  - push
-  - pull_request
+on: [push, pull_request]
+
+concurrency: # Cancel stale PR builds (but not push builds)
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
-  before:
-    runs-on: ubuntu-latest
-    outputs:
-      skip-ci: ${{ contains(github.event.head_commit.message, '[skip ci]') }}
-    steps:
-      - name: Dummy step
-        run: /bin/true
-
   test:
     runs-on: ${{ matrix.os }}
-    needs: before
-    if: ${{ !needs.before.outputs.skip_ci }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
-          # - macOS-latest # no devel-compiler of mac
-          # - windows-latest # FIXME
+          - macos-latest
+          - windows-latest
         nim_version:
           - stable
           - devel
+    defaults:
+      run:
+        shell: bash
+
+    name: Test ${{ matrix.os }} (Nim ${{ matrix.nim_version }})
     steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       - name: Checkout
-        uses: actions/checkout@v1
-      - name: Cache choosenim
-        uses: actions/cache@v3
+        uses: actions/checkout@v4
+
+      - name: Set cache-key
+        id: vars
+        run: echo "cache-key=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Cache nimble
+        id: cache-nimble
+        uses: actions/cache@v4
         with:
-          path: ~/.choosenim
-          key: ${{ matrix.os }}-choosenim-${{ matrix.nim_version }}-${{ github.run_id }}
-          restore-keys: |
-            ${{ matrix.os }}-choosenim-${{ matrix.nim_version }}-
-      - uses: jiro4989/setup-nim-action@v1
+          path: ~/.nimble
+          key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
+
+      - name: Download and setup Nim DLLs (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          curl -L -o dlls.zip https://nim-lang.org/download/dlls.zip
+          unzip dlls.zip -d nim-dlls
+          echo "$GITHUB_WORKSPACE/nim-dlls" >> $GITHUB_PATH
+          echo "SSL_CERT_FILE=$GITHUB_WORKSPACE/nim-dlls/cacert.pem" >> $GITHUB_ENV
+
+      - name: Install make (Windows)
+        if: runner.os == 'Windows'
+        run: choco install make -y --no-progress
+
+      - uses: nim-lang/setup-nimble-action@v1
         with:
-          nim-version: ${{ matrix.nim_version }}
+          nimble-version: '0.20.1'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nim and add to PATH
+        run: |
+          if [ "${{ matrix.nim_version }}" == "stable" ]; then
+            nimble install nim --latest -y
+          else
+            nimble install 'nim@#devel' -y
+          fi
+          # Find where nimble actually installed nim (in .nimble/nimbinaries/nim-VERSION/bin/)
+          NIM_BIN=$(find $HOME/.nimble/nimbinaries -name nim -type f 2>/dev/null | head -1)
+          if [ -n "$NIM_BIN" ]; then
+            NIM_BIN_DIR=$(dirname "$NIM_BIN")
+            echo "Found nim at: $NIM_BIN"
+            echo "$NIM_BIN_DIR" >> $GITHUB_PATH
+          fi
+          echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+
       - name: Test
-        run: make V=1 -j $(nproc)
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            make V=1 -j 1
+          else
+            make V=1 -j $(nproc)
+          fi
         env:
           DIFF: diff -u
