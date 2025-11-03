@@ -3,115 +3,115 @@ nim	cmemchr	cligen/mslice.html#cmemchr,pointer,char,csize	proc cmemchr(s: pointe
 nim	cmemcmp	cligen/mslice.html#cmemcmp,pointer,pointer,csize	proc cmemcmp(a, b: pointer; n: csize): cint		14
 nim	cmemcpy	cligen/mslice.html#cmemcpy,pointer,pointer,csize	proc cmemcpy(a, b: pointer; n: csize): cint		16
 nim	cmemmem	cligen/mslice.html#cmemmem,pointer,csize,pointer,csize	proc cmemmem(h: pointer; nH: csize; s: pointer; nS: csize): pointer		18
-nim	`-!`	cligen/mslice.html#-!,pointer,pointer	proc `-!`(p, q: pointer): int		20
-nim	`+!`	cligen/mslice.html#+!,pointer,int	proc `+!`(p: pointer; i: int): pointer		21
-nim	`+!`	cligen/mslice.html#+!,pointer,uint64	proc `+!`(p: pointer; i: uint64): pointer		22
-nim	cmemrchr	cligen/mslice.html#cmemrchr,pointer,char,csize	proc cmemrchr(s: pointer; c: char; n: csize): pointer		24
-nim	MSlice	cligen/mslice.html#MSlice	object MSlice		32
-nim	SomeString	cligen/mslice.html#SomeString	type SomeString		39
-nim	toMSlice	cligen/mslice.html#toMSlice,string	proc toMSlice(a: string; keep = false): MSlice		41
-nim	toCstr	cligen/mslice.html#toCstr,pointer	proc toCstr(p: pointer): cstring		50
-nim	`[]`	cligen/mslice.html#[],MSlice,int	proc `[]`(ms: MSlice; i: int): char		60
-nim	`[]=`	cligen/mslice.html#[]=,MSlice,int,char	proc `[]=`(ms: MSlice; i: int; c: char)		66
-nim	`[]`	cligen/mslice.html#[],MSlice,HSlice[T: Ordinal,U: Ordinal]	proc `[]`[T, U: Ordinal](s: MSlice; x: HSlice[T, U]): MSlice		72
-nim	toMSlice	cligen/mslice.html#toMSlice,openArray[char],HSlice[T,U]	proc toMSlice[T, U](a: openArray[char]; s: HSlice[T, U]; keep = false): MSlice		80
-nim	mem	cligen/mslice.html#mem,openArray[char]	proc mem(s: openArray[char]): pointer		96
-nim	startsWith	cligen/mslice.html#startsWith,MSlice,SomeString	proc startsWith(s: MSlice; pfx: SomeString): bool		100
-nim	endsWith	cligen/mslice.html#endsWith,MSlice,SomeString	proc endsWith(s: MSlice; sfx: SomeString): bool		104
-nim	find	cligen/mslice.html#find,MSlice,SomeString	proc find(s: MSlice; sub: SomeString): int		109
-nim	find	cligen/mslice.html#find,MSlice,MSlice,Natural	proc find(s, sub: MSlice; start: Natural = 0): int		114
-nim	find	cligen/mslice.html#find,MSlice,char,Natural,int	proc find(s: MSlice; sub: char; start: Natural = 0; last = -1): int		120
-nim	rebase	cligen/mslice.html#rebase,MSlice,pointer,pointer	proc rebase(ms: MSlice; origin0, origin1: pointer): MSlice		128
-nim	setLen	cligen/mslice.html#setLen,MSlice,int	proc setLen(s: var MSlice; n: int)		133
-nim	clipAtFirst	cligen/mslice.html#clipAtFirst,SomeString,char	proc clipAtFirst(s: var SomeString; ch: char)		138
-nim	high	cligen/mslice.html#high,MSlice	proc high(s: MSlice): int		142
-nim	rfind	cligen/mslice.html#rfind,MSlice,char,Natural,int	proc rfind(s: MSlice; sub: char; start: Natural = 0; last = -1): int		144
-nim	rfind	cligen/mslice.html#rfind,MSlice,set[char],Natural,int	proc rfind(s: MSlice; chars: set[char]; start: Natural = 0; last = -1): int		149
-nim	dup	cligen/mslice.html#dup,MSlice	proc dup(ms: var MSlice)		154
-nim	dup	cligen/mslice.html#dup,MSlice_2	proc dup(ms: MSlice): MSlice		162
-nim	toString	cligen/mslice.html#toString,MSlice,string	proc toString(ms: MSlice; s: var string)		170
-nim	toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,MSlice	template toOpenArrayChar(ms: MSlice): untyped		175
-nim	toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,string	template toOpenArrayChar(s: string): untyped		178
-nim	`$`	cligen/mslice.html#$,MSlice	proc `$`(ms: MSlice): string		182
-nim	add	cligen/mslice.html#add,string,MSlice	proc add(s: var string; ms: MSlice)		186
-nim	join	cligen/mslice.html#join,openArray[MSlice],string	proc join(a: openArray[MSlice]; sep: string = ""): string		193
-nim	`==`	cligen/mslice.html#==,MSlice,MSlice	proc `==`(x, y: MSlice): bool		202
-nim	`<`	cligen/mslice.html#<,MSlice,MSlice	proc `<`(a, b: MSlice): bool		206
-nim	write	cligen/mslice.html#write,File,MSlice	proc write(f: File; ms: MSlice)		211
-nim	urite	cligen/mslice.html#urite,File,MSlice	proc urite(f: File; ms: MSlice)		215
-nim	mrite	cligen/mslice.html#mrite,File,varargs[MSlice]	proc mrite(f: File; mses: varargs[MSlice])		225
-nim	toOb	cligen/mslice.html#toOb,MSlice,T	proc toOb[T](m: MSlice; ob: var T)		229
-nim	toSeq	cligen/mslice.html#toSeq,MSlice,seq[T]	proc toSeq[T](m: MSlice; s: var seq[T])		238
-nim	`==`	cligen/mslice.html#==,string,MSlice	proc `==`(a: string; ms: MSlice): bool		251
-nim	`==`	cligen/mslice.html#==,MSlice,string	proc `==`(ms: MSlice; b: string): bool		253
-nim	hash	cligen/mslice.html#hash,MSlice	proc hash(ms: MSlice): Hash		256
-nim	nextSlice	cligen/mslice.html#nextSlice,MSlice,MSlice,char,char	proc nextSlice(mslc, ms: var MSlice; sep = '\n'; eat = '\x00'): int		260
-nim	mSlices	cligen/mslice.html#mSlices.i,MSlice,char,char	iterator mSlices(mslc: MSlice; sep = ' '; eat = '\x00'): MSlice		294
-nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,char	proc msplit(mslc: MSlice; fs: var seq[MSlice]; sep = ' '; eat = '\x00')		321
-nim	firstN	cligen/mslice.html#firstN,MSlice,int,char	proc firstN(ms: MSlice; n = 1; term = '\n'): MSlice		334
-nim	wspace	cligen/mslice.html#wspace	const wspace		344
-nim	mempbrk	cligen/mslice.html#mempbrk,pointer,set[char],csize	proc mempbrk(s: pointer; accept: set[char]; n: csize): pointer		350
-nim	stripLeading	cligen/mslice.html#stripLeading,MSlice	proc stripLeading(s: var MSlice; chars = wspace)		354
-nim	stripTrailing	cligen/mslice.html#stripTrailing,MSlice	proc stripTrailing(s: var MSlice; chars = wspace)		359
-nim	strip	cligen/mslice.html#strip,MSlice	proc strip(s: var MSlice; leading = true; trailing = true; chars = wspace)		362
-nim	stripLeading	cligen/mslice.html#stripLeading,MSlice_2	proc stripLeading(s: MSlice; chars = wspace): MSlice		366
-nim	stripTrailing	cligen/mslice.html#stripTrailing,MSlice_2	proc stripTrailing(s: MSlice; chars = wspace): MSlice		369
-nim	strip	cligen/mslice.html#strip,MSlice_2	proc strip(s: MSlice; leading = true; trailing = true; chars = wspace): MSlice		372
-nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,int	proc msplit(s: MSlice; fs: var seq[MSlice]; sep = ' '; n = 0; repeat = false): int		406
-nim	msplit	cligen/mslice.html#msplit,MSlice,char,int	proc msplit(s: MSlice; sep = ' '; n = 0; repeat = false): seq[MSlice]		409
-nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],int	proc msplit(s: MSlice; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int		412
-nim	msplit	cligen/mslice.html#msplit,MSlice,int	proc msplit(s: MSlice; n = 0; seps = wspace; repeat = true): seq[MSlice]		415
-nim	msplit	cligen/mslice.html#msplit,string,seq[MSlice],char,int	proc msplit(s: string; fs: var seq[MSlice]; sep = ' '; n = 0; repeat = false): int		418
-nim	msplit	cligen/mslice.html#msplit,string,char,int	proc msplit(s: string; sep: char; n = 0; repeat = false): seq[MSlice]		422
-nim	msplit	cligen/mslice.html#msplit,string,seq[MSlice],int	proc msplit(s: string; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int		426
-nim	msplit	cligen/mslice.html#msplit,string,int	proc msplit(s: string; seps = wspace; n = 0; repeat = true): seq[MSlice]		430
-nim	splitr	cligen/mslice.html#splitr,string,seq[string],char,int,ptr.seq[string]	proc splitr(s: string; fs: var seq[string]; sep = ' '; n = 0; repeat = false;\n       sp: ptr seq[string] = nil): int		473
-nim	splitr	cligen/mslice.html#splitr,string,char,int	proc splitr(s: string; sep: char; n = 0; repeat = false): seq[string]		478
-nim	splitr	cligen/mslice.html#splitr,string,seq[string],int,ptr.seq[string]	proc splitr(s: string; fs: var seq[string]; seps = wspace; n = 0; repeat = true;\n       sp: ptr seq[string] = nil): int		482
-nim	splitr	cligen/mslice.html#splitr,string,int	proc splitr(s: string; seps = wspace; n = 0; repeat = true): seq[string]		487
-nim	Sep	cligen/mslice.html#Sep	tuple Sep		491
-nim	initSep	cligen/mslice.html#initSep,string	proc initSep(seps: string): Sep		493
-nim	Splitr	cligen/mslice.html#Splitr	type Splitr		519
-nim	initSplitr	cligen/mslice.html#initSplitr,string	proc initSplitr(seps: string): Sep		520
-nim	split	cligen/mslice.html#split,Sep,MSlice,seq[MSlice],int	proc split(s: Sep; line: MSlice; cols: var seq[MSlice]; n = 0)		522
-nim	split	cligen/mslice.html#split,Sep,string,seq[string],int	proc split(s: Sep; line: string; cols: var seq[string]; n = 0)		526
-nim	split	cligen/mslice.html#split,Sep,string,int	proc split(s: Sep; line: string; n = 0): seq[string]		530
-nim	TextFrame	cligen/mslice.html#TextFrame	tuple TextFrame		541
-nim	frame	cligen/mslice.html#frame.i,MSlice,char,int	iterator frame(s: MSlice; sep: char; repeat = false; n = 0): TextFrame		579
-nim	frame	cligen/mslice.html#frame.i,MSlice,set[char],int	iterator frame(s: MSlice; seps: set[char]; repeat = false; n = 0): TextFrame		587
-nim	frame	cligen/mslice.html#frame.i,MSlice,Sep,int	iterator frame(s: MSlice; sep: Sep; n = 0): TextFrame		595
-nim	frame	cligen/mslice.html#frame,MSlice,seq[TextFrame],Sep,int	proc frame(s: MSlice; fs: var seq[TextFrame]; sep: Sep; n = 0): int		606
-nim	frame	cligen/mslice.html#frame,MSlice,Sep,int	proc frame(s: MSlice; sep: Sep; n = 0): seq[TextFrame]		613
-nim	items	cligen/mslice.html#items.i,MSlice	iterator items(a: MSlice): char		622
-nim	contains	cligen/mslice.html#contains,MSlice,set[char]	proc contains(s: MSlice; cset: set[char]): bool		627
-nim	pairs	cligen/mslice.html#pairs.i,MSlice	iterator pairs(a: MSlice): tuple[ix: int, c: char]		631
-nim	findNot	cligen/mslice.html#findNot,string,set[char],Natural,int	proc findNot(s: string; chars: set[char]; start: Natural = 0; last = 0): int		636
-nim	eos	cligen/mslice.html#eos,MSlice	proc eos(ms: MSlice): pointer		652
-nim	within	cligen/mslice.html#within,MSlice,MSlice	proc within(a, c: MSlice): bool		655
-nim	extend	cligen/mslice.html#extend,MSlice,int,char	proc extend(ms: MSlice; max: int; sep = '\n'): MSlice		659
-nim	nSplit	cligen/mslice.html#nSplit,int,MSlice,char	proc nSplit(n: int; data: MSlice; sep = '\n'): seq[MSlice]		669
-nim	parseBin	cligen/mslice.html#parseBin,,int	proc parseBin(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		714
-nim	parseOct	cligen/mslice.html#parseOct,,int	proc parseOct(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		719
-nim	parseInt	cligen/mslice.html#parseInt,,int	proc parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		724
-nim	parseHex	cligen/mslice.html#parseHex,,int	proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		729
-nim	parseHSlice	cligen/mslice.html#parseHSlice	proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]		734
-nim	parseHSlice	cligen/mslice.html#parseHSlice,string	proc parseHSlice[T, U](s: string): HSlice[T, U]		755
-nim	pow10	cligen/mslice.html#pow10	const pow10		758
-nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		817
-nimgrp	tomslice	cligen/mslice.html#toMSlice-procs-all	proc		41
-nimgrp	splitr	cligen/mslice.html#splitr-procs-all	proc		473
-nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		21
-nimgrp	[]	cligen/mslice.html#[]-procs-all	proc		60
-nimgrp	dup	cligen/mslice.html#dup-procs-all	proc		154
-nimgrp	striptrailing	cligen/mslice.html#stripTrailing-procs-all	proc		359
-nimgrp	stripleading	cligen/mslice.html#stripLeading-procs-all	proc		354
-nimgrp	find	cligen/mslice.html#find-procs-all	proc		109
-nimgrp	rfind	cligen/mslice.html#rfind-procs-all	proc		144
-nimgrp	==	cligen/mslice.html#==-procs-all	proc		202
-nimgrp	msplit	cligen/mslice.html#msplit-procs-all	proc		321
-nimgrp	strip	cligen/mslice.html#strip-procs-all	proc		362
-nimgrp	parsehslice	cligen/mslice.html#parseHSlice-procs-all	proc		734
-nimgrp	split	cligen/mslice.html#split-procs-all	proc		522
-nimgrp	frame	cligen/mslice.html#frame-procs-all	proc		606
-nimgrp	frame	cligen/mslice.html#frame-iterators-all	iterator		579
-nimgrp	toopenarraychar	cligen/mslice.html#toOpenArrayChar-templates-all	template		175
+nim	`-!`	cligen/mslice.html#-!,pointer,pointer	proc `-!`(p, q: pointer): int		42
+nim	`+!`	cligen/mslice.html#+!,pointer,int	proc `+!`(p: pointer; i: int): pointer		43
+nim	`+!`	cligen/mslice.html#+!,pointer,uint64	proc `+!`(p: pointer; i: uint64): pointer		44
+nim	cmemrchr	cligen/mslice.html#cmemrchr,pointer,char,csize	proc cmemrchr(s: pointer; c: char; n: csize): pointer		46
+nim	MSlice	cligen/mslice.html#MSlice	object MSlice		54
+nim	SomeString	cligen/mslice.html#SomeString	type SomeString		61
+nim	toMSlice	cligen/mslice.html#toMSlice,string	proc toMSlice(a: string; keep = false): MSlice		63
+nim	toCstr	cligen/mslice.html#toCstr,pointer	proc toCstr(p: pointer): cstring		72
+nim	`[]`	cligen/mslice.html#[],MSlice,int	proc `[]`(ms: MSlice; i: int): char		82
+nim	`[]=`	cligen/mslice.html#[]=,MSlice,int,char	proc `[]=`(ms: MSlice; i: int; c: char)		88
+nim	`[]`	cligen/mslice.html#[],MSlice,HSlice[T: Ordinal,U: Ordinal]	proc `[]`[T, U: Ordinal](s: MSlice; x: HSlice[T, U]): MSlice		94
+nim	toMSlice	cligen/mslice.html#toMSlice,openArray[char],HSlice[T,U]	proc toMSlice[T, U](a: openArray[char]; s: HSlice[T, U]; keep = false): MSlice		102
+nim	mem	cligen/mslice.html#mem,openArray[char]	proc mem(s: openArray[char]): pointer		118
+nim	startsWith	cligen/mslice.html#startsWith,MSlice,SomeString	proc startsWith(s: MSlice; pfx: SomeString): bool		122
+nim	endsWith	cligen/mslice.html#endsWith,MSlice,SomeString	proc endsWith(s: MSlice; sfx: SomeString): bool		126
+nim	find	cligen/mslice.html#find,MSlice,SomeString	proc find(s: MSlice; sub: SomeString): int		131
+nim	find	cligen/mslice.html#find,MSlice,MSlice,Natural	proc find(s, sub: MSlice; start: Natural = 0): int		136
+nim	find	cligen/mslice.html#find,MSlice,char,Natural,int	proc find(s: MSlice; sub: char; start: Natural = 0; last = -1): int		142
+nim	rebase	cligen/mslice.html#rebase,MSlice,pointer,pointer	proc rebase(ms: MSlice; origin0, origin1: pointer): MSlice		150
+nim	setLen	cligen/mslice.html#setLen,MSlice,int	proc setLen(s: var MSlice; n: int)		155
+nim	clipAtFirst	cligen/mslice.html#clipAtFirst,SomeString,char	proc clipAtFirst(s: var SomeString; ch: char)		160
+nim	high	cligen/mslice.html#high,MSlice	proc high(s: MSlice): int		164
+nim	rfind	cligen/mslice.html#rfind,MSlice,char,Natural,int	proc rfind(s: MSlice; sub: char; start: Natural = 0; last = -1): int		166
+nim	rfind	cligen/mslice.html#rfind,MSlice,set[char],Natural,int	proc rfind(s: MSlice; chars: set[char]; start: Natural = 0; last = -1): int		171
+nim	dup	cligen/mslice.html#dup,MSlice	proc dup(ms: var MSlice)		176
+nim	dup	cligen/mslice.html#dup,MSlice_2	proc dup(ms: MSlice): MSlice		184
+nim	toString	cligen/mslice.html#toString,MSlice,string	proc toString(ms: MSlice; s: var string)		192
+nim	toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,MSlice	template toOpenArrayChar(ms: MSlice): untyped		197
+nim	toOpenArrayChar	cligen/mslice.html#toOpenArrayChar.t,string	template toOpenArrayChar(s: string): untyped		200
+nim	`$`	cligen/mslice.html#$,MSlice	proc `$`(ms: MSlice): string		204
+nim	add	cligen/mslice.html#add,string,MSlice	proc add(s: var string; ms: MSlice)		208
+nim	join	cligen/mslice.html#join,openArray[MSlice],string	proc join(a: openArray[MSlice]; sep: string = ""): string		215
+nim	`==`	cligen/mslice.html#==,MSlice,MSlice	proc `==`(x, y: MSlice): bool		224
+nim	`<`	cligen/mslice.html#<,MSlice,MSlice	proc `<`(a, b: MSlice): bool		228
+nim	write	cligen/mslice.html#write,File,MSlice	proc write(f: File; ms: MSlice)		233
+nim	urite	cligen/mslice.html#urite,File,MSlice	proc urite(f: File; ms: MSlice)		237
+nim	mrite	cligen/mslice.html#mrite,File,varargs[MSlice]	proc mrite(f: File; mses: varargs[MSlice])		247
+nim	toOb	cligen/mslice.html#toOb,MSlice,T	proc toOb[T](m: MSlice; ob: var T)		251
+nim	toSeq	cligen/mslice.html#toSeq,MSlice,seq[T]	proc toSeq[T](m: MSlice; s: var seq[T])		260
+nim	`==`	cligen/mslice.html#==,string,MSlice	proc `==`(a: string; ms: MSlice): bool		273
+nim	`==`	cligen/mslice.html#==,MSlice,string	proc `==`(ms: MSlice; b: string): bool		275
+nim	hash	cligen/mslice.html#hash,MSlice	proc hash(ms: MSlice): Hash		278
+nim	nextSlice	cligen/mslice.html#nextSlice,MSlice,MSlice,char,char	proc nextSlice(mslc, ms: var MSlice; sep = '\n'; eat = '\x00'): int		282
+nim	mSlices	cligen/mslice.html#mSlices.i,MSlice,char,char	iterator mSlices(mslc: MSlice; sep = ' '; eat = '\x00'): MSlice		316
+nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,char	proc msplit(mslc: MSlice; fs: var seq[MSlice]; sep = ' '; eat = '\x00')		343
+nim	firstN	cligen/mslice.html#firstN,MSlice,int,char	proc firstN(ms: MSlice; n = 1; term = '\n'): MSlice		356
+nim	wspace	cligen/mslice.html#wspace	const wspace		366
+nim	mempbrk	cligen/mslice.html#mempbrk,pointer,set[char],csize	proc mempbrk(s: pointer; accept: set[char]; n: csize): pointer		372
+nim	stripLeading	cligen/mslice.html#stripLeading,MSlice	proc stripLeading(s: var MSlice; chars = wspace)		376
+nim	stripTrailing	cligen/mslice.html#stripTrailing,MSlice	proc stripTrailing(s: var MSlice; chars = wspace)		381
+nim	strip	cligen/mslice.html#strip,MSlice	proc strip(s: var MSlice; leading = true; trailing = true; chars = wspace)		384
+nim	stripLeading	cligen/mslice.html#stripLeading,MSlice_2	proc stripLeading(s: MSlice; chars = wspace): MSlice		388
+nim	stripTrailing	cligen/mslice.html#stripTrailing,MSlice_2	proc stripTrailing(s: MSlice; chars = wspace): MSlice		391
+nim	strip	cligen/mslice.html#strip,MSlice_2	proc strip(s: MSlice; leading = true; trailing = true; chars = wspace): MSlice		394
+nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],char,int	proc msplit(s: MSlice; fs: var seq[MSlice]; sep = ' '; n = 0; repeat = false): int		428
+nim	msplit	cligen/mslice.html#msplit,MSlice,char,int	proc msplit(s: MSlice; sep = ' '; n = 0; repeat = false): seq[MSlice]		431
+nim	msplit	cligen/mslice.html#msplit,MSlice,seq[MSlice],int	proc msplit(s: MSlice; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int		434
+nim	msplit	cligen/mslice.html#msplit,MSlice,int	proc msplit(s: MSlice; n = 0; seps = wspace; repeat = true): seq[MSlice]		437
+nim	msplit	cligen/mslice.html#msplit,string,seq[MSlice],char,int	proc msplit(s: string; fs: var seq[MSlice]; sep = ' '; n = 0; repeat = false): int		440
+nim	msplit	cligen/mslice.html#msplit,string,char,int	proc msplit(s: string; sep: char; n = 0; repeat = false): seq[MSlice]		444
+nim	msplit	cligen/mslice.html#msplit,string,seq[MSlice],int	proc msplit(s: string; fs: var seq[MSlice]; seps = wspace; n = 0; repeat = true): int		448
+nim	msplit	cligen/mslice.html#msplit,string,int	proc msplit(s: string; seps = wspace; n = 0; repeat = true): seq[MSlice]		452
+nim	splitr	cligen/mslice.html#splitr,string,seq[string],char,int,ptr.seq[string]	proc splitr(s: string; fs: var seq[string]; sep = ' '; n = 0; repeat = false;\n       sp: ptr seq[string] = nil): int		495
+nim	splitr	cligen/mslice.html#splitr,string,char,int	proc splitr(s: string; sep: char; n = 0; repeat = false): seq[string]		500
+nim	splitr	cligen/mslice.html#splitr,string,seq[string],int,ptr.seq[string]	proc splitr(s: string; fs: var seq[string]; seps = wspace; n = 0; repeat = true;\n       sp: ptr seq[string] = nil): int		504
+nim	splitr	cligen/mslice.html#splitr,string,int	proc splitr(s: string; seps = wspace; n = 0; repeat = true): seq[string]		509
+nim	Sep	cligen/mslice.html#Sep	tuple Sep		513
+nim	initSep	cligen/mslice.html#initSep,string	proc initSep(seps: string): Sep		515
+nim	Splitr	cligen/mslice.html#Splitr	type Splitr		541
+nim	initSplitr	cligen/mslice.html#initSplitr,string	proc initSplitr(seps: string): Sep		542
+nim	split	cligen/mslice.html#split,Sep,MSlice,seq[MSlice],int	proc split(s: Sep; line: MSlice; cols: var seq[MSlice]; n = 0)		544
+nim	split	cligen/mslice.html#split,Sep,string,seq[string],int	proc split(s: Sep; line: string; cols: var seq[string]; n = 0)		548
+nim	split	cligen/mslice.html#split,Sep,string,int	proc split(s: Sep; line: string; n = 0): seq[string]		552
+nim	TextFrame	cligen/mslice.html#TextFrame	tuple TextFrame		563
+nim	frame	cligen/mslice.html#frame.i,MSlice,char,int	iterator frame(s: MSlice; sep: char; repeat = false; n = 0): TextFrame		601
+nim	frame	cligen/mslice.html#frame.i,MSlice,set[char],int	iterator frame(s: MSlice; seps: set[char]; repeat = false; n = 0): TextFrame		609
+nim	frame	cligen/mslice.html#frame.i,MSlice,Sep,int	iterator frame(s: MSlice; sep: Sep; n = 0): TextFrame		617
+nim	frame	cligen/mslice.html#frame,MSlice,seq[TextFrame],Sep,int	proc frame(s: MSlice; fs: var seq[TextFrame]; sep: Sep; n = 0): int		628
+nim	frame	cligen/mslice.html#frame,MSlice,Sep,int	proc frame(s: MSlice; sep: Sep; n = 0): seq[TextFrame]		635
+nim	items	cligen/mslice.html#items.i,MSlice	iterator items(a: MSlice): char		644
+nim	contains	cligen/mslice.html#contains,MSlice,set[char]	proc contains(s: MSlice; cset: set[char]): bool		649
+nim	pairs	cligen/mslice.html#pairs.i,MSlice	iterator pairs(a: MSlice): tuple[ix: int, c: char]		653
+nim	findNot	cligen/mslice.html#findNot,string,set[char],Natural,int	proc findNot(s: string; chars: set[char]; start: Natural = 0; last = 0): int		658
+nim	eos	cligen/mslice.html#eos,MSlice	proc eos(ms: MSlice): pointer		674
+nim	within	cligen/mslice.html#within,MSlice,MSlice	proc within(a, c: MSlice): bool		677
+nim	extend	cligen/mslice.html#extend,MSlice,int,char	proc extend(ms: MSlice; max: int; sep = '\n'): MSlice		681
+nim	nSplit	cligen/mslice.html#nSplit,int,MSlice,char	proc nSplit(n: int; data: MSlice; sep = '\n'): seq[MSlice]		691
+nim	parseBin	cligen/mslice.html#parseBin,,int	proc parseBin(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		736
+nim	parseOct	cligen/mslice.html#parseOct,,int	proc parseOct(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		741
+nim	parseInt	cligen/mslice.html#parseInt,,int	proc parseInt(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		746
+nim	parseHex	cligen/mslice.html#parseHex,,int	proc parseHex(s: MSlice | openArray[char]; eoNum: var int = doNotUse): int		751
+nim	parseHSlice	cligen/mslice.html#parseHSlice	proc parseHSlice[T, U](s: MSlice | openArray[char]): HSlice[T, U]		756
+nim	parseHSlice	cligen/mslice.html#parseHSlice,string	proc parseHSlice[T, U](s: string): HSlice[T, U]		777
+nim	pow10	cligen/mslice.html#pow10	const pow10		780
+nim	parseFloat	cligen/mslice.html#parseFloat,,int	proc parseFloat(s: MSlice | openArray[char]; eoNum: var int = doNotUse): float		839
+nimgrp	tomslice	cligen/mslice.html#toMSlice-procs-all	proc		63
+nimgrp	splitr	cligen/mslice.html#splitr-procs-all	proc		495
+nimgrp	+!	cligen/mslice.html#+!-procs-all	proc		43
+nimgrp	[]	cligen/mslice.html#[]-procs-all	proc		82
+nimgrp	dup	cligen/mslice.html#dup-procs-all	proc		176
+nimgrp	striptrailing	cligen/mslice.html#stripTrailing-procs-all	proc		381
+nimgrp	stripleading	cligen/mslice.html#stripLeading-procs-all	proc		376
+nimgrp	find	cligen/mslice.html#find-procs-all	proc		131
+nimgrp	rfind	cligen/mslice.html#rfind-procs-all	proc		166
+nimgrp	==	cligen/mslice.html#==-procs-all	proc		224
+nimgrp	msplit	cligen/mslice.html#msplit-procs-all	proc		343
+nimgrp	strip	cligen/mslice.html#strip-procs-all	proc		384
+nimgrp	parsehslice	cligen/mslice.html#parseHSlice-procs-all	proc		756
+nimgrp	split	cligen/mslice.html#split-procs-all	proc		544
+nimgrp	frame	cligen/mslice.html#frame-procs-all	proc		628
+nimgrp	frame	cligen/mslice.html#frame-iterators-all	iterator		601
+nimgrp	toopenarraychar	cligen/mslice.html#toOpenArrayChar-templates-all	template		197
