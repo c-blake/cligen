@@ -3,17 +3,18 @@ RELEASE NOTES
 
 Version: 1.9.5
 --------------
-  - Add newly necessary in nim-devel explicit generic for mslice.parseHSlice
-  - Add a new search path for libmagic (maybe Ubuntu & imitators)
+  - Fix bugs in Windows branch of `cligen/osUt.getdelim`.
 
 Version: 1.9.4
 --------------
+  - Add newly necessary in nim-devel explicit generic for mslice.parseHSlice
+
+  - Add a new search path for libmagic (maybe Ubuntu & imitators)
 
   - Fix implicit conversion to 'cstring' cligen/mfile warning
 
 Version: 1.9.3
 --------------
-
   - `osUt.getDelims(path: string)` can convert `"" path` -> `stdin` use
 
   - `mfile.mSlices` has a better error message
