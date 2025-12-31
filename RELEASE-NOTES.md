@@ -1,6 +1,11 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.6
+--------------
+  - Add `cligen/trie`-like `match` capability to `cligen/tern` & have
+  `cligen/abbrev` use that instead for ~1.5-2x speed-up on slow cases.
+
 Version: 1.9.5
 --------------
   - Fix bugs in Windows branch of `cligen/osUt.getdelim`.
