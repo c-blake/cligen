@@ -1,13 +1,13 @@
-##This module implements a Ternary Search Tree which is an efficient container
-##for a sorted set|mapping of strings in the family of digital search trees.
-##Presently, NUL bytes(``'\0'``) are not allowed in keys.  I have measured it as
-##up to 1.5x faster than ``CritBitTree`` (at a cost of a 7x memory footprint)
-##doing things like unique `**.nim` lines and never more than 1.1x slower.  It
-##mostly felt easier for me to extend this variant.  It is API-compatible with
-##``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
-##which will be trapped by the compiler if you use kwargs).  ``CritBitTree``
-##itself is API-compatible with the union of both ``HashSet`` and ``Table``.
-import std/algorithm, ./sysUt # reverse, postInc
+## This module implements a Ternary Search Tree which is an efficient container
+## for a sorted set|mapping of strings in the family of digital search trees.
+## Presently, NUL bytes(``'\0'``) are not allowed in keys.  I have measured it
+## as up to 1.5x faster than ``CritBitTree`` (at a cost of 7x memory footprint)
+## doing things like unique `**.nim` lines and never more than 1.1x slower.  It
+## mostly felt easier for me to extend this variant.  It is API-compatible with
+## ``CritBitTree`` (except a ``longestMatch`` -> ``longest`` parameter rename
+## which will be trapped by the compiler if you use kwargs).  ``CritBitTree``
+## itself is API-compatible with the union of both ``HashSet`` and ``Table``.
+import std/[algorithm, sets, strutils], ./sysUt # reverse, postInc, !!, toItr
 
 const NUL* = '\0'
 type
@@ -166,6 +166,10 @@ proc incl*(t: var Tern[void], key: string) =
   ## Includes ``key`` in ``t``.
   discard rawInsert(t, key)
 
+proc toTern*(x: openArray[string]): Tern[void] =
+  ## Compute & return a ``Trie[void]`` based on input parameter.
+  for s in x: result.incl s
+
 proc incl*[T](t: var Tern[T], key: string, val: T) =
   ## Inserts ``key`` with value ``val`` into ``t``, overwriting if present
   var n = rawInsert(t, key)
@@ -272,15 +276,17 @@ proc uniquePfxPat*[T](t: Tern[T], key: string, sep="*"): string =
       i.inc
     p = p.kid[d+1]
 
+proc uniquePfxPats*(t: Tern[void], x: openArray[string], sep="*"): seq[string] =
+  ## Return shortest unique prefixes of ``x`` assuming non-"" & unique ``x[i]``.
+  result.setLen x.len; for i, s in x: result[i] = t.uniquePfxPat(s, sep)
+
 proc uniquePfxPats*(x: openArray[string], sep="*"): seq[string] =
-  ## Return unique prefixes in ``x`` assuming non-empty-string&unique ``x[i]``.
-  result.setLen x.len
-  var t: Tern[void]
-  for i, s in x: t.incl s
-  for i, s in x: result[i] = t.uniquePfxPat(s, sep)
+  ## Return shortest unique prefixes in ``x`` assuming non-"" & unique ``x[i]``.
+  x.toTern.uniquePfxPats x, sep
 
 proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
-  ## Return unique suffixes in ``x`` assuming non-empty-string&unique ``x[i]``.
+  ## Return shortest unique suffixes in ``x`` assuming no "" & unique ``x[i]``.
+  ## NOTE: This just reverses bytes and so does not work with utf8.
   result.setLen x.len
   var revd = newSeq[string](x.len)
   var t: Tern[void]
@@ -290,3 +296,52 @@ proc uniqueSfxPats*(x: openArray[string], sep="*"): seq[string] =
     result[i] = t.uniquePfxPat(s, "")
     result[i].reverse
     result[i] = sep & result[i]
+
+proc match[T](a: var HashSet[string]; key: var string; n: Node[T]; pat="";
+              i=0, nK=0, a1='?', aN='*', lim=2) =
+  if n.isNil: return
+  if i >= pat.len:
+    if n.ch == NUL:
+      if key.len > 0:           # De-dup matches w/HashSet and if too may use..
+        a.incl key              #..exceptions to end the whole recursion.
+        if a.len >= lim: IO !! "done"
+    else:                       # Due to NUL-termination, chase chain @EOPat
+      var nn = n; var nK = nK
+      while nn.ch != NUL:
+        key.setLen nK + 1; key[nK] = nn.ch; inc nK
+        nn = nn.kid[1]
+    return
+  let p = pat[i]
+  if p == aN:                   # '*' matching
+    a.match key, n, pat, i + 1, nK, a1, aN, lim       # * => Empty string here
+    a.match key, n.kid[0], pat, i, nK, a1, aN, lim
+    key.setLen nK + 1; key[nK] = n.ch
+    a.match key, n.kid[1], pat, i, nK + 1, a1, aN, lim
+    a.match key, n.kid[2], pat, i, nK, a1, aN, lim
+  else:
+    if p == a1 or p == n.ch:    # Wildcard or exact match; XXX set[char], too?
+      a.match key, n.kid[0], pat, i, nK, a1, aN, lim
+      key.setLen nK + 1; key[nK] = n.ch
+      a.match key, n.kid[1], pat, i + 1, nK + 1, a1, aN, lim
+      a.match key, n.kid[2], pat, i, nK, a1, aN, lim
+    elif p < n.ch: a.match key, n.kid[0], pat, i, nK, a1, aN, lim
+    elif p > n.ch: a.match key, n.kid[2], pat, i, nK, a1, aN, lim
+
+proc simplifyPattern*(pat: string, a1='?', aN='*'): string =
+  ## Map "(>1 of ?)*" --> "?*" or "*(>1 '?')" --> just "*?".
+  result = pat                          # This could be more efficient & ..
+  let pre  = a1 & a1 & aN               #..maybe shouldn't even happen at all.
+  let pre2 = a1 & aN
+  while pre in result: result = result.replace(pre, pre2)
+  let post = aN & a1 & a1
+  let post2 = a1 & aN
+  while post in result: result = result.replace(post, post2)
+
+proc match*[T](t: Tern[T], pat="", lim=0, a1='?', aN='*'): seq[string] =
+  ## Return up to `lim` matches of shell `[?*]` glob pattern `pat` in `t`.
+  var key: string
+  var s: HashSet[string]
+  let pat = pat.simplifyPattern(a1, aN)
+  try: s.match(key, t.root, pat, 0, 0, a1, aN, if lim == 0: t.len else: lim)
+  except IOError: discard
+  for x in s.items: result.add x
