@@ -28,8 +28,7 @@
 ##making strings harder to read & gets slower to compute.  Efficient algorithms
 ##for this case are a work in progress. This algo research area seems neglected.
 
-import std/[strutils, algorithm, sets, tables, math],
-       ./tern, ./humanUt, ./textUt, ./trie
+import std/[strutils, algorithm, sets, tables, math], ./[tern, humanUt, textUt]
 
 type Abbrev* = object
   sep: string
@@ -38,7 +37,7 @@ type Abbrev* = object
   mx*, hd, tl, sLen, m, h, t: int
   optim: bool
   abbOf: Table[string, string]
-  trie: Trie[void]
+  all: Tern[void]
 
 proc isAbstract*(a: Abbrev): bool {.inline.} =
   a.mx < 0 or a.hd < 0 or a.tl < 0
@@ -120,7 +119,7 @@ proc pquote(a: Abbrev; abb: string): string =
     if j < 0: break
     let old = result[j]
     result[j] = a.qmark
-    if a.trie.match(result, 2, a.qmark, star).len > 1:
+    if a.all.match(result, 2, a.qmark, star).len > 1:
       result[j] = old
     start = j + 1
 
@@ -134,8 +133,8 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
   let sLen = sep.len                      #Code below may assume "*" in spots
   if strs.len == 1:                       #best locally varying n-* pattern = *
     return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
-  a.trie = toTrie(strs)                   #A trie with all strings (<= -4)
-  let t = a.trie
+  a.all = toTern(strs)                    #A TernaryST with all strings (<= -4)
+  let t = a.all
   result.setLen strs.len
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
@@ -149,7 +148,7 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
       break
   if a.mx == -4: return                    #Only best pfx|sfx requested; Done
 #XXX -5,-6 can get slow.  May be able to speed up with a 2nd reversed-string
-#trie for *foo or a greedy algorithm starting with longest common substrings.
+#Tern for *foo or a greedy algorithm starting with longest common substrings.
   for i, s in strs:                       #Try to improve with shortest any-spot
     if result[i].len - sLen <= 1: continue    #Too short to abbreviate more
     block outermost:                          #Simple but slow algo: Start
