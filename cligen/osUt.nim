@@ -588,7 +588,7 @@ proc setFileSize*(fh: FileHandle; currSize, newSize: int64): OSErrorCode =
     if newSize > currSize:              # GROW FILE
       var e: cint                       # posix_fallocate truncates up as needed
       while (e = posix_fallocate(fh, 0.Off, nSz); e == EINTR): discard
-      if e in [EINVAL, EOPNOTSUPP] and ftruncate(fh, nSz) == -1:
+      if e in [EINVAL, EOPNOTSUPP, ENOSYS] and ftruncate(fh, nSz) == -1:
         result = osLastError()          # ftruncate fallback debatable; More FS
       elif e!=0: result = osLastError() #..portable, but SEGV becomes possible.
     else:                               # newSize < currSize: SHRINK FILE
