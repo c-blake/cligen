@@ -137,19 +137,19 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
-  let sep = a.sep
+  let sep = a.sep; let n = strs.len
   if   a.mx == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
   elif a.mx == -3: result = strs.uniqueSfxPats(sep); return
   let sLen = sep.len                      #Code below may assume "*" in spots
-  if strs.len == 1:                       #best locally varying n-* pattern = *
+  if n == 1:                              #best locally varying n-* pattern = *
     return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
   a.all = toTern(strs)                    #A TernaryST with all strings (<= -4)
   let t = a.all
-  result.setLen strs.len
+  result.setLen n
   let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
   let sfx = strs.uniqueSfxPats(sep)
   var avgSfx = 0; var avgPfx = 0
-  for i in 0 ..< strs.len:
+  for i in 0 ..< n:
     avgSfx.inc sfx[i].len; avgPfx.inc pfx[i].len
     result[i] = if sfx[i].len < pfx[i].len: sfx[i] else: pfx[i]
   for r in result:
@@ -157,11 +157,10 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
       result = if avgSfx < avgPfx: sfx else: pfx
       break
   if a.mx == -4: return                    #Only best pfx|sfx requested; Done
-#XXX -5,-6 can get slow.  May be able to speed up with a 2nd reversed-string
-#Tern for *foo or a greedy algorithm starting with longest common substrings.
-  for i, s in strs:                       #Try to improve with shortest any-spot
-    if result[i].len - sLen <= 1: continue    #Too short to abbreviate more
-    block outermost:                          #Simple but slow algo: Start
+  for i in 0 ..< strs.len:                #Try to improve with shortest any-spot
+    let s = strs[i]
+    if result[i].len - sLen > 1:              #Long enough to abbreviate more
+     block outermost:                         #Simple but slow algo: Start
       for tLen in sLen + 1 ..< result[i].len: #..from shortest possible pats,
         for nSfx in 0 ..< tLen - sLen:        #..try all splits, stop when
           let nPfx = tLen - sLen - nSfx       #..first unique is found.
@@ -169,9 +168,10 @@ proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
           if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
             result[i] = pat; break outermost
   if a.mx == -5: return                   #Only best 1-* requested; Done
-  for i, s in strs:                       #Try to improve with a second *
-    if result[i].len - 2*sLen <= 1: continue  #Too short for more *s to help
-    block outermost:                          #Like above but pfx*middle*sfx
+  for i in 0 ..< strs.len:                    #Try to improve with a second *
+    let s = strs[i]
+    if result[i].len - 2*sLen > 1:            #Long enough for more *s to help
+     block outermost:                         #Like above but pfx*middle*sfx
       for tLen in 2*sLen+1 ..< result[i].len: #NOTE: "" middle is unhelpful
         for nSfx in 0 ..< tLen - 2*sLen:
           let sfx = s[^nSfx .. ^1]
