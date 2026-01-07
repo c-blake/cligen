@@ -1,32 +1,42 @@
-##This module is about construction of shell-`*` wildcard-like abbreviations for
-##a set of strings.  The simplest variant is when the user gives us a specific
-##maximum string length and at least one component of the head,tail slices.  In
-##that case, `abbrev` just wraps Nim string slicing and the set of abbreviations
-##may or may not uniquely cover the input string set.
-##
-##When the user leaves certain aspects automatic/undefined, various algorithms
-##can be deployed to find optimized answers within various constraints.  The
-##most important constraint is likely uniqueness.  Can I select a string, paste
-##it into a shell REPL, and expect it to expand to exactly 1 item?  The same
-##concept applies to non-filename strings, but there is less help from a shell
-##to expand them.  Eg., 10-40 user names on a lightly configured single-user
-##Unix system uses "a directory in your brain" (or you can write a small
-##expander script to spot-check anything non-obvious in context).
-##
-##The simplest automatic setting is just a fixed wildcard spot protocol such as
-##a specific head or mid-point with binary search quickly finding a smallest max
-##limit which makes abbreviations unique.  Visually this results in columns of
-##abbreviations where the wildcard `*`s line up vertically which seems easier to
-##read.  We can also ignore user head,tail specs, instead finding the location
-##that minimizes the width of the string set.  This code does that by just
-##trying all possible locations.  This starts to be slow for a computer but
-##remains fast for a human (eg. 400 ms on a directory of 12,000 entries).
-##
-##The next level of optimization/data compression is to allow the location of
-##the wildcard to vary from string to string.  After that, allowing >1 '*' can
-##continue to shorten strings.  Each optimization level removes more context
-##making strings harder to read & gets slower to compute.  Efficient algorithms
-##for this case are a work in progress. This algo research area seems neglected.
+##[ This module is about building shell-`*` wildcard abbreviations for sets of
+strings.  The simplest variant is when the user gives a specific maximum string
+length and at least one component of the head,tail slices.  In that case,
+`abbrev` just wraps Nim string slicing and the set of abbreviations may or may
+not uniquely cover the input string set.
+
+When users leave certain aspects automatic/undefined, various algorithms can be
+deployed to find optimized answers within various constraints.  The likely most
+important constraint is uniqueness.  Can one copy-paste strings into shell REPLs
+and expect each to expand to exactly 1 item?  The same concept applies to
+non-filename strings, but there is less help from shells to auto-expand.  Eg.,
+10-40 user names on a lightly configured single-user Unix system might expand
+using "a directory in your brain" (or you can write a small expander script to
+spot-check anything non-obvious in context).
+
+The simplest automatic setting is a fixed wildcard position protocol such as a
+specific head or mid-point with binary search quickly finding a smallest max
+limit which makes abbreviations unique.  Visually this results in columns of
+abbreviations where the wildcard `*`s line up vertically which seems easier to
+read and is most similar to an ellipsis (...) separator the NeXT cube file
+browser used.
+
+As a next level of terminal-space optimization, we can ignore user head,tail
+specs, instead finding the location that minimizes each width of the string set.
+This code does that by just trying all possible locations for '*'.  This starts
+to be a lot of brute force work and slow for a computer but remains fast for a
+human (eg. 400 ms on a directory of 12,000 entries).
+
+The next level of optimization/data compression is to allow the location of
+the wildcard to vary from string to string.  After that, allowing >1 '*' can
+continue to shorten strings.  Each optimization level removes more context
+making strings harder to read & gets slower to compute.  Meanwhile, tabular
+contexts often decide (after initial lengths are known) padding space to align
+text visually.  That space can be repurposed to partially expand patterns which
+then eases reading without loss of terminal rows which here we call `expandFit`.
+
+This algo research area seems neglected, the closest I could find being Minimal
+Distinguishing Subsequence Patterns by Ji, Bailey & Dong in 2007 in a
+bioinformatics context.]##
 
 import std/[strutils, algorithm, sets, tables, math], ./[tern, humanUt, textUt]
 
