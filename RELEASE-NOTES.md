@@ -4,7 +4,14 @@ RELEASE NOTES
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have
-  `cligen/abbrev` use that instead for ~1.5-2x speed-up on slow cases.
+  `cligen/abbrev` use that instead for ~1.5-2X speed-up on slow cases.
+
+  - Parallelize `cligen/abbrev` modes -5,-6 & elide string allocating for 2-4X
+  speed-up (1-* & 2-* anywhere pattern modes); `abbrev.(realize|uniqueAbbrevs)`
+  signatures grows `jobs=1, jobsN=150`.  Client code (`abbrev` test main, `lc`,
+  `procs`, ..) now needs a `.nims` that has at least `switch("threads", "on")`.
+  You can just copy `cligen/abbrev.nims` if you want if literally anyone but me
+  even uses `cligen/abbrev`.
 
 Version: 1.9.5
 --------------

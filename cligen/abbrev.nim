@@ -38,7 +38,9 @@ This algo research area seems neglected, the closest I could find being Minimal
 Distinguishing Subsequence Patterns by Ji, Bailey & Dong in 2007 in a
 bioinformatics context.]##
 
-import std/[strutils, algorithm, sets, tables, math], ./[tern, humanUt, textUt]
+when not declared Thread: import std/typedthreads
+import std/[strutils, algorithm, sets, tables, math, osproc],
+       ./[tern, humanUt, textUt, sysUt]
 
 type Abbrev* = object
   sep: string
@@ -133,57 +135,94 @@ proc pquote(a: Abbrev; abb: string): string =
       result[j] = old
     start = j + 1
 
-proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string]): seq[string] =
+proc parts(n,m:int):seq[Slice[int]]= #Split 0..<n into m subslices so that non-0
+  var start = 0                      #..remains spread evenly over early slices.
+  let (q, r)=(n div m, n mod m) # Quotient & Remainder
+  for i in 0 ..< m:
+    let size = if i < r: q + 1 else: q
+    result.add start ..< (start + size)
+    start += size
+
+type TA = tuple[sep:ptr string,t:ptr Tern[void],sl:ptr Slice[int],st:pua string,
+                pO: ptr seq[string]]    # Need threads not procs to be able to..
+                                        #..just write into carried over result.
+proc add(o: var string, s: string; a, b: int) =
+  if b > a:
+    let oL0 = o.len; o.setLen oL0 + b - a; copyMem o[oL0].addr, s[a].addr, b - a
+
+proc w5(ta: TA) {.thread.} =            # TA = Thread Arg
+  let (sep, t, sl, strs) = (ta.sep[], ta.t[], ta.sl[], ta.st)
+  let sLen = sep.len; template R: untyped = ta.pO[]
+  var pat = newString(256)
+  for i in sl:                          # Try to improve with shortest any-spot
+   if R[i].len - sLen > 1:              # Long enough to abbreviate more
+    block outermost:                    # Simple but slow algo: Start
+     let s = strs[i]
+     for tLen in sLen + 1 ..< R[i].len: # From shortest possible pats, try all..
+       for nSfx in 0 ..< tLen - sLen:   #..splits, stop when first unique found.
+         let nPfx = tLen - sLen - nSfx
+#        let pat = s[0 ..< nPfx] & sep & s[^nSfx .. ^1]
+         pat.setLen 0; pat.add s,0,nPfx; pat.add sep; pat.add s,s.len-nSfx,s.len
+         if pat.len < R[i].len and t.match(pat, 2, aN=sep[0]).len == 1:
+           R[i].setLen pat.len; copyMem R[i][0].addr, pat[0].addr, pat.len
+           break outermost              # Stop @shortest pattern w/unique match
+
+proc w6(ta: TA) {.thread.} =            # TA = Thread Arg
+  let (sep, t, sl, strs) = (ta.sep[], ta.t[], ta.sl[], ta.st)
+  let sLen = sep.len; template R: untyped = ta.pO[]
+  var pat = newString(256); var pfx = newString(256); var sfx = newString(256)
+  for i in sl:                          # Try to improve with a second *
+    if R[i].len - 2*sLen > 1:           # Long enough for more *s to help
+      block outermost:                  # Like above but pfx*middle*sfx
+        let s = strs[i]
+        for tLen in 2*sLen+1 ..< R[i].len: #NOTE: "" middle is unhelpful
+          for nSfx in 0 ..< tLen - 2*sLen:
+            sfx.setLen 0; sfx.add s, s.len - nSfx, s.len
+            for nPfx in 0 ..< tLen - nSfx - 2*sLen: # nPfx&nSfx lens fix data..
+              pfx.setLen 0; pfx.add s, 0, nPfx      #..but mid can be ANY SUBSTR
+              for nMid in 1 .. tLen - 2*sLen - nSfx - nPfx:
+                for off in 0 .. s.len - nPfx - nSfx - nMid:
+#                 let pat=pfx & sep & s[nPfx+off ..< nPfx+off+nMid] & sep & sfx
+                  pat.setLen 0; pat.add pfx; pat.add sep
+                  pat.add s, nPfx+off, nPfx+off+nMid
+                  pat.add sep; pat.add sfx
+                  if pat.len < R[i].len and t.match(pat, 2, aN=sep[0]).len == 1:
+                    R[i].setLen pat.len;copyMem R[i][0].addr,pat[0].addr,pat.len
+                    break outermost # stop at shortest pattern with unique match
+import std/times
+proc uniqueAbbrevs*(a: var Abbrev; strs: openArray[string], jobs=1, jobsN=150):
+        seq[string] =
   ## Return narrowest unique abbrevation set for ``strs`` given some number of
   ## wildcards (``sep``, probably ``*``), where both location and number of
   ## wildcards can vary from string to string.
   let sep = a.sep; let n = strs.len
-  if   a.mx == -2: result = strs.uniquePfxPats(sep); return  #Simplest patterns
-  elif a.mx == -3: result = strs.uniqueSfxPats(sep); return
-  let sLen = sep.len                      #Code below may assume "*" in spots
-  if n == 1:                              #best locally varying n-* pattern = *
-    return @[ (if sLen < strs[0].len: sep else: strs[0]) ]
-  a.all = toTern(strs)                    #A TernaryST with all strings (<= -4)
-  let t = a.all
-  result.setLen n
-  let pfx = strs.uniquePfxPats(sep)       #Locally narrower of two w/post-check
-  let sfx = strs.uniqueSfxPats(sep)
-  var avgSfx = 0; var avgPfx = 0
-  for i in 0 ..< n:
-    avgSfx.inc sfx[i].len; avgPfx.inc pfx[i].len
+  let sLen = sep.len                    # Code below assumes 1/sep[0] in spots
+  if n == 1: return @[(if sLen < strs[0].len: sep else: strs[0])] # best=just *
+  if a.mx != -3: a.all = strs.toTern    # A TernaryST with all strings
+  if   a.mx == -2: return a.all.uniquePfxPats(strs, sep)  # Simplest patterns
+  elif a.mx == -3: return strs.uniqueSfxPats(sep)
+  result.setLen n; let t = a.all        # <=-4: result->LOCALLY lesser of [ps]fx
+  let pfx = t.uniquePfxPats(strs, sep)  # Because either individually guaranteed
+  let sfx = strs.uniqueSfxPats(sep)     #..1 match in dir, we can mix & match &
+  for i in 0 ..< n:                     #..not alter that guarantee.
     result[i] = if sfx[i].len < pfx[i].len: sfx[i] else: pfx[i]
-  for r in result:
-    if t.match(r, 2, aN=sep[0]).len > 1:   #Collision=>revert to narrower on avg
-      result = if avgSfx < avgPfx: sfx else: pfx
-      break
-  if a.mx == -4: return                    #Only best pfx|sfx requested; Done
-  for i in 0 ..< strs.len:                #Try to improve with shortest any-spot
-    let s = strs[i]
-    if result[i].len - sLen > 1:              #Long enough to abbreviate more
-     block outermost:                         #Simple but slow algo: Start
-      for tLen in sLen + 1 ..< result[i].len: #..from shortest possible pats,
-        for nSfx in 0 ..< tLen - sLen:        #..try all splits, stop when
-          let nPfx = tLen - sLen - nSfx       #..first unique is found.
-          let pat = s[0 ..< nPfx] & sep & s[^nSfx .. ^1]
-          if t.match(pat, 2, aN=sep[0]).len == 1 and pat.len < result[i].len:
-            result[i] = pat; break outermost
-  if a.mx == -5: return                   #Only best 1-* requested; Done
-  for i in 0 ..< strs.len:                    #Try to improve with a second *
-    let s = strs[i]
-    if result[i].len - 2*sLen > 1:            #Long enough for more *s to help
-     block outermost:                         #Like above but pfx*middle*sfx
-      for tLen in 2*sLen+1 ..< result[i].len: #NOTE: "" middle is unhelpful
-        for nSfx in 0 ..< tLen - 2*sLen:
-          let sfx = s[^nSfx .. ^1]
-          for nPfx in 0 ..< tLen - nSfx - 2*sLen: #nPfx&nSfx lens fix their data
-            let pfx = s[0 ..< nPfx]               #..but mid can be ANY SUBSTR.
-            for nMid in 1 .. tLen - 2*sLen - nSfx - nPfx:
-              for off in 0 .. s.len - nPfx - nSfx - nMid:
-                let pat = pfx & sep & s[nPfx+off ..< nPfx+off+nMid] & sep & sfx
-                if t.match(pat, 2, aN=sep[0]).len==1 and pat.len<result[i].len:
-                  result[i] = pat; break outermost
+  if a.mx == -4: return                 # Only best pfx|sfx requested; Done
+  let pts = n.parts(if n < jobsN: 1 elif jobs > 0: jobs else: countProcessors())
+  if pts.len > 1:
+    var th = newSeq[Thread[TA]](pts.len)
+    for i in 0 ..< th.len:
+      th[i].createThread w5,(sep.addr,t.addr,pts[i].addr,strs.toPua,result.addr)
+    joinThreads th
+  else: (var all=0..<n; w5 (sep.addr,t.addr,all.addr, strs.toPua, result.addr))
+  if a.mx == -5: return                 # Only best 1-* requested; Done
+  if pts.len > 1:
+    var th = newSeq[Thread[TA]](pts.len)
+    for i in 0 ..< th.len:
+      th[i].createThread w6,(sep.addr,t.addr,pts[i].addr,strs.toPua,result.addr)
+    joinThreads th
+  else: (var all=0..<n; w6 (sep.addr,t.addr,all.addr, strs.toPua, result.addr))
 
-proc realize*(a: var Abbrev, strs: openArray[string]) =
+proc realize*(a: var Abbrev, strs: openArray[string], jobs=1, jobsN=150) =
   ## Semi-efficiently find the smallest max such that ``strs`` can be uniquely
   ## abbreviated by ``abbrev(s, mx, hd, tl)`` for all ``s`` in ``strs``.
   a.update
@@ -193,7 +232,8 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
     a.mx = a.sLen + 1; a.update
     return
   if a.mx < -1:
-    for i, abb in a.uniqueAbbrevs(strs):
+    for i, abb in a.uniqueAbbrevs(strs, jobs, jobsN):
+      if a.mx == -3 and a.all.len < 1: a.all = strs.toTern #-3 doesn't set a.all
       a.abbOf[strs[i]] = a.pquote(abb)
   elif a.optim:
     var res: seq[tuple[m, h, t: int]]
@@ -207,12 +247,12 @@ proc realize*(a: var Abbrev, strs: openArray[string]) =
   elif a.mx == -1:
     a.minMaxSTUnique(strs, mLen)
 
-proc realize*[T](a: var Abbrev, tab: Table[T, string]) =
+proc realize*[T](a: var Abbrev, tab: Table[T, string], jobs=1, jobsN=150) =
   ## Find smallest max s.t. abbrev unique over ``values`` of ``tab``.
   if tab.len == 0 or a.mx >= 0: return
   var strs: seq[string]
   for v in tab.values: strs.add v
-  a.realize strs
+  a.realize strs, jobs, jobsN
 
 proc sepExt(loc: var int; sep, abb, src: string): int =   #extent of sep
   loc = abb.find(sep)
@@ -293,10 +333,11 @@ proc expandFit*(a: var Abbrev; strs: var seq[string];
                   a.abbOf[src[si][0..^1]] = strs[ti][0..^1] #COPY
           return
 
+#UniqChk: abbrev -a-4 * | while {read p} {m=(${~p}); [ ${#m} == 1 ]||echo "$p"}
 when isMainModule:
-  proc abb(abbr="", byLen=false, strs: seq[string]) =
-    var a = parseAbbrev(abbr)
-    a.realize strs
+  proc abb(abbr="", byLen=false, jobs=1, jobsN=150, strs: seq[string]) =
+    var a = parseAbbrev(abbr)  
+    a.realize strs, jobs, jobsN
     if byLen:
       var sq: seq[string]
       for s in strs: sq.add a.abbrev s
