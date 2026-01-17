@@ -1,8 +1,8 @@
 ##[ This module is about building shell-`*` wildcard abbreviations for sets of
 strings.  The simplest variant is when the user gives a specific maximum string
-length and at least one component of the head,tail slices.  In that case,
-`abbrev` just wraps Nim string slicing and the set of abbreviations may or may
-not uniquely cover the input string set.
+length and at least one component of the head,tail slice amounts.  In that case,
+`abbrev` just wraps Nim string slicing BUT the set of abbreviations may NOT
+UNIQUELY EXPAND within the input string set.
 
 When users leave certain aspects automatic/undefined, various algorithms can be
 deployed to find optimized answers within various constraints.  The likely most
@@ -24,19 +24,20 @@ As a next level of terminal-space optimization, we can ignore user head,tail
 specs, instead finding the location that minimizes each width of the string set.
 This code does that by just trying all possible locations for '*'.  This starts
 to be a lot of brute force work and slow for a computer but remains fast for a
-human (eg. 400 ms on a directory of 12,000 entries).
+human (eg. sub-second for a directory of 18,000 entries).  (This is 'a' mode.)
 
-The next level of optimization/data compression is to allow the location of
-the wildcard to vary from string to string.  After that, allowing >1 '*' can
-continue to shorten strings.  Each optimization level removes more context
-making strings harder to read & gets slower to compute.  Meanwhile, tabular
-contexts often decide (after initial lengths are known) padding space to align
-text visually.  That space can be repurposed to partially expand patterns which
-then eases reading without loss of terminal rows which here we call `expandFit`.
+The next level of optimization/data compression is to allow the location of the
+wildcard to *vary from string to string* (shortest prefix or suffix or shorter
+of both or best single-'*' location).  After that, allowing >1 '*' can continue
+to shorten strings.  Each optimization level removes more context making strings
+harder to read & gets slower to compute.  Meanwhile, tabular contexts often
+decide (after initial lengths are known) padding space to align text visually.
+That space can be repurposed to partially expand patterns which then eases
+reading without loss of terminal rows which here we call `expandFit`.
 
-This algo research area seems neglected, the closest I could find being Minimal
+Algo research here seems neglected.  The closest I could find is Minimal
 Distinguishing Subsequence Patterns by Ji, Bailey & Dong in 2007 in a
-bioinformatics context.]##
+bioinformatics context. ]##
 
 when not declared Thread: import std/typedthreads
 import std/[strutils, algorithm, sets, tables, math, osproc],
