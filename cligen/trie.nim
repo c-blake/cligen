@@ -1,7 +1,8 @@
-##This module implements a Trie, a container for a set|mapping of strings in the
-##digital search tree family.  It is drop-in compatible-ish with ``CritBitTree``
-##itself compatible with both ``HashSet[string]`` & ``Table[string,*]``.  It was
-##easier for me to extend this with ``match``&``nearLev`` than ``CritBitTree``.
+##[ This module implements a Trie, a container for a set|mapping of strings in
+the digital search tree family.  It is drop-in compatible-ish with `CritBitTree`
+itself compatible with both `HashSet[string]` & `Table[string,*]`.  It was
+easier for me to extend this with `match`&`nearLev` than `CritBitTree`. ]##
+{.deprecated: "Deprecated since 1.9.6; `cligen/tern` does all you need".}
 
 import cligen/sysUt, std/[sets, algorithm, strutils] # HashSet, reverse
 type

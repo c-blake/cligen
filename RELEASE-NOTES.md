@@ -13,6 +13,8 @@ Version: 1.9.6
   You can just copy `cligen/abbrev.nims` if you want if literally anyone but me
   even uses `cligen/abbrev`.
 
+  - Deprecate `cligen/trie` as redundant
+
 Version: 1.9.5
 --------------
   - Fix bugs in Windows branch of `cligen/osUt.getdelim`.
