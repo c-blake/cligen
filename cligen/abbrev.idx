@@ -1,12 +1,12 @@
 nimTitle	abbrev	cligen/abbrev.html	module cligen/abbrev		0
-nim	Abbrev	cligen/abbrev.html#Abbrev	object Abbrev		45
-nim	isAbstract	cligen/abbrev.html#isAbstract,Abbrev	proc isAbstract(a: Abbrev): bool		54
-nim	update	cligen/abbrev.html#update,Abbrev	proc update(a: var Abbrev)		57
-nim	abbrev	cligen/abbrev.html#abbrev,Abbrev,string	proc abbrev(a: Abbrev; str: string): string		69
-nim	parseAbbrev	cligen/abbrev.html#parseAbbrev,string	proc parseAbbrev(s: string): Abbrev		78
-nim	parseAbbrevHelp	cligen/abbrev.html#parseAbbrevHelp	const parseAbbrevHelp		99
-nim	uniqueAbbrevs	cligen/abbrev.html#uniqueAbbrevs,Abbrev,openArray[string],int,int	proc uniqueAbbrevs(a: var Abbrev; strs: openArray[string]; jobs = 1; jobsN = 150): seq[\n    string]		193
-nim	realize	cligen/abbrev.html#realize,Abbrev,openArray[string],int,int	proc realize(a: var Abbrev; strs: openArray[string]; jobs = 1; jobsN = 150)		225
-nim	realize	cligen/abbrev.html#realize,Abbrev,Table[T,string],int,int	proc realize[T](a: var Abbrev; tab: Table[T, string]; jobs = 1; jobsN = 150)		250
-nim	expandFit	cligen/abbrev.html#expandFit,Abbrev,seq[string],seq[int],seq[int],seq[int],seq[int],int,int,int,int,int	proc expandFit(a: var Abbrev; strs: var seq[string];\n          ab0, ab1, wids, colWs: var seq[int]; w, jP, m, nr, nc: int)		276
-nimgrp	realize	cligen/abbrev.html#realize-procs-all	proc		225
+nim	Abbrev	cligen/abbrev.html#Abbrev	object Abbrev		46
+nim	isAbstract	cligen/abbrev.html#isAbstract,Abbrev	proc isAbstract(a: Abbrev): bool		55
+nim	update	cligen/abbrev.html#update,Abbrev	proc update(a: var Abbrev)		58
+nim	abbrev	cligen/abbrev.html#abbrev,Abbrev,string	proc abbrev(a: Abbrev; str: string): string		70
+nim	parseAbbrev	cligen/abbrev.html#parseAbbrev,string	proc parseAbbrev(s: string): Abbrev		79
+nim	parseAbbrevHelp	cligen/abbrev.html#parseAbbrevHelp	const parseAbbrevHelp		100
+nim	uniqueAbbrevs	cligen/abbrev.html#uniqueAbbrevs,Abbrev,openArray[string],int,int	proc uniqueAbbrevs(a: var Abbrev; strs: openArray[string]; jobs = 1; jobsN = 150): seq[\n    string]		194
+nim	realize	cligen/abbrev.html#realize,Abbrev,openArray[string],int,int	proc realize(a: var Abbrev; strs: openArray[string]; jobs = 1; jobsN = 150)		226
+nim	realize	cligen/abbrev.html#realize,Abbrev,Table[T,string],int,int	proc realize[T](a: var Abbrev; tab: Table[T, string]; jobs = 1; jobsN = 150)		251
+nim	expandFit	cligen/abbrev.html#expandFit,Abbrev,seq[string],seq[int],seq[int],seq[int],seq[int],int,int,int,int,int	proc expandFit(a: var Abbrev; strs: var seq[string];\n          ab0, ab1, wids, colWs: var seq[int]; w, jP, m, nr, nc: int)		277
+nimgrp	realize	cligen/abbrev.html#realize-procs-all	proc		226
