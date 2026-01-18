@@ -48,8 +48,16 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          curl -L -o dlls.zip https://nim-lang.org/download/dlls.zip
-          unzip dlls.zip -d nim-dlls
+          SEC=9; ok=0; URL=https://nim-lang.org/download/dlls.zip
+          for i in {1..5}; do
+            curl -sfL --retry 3 --retry-delay 2 -o dlls.zip "$URL" || {
+              echo "ATTEMPT $i: CURL FAILED"
+              sleep $SEC; continue }      # check file exists & unzip can read
+            if unzip -t dlls.zip >/dev/null 2>&1; then
+              unzip dlls.zip -d nim-dlls; ok=1; break
+            else
+              echo "ATTEMPT $i: BAD ZIP"; rm -f dlls.zip; sleep $SEC; fi; done
+          [ "$ok" -ne 1 ] && { echo "FAILED TO GET VALID dlls.zip"; exit 1; }
           echo "$GITHUB_WORKSPACE/nim-dlls" >> $GITHUB_PATH
           echo "SSL_CERT_FILE=$GITHUB_WORKSPACE/nim-dlls/cacert.pem" >> $GITHUB_ENV
 
