@@ -208,15 +208,15 @@ func uint64toDecimal*(res: var openArray[char], x: uint64): int =
     res[result - 2] = d3[index    ]
     dec result, 2
 
-## DragonBox is fast & accurate but sadly has no output format flexibility.
-## Someday that may improve.  For now the below routines maintain speed but fill
-## the flexibility gap at a tiny loss of accuracy.  This is not so bad if your
-## mindset is that output (&parsing) is just another calculation on floats like
-## transcendentals.  1 ULP is often considered ok for those.  Rel.err. < ~2^-52
-## for me.  Binary|C99 hex float are cheaper marshaling & Javascript should just
-## learn C99 hex floats already, especially since every number is `float`!
-## `ecvt`/`fcvt` can be ~2X faster than DragonBox when asking for rounded
-## results/fewer digits which for me is a common case.
+##[ DragonBox is fast & accurate but sadly has no output format flexibility.
+Someday that may improve.  For now the below routines maintain speed but fill
+the flexibility gap at a tiny loss of accuracy.  This is not so bad if your
+mindset is that output (&parsing) is just another calculation on floats like
+transcendentals.  1 ULP is often considered ok for those.  Rel.err. < ~2^-52 for
+me.  Binary|C99 hex float are cheaper round-trip marshaling & Javascript should
+just learn C99 hex floats already (especially since every number is `float`)!
+`ecvt`/`fcvt` can be ~2X faster than DragonBox for rounded results/fewer digits
+which for uncertain numbers code here is the common case. ]##
 type
   FloatCvtOptions* =  ## The many options of binary -> string float conversion.
     enum fcPad0,      ## Pad with '0' to the right (based upon precision `p`)
