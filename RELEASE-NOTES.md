@@ -1,6 +1,10 @@
 RELEASE NOTES
 =============
 
+Version: 1.9.7
+--------------
+  - cligen/puSig.nim grows u1, u2 short aliases for usr1, usr2 signal names.
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have
