@@ -104,7 +104,7 @@ def apply(cf=dict(), path="", plain=False):
       if len(subs) > 0 and subs[0] == subs[0].upper():
         subp = E(subs[0], subs[1] if len(subs) > 1 else "")
       else: subp = sub
-      apply(cf, subp if subp.startswith("/") else (relTo + subp), plain)
+      if subp: apply(cf, subp if subp.startswith("/") else (relTo+subp), plain)
     else:                       #TODO Could perhaps also handle [layout]
       if k in ("global", "aliases"):
         for K,V in v.items():
