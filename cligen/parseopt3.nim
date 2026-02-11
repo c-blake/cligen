@@ -282,7 +282,7 @@ proc next*(p: var OptParser) =
   if p.pos >= p.cmd.len:                #Step2: end of params check
     p.kind = cmdEnd
     return
-  if not p.cmd[p.pos].startsWith("-") or p.optsDone:  #Step3: non-option param
+  if p.optsDone or not p.cmd[p.pos].startsWith("-"):  #Step3: non-option param
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
