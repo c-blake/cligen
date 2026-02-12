@@ -80,6 +80,7 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           c.sepChars = {}; (for ch in e.value: c.sepChars.incl ch)
         of "longprefixok": c.longPfxOk = e.value.optionNormalize in yes
         of "stopprefixok": c.stopPfxOk = e.value.optionNormalize in yes
+        of "argendsopts" : c.argEndsOpts = e.value.optionNormalize in yes
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
             "requireseparator separatorchars longprefixok stopprefixok\n"

@@ -142,6 +142,7 @@ type
     opChars*: set[char]       ## all chars that can prefix a sepChar
     longPfxOk*: bool          ## true means unique prefix is ok for longOpts
     stopPfxOk*: bool          ## true means unique prefix is ok for stopWords
+    argEndsOpts*: bool        ## true=>disallow options after 1st non-option arg
     sep*: string              ## actual string separating key & value
     message*: string          ## message to display upon cmdError
     kind*: CmdLineKind        ## the detected command line token
@@ -153,7 +154,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
                     shortNoVal: set[char] = {}, longNoVal: seq[string] = @[],
                     requireSeparator=false, sepChars={'=',':'},
                     opChars: set[char] = {}, stopWords: seq[string] = @[],
-                    longPfxOk=true, stopPfxOk=true): OptParser =
+                    longPfxOk=true, stopPfxOk=true,
+                    argEndsOpts=false): OptParser =
   ## Initializes a parse. ``cmdline`` should not contain parameter 0, typically
   ## the program name.  If ``cmdline`` is not given, default to current program
   ## parameters.
@@ -167,6 +169,10 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   ## that only non-NoVal options will expect args and users may say ``-aboVal``
   ## or ``-o Val`` or ``--opt Val`` { as well as the `-o:Val|--opt=Val`
   ## separator style which always works }.
+  ##
+  ## If ``argEndsOpts==true`` command parameters after the first non-option
+  ## argument are just arguments, even if they start with a '-'.  (The GNU
+  ## ``getopt_long`` defaults to this if ``POSIXLY_CORRECT`` is set.)
   ##
   ## If ``opChars`` is not empty then those characters before the ``:|==``
   ## separator are reported in the ``.sep`` field of an element parse.  This
@@ -183,6 +189,7 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(),
   for s in longNoVal:   #Take normalizer param vs. hard-coding optionNormalize?
     if s.len > 0: result.longNoVal.incl(optionNormalize(s), s)
   result.requireSep = requireSeparator
+  result.argEndsOpts = argEndsOpts
   result.sepChars = sepChars
   result.opChars = opChars
   {.push warning[ProveField]: off.}
@@ -287,7 +294,7 @@ proc next*(p: var OptParser) =
     p.key = p.cmd[p.pos]
     p.val = ""
     let k = p.stopWords.lengthen(optionNormalize(p.cmd[p.pos]), p.stopPfxOk)
-    if k in p.stopWords:                #Step4: chk for stop word
+    if k in p.stopWords or p.argEndsOpts: #Step4: chk for stop word | syntax
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
     return
@@ -301,6 +308,7 @@ proc next*(p: var OptParser) =
   else:                                 #Step6: "-" but not "--" => short opt
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
       p.kind = cmdArgument              #  {"-" often used to indicate "stdin"}
+      if p.argEndsOpts: p.optsDone = true
       p.key = p.cmd[p.pos]
       p.val = ""
       p.pos += 1
@@ -342,7 +350,8 @@ when declared(paramCount):
   iterator getopt*(cmdline=commandLineParams(), shortNoVal: set[char] = {},
                    longNoVal: seq[string] = @[], requireSeparator=false,
                    sepChars={'=', ':'}, opChars: set[char] = {},
-                   stopWords: seq[string] = @[]): GetoptResult =
+                   stopWords: seq[string] = @[],
+                   argEndsOpts=false): GetoptResult =
     ## This is an convenience iterator for iterating over the command line.
     ## Parameters here are the same as for initOptParser.  Example:
     ## See above for a more detailed example
@@ -353,7 +362,7 @@ when declared(paramCount):
     ##     continue
     ##
     var p = initOptParser(cmdline, shortNoVal, longNoVal, requireSeparator,
-                          sepChars, opChars, stopWords)
+                          sepChars, opChars, stopWords, argEndsOpts)
     while true:
       next(p)
       if p.kind == cmdEnd: break

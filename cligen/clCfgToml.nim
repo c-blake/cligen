@@ -58,7 +58,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           c.sepChars = {}
           for ch in v2.getElems.mapIt(it.getStr[0]): c.sepChars.incl(ch)
         of "longprefixok": c.longPfxOk = v2.getBool
-        of "stopprefixok": c.longPfxOk = v2.getBool
+        of "stopprefixok": c.stopPfxOk = v2.getBool
+        of "argendsopts" : c.argEndsOpts = v2.getBool
         else: uk k1, k2
     of "color":
       if not plain:

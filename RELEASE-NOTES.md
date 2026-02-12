@@ -6,7 +6,27 @@ Version: 1.9.7
   - cligen/puSig.nim grows u1, u2 short aliases for usr1, usr2 signal names.
 
   - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
-    `[include_CG_STRICT]` but with `CG_STRICT` unset).
+  `[include_CG_STRICT]` but with `CG_STRICT` unset).
+
+  - add a new way to be strict to `cligen/parseopt3.nim`, bubbling up that
+  ability to both `std/parsecfg` & TOML config files.  This is helpful, e.g.,
+  to enhance syntax strictness of a mode already pretty easy in "config
+  directory-style" by making (on a Unix) a `~/.config/cligen/strict`:
+```
+[syntax] # Changing can EASILY break cfg files|script-usage of programs!
+reqSep       = on
+sepChars     = "="   # Do not use Araq's Windows-esque ':' convention
+longPrefixOk = false # deny/allow unique prefix match for long options
+stopPrefixOk = false # deny/allow unique prefix match for subcommand names
+argEndsOpts  = true  # forbid treatment as options after first non-option arg
+```
+  Then in `$HOME/.config/cligen/config`, include an `[include__CG_STRICT]` line
+  after your probably more human keyboard entry-friendly defaults.  Then,
+  anywhere you can set an inheritable environment variable will be a single
+  point of activation for strict syntax mode.  E.g., in POSIX shell a
+  top-of-script `export CG_STRICT=strict`.  This will not apply to cligen
+  programs compiled with the non-default `-d:cgCfgNone` mode, though it will
+  make more strict the syntax of all default-compiled cligen programs.
 
 Version: 1.9.6
 --------------

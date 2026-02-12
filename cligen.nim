@@ -37,6 +37,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
     longPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
+    argEndsOpts*: bool           ## ``parseopt3.initOptParser`` parameter
     subRowSep*:   string         ## separates full help dump subcmds; Eg.: "\n"
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
@@ -77,6 +78,7 @@ var clCfg* = ClCfg(
                  '|', '~', '^', '$', '#', '<', '>', '?' },
   longPfxOk:   true,
   stopPfxOk:   true,
+  argEndsOpts: false,
   subRowSep:   "",
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),
@@ -835,7 +837,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         var `posNoId` = 0
         var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
                                   `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
-                                  `stopWords`, `cf`.longPfxOk, `cf`.stopPfxOk)
+                                  `stopWords`, `cf`.longPfxOk, `cf`.stopPfxOk,
+                                  `cf`.argEndsOpts)
         while true:
           next(`pId`)
           if `pId`.kind == cmdEnd: break
