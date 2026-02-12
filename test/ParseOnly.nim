@@ -12,7 +12,7 @@ import cligen
 
 var fooParse: seq[ClParse]
 
-proc foo(alpha: int, beta: int=2, rest: seq[int]) =
+proc foo(alpha: int, beta: int=2, flag=false, rest: seq[int]) =
   if "alpha" in fooParse:
     echo "user sets of alpha saw these value strings: "
     for s in fooParse:
@@ -24,6 +24,7 @@ proc foo(alpha: int, beta: int=2, rest: seq[int]) =
   echo "full parameter parse:", fooParse
   echo "alpha: ", alpha                     #Main logic
   echo "beta: ", beta
+  echo "flag: ", flag
 
 dispatchGen(foo, setByParse=addr fooParse)
 dispatchfoo(parseOnly=true)   #cmdLine=os.commandLineParams() by default
