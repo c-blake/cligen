@@ -1269,10 +1269,10 @@
           data-doc-search-tag="parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
        longNoVal: seq[string] = @[]; requireSeparator = false;
        sepChars = {'=', ':'}; opChars: set[char] = {};
-       stopWords: seq[string] = @[]): GetoptResult" href="cligen/parseopt3.html#getopt.i%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
+       stopWords: seq[string] = @[]; argEndsOpts = false): GetoptResult" href="cligen/parseopt3.html#getopt.i%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
        longNoVal: seq[string] = @[]; requireSeparator = false;
        sepChars = {'=', ':'}; opChars: set[char] = {};
-       stopWords: seq[string] = @[]): GetoptResult</a></li>
+       stopWords: seq[string] = @[]; argEndsOpts = false): GetoptResult</a></li>
           </ul></dd>
 <dt><a name="GetoptResult" href="#GetoptResult"><span>GetoptResult:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1462,11 +1462,11 @@
               shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
               requireSeparator = false; sepChars = {'=', ':'};
               opChars: set[char] = {}; stopWords: seq[string] = @[];
-              longPfxOk = true; stopPfxOk = true): OptParser" href="cligen/parseopt3.html#initOptParser%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams();
+              longPfxOk = true; stopPfxOk = true; argEndsOpts = false): OptParser" href="cligen/parseopt3.html#initOptParser%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams();
               shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
               requireSeparator = false; sepChars = {'=', ':'};
               opChars: set[char] = {}; stopWords: seq[string] = @[];
-              longPfxOk = true; stopPfxOk = true): OptParser</a></li>
+              longPfxOk = true; stopPfxOk = true; argEndsOpts = false): OptParser</a></li>
           <li><a class="reference external"
           data-doc-search-tag="parseopt3: proc initOptParser(cmdline: string): OptParser" href="cligen/parseopt3.html#initOptParser%2Cstring">parseopt3: proc initOptParser(cmdline: string): OptParser</a></li>
           </ul></dd>
@@ -3340,7 +3340,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-12 09:07:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-12 09:49:23 UTC</small>
       </div>
     </div>
   </div>

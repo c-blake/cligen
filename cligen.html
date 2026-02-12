@@ -72,6 +72,7 @@
   opChars*: set[char]        ## ``parseopt3.initOptParser`` parameter
   longPfxOk*: bool           ## ``parseopt3.initOptParser`` parameter
   stopPfxOk*: bool           ## ``parseopt3.initOptParser`` parameter
+  argEndsOpts*: bool         ## ``parseopt3.initOptParser`` parameter
   subRowSep*: string         ## separates full help dump subcmds; Eg.: &quot;\n&quot;
   hTabSuppress*: string      ## Magic val for per-param help to suppress
   helpAttr*: Table[string, string] ## Text attrs for each help area
@@ -125,11 +126,11 @@
               hTabRowSep: &quot;&quot;, hTabColGap: 2, hTabMinLast: 16,
               hTabVal4req: &quot;REQUIRED&quot;, reqSep: false, sepChars: {'=', ':'}, opChars: {
     '+', '-', '*', '/', '%', '@', ',', '.', '&amp;', '|', '~', '^', '$', '#', '&lt;',
-    '&gt;', '?'}, longPfxOk: true, stopPfxOk: true, subRowSep: &quot;&quot;,
-              hTabSuppress: &quot;CLIGEN-NOHELP&quot;, helpAttr: initTable(32),
-              helpAttrOff: initTable(32), helpSyntax: syntaxHelp,
-              render: descape, widthEnv: &quot;CLIGEN_WIDTH&quot;, sigPIPE: spIsOk,
-              minStrQuoting: false, trueDefaultStr: &quot;true&quot;,
+    '&gt;', '?'}, longPfxOk: true, stopPfxOk: true, argEndsOpts: false,
+              subRowSep: &quot;&quot;, hTabSuppress: &quot;CLIGEN-NOHELP&quot;,
+              helpAttr: initTable(32), helpAttrOff: initTable(32),
+              helpSyntax: syntaxHelp, render: descape, widthEnv: &quot;CLIGEN_WIDTH&quot;,
+              sigPIPE: spIsOk, minStrQuoting: false, trueDefaultStr: &quot;true&quot;,
               falseDefaultStr: &quot;false&quot;)">clCfg</a></li>
 
     </ul>
@@ -408,6 +409,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   <span class="Identifier">opChars</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>        <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
   <span class="Identifier">longPfxOk</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>           <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
   <span class="Identifier">stopPfxOk</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>           <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
+  <span class="Identifier">argEndsOpts</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>         <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
   <span class="Identifier">subRowSep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>         <span class="Comment">## separates full help dump subcmds; Eg.: &quot;\n&quot;</span>
   <span class="Identifier">hTabSuppress</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## Magic val for per-param help to suppress</span>
   <span class="Identifier">helpAttr</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">]</span> <span class="Comment">## Text attrs for each help area</span>
@@ -529,11 +531,11 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
               <span class="Identifier">hTabRowSep</span><span class="Other">:</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="Identifier">hTabColGap</span><span class="Other">:</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="Identifier">hTabMinLast</span><span class="Other">:</span> <span class="DecNumber">16</span><span class="Other">,</span>
               <span class="Identifier">hTabVal4req</span><span class="Other">:</span> <span class="StringLit">&quot;REQUIRED&quot;</span><span class="Other">,</span> <span class="Identifier">reqSep</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span> <span class="Identifier">sepChars</span><span class="Other">:</span> <span class="Other">{</span><span class="CharLit">'='</span><span class="Other">,</span> <span class="CharLit">':'</span><span class="Other">}</span><span class="Other">,</span> <span class="Identifier">opChars</span><span class="Other">:</span> <span class="Other">{</span>
     <span class="CharLit">'+'</span><span class="Other">,</span> <span class="CharLit">'-'</span><span class="Other">,</span> <span class="CharLit">'*'</span><span class="Other">,</span> <span class="CharLit">'/'</span><span class="Other">,</span> <span class="CharLit">'%'</span><span class="Other">,</span> <span class="CharLit">'@'</span><span class="Other">,</span> <span class="CharLit">','</span><span class="Other">,</span> <span class="CharLit">'.'</span><span class="Other">,</span> <span class="CharLit">'&amp;'</span><span class="Other">,</span> <span class="CharLit">'|'</span><span class="Other">,</span> <span class="CharLit">'~'</span><span class="Other">,</span> <span class="CharLit">'^'</span><span class="Other">,</span> <span class="CharLit">'$'</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">,</span> <span class="CharLit">'&lt;'</span><span class="Other">,</span>
-    <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">,</span> <span class="Identifier">longPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">stopPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">subRowSep</span><span class="Other">:</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span>
-              <span class="Identifier">hTabSuppress</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN-NOHELP&quot;</span><span class="Other">,</span> <span class="Identifier">helpAttr</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span>
-              <span class="Identifier">helpAttrOff</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">helpSyntax</span><span class="Other">:</span> <span class="Identifier">syntaxHelp</span><span class="Other">,</span>
-              <span class="Identifier">render</span><span class="Other">:</span> <span class="Identifier">descape</span><span class="Other">,</span> <span class="Identifier">widthEnv</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN_WIDTH&quot;</span><span class="Other">,</span> <span class="Identifier">sigPIPE</span><span class="Other">:</span> <span class="Identifier">spIsOk</span><span class="Other">,</span>
-              <span class="Identifier">minStrQuoting</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span> <span class="Identifier">trueDefaultStr</span><span class="Other">:</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span>
+    <span class="CharLit">'&gt;'</span><span class="Other">,</span> <span class="CharLit">'?'</span><span class="Other">}</span><span class="Other">,</span> <span class="Identifier">longPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">stopPfxOk</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">argEndsOpts</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span>
+              <span class="Identifier">subRowSep</span><span class="Other">:</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="Identifier">hTabSuppress</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN-NOHELP&quot;</span><span class="Other">,</span>
+              <span class="Identifier">helpAttr</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">helpAttrOff</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span>
+              <span class="Identifier">helpSyntax</span><span class="Other">:</span> <span class="Identifier">syntaxHelp</span><span class="Other">,</span> <span class="Identifier">render</span><span class="Other">:</span> <span class="Identifier">descape</span><span class="Other">,</span> <span class="Identifier">widthEnv</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN_WIDTH&quot;</span><span class="Other">,</span>
+              <span class="Identifier">sigPIPE</span><span class="Other">:</span> <span class="Identifier">spIsOk</span><span class="Other">,</span> <span class="Identifier">minStrQuoting</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">,</span> <span class="Identifier">trueDefaultStr</span><span class="Other">:</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span>
               <span class="Identifier">falseDefaultStr</span><span class="Other">:</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">)</span></pre></dt>
   <dd>
     
@@ -1052,7 +1054,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-12 09:07:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-12 09:49:22 UTC</small>
       </div>
     </div>
   </div>
