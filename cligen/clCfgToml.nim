@@ -60,6 +60,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         of "longprefixok": c.longPfxOk = v2.getBool
         of "stopprefixok": c.stopPfxOk = v2.getBool
         of "argendsopts" : c.argEndsOpts = v2.getBool
+        of "oneperarg"   : c.onePerArg   = v2.getBool
+        of "noshort"     : c.noShort     = v2.getBool
         else: uk k1, k2
     of "color":
       if not plain:

@@ -32,12 +32,14 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     hTabColGap*:  int            ## number of spaces to separate cols by
     hTabMinLast*: int            ## narrowest rightmost col no matter term width
     hTabVal4req*: string         ## ``"REQUIRED"`` (or ``"NEEDED"``, etc.).
-    reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
     sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
+    reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
     longPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
     argEndsOpts*: bool           ## ``parseopt3.initOptParser`` parameter
+    onePerArg*:   bool           ## ``parseopt3.initOptParser`` parameter
+    noShort*:     bool           ## ``parseopt3.initOptParser`` parameter
     subRowSep*:   string         ## separates full help dump subcmds; Eg.: "\n"
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
@@ -66,6 +68,8 @@ proc sfFlags*(cf: ClCfg): set[SyntaxFlag] =
   if cf.longPfxOk:   result.incl sfLongPfxOk
   if cf.stopPfxOk:   result.incl sfStopPfxOk
   if cf.argEndsOpts: result.incl sfArgEndsOpts
+  if cf.onePerArg:   result.incl sfOnePerArg
+  if cf.noShort:     result.incl sfNoShort
 
 proc descape(s: string): string =
   for c, escaped in s.descape: result.add c

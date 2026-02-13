@@ -133,7 +133,9 @@ type
     sfRequireSep,             ## true=>require separator between option key&val
     sfLongPfxOk,              ## true=>unique prefix is ok for longOpts
     sfStopPfxOk,              ## true=>unique prefix is ok for stopWords
-    sfArgEndsOpts             ## true=>disallow options after 1st non-option arg
+    sfArgEndsOpts,            ## true=>disallow options after 1st non-option arg
+    sfOnePerArg,              ## true=>disallow -a -b- => -ab bool flag folding
+    sfNoShort                 ## true=>run-time disallow short (vs. compTime-"")
   OptParser* = object of RootObj  ## object to implement the command line parser
     cmd*: seq[string]         ## command line being parsed
     pos*: int                 ## current command parameter to inspect
@@ -206,14 +208,18 @@ proc initOptParser*(cmdline: string): OptParser =
   ## Initializes option parses with cmdline.  Splits cmdline in on spaces and
   ## calls `initOptParser(openarray[string])`.  Should use a proper tokenizer.
   if cmdline == "": # backward compatibility
-    return initOptParser(commandLineParams())
+    return initOptParser(commandLineParams(), laxFlags)
   else:
-    return initOptParser(cmdline.split)
+    return initOptParser(cmdline.split, laxFlags)
+
+proc cur(p: OptParser): char =
+  if p.off < p.cmd[p.pos].len: result = p.cmd[p.pos][p.off]
+  else: result = '\0'
 
 proc doShort(p: var OptParser) =
-  proc cur(p: OptParser): char =
-    if p.off < p.cmd[p.pos].len: result = p.cmd[p.pos][p.off]
-    else: result = '\0'
+  if sfNoShort in p.flags:
+    p.message = "Short options are run-time disallowed at `" & p.key & "`"
+    p.kind = cmdError; return
   p.kind = cmdShortOption
   p.val = ""
   p.key = $p.cur; p.off += 1            # shift off first char as key
@@ -285,7 +291,11 @@ proc doLong(p: var OptParser) =
 proc next*(p: var OptParser) =
   p.sep = ""
   if p.off > 0:                         #Step1: handle any remaining short opts
-    doShort(p)
+    if sfOnePerArg in p.flags:
+      p.kind = cmdError
+      p.message = "> 1 option per command parameter, after `" & p.key & "`"
+      return
+    else: doShort(p)
     return
   if p.pos >= p.cmd.len:                #Step2: end of params check
     p.kind = cmdEnd

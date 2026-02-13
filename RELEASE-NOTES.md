@@ -8,17 +8,19 @@ Version: 1.9.7
   - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
   `[include_CG_STRICT]` but with `CG_STRICT` unset).
 
-  - add a new way to be strict to `cligen/parseopt3.nim`, bubbling up that
+  - add new ways to be strict to `cligen/parseopt3.nim`, bubbling up that
   ability to both `std/parsecfg` & TOML config files.  This is helpful, e.g.,
   to enhance syntax strictness of a mode already pretty easy in "config
   directory-style" by making (on a Unix) a `~/.config/cligen/strict`:
 ```
 [syntax] # Changing can EASILY break cfg files|script-usage of programs!
-reqSep       = on
 sepChars     = "="   # Do not use Araq's Windows-esque ':' convention
+reqSep       = on
 longPrefixOk = false # deny/allow unique prefix match for long options
 stopPrefixOk = false # deny/allow unique prefix match for subcommand names
 argEndsOpts  = true  # forbid treatment as options after first non-option arg
+onePerArg    = true  # command parameters can only encode 1 option; No -abc
+noShort      = true  # block short option syntax entirely; Must say --alpha
 ```
   Then in `$HOME/.config/cligen/config`, include an `[include__CG_STRICT]` line
   after your probably more human keyboard entry-friendly defaults.  Then,
