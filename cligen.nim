@@ -61,6 +61,12 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ParseError*  = object of CatchableError ## CL-Syntax Err from generated code
   HelpError*   = object of CatchableError ## User-Syntax/Semantic Err; ${HELP}
 
+proc sfFlags*(cf: ClCfg): set[SyntaxFlag] =
+  if cf.reqSep:      result.incl sfRequireSep
+  if cf.longPfxOk:   result.incl sfLongPfxOk
+  if cf.stopPfxOk:   result.incl sfStopPfxOk
+  if cf.argEndsOpts: result.incl sfArgEndsOpts
+
 proc descape(s: string): string =
   for c, escaped in s.descape: result.add c
 
@@ -835,10 +841,8 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       var `keyCountId` {.used.} = initCountTable[string]()
       proc parser(args=`cmdLineId`, `provideId`=true) = #{.gcsafe.} clCfg access
         var `posNoId` = 0
-        var `pId` = initOptParser(args, `apId`.shortNoVal, `apId`.longNoVal,
-                                  `cf`.reqSep, `cf`.sepChars, `cf`.opChars,
-                                  `stopWords`, `cf`.longPfxOk, `cf`.stopPfxOk,
-                                  `cf`.argEndsOpts)
+        var `pId` = initOptParser(args, `cf`.sfFlags, `apId`.shortNoVal,
+                      `apId`.longNoVal, `cf`.sepChars, `cf`.opChars,`stopWords`)
         while true:
           next(`pId`)
           if `pId`.kind == cmdEnd: break
