@@ -1269,10 +1269,10 @@
           data-doc-search-tag="parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
        longNoVal: seq[string] = @[]; requireSeparator = false;
        sepChars = {'=', ':'}; opChars: set[char] = {};
-       stopWords: seq[string] = @[]; argEndsOpts = false): GetoptResult" href="cligen/parseopt3.html#getopt.i%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
+       stopWords: seq[string] = @[]): GetoptResult" href="cligen/parseopt3.html#getopt.i%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: iterator getopt(cmdline = commandLineParams(); shortNoVal: set[char] = {};
        longNoVal: seq[string] = @[]; requireSeparator = false;
        sepChars = {'=', ':'}; opChars: set[char] = {};
-       stopWords: seq[string] = @[]; argEndsOpts = false): GetoptResult</a></li>
+       stopWords: seq[string] = @[]): GetoptResult</a></li>
           </ul></dd>
 <dt><a name="GetoptResult" href="#GetoptResult"><span>GetoptResult:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1458,15 +1458,23 @@
           </ul></dd>
 <dt><a name="initOptParser" href="#initOptParser"><span>initOptParser:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams(); flags = laxFlags;
+              shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
+              sepChars = {'=', ':'}; opChars: set[char] = {};
+              stopWords: seq[string] = @[]): OptParser" href="cligen/parseopt3.html#initOptParser%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams(); flags = laxFlags;
+              shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
+              sepChars = {'=', ':'}; opChars: set[char] = {};
+              stopWords: seq[string] = @[]): OptParser</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams();
               shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
               requireSeparator = false; sepChars = {'=', ':'};
               opChars: set[char] = {}; stopWords: seq[string] = @[];
-              longPfxOk = true; stopPfxOk = true; argEndsOpts = false): OptParser" href="cligen/parseopt3.html#initOptParser%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D">parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams();
+              longPfxOk = true; stopPfxOk = true): OptParser" href="cligen/parseopt3.html#initOptParser%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D%2Cset%5Bchar%5D%2Cseq%5Bstring%5D_2">parseopt3: proc initOptParser(cmdline: seq[string] = commandLineParams();
               shortNoVal: set[char] = {}; longNoVal: seq[string] = @[];
               requireSeparator = false; sepChars = {'=', ':'};
               opChars: set[char] = {}; stopWords: seq[string] = @[];
-              longPfxOk = true; stopPfxOk = true; argEndsOpts = false): OptParser</a></li>
+              longPfxOk = true; stopPfxOk = true): OptParser</a></li>
           <li><a class="reference external"
           data-doc-search-tag="parseopt3: proc initOptParser(cmdline: string): OptParser" href="cligen/parseopt3.html#initOptParser%2Cstring">parseopt3: proc initOptParser(cmdline: string): OptParser</a></li>
           </ul></dd>
@@ -1540,6 +1548,10 @@
           <li><a class="reference external"
           data-doc-search-tag="trie: iterator keysWithPrefix[T](t: Trie[T]; prefix: string; longest = false): string" href="cligen/trie.html#keysWithPrefix.i%2CTrie%5BT%5D%2Cstring">trie: iterator keysWithPrefix[T](t: Trie[T]; prefix: string; longest = false): string</a></li>
           </ul></dd>
+<dt><a name="laxFlags" href="#laxFlags"><span>laxFlags:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: const laxFlags" href="cligen/parseopt3.html#laxFlags">parseopt3: const laxFlags</a></li>
+          </ul></dd>
 <dt><a name="layout" href="#layout"><span>layout:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="tab: proc layout(lens: seq[int]; W, gap, mx, m: int; nr, nc: var int): seq[int]" href="cligen/tab.html#layout%2Cseq%5Bint%5D%2Cint%2Cint%2Cint%2Cint%2Cint%2Cint">tab: proc layout(lens: seq[int]; W, gap, mx, m: int; nr, nc: var int): seq[int]</a></li>
@@ -1597,6 +1609,10 @@
 <dt><a name="log" href="#log"><span>log:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="posixUt: proc log(f: File; s: string)" href="cligen/posixUt.html#log%2CFile%2Cstring">posixUt: proc log(f: File; s: string)</a></li>
+          </ul></dd>
+<dt><a name="longPfxOk" href="#longPfxOk"><span>longPfxOk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: proc longPfxOk(p: OptParser): bool" href="cligen/parseopt3.html#longPfxOk%2COptParser">parseopt3: proc longPfxOk(p: OptParser): bool</a></li>
           </ul></dd>
 <dt><a name="ls1AU" href="#ls1AU"><span>ls1AU:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2460,6 +2476,10 @@
 <li><a class="reference external"
           data-doc-search-tag="osUt: proc replacingUrite(f: File; s: string; eor: char; subEor: string)" href="cligen/osUt.html#replacingUrite%2CFile%2Cstring%2Cchar%2Cstring">osUt: proc replacingUrite(f: File; s: string; eor: char; subEor: string)</a></li>
           </ul></dd>
+<dt><a name="requireSep" href="#requireSep"><span>requireSep:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: proc requireSep(p: OptParser): bool" href="cligen/parseopt3.html#requireSep%2COptParser">parseopt3: proc requireSep(p: OptParser): bool</a></li>
+          </ul></dd>
 <dt><a name="resize" href="#resize"><span>resize:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mfile: proc resize(mf: var MFile; newFileSize: int64; err = stderr): int" href="cligen/mfile.html#resize%2CMFile%2Cint64">mfile: proc resize(mf: var MFile; newFileSize: int64; err = stderr): int</a></li>
@@ -2541,6 +2561,34 @@
 <dt><a name="setLen" href="#setLen"><span>setLen:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="mslice: proc setLen(s: var MSlice; n: int)" href="cligen/mslice.html#setLen%2CMSlice%2Cint">mslice: proc setLen(s: var MSlice; n: int)</a></li>
+          </ul></dd>
+<dt><a name="sfArgEndsOpts" href="#sfArgEndsOpts"><span>sfArgEndsOpts:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfArgEndsOpts" href="cligen/parseopt3.html#sfArgEndsOpts">parseopt3: SyntaxFlag.sfArgEndsOpts</a></li>
+          </ul></dd>
+<dt><a name="sfFlags" href="#sfFlags"><span>sfFlags:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="cligen: proc sfFlags(cf: ClCfg): set[SyntaxFlag]" href="cligen.html#sfFlags%2CClCfg">cligen: proc sfFlags(cf: ClCfg): set[SyntaxFlag]</a></li>
+          </ul></dd>
+<dt><a name="sfLongPfxOk" href="#sfLongPfxOk"><span>sfLongPfxOk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfLongPfxOk" href="cligen/parseopt3.html#sfLongPfxOk">parseopt3: SyntaxFlag.sfLongPfxOk</a></li>
+          </ul></dd>
+<dt><a name="sfNoShort" href="#sfNoShort"><span>sfNoShort:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfNoShort" href="cligen/parseopt3.html#sfNoShort">parseopt3: SyntaxFlag.sfNoShort</a></li>
+          </ul></dd>
+<dt><a name="sfOnePerArg" href="#sfOnePerArg"><span>sfOnePerArg:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfOnePerArg" href="cligen/parseopt3.html#sfOnePerArg">parseopt3: SyntaxFlag.sfOnePerArg</a></li>
+          </ul></dd>
+<dt><a name="sfRequireSep" href="#sfRequireSep"><span>sfRequireSep:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfRequireSep" href="cligen/parseopt3.html#sfRequireSep">parseopt3: SyntaxFlag.sfRequireSep</a></li>
+          </ul></dd>
+<dt><a name="sfStopPfxOk" href="#sfStopPfxOk"><span>sfStopPfxOk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: SyntaxFlag.sfStopPfxOk" href="cligen/parseopt3.html#sfStopPfxOk">parseopt3: SyntaxFlag.sfStopPfxOk</a></li>
           </ul></dd>
 <dt><a name="sGray" href="#sGray"><span>sGray:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -2848,6 +2896,10 @@
 <li><a class="reference external"
           data-doc-search-tag="statx: proc st_nlink=(st: var Statx; n: Nlink)" href="cligen/statx.html#st_nlink%3D%2CStatx%2CNlink">statx: proc st_nlink=(st: var Statx; n: Nlink)</a></li>
           </ul></dd>
+<dt><a name="stopPfxOk" href="#stopPfxOk"><span>stopPfxOk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: proc stopPfxOk(p: OptParser): bool" href="cligen/parseopt3.html#stopPfxOk%2COptParser">parseopt3: proc stopPfxOk(p: OptParser): bool</a></li>
+          </ul></dd>
 <dt><a name="strftime" href="#strftime"><span>strftime:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="posixUt: proc strftime(fmt: string; ts: Timespec): string" href="cligen/posixUt.html#strftime%2Cstring%2CTimespec">posixUt: proc strftime(fmt: string; ts: Timespec): string</a></li>
@@ -2925,6 +2977,10 @@
 <dt><a name="symlinkat" href="#symlinkat"><span>symlinkat:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="posixUt: proc symlinkat(target: cstring; newdirfd: cint; linkpath: cstring): cint" href="cligen/posixUt.html#symlinkat%2Ccstring%2Ccint%2Ccstring">posixUt: proc symlinkat(target: cstring; newdirfd: cint; linkpath: cstring): cint</a></li>
+          </ul></dd>
+<dt><a name="SyntaxFlag" href="#SyntaxFlag"><span>SyntaxFlag:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="parseopt3: enum SyntaxFlag" href="cligen/parseopt3.html#SyntaxFlag">parseopt3: enum SyntaxFlag</a></li>
           </ul></dd>
 <dt><a name="system" href="#system"><span>system:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -3340,7 +3396,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-12 09:49:23 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-13 13:54:47 UTC</small>
       </div>
     </div>
   </div>
