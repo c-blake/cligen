@@ -637,17 +637,18 @@ Options:
 
 ==> test/ParseOnly.out <==
 fooParse:
-  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [REQUIRED,optional-params] [rest: int...]\nOptions:\n  -h, --help                    print this cligen-erated help\n  --help-syntax                 advanced: prepend,plurals,..\n  -a=, --alpha=  int  REQUIRED  set alpha\n  -b=, --beta=   int  2         set beta\n", status: clHelpOnly)
+  (paramName: "help", unparsedVal: "", message: "Usage:\n  foo [REQUIRED,optional-params] [rest: int...]\nOptions:\n  -h, --help                     print this cligen-erated help\n  --help-syntax                  advanced: prepend,plurals,..\n  -a=, --alpha=  int   REQUIRED  set alpha\n  -b=, --beta=   int   2         set beta\n  -f, --flag     bool  false     set flag\n", status: clHelpOnly)
   (paramName: "alpha", unparsedVal: "", message: "Missing alpha", status: clMissing)
 would not have called foo
 User requested help.  Here you go
 Usage:
   foo [REQUIRED,optional-params] [rest: int...]
 Options:
-  -h, --help                    print this cligen-erated help
-  --help-syntax                 advanced: prepend,plurals,..
-  -a=, --alpha=  int  REQUIRED  set alpha
-  -b=, --beta=   int  2         set beta
+  -h, --help                     print this cligen-erated help
+  --help-syntax                  advanced: prepend,plurals,..
+  -a=, --alpha=  int   REQUIRED  set alpha
+  -b=, --beta=   int   2         set beta
+  -f, --flag     bool  false     set flag
 
 
 ==> test/PassValues.out <==
@@ -996,9 +997,9 @@ Options:
 
 ==> test/TwoNondefaultedSeq.out <==
 test/TwoNondefaultedSeq.nim(9, 11) template/generic instantiation of `dispatch` from here
-cligen.nim(933, 14) template/generic instantiation of `dispatchCf` from here
-cligen.nim(920, 14) template/generic instantiation of `dispatchGen` from here
-cligen.nim(311, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
+cligen.nim(941, 14) template/generic instantiation of `dispatchCf` from here
+cligen.nim(928, 14) template/generic instantiation of `dispatchGen` from here
+cligen.nim(321, 16) Warning: cligen only supports one seq param for positional args; using `args`, not `stuff`.  Use `positional` parameter to `dispatch` to override this. [User]
 Usage:
   demo [REQUIRED,optional-params] [args: string...]
 demo entry point with varied, meaningless parameters.
