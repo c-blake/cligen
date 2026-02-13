@@ -1,13 +1,8 @@
 RELEASE NOTES
 =============
 
-Version: 1.9.7
---------------
-  - cligen/puSig.nim grows u1, u2 short aliases for usr1, usr2 signal names.
-
-  - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
-  `[include_CG_STRICT]` but with `CG_STRICT` unset).
-
+Version: 1.10
+-------------
   - add new ways to be strict to `cligen/parseopt3.nim`, bubbling up that
   ability to both `std/parsecfg` & TOML config files.  This is helpful, e.g.,
   to enhance syntax strictness of a mode already pretty easy in "config
@@ -26,9 +21,20 @@ noShort      = true  # block short option syntax entirely; Must say --alpha
   after your probably more human keyboard entry-friendly defaults.  Then,
   anywhere you can set an inheritable environment variable will be a single
   point of activation for strict syntax mode.  E.g., in POSIX shell a
-  top-of-script `export CG_STRICT=strict`.  This will not apply to cligen
+  top-of-script `export CG_STRICT=strict`.  This will not apply to `cligen`
   programs compiled with the non-default `-d:cgCfgNone` mode, though it will
-  make more strict the syntax of all default-compiled cligen programs.
+  make more strict the syntax of all default-compiled `cligen` programs.
+
+  - It's unlikely to be a problem { I couldn't find one Nimbleverse instance },
+  but a theoretical BREAKING CHANGE in this release is that compilation fails
+  IF you had code initializing a `cligen/parseopt3.OptParser` with constructor
+  syntax { i.e. `OptParser(name: true)` } AND it used any of `requireSep`,
+  `longPfxOk`, `stopPfxOk` for `name`.  Use `initOptParser` instead.
+
+  - `cligen/puSig.nim` grows u1, u2 short aliases for usr1, usr2 signal names.
+
+  - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
+  `[include_CG_STRICT]` but with `CG_STRICT` unset).
 
 Version: 1.9.6
 --------------
