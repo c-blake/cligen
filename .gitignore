@@ -38,6 +38,7 @@ test/FancyRepeats
 test/FancyRepeats2
 test/OneCharLong
 test/OneCharParams
+test/OptionT
 test/ImplicitDefault
 test/AllSeqTypes
 test/Enums
