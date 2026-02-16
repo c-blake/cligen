@@ -66,7 +66,7 @@
   cmd*: seq[string]          ## command line being parsed
   pos*: int                  ## current command parameter to inspect
   off*: int                  ## current offset in cmd[pos] for short key block
-  optsDone*: bool            ## &quot;--&quot; has been seen
+  optsDone*, ended*: bool    ## &quot;--&quot; has been seen implicitly or explicitly
   shortNoVal*: set[char]     ## 1-letter options not requiring optarg
   longNoVal*: CritBitTree[string] ## long options not requiring optarg
   stopWords*: CritBitTree[string] ## special literal params acting like &quot;--&quot;
@@ -83,10 +83,13 @@
   sfRequireSep, ## true=&gt;require `sepChars` element between option
                  ## key&amp;val.  Parser knows that both long/short non-NoVal expect args so space
                  ## separators also work.
+  sfArgEndsOpts,            ## true=&gt;disallow options after 1st non-option arg
+  sfEndOpts,                ## true=&gt;`--` must precede positionals
+  sfOnePerArg,              ## true=&gt;disallow -a -b- =&gt; -ab bool flag folding
+  sfValued,                 ## X true=&gt;`bool` flags need explicit values
   sfLongPfxOk,              ## true=&gt;unique prefix is ok for longOpts
   sfStopPfxOk,              ## true=&gt;unique prefix is ok for stopWords
-  sfArgEndsOpts,            ## true=&gt;disallow options after 1st non-option arg
-  sfOnePerArg,              ## true=&gt;disallow -a -b- =&gt; -ab bool flag folding
+  sfExact,                  ## X true=&gt;option keys are case&amp;style-sensitive
   sfNoShort                  ## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)">SyntaxFlag</a></li>
 
     </ul>
@@ -138,7 +141,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">optionNormalize
-  <li><a class="reference" href="#optionNormalize%2Cstring%2Cstring" title="optionNormalize(s: string; wordSeparators = &quot;_-&quot;): string">optionNormalize(s: string; wordSeparators = &quot;_-&quot;): string</a></li>
+  <li><a class="reference" href="#optionNormalize%2Cstring%2Cstring" title="optionNormalize(s: string; wordSeparators = &quot;_-&quot;; noop = false): string">optionNormalize(s: string; wordSeparators = &quot;_-&quot;; noop = false): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">requireSep
@@ -228,7 +231,7 @@
   <span class="Identifier">cmd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>          <span class="Comment">## command line being parsed</span>
   <span class="Identifier">pos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                  <span class="Comment">## current command parameter to inspect</span>
   <span class="Identifier">off</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                  <span class="Comment">## current offset in cmd[pos] for short key block</span>
-  <span class="Identifier">optsDone</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>            <span class="Comment">## &quot;--&quot; has been seen</span>
+  <span class="Identifier">optsDone</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">ended</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>    <span class="Comment">## &quot;--&quot; has been seen implicitly or explicitly</span>
   <span class="Identifier">shortNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>     <span class="Comment">## 1-letter options not requiring optarg</span>
   <span class="Identifier">longNoVal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Comment">## long options not requiring optarg</span>
   <span class="Identifier">stopWords</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Comment">## special literal params acting like &quot;--&quot;</span>
@@ -252,10 +255,13 @@
   <span class="Identifier">sfRequireSep</span><span class="Other">,</span> <span class="Comment">## true=&gt;require `sepChars` element between option</span>
                  <span class="Comment">## key&amp;val.  Parser knows that both long/short non-NoVal expect args so space</span>
                  <span class="Comment">## separators also work.</span>
+  <span class="Identifier">sfArgEndsOpts</span><span class="Other">,</span>            <span class="Comment">## true=&gt;disallow options after 1st non-option arg</span>
+  <span class="Identifier">sfEndOpts</span><span class="Other">,</span>                <span class="Comment">## true=&gt;`--` must precede positionals</span>
+  <span class="Identifier">sfOnePerArg</span><span class="Other">,</span>              <span class="Comment">## true=&gt;disallow -a -b- =&gt; -ab bool flag folding</span>
+  <span class="Identifier">sfValued</span><span class="Other">,</span>                 <span class="Comment">## X true=&gt;`bool` flags need explicit values</span>
   <span class="Identifier">sfLongPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for longOpts</span>
   <span class="Identifier">sfStopPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for stopWords</span>
-  <span class="Identifier">sfArgEndsOpts</span><span class="Other">,</span>            <span class="Comment">## true=&gt;disallow options after 1st non-option arg</span>
-  <span class="Identifier">sfOnePerArg</span><span class="Other">,</span>              <span class="Comment">## true=&gt;disallow -a -b- =&gt; -ab bool flag folding</span>
+  <span class="Identifier">sfExact</span><span class="Other">,</span>                  <span class="Comment">## X true=&gt;option keys are case&amp;style-sensitive</span>
   <span class="Identifier">sfNoShort</span>                  <span class="Comment">## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)</span></pre></dt>
   <dd>
     
@@ -360,8 +366,8 @@
 </div>
 <div id="optionNormalize-procs-all">
   <div id="optionNormalize,string,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#optionNormalize%2Cstring%2Cstring"><span class="Identifier">optionNormalize</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span class="Identifier">noSideEffect</span><span class="Other">,</span>
-    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#optionNormalize%2Cstring%2Cstring"><span class="Identifier">optionNormalize</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">;</span> <span class="Identifier">noop</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+    <span class="Identifier">noSideEffect</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     <p>Normalizes option key <tt class="docutils literal"><span class="pre"><span class="Identifier">s</span></span></tt> to allow command syntax to be style-insensitive in a similar way to Nim identifier syntax.</p>
@@ -461,7 +467,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-15 23:27:00 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-16 13:39:38 UTC</small>
       </div>
     </div>
   </div>
