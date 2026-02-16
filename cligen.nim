@@ -34,12 +34,10 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     hTabVal4req*: string         ## ``"REQUIRED"`` (or ``"NEEDED"``, etc.).
     sepChars*:    set[char]      ## ``parseopt3.initOptParser`` parameter
     opChars*:     set[char]      ## ``parseopt3.initOptParser`` parameter
-    reqSep*:      bool           ## ``parseopt3.initOptParser`` parameter
-    longPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
-    stopPfxOk*:   bool           ## ``parseopt3.initOptParser`` parameter
-    argEndsOpts*: bool           ## ``parseopt3.initOptParser`` parameter
-    onePerArg*:   bool           ## ``parseopt3.initOptParser`` parameter
-    noShort*:     bool           ## ``parseopt3.initOptParser`` parameter
+    reqSep*, argEndsOpts*, endOpts*, #SyntaxFlags: DELIMITING kv,opt-positionals
+     onePerArg*, valued*,           # BOOL FLAGS: combining explicitValue
+     longPfxOk*, stopPfxOk*,        # KEY SPELL: noAbbrev sensitive long-only
+     exact*, noShort*: bool      ## ``parseopt3.initOptParser`` parameters
     subRowSep*:   string         ## separates full help dump subcmds; Eg.: "\n"
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
@@ -63,18 +61,23 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
   ParseError*  = object of CatchableError ## CL-Syntax Err from generated code
   HelpError*   = object of CatchableError ## User-Syntax/Semantic Err; ${HELP}
 
-proc sfFlags*(cf: ClCfg): set[SyntaxFlag] =
-  if cf.reqSep:      result.incl sfRequireSep
-  if cf.longPfxOk:   result.incl sfLongPfxOk
-  if cf.stopPfxOk:   result.incl sfStopPfxOk
-  if cf.argEndsOpts: result.incl sfArgEndsOpts
-  if cf.onePerArg:   result.incl sfOnePerArg
-  if cf.noShort:     result.incl sfNoShort
+proc sfFlags*(cf: ClCfg): set[SyntaxFlag] = # CLSYNTAX:known,typed always on
+  if cf.reqSep:      result.incl sfRequireSep  # CLSYNTAX:kvSep
+  if cf.argEndsOpts: result.incl sfArgEndsOpts # CLSYNTAX:noMix
+  if cf.endOpts:     result.incl sfEndOpts     # CLSYNTAX:endOpt
+  if cf.onePerArg:   result.incl sfOnePerArg   # CLSYNTAX:noFold
+  if cf.valued:      result.incl sfValued      # CLSYNTAX:valued
+  if cf.longPfxOk:   result.incl sfLongPfxOk   # CLSYNTAX:full
+  if cf.stopPfxOk:   result.incl sfStopPfxOk   # CLSYNTAX:full
+  if cf.exact :      result.incl sfExact       # CLSYNTAX:exact
+  if cf.noShort:     result.incl sfNoShort     # CLSYNTAX:long
 
 proc descape(s: string): string =
   for c, escaped in s.descape: result.add c
 
 {.push hint[GlobalVar]: off.}
+var cls = "CLSYNTAX".getEnv
+if "all" in cls: cls="kvSep,noMix,endOpt,typed,known,noFold,valuedfullexactlong"
 var clCfg* = ClCfg(
   version:     "",
   hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
@@ -82,13 +85,13 @@ var clCfg* = ClCfg(
   hTabColGap:  2,
   hTabMinLast: 16,
   hTabVal4req: "REQUIRED",
-  reqSep:      false,
   sepChars:    { '=', ':' },
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?' },
-  longPfxOk:   true,
-  stopPfxOk:   true,
-  argEndsOpts: false,
+  reqSep   : "kvSep"in cls, argEndsOpts: "noMix"in cls,endOpts: "endOpt" in cls,
+  onePerArg: "noFold"in cls, valued: "valued"in cls,     #^DELIMITING,BOOL FLAGS
+  longPfxOk: "full" notin cls, stopPfxOk: "full" notin cls, # KEY SPELLING
+  exact    : "exact"in cls, noShort: "long"in cls,
   subRowSep:   "",
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),

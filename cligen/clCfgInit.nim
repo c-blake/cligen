@@ -74,15 +74,17 @@ proc apply(c: var ClCfg, path: string, plain=false) =
             "minstrquoting truedefaultstr falsedefaultstr wrapdoc wraptable\n"
       of "syntax":
         case e.key.optionNormalize
-        of "reqsep", "requireseparator":
-          c.reqSep = e.value.optionNormalize in yes
         of "sepchars", "separatorchars":
           c.sepChars = {}; (for ch in e.value: c.sepChars.incl ch)
+        of "reqsep","requireseparator":c.reqSep = e.value.optionNormalize in yes
+        of "argendsopts" : c.argEndsOpts = e.value.optionNormalize in yes
+        of "endopts"     : c.endOpts   = e.value.optionNormalize in yes
+        of "oneperarg"   : c.onePerArg = e.value.optionNormalize in yes
+        of "valued"      : c.valued    = e.value.optionNormalize in yes
         of "longprefixok": c.longPfxOk = e.value.optionNormalize in yes
         of "stopprefixok": c.stopPfxOk = e.value.optionNormalize in yes
-        of "argendsopts" : c.argEndsOpts = e.value.optionNormalize in yes
-        of "oneperarg"   : c.onePerArg   = e.value.optionNormalize in yes
-        of "noshort"     : c.noShort     = e.value.optionNormalize in yes
+        of "exact"       : c.exact     = e.value.optionNormalize in yes
+        of "noshort"     : c.noShort   = e.value.optionNormalize in yes
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
             "requireseparator separatorchars longprefixok stopprefixok\n"

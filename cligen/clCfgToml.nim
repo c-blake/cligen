@@ -53,14 +53,17 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
     of "syntax":
       for k2, v2 in v1.getTable.pairs:
         case k2.toLowerAscii
-        of "reqsep", "requireseparator": c.reqSep = v2.getBool
         of "sepchars", "separatorchars":
           c.sepChars = {}
           for ch in v2.getElems.mapIt(it.getStr[0]): c.sepChars.incl(ch)
-        of "longprefixok": c.longPfxOk = v2.getBool
-        of "stopprefixok": c.stopPfxOk = v2.getBool
+        of "reqsep", "requireseparator": c.reqSep = v2.getBool
         of "argendsopts" : c.argEndsOpts = v2.getBool
+        of "endopts"     : c.endOpts     = v2.getBool
         of "oneperarg"   : c.onePerArg   = v2.getBool
+        of "valued"      : c.valued      = v2.getBool
+        of "longprefixok": c.longPfxOk   = v2.getBool
+        of "stopprefixok": c.stopPfxOk   = v2.getBool
+        of "exact"       : c.exact       = v2.getBool
         of "noshort"     : c.noShort     = v2.getBool
         else: uk k1, k2
     of "color":

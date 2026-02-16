@@ -67,7 +67,8 @@ folding is allowed, and whether short options are even allowed at all. ]##
 
 import std/[os, strutils, critbits]
 
-proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
+proc optionNormalize*(s: string, wordSeparators="_-", noop=false):
+    string {.noSideEffect.} =
   ## Normalizes option key `s` to allow command syntax to be style-insensitive
   ## in a similar way to Nim identifier syntax.
   ## 
@@ -81,6 +82,7 @@ proc optionNormalize*(s: string, wordSeparators="_-"): string {.noSideEffect.} =
   ##     of cmdLongOption, cmdShortOption:
   ##       case optionNormalize(key)
   ##       of "myoptkey", "m": doSomething()
+  if noop: return s
   result = newString(s.len)
   if s.len == 0: return
   var wordSeps: set[char]   # compile a set[char] from `wordSeparators`
@@ -105,7 +107,7 @@ proc valsWithPfx*[T](cb: CritBitTree[T], key: string): seq[T] =
 proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
   ##[ Use `cb` to find normalized long form of `key`. Return empty string if
   ambiguous or unchanged string on no match. ]##
-  let n = optionNormalize(key)
+  let n = optionNormalize(key)  # Also used by subcommands
   if not prefixOk:
     return n
   var ks: seq[string]
@@ -135,16 +137,21 @@ type
     sfRequireSep,             ##[true=>require `sepChars` element between option
       key&val.  Parser knows that both long/short non-NoVal expect args so space
       separators also work.]##
+    sfArgEndsOpts,            ## true=>disallow options after 1st non-option arg
+    sfEndOpts,                ## true=>`--` must precede positionals
+    sfOnePerArg,              ## true=>disallow -a -b- => -ab bool flag folding
+    sfValued,                 ##X true=>`bool` flags need explicit values
     sfLongPfxOk,              ## true=>unique prefix is ok for longOpts
     sfStopPfxOk,              ## true=>unique prefix is ok for stopWords
-    sfArgEndsOpts,            ## true=>disallow options after 1st non-option arg
-    sfOnePerArg,              ## true=>disallow -a -b- => -ab bool flag folding
+#TODO All need is pass optionNormalize `noop=sfExact in p.flags` & update calls,
+#     BUT must also check if foo-bar/fooBar in `help` breaks spell check.
+    sfExact,                  ##X true=>option keys are case&style-sensitive
     sfNoShort                 ## true=>run-time disallow short (vs. compTime-"")
   OptParser* = object of RootObj  ## object to implement the command line parser
     cmd*: seq[string]         ## command line being parsed
     pos*: int                 ## current command parameter to inspect
     off*: int                 ## current offset in cmd[pos] for short key block
-    optsDone*: bool           ## "--" has been seen
+    optsDone*, ended*: bool   ## "--" has been seen implicitly or explicitly
     shortNoVal*: set[char]    ## 1-letter options not requiring optarg
     longNoVal*: CritBitTree[string] ## long options not requiring optarg
     stopWords*: CritBitTree[string] ## special literal params acting like "--"
@@ -185,6 +192,8 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(), flags=laxFlags,
   never interpreted as options.]##
   result.cmd = cmdline
   result.flags = flags
+  let shortNoVal = if sfValued in flags: {}  else: shortNoVal
+  let longNoVal  = if sfValued in flags: @[] else: longNoVal
   result.shortNoVal = shortNoVal
   for s in longNoVal:   #Take normalizer param vs. hard-coding optionNormalize?
     if s.len > 0: result.longNoVal.incl(optionNormalize(s), s)
@@ -261,6 +270,9 @@ proc doShort(p: var OptParser) =
   p.val = ""
   p.off = 0
   p.pos += 1
+  if sfValued in p.flags and p.pos == p.cmd.len:
+    p.kind = cmdError
+    p.message = "`bool` flag `" & p.key & "` requires explicit value"
 
 proc doLong(p: var OptParser) =
   p.kind = cmdLongOption
@@ -290,6 +302,9 @@ proc doLong(p: var OptParser) =
   elif p.longNoVal.len != 0:
     p.val = ""
     p.pos += 1
+  elif sfValued in p.flags:
+    p.kind = cmdError
+    p.message = "`bool` flag `" & p.key & "` requires explicit value"
 
 {.push warning[ProveField]: off.}
 proc next*(p: var OptParser) =
@@ -305,6 +320,8 @@ proc next*(p: var OptParser) =
     p.kind = cmdEnd
     return
   if p.optsDone or not p.cmd[p.pos].startsWith("-"):  #Step3: non-option param
+    if sfEndOpts in p.flags and not p.ended:
+      p.kind = cmdError; p.message = "positionals without leading '--'";return
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
@@ -316,12 +333,15 @@ proc next*(p: var OptParser) =
   if p.cmd[p.pos].startsWith("--"):     #Step5: "--*"
     if p.cmd[p.pos].len == 2:           # terminating "--" => pure param mode
       p.optsDone = true                 # should only hit Step3 henceforth
+      p.ended = true                    # flag for sfEndOpts
       p.pos += 1                        # skip the "--" itself, unlike stopWords
       next(p)                           # do next one so each parent next()..
       return                            #..yields exactly 1 opt+arg|cmdparam
     doLong(p)
   else:                                 #Step6: "-" but not "--" => short opt
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
+      if sfEndOpts in p.flags and not p.ended:
+        p.kind = cmdError; p.message = "positionals without leading '--'";return
       p.kind = cmdArgument              #  {"-" often used to indicate "stdin"}
       if sfArgEndsOpts in p.flags: p.optsDone = true
       p.key = p.cmd[p.pos]
