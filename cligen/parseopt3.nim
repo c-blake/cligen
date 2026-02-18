@@ -231,7 +231,7 @@ proc cur(p: OptParser): char =
 
 proc doShort(p: var OptParser) =
   if sfNoShort in p.flags:
-    p.message = "Short options are run-time disallowed at `" & p.key & "`"
+    p.message = "Short options are run-time disallowed at `" & $p.cur & "`"
     p.kind = cmdError; return
   p.kind = cmdShortOption
   p.val = ""
