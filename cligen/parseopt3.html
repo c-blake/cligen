@@ -86,10 +86,10 @@
   sfArgEndsOpts,            ## true=&gt;disallow options after 1st non-option arg
   sfEndOpts,                ## true=&gt;`--` must precede positionals
   sfOnePerArg,              ## true=&gt;disallow -a -b- =&gt; -ab bool flag folding
-  sfValued,                 ## X true=&gt;`bool` flags need explicit values
+  sfValued,                 ## true=&gt;`bool` flags need explicit values
   sfLongPfxOk,              ## true=&gt;unique prefix is ok for longOpts
   sfStopPfxOk,              ## true=&gt;unique prefix is ok for stopWords
-  sfExact,                  ## X true=&gt;option keys are case&amp;style-sensitive
+  sfExact,                  ## true=&gt;option keys are case&amp;style-sensitive
   sfNoShort                  ## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)">SyntaxFlag</a></li>
 
     </ul>
@@ -129,7 +129,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">lengthen
-  <li><a class="reference" href="#lengthen%2CCritBitTree%5BT%5D%2Cstring" title="lengthen[T](cb: CritBitTree[T]; key: string; prefixOk = false): string">lengthen[T](cb: CritBitTree[T]; key: string; prefixOk = false): string</a></li>
+  <li><a class="reference" href="#lengthen%2CCritBitTree%5BT%5D%2Cstring" title="lengthen[T](cb: CritBitTree[T]; key: string; prefixOk = false; no = false): string">lengthen[T](cb: CritBitTree[T]; key: string; prefixOk = false; no = false): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">longPfxOk
@@ -141,7 +141,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">optionNormalize
-  <li><a class="reference" href="#optionNormalize%2Cstring%2Cstring" title="optionNormalize(s: string; wordSeparators = &quot;_-&quot;; noop = false): string">optionNormalize(s: string; wordSeparators = &quot;_-&quot;; noop = false): string</a></li>
+  <li><a class="reference" href="#optionNormalize%2Cstring%2Cstring" title="optionNormalize(s: string; wordSeparators = &quot;_-&quot;; no = false): string">optionNormalize(s: string; wordSeparators = &quot;_-&quot;; no = false): string</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">requireSep
@@ -153,7 +153,7 @@
 
 </ul>
 <ul class="simple nested-toc-section">valsWithPfx
-  <li><a class="reference" href="#valsWithPfx%2CCritBitTree%5BT%5D%2Cstring" title="valsWithPfx[T](cb: CritBitTree[T]; key: string): seq[T]">valsWithPfx[T](cb: CritBitTree[T]; key: string): seq[T]</a></li>
+  <li><a class="reference" href="#valsWithPfx%2CCritBitTree%5BT%5D%2Cstring" title="valsWithPfx[T](cb: CritBitTree[T]; key: string; no = false): seq[T]">valsWithPfx[T](cb: CritBitTree[T]; key: string; no = false): seq[T]</a></li>
 
 </ul>
 
@@ -258,10 +258,10 @@
   <span class="Identifier">sfArgEndsOpts</span><span class="Other">,</span>            <span class="Comment">## true=&gt;disallow options after 1st non-option arg</span>
   <span class="Identifier">sfEndOpts</span><span class="Other">,</span>                <span class="Comment">## true=&gt;`--` must precede positionals</span>
   <span class="Identifier">sfOnePerArg</span><span class="Other">,</span>              <span class="Comment">## true=&gt;disallow -a -b- =&gt; -ab bool flag folding</span>
-  <span class="Identifier">sfValued</span><span class="Other">,</span>                 <span class="Comment">## X true=&gt;`bool` flags need explicit values</span>
+  <span class="Identifier">sfValued</span><span class="Other">,</span>                 <span class="Comment">## true=&gt;`bool` flags need explicit values</span>
   <span class="Identifier">sfLongPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for longOpts</span>
   <span class="Identifier">sfStopPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for stopWords</span>
-  <span class="Identifier">sfExact</span><span class="Other">,</span>                  <span class="Comment">## X true=&gt;option keys are case&amp;style-sensitive</span>
+  <span class="Identifier">sfExact</span><span class="Other">,</span>                  <span class="Comment">## true=&gt;option keys are case&amp;style-sensitive</span>
   <span class="Identifier">sfNoShort</span>                  <span class="Comment">## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)</span></pre></dt>
   <dd>
     
@@ -333,7 +333,7 @@
 </div>
 <div id="lengthen-procs-all">
   <div id="lengthen,CritBitTree[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#lengthen%2CCritBitTree%5BT%5D%2Cstring"><span class="Identifier">lengthen</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">cb</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">prefixOk</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#lengthen%2CCritBitTree%5BT%5D%2Cstring"><span class="Identifier">lengthen</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">cb</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">prefixOk</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">no</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Use <tt class="docutils literal"><span class="pre"><span class="Identifier">cb</span></span></tt> to find normalized long form of <tt class="docutils literal"><span class="pre"><span class="Identifier">key</span></span></tt>. Return empty string if ambiguous or unchanged string on no match. 
@@ -366,7 +366,7 @@
 </div>
 <div id="optionNormalize-procs-all">
   <div id="optionNormalize,string,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#optionNormalize%2Cstring%2Cstring"><span class="Identifier">optionNormalize</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">;</span> <span class="Identifier">noop</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#optionNormalize%2Cstring%2Cstring"><span class="Identifier">optionNormalize</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">wordSeparators</span> <span class="Other">=</span> <span class="StringLit">&quot;_-&quot;</span><span class="Other">;</span> <span class="Identifier">no</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
     <span class="Identifier">noSideEffect</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -406,7 +406,7 @@
 </div>
 <div id="valsWithPfx-procs-all">
   <div id="valsWithPfx,CritBitTree[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#valsWithPfx%2CCritBitTree%5BT%5D%2Cstring"><span class="Identifier">valsWithPfx</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">cb</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#valsWithPfx%2CCritBitTree%5BT%5D%2Cstring"><span class="Identifier">valsWithPfx</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">cb</span><span class="Other">:</span> <span class="Identifier">CritBitTree</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">no</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -467,7 +467,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-18 18:15:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-02-19 21:21:06 UTC</small>
       </div>
     </div>
   </div>
