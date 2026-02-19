@@ -67,7 +67,12 @@ folding is allowed, and whether short options are even allowed at all. ]##
 
 import std/[os, strutils, critbits]
 
-proc optionNormalize*(s: string, wordSeparators="_-", noop=false):
+# For pure parseopt3, run-time flag is ok, BUT cligen uses case-of => C-T keys.
+when defined cgNoNorm: # Nicer to make R-T, but either case-dispatch dups=>ObSz
+ proc optionNormalize*(s: string, wordSeparators="_-",no=false): #..OR becomes a
+    string {.noSideEffect.} = s               #..potentially long if-elif chain.
+else:
+ proc optionNormalize*(s: string, wordSeparators="_-", no=false):
     string {.noSideEffect.} =
   ## Normalizes option key `s` to allow command syntax to be style-insensitive
   ## in a similar way to Nim identifier syntax.
@@ -82,7 +87,7 @@ proc optionNormalize*(s: string, wordSeparators="_-", noop=false):
   ##     of cmdLongOption, cmdShortOption:
   ##       case optionNormalize(key)
   ##       of "myoptkey", "m": doSomething()
-  if noop: return s
+  if no: return s
   result = newString(s.len)
   if s.len == 0: return
   var wordSeps: set[char]   # compile a set[char] from `wordSeparators`
@@ -101,13 +106,13 @@ proc optionNormalize*(s: string, wordSeparators="_-", noop=false):
     setLen(result, j)
 
 {.push warning[ProveField]: off.}
-proc valsWithPfx*[T](cb: CritBitTree[T], key: string): seq[T] =
-  for v in cb.valuesWithPrefix(optionNormalize(key)): result.add(v)
+proc valsWithPfx*[T](cb: CritBitTree[T], key: string, no=false): seq[T] =
+  for v in cb.valuesWithPrefix(optionNormalize(key, no=no)): result.add(v)
 
-proc lengthen*[T](cb: CritBitTree[T], key: string, prefixOk=false): string =
+proc lengthen*[T](cb:CritBitTree[T], key:string,prefixOk=false,no=false):string=
   ##[ Use `cb` to find normalized long form of `key`. Return empty string if
   ambiguous or unchanged string on no match. ]##
-  let n = optionNormalize(key)  # Also used by subcommands
+  let n = optionNormalize(key, no=no)  # Also used by subcommands
   if not prefixOk:
     return n
   var ks: seq[string]
@@ -140,12 +145,10 @@ type
     sfArgEndsOpts,            ## true=>disallow options after 1st non-option arg
     sfEndOpts,                ## true=>`--` must precede positionals
     sfOnePerArg,              ## true=>disallow -a -b- => -ab bool flag folding
-    sfValued,                 ##X true=>`bool` flags need explicit values
+    sfValued,                 ## true=>`bool` flags need explicit values
     sfLongPfxOk,              ## true=>unique prefix is ok for longOpts
     sfStopPfxOk,              ## true=>unique prefix is ok for stopWords
-#TODO All need is pass optionNormalize `noop=sfExact in p.flags` & update calls,
-#     BUT must also check if foo-bar/fooBar in `help` breaks spell check.
-    sfExact,                  ##X true=>option keys are case&style-sensitive
+    sfExact,                  ## true=>option keys are case&style-sensitive
     sfNoShort                 ## true=>run-time disallow short (vs. compTime-"")
   OptParser* = object of RootObj  ## object to implement the command line parser
     cmd*: seq[string]         ## command line being parsed
@@ -169,6 +172,7 @@ type
 proc requireSep*(p:OptParser):bool = sfRequireSep in p.flags ## Chk sfRequireSep
 proc longPfxOk*(p: OptParser):bool = sfLongPfxOk  in p.flags ## Chk sfLongPfxOk
 proc stopPfxOk*(p: OptParser):bool = sfStopPfxOk  in p.flags ## Chk sfStopPfxOk
+proc no(flags: set[SyntaxFlag]): bool = sfExact in flags
     
 const laxFlags*: set[SyntaxFlag] = {}
 
@@ -195,13 +199,14 @@ proc initOptParser*(cmdline: seq[string] = commandLineParams(), flags=laxFlags,
   let shortNoVal = if sfValued in flags: {}  else: shortNoVal
   let longNoVal  = if sfValued in flags: @[] else: longNoVal
   result.shortNoVal = shortNoVal
-  for s in longNoVal:   #Take normalizer param vs. hard-coding optionNormalize?
-    if s.len > 0: result.longNoVal.incl(optionNormalize(s), s)
+  let no = sfExact in flags
+  for s in longNoVal:
+    if s.len > 0: result.longNoVal.incl(optionNormalize(s, no=no), s)
   result.sepChars = sepChars
   result.opChars = opChars
   {.push warning[ProveField]: off.}
   for w in stopWords:
-    if w.len > 0: result.stopWords.incl(optionNormalize(w), w)
+    if w.len > 0: result.stopWords.incl(optionNormalize(w, no=no), w)
   {.pop.}
   result.off = 0
   result.optsDone = false
@@ -289,7 +294,7 @@ proc doLong(p: var OptParser) =
     p.val = param[sep+1..^1]
     return
   p.key = param[2..^1]                  # no sep; key is whole param past "--"
-  let k = p.longNoVal.lengthen(optionNormalize(p.key), p.longPfxOk)
+  let k = p.longNoVal.lengthen(optionNormalize(p.key,no=p.flags.no),p.longPfxOk)
   if k in p.longNoVal:
     return                              # No argument; done
   if p.requireSep:
@@ -325,7 +330,8 @@ proc next*(p: var OptParser) =
     p.kind = cmdArgument
     p.key = p.cmd[p.pos]
     p.val = ""
-    let k = p.stopWords.lengthen(optionNormalize(p.cmd[p.pos]), p.stopPfxOk)
+    let k = p.stopWords.lengthen(optionNormalize(p.cmd[p.pos], no=p.flags.no),
+                                 p.stopPfxOk)
     if sfArgEndsOpts in p.flags or k in p.stopWords:  #Step4: chk for stopping
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
