@@ -6,15 +6,20 @@ Version: 1.10
   - add new ways to be strict to `cligen/parseopt3.nim`, bubbling up that
   ability to both `std/parsecfg` & TOML config files.  This is helpful, e.g.,
   to enhance syntax strictness of a mode already pretty easy in "config
-  directory-style" by making (on a Unix) a `~/.config/cligen/strict`:
+  directory-style" by making (on a Unix) a `~/.config/cligen/strict` (these
+  are ordered into delimiting, bool handling, and key spelling groups):
 ```
 [syntax] # Changing can EASILY break cfg files|script-usage of programs!
 sepChars     = "="   # Do not use Araq's Windows-esque ':' convention
-reqSep       = on
+reqSep       = on    # require separator between option keys & values
+argEndsOpts  = true  # forbid treatment as options after first non-option arg
+endOpts      = true  # `--` must precede positionals, not just delimit opts&args
+
+onePerArg    = true  # command parameters can only encode 1 option; No -abc
+valued       = on    # `bool` flags require explicit values (`--flag=on`)
+
 longPrefixOk = false # deny/allow unique prefix match for long options
 stopPrefixOk = false # deny/allow unique prefix match for subcommand names
-argEndsOpts  = true  # forbid treatment as options after first non-option arg
-onePerArg    = true  # command parameters can only encode 1 option; No -abc
 noShort      = true  # block short option syntax entirely; Must say --alpha
 ```
   Then in `$HOME/.config/cligen/config`, include an `[include__CG_STRICT]` line
@@ -24,6 +29,23 @@ noShort      = true  # block short option syntax entirely; Must say --alpha
   top-of-script `export CG_STRICT=strict`.  This will not apply to `cligen`
   programs compiled with the non-default `-d:cgCfgNone` mode, though it will
   make more strict the syntax of all default-compiled `cligen` programs.
+
+  - The above method still works and shows how `cligen` was able to do run-time
+  syntax (at least for separators) since 0.9.46, but this release also adds a
+  probably simpler to use `CLSYNTAX` environmental variable that can activate
+  strictness through a whole family tree of processes launching commands in all
+  sorts of lexical contexts (shell, python, Nim, etc.).  As this variable is of
+  potentially broad enough interest to apply to command-line parsing libs in all
+  sorts of programming languages, it deserved motivation & documentation in its
+  very own, non-Nim-specific repository which is here:
+    https://github.com/c-blake/clsyntax
+
+  - Presently, for case-label-const-ness reasons (grounded in C int-switch label
+  const-ness), what the CLSYNTAX document calls the `exact` syntax flag is only
+  decidable at compile-time via a new define `cgNoNorm`.  If set, `parseopt3`
+  and so `cligen` will use exact ident strings, not `optionNormalized` ones --
+  i.e. post-1st char-case-folded, underscore & dash/hypen stripped.  This also
+  induced canonical spellings for all cligen config file keys in that mode.
 
   - It's unlikely to be a problem { I couldn't find one Nimbleverse instance },
   but a theoretical BREAKING CHANGE in this release is that compilation fails
