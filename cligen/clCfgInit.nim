@@ -6,6 +6,8 @@ when defined(nimHasWarningObservableStores):
 import std/[streams, parsecfg] # , os, tables # for standalone
 when not declared(stderr): import std/syncio
 const cgConfigFileBaseName = "config"
+proc on(s: string, wordSeparators="_-", no=false): string {.noSideEffect.} =
+  optionNormalize(s)
 
 proc apply(c: var ClCfg, path: string, plain=false) =
   const yes = [ "t", "true" , "yes", "y", "1", "on" ]
@@ -32,63 +34,65 @@ proc apply(c: var ClCfg, path: string, plain=false) =
       else:
         let sec = e.section.optionNormalize
         case sec
-        of "global","aliases","layout","syntax","color","render","templates":
-          activeSection = sec
+        of "global".on,"aliases".on,"layout".on,"syntax".on,"color".on,
+           "render".on,"templates".on: activeSection = sec
         else:
           stderr.write path & ":" & " unknown section " & e.section & "\n" &
             "Expecting: global aliases layout syntax color render templates\n"
           break
     of cfgKeyValuePair, cfgOption:
       case activeSection
-      of "global", "aliases":
+      of "global".on, "aliases".on:
         case e.key.optionNormalize #I realize this can be simpler, but as-is it
-        of "colors":               #..allows darkBG symlink-> (lc|procs)/darkBG
+        of "colors".on:            #..allows darkBG symlink-> (lc|procs)/darkBG
           let cols = e.value.split('=')
           textAttrAlias(cols[0].strip, cols[1].strip)
-        of "sigpipe": c.sigPIPE = parseEnum[ClSIGPIPE](e.value.optionNormalize)
+        of "sigpipe".on: c.sigPIPE=parseEnum[ClSIGPIPE](e.value.optionNormalize)
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
                        "Can only be \"colors\" or \"sigpipe\"\n"
-      of "layout":
+      of "layout".on:
         case e.key.optionNormalize
-        of "widthenv":               c.widthEnv    = e.value
-        of "rowsep", "rowseparator": c.hTabRowSep  = e.value
-        of "subsep", "subrowsep":    c.subRowSep   = e.value
-        of "colgap", "columngap":    c.hTabColGap  = parseInt(e.value)
-        of "minlast", "leastfinal":  c.hTabMinLast = parseInt(e.value)
-        of "required", "val4req":    c.hTabVal4req = e.value
-        of "cols", "columns":
+        of "widthEnv".on:                  c.widthEnv    = e.value
+        of "rowSep".on, "rowSeparator".on: c.hTabRowSep  = e.value
+        of "subSep".on, "subRowSep".on:    c.subRowSep   = e.value
+        of "colGap".on, "columnGap".on:    c.hTabColGap  = parseInt(e.value)
+        of "minLast".on, "leastFinal".on:  c.hTabMinLast = parseInt(e.value)
+        of "required".on, "val4req".on:    c.hTabVal4req = e.value
+        of "cols".on, "columns".on:
           c.hTabCols.setLen 0
           for tok in e.value.split: c.hTabCols.add parseEnum[ClHelpCol](tok)
-        of "nohelphelp", "skiphelphelp":
+        of "noHelpHelp".on, "skipHelpHelp".on:
           c.noHelpHelp = e.value.optionNormalize in yes
-        of "minstrquoting":
+        of "minStrquoting".on:
           c.minStrQuoting = e.value.optionNormalize in yes
-        of "truedefaultstr" : c.trueDefaultStr  = e.value
-        of "falsedefaultstr": c.falseDefaultStr = e.value
-        of "wrapdoc"     : c.wrapDoc      = e.value.parseInt
-        of "wraptable"   : c.wrapTable    = e.value.parseInt
+        of "trueDefaultStr".on : c.trueDefaultStr  = e.value
+        of "falseDefaultStr".on: c.falseDefaultStr = e.value
+        of "wrapDoc".on        : c.wrapDoc         = e.value.parseInt
+        of "wrapTable".on      : c.wrapTable       = e.value.parseInt
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
-            "rowsep colgap minlast required cols nohelphelp widthenv\n  " &
-            "minstrquoting truedefaultstr falsedefaultstr wrapdoc wraptable\n"
-      of "syntax":
+            "rowSep colGap minLast required cols noHelpHelp widthEnv\n  " &
+            "minStrQuoting trueDefaultStr falseDefaultStr wrapDoc wrapTable\n"
+      of "syntax".on:
         case e.key.optionNormalize
-        of "sepchars", "separatorchars":
+        of "sepChars".on, "separatorChars".on:
           c.sepChars = {}; (for ch in e.value: c.sepChars.incl ch)
-        of "reqsep","requireseparator":c.reqSep = e.value.optionNormalize in yes
-        of "argendsopts" : c.argEndsOpts = e.value.optionNormalize in yes
-        of "endopts"     : c.endOpts   = e.value.optionNormalize in yes
-        of "oneperarg"   : c.onePerArg = e.value.optionNormalize in yes
-        of "valued"      : c.valued    = e.value.optionNormalize in yes
-        of "longprefixok": c.longPfxOk = e.value.optionNormalize in yes
-        of "stopprefixok": c.stopPfxOk = e.value.optionNormalize in yes
-        of "exact"       : c.exact     = e.value.optionNormalize in yes
-        of "noshort"     : c.noShort   = e.value.optionNormalize in yes
+        of "reqSep".on, "requireSeparator".on:
+          c.reqSep = e.value.optionNormalize in yes
+        of "argEndsOpts".on : c.argEndsOpts = e.value.optionNormalize in yes
+        of "endOpts".on     : c.endOpts     = e.value.optionNormalize in yes
+        of "onePerArg".on   : c.onePerArg   = e.value.optionNormalize in yes
+        of "valued".on      : c.valued      = e.value.optionNormalize in yes
+        of "longPrefixOk".on: c.longPfxOk   = e.value.optionNormalize in yes
+        of "stopPrefixOk".on: c.stopPfxOk   = e.value.optionNormalize in yes
+        of "exact".on       : c.exact       = e.value.optionNormalize in yes
+        of "noShort".on     : c.noShort     = e.value.optionNormalize in yes
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
-            "requireseparator separatorchars longprefixok stopprefixok\n"
-      of "color":
+            "requireSeparator separatorChars longPrefixOk stopPrefixOk\n" &
+            "argEndsOpts endOpts onePerArg valued exact noShort\n"
+      of "color".on:
         if not plain:
           var on = ""; var off = textAttrOff
           if ';' in e.value:
@@ -100,49 +104,51 @@ proc apply(c: var ClCfg, path: string, plain=false) =
           else:
             on = textAttrOn(e.value.split, plain)
           case e.key.optionNormalize
-          of "optkeys", "options", "switches", "optkey", "option", "switch":
+          of "optKeys".on, "options".on, "switches".on, "optKey".on,
+             "option".on, "switch".on:
             c.helpAttr["clOptKeys"] = on; c.helpAttrOff["clOptKeys"] = off
-          of "valtypes", "valuetypes", "types", "valtype", "valuetype", "type":
+          of "valTypes".on, "valueTypes".on, "types".on, "valType".on,
+             "valueType".on, "type".on:
             c.helpAttr["clValType"] = on; c.helpAttrOff["clValType"] = off
-          of "dflvals", "defaultvalues", "dflval", "defaultvalue":
+          of "dflVals".on, "defaultValues".on, "dflval".on, "defaultValue".on:
             c.helpAttr["clDflVal"]  = on; c.helpAttrOff["clDflVal"]  = off
-          of "descrips", "descriptions", "paramdescriptions", "descrip",
-             "description", "paramdescription":
+          of "descrips".on, "descriptions".on, "paramDescriptions".on,
+             "descrip".on, "description".on, "paramDescription".on:
             c.helpAttr["clDescrip"] = on; c.helpAttrOff["clDescrip"] = off
-          of "cmd", "command", "cmdname", "commandname":
+          of "cmd".on, "command".on, "cmdName".on, "commandName".on:
             c.helpAttr["cmd"] = on; c.helpAttrOff["cmd"] = off
-          of "doc", "documentation", "overalldocumentation":
+          of "doc".on, "documentation".on, "overallDocumentation".on:
             c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
-          of "args", "arguments", "argsonlinewithcmd":
+          of "args".on, "arguments".on, "argsOnLineWithCmd".on:
             c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
-          of "bad", "errbad", "errorbad":
+          of "bad".on, "errBad".on, "errorBad".on:
             c.helpAttr["bad"] = on; c.helpAttrOff["bad"] = off
-          of "good", "errgood", "errorgood":
+          of "good".on, "errGood".on, "errorGood".on:
             c.helpAttr["good"] = on; c.helpAttrOff["good"] = off
           else:
             stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-              "Expecting: options types defaultvalues descriptions command" &
-              " documentation arguments errorbad errorgood\n"
-      of "render":
+              "Expecting: options types defaultValues descriptions command" &
+              " documentation arguments errorBad errorGood\n"
+      of "render".on:
         case e.key.optionNormalize
-        of "singlestar": rendOpts["singlestar"] = e.value
-        of "doublestar": rendOpts["doublestar"] = e.value
-        of "triplestar": rendOpts["triplestar"] = e.value
-        of "singlebquo": rendOpts["singlebquo"] = e.value
-        of "doublebquo": rendOpts["doublebquo"] = e.value
+        of "singleStar".on: rendOpts["singlestar"] = e.value
+        of "doubleStar".on: rendOpts["doublestar"] = e.value
+        of "tripleStar".on: rendOpts["triplestar"] = e.value
+        of "singleBQuo".on: rendOpts["singlebquo"] = e.value
+        of "doubleBQuo".on: rendOpts["doublebquo"] = e.value
         else:
           stderr.write path & ":" & " unexpected setting " & e.key & "\n" &
-            "Expecting: singlestar, doublestar, triplestar, singlebquo," &
-            " doublebquo\n"
-      of "templates":
+            "Expecting: singleStar, doubleStar, tripleStar, singleBQuo," &
+            " doubleBQuo\n"
+      of "templates".on:
         case e.key.optionNormalize
-        of "usehdr", "usageheader" : c.useHdr     = hl(e.value)
-        of "use", "usage"          : c.use        = hl(e.value)
-        of "usemulti", "usagemulti": c.useMulti   = hl(e.value)
-        of "helpsyntax"            : c.helpSyntax = hl(e.value)
+        of "useHdr".on, "usageHeader".on : c.useHdr     = hl(e.value)
+        of "use".on, "usage".on          : c.use        = hl(e.value)
+        of "useMulti".on, "usageMulti".on: c.useMulti   = hl(e.value)
+        of "helpSyntax".on            : c.helpSyntax = hl(e.value)
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: " &
-            "usehdr,usageheader use,usage usemulti,usagemulti helpsyntax\n"
+            "useHdr,usageHeader use,usage useMulti,usageMulti helpSyntax\n"
       else: discard # cannot happen since we break early above
     of cfgError: echo e.msg
   close(p)

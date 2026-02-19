@@ -5,6 +5,8 @@
 import std/[strformat, sequtils], parsetoml # , tables # for standalone
 when not declared(stderr): import std/syncio
 const cgConfigFileBaseName = "config.toml"
+proc on(s: string, wordSeparators="_-", no=false): string {.noSideEffect.} =
+  optionNormalize(s)
 
 proc apply(c: var ClCfg, cfgFile: string, plain=false) =
   template hl(x): string = specifierHighlight(x, Whitespace, plain,
@@ -15,7 +17,7 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
   let tomlCfg = parsetoml.parseFile(cfgFile).getTable
   for k1, v1 in tomlCfg.pairs:
     case k1.toLowerAscii
-    of "includes":
+    of "includes".on:
       let includeFiles = v1.getElems().mapIt(it.getStr)
       for f in includeFiles:
         if f == cfgFile: continue # disallow infinite loop
@@ -23,50 +25,50 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         if f == f.toUpperAscii(): f = f.getEnv
         if not f.startsWith('/'): f = cfgFile.parentDir/f
         if f.fileExists: c.apply(f, plain)
-    of "global", "aliases":
+    of "global".on, "aliases".on:
       for k2, v2 in v1.getTable.pairs:
         case k2.toLowerAscii
-        of "colors":
+        of "colors".on:
           for k3, v3 in v2.getTable.pairs: textAttrAlias(k3, v3.getStr.strip)
-        of "sigpipe":c.sigPIPE = parseEnum[ClSIGPIPE](v2.getStr.optionNormalize)
+        of "sigpipe".on:c.sigPIPE=parseEnum[ClSIGPIPE] v2.getStr.optionNormalize
         else: uk k1, k2
-    of "layout":
+    of "layout".on:
       for k2, v2 in v1.getTable.pairs:
         case k2.toLowerAscii
-        of "widthenv":               c.widthEnv    = v2.getStr
-        of "rowsep", "rowseparator": c.hTabRowSep  = v2.getStr
-        of "subsep", "subrowsep":    c.subRowSep   = v2.getStr
-        of "colgap", "columngap":    c.hTabColGap  = v2.getInt
-        of "minlast", "leastfinal":  c.hTabMinLast = v2.getInt
-        of "required", "val4req":    c.hTabVal4req = v2.getStr
-        of "cols", "columns":
+        of "widthEnv".on:                  c.widthEnv    = v2.getStr
+        of "rowSep".on, "rowSeparator".on: c.hTabRowSep  = v2.getStr
+        of "subSep".on, "subRowSep".on:    c.subRowSep   = v2.getStr
+        of "colGap".on, "columnGap".on:    c.hTabColGap  = v2.getInt
+        of "minLast".on, "leastFinal".on:  c.hTabMinLast = v2.getInt
+        of "required".on, "val4req".on:    c.hTabVal4req = v2.getStr
+        of "cols".on, "columns".on:
           c.hTabCols.setLen 0
           for tok in v2.getElems.mapIt(it.getStr):
             c.hTabCols.add parseEnum[ClHelpCol](tok)
-        of "nohelphelp", "skiphelphelp": c.noHelpHelp      = v2.getBool
-        of "minstrquoting"             : c.minStrQuoting   = v2.getBool
-        of "truedefaultstr"            : c.trueDefaultStr  = v2.getStr
-        of "falsedefaultstr"           : c.falseDefaultStr = v2.getStr
-        of "wrapdoc"                   : c.wrapDoc         = v2.getInt
-        of "wraptable"                 : c.wrapTable       = v2.getInt
+        of "noHelpHelp".on, "skipHelpHelp".on: c.noHelpHelp      = v2.getBool
+        of "minStrQuoting".on                : c.minStrQuoting   = v2.getBool
+        of "trueDefaultStr".on               : c.trueDefaultStr  = v2.getStr
+        of "falseDefaultStr".on              : c.falseDefaultStr = v2.getStr
+        of "wrapDoc".on                      : c.wrapDoc         = v2.getInt
+        of "wrapTable".on                    : c.wrapTable       = v2.getInt
         else: uk k1, k2
-    of "syntax":
+    of "syntax".on:
       for k2, v2 in v1.getTable.pairs:
         case k2.toLowerAscii
-        of "sepchars", "separatorchars":
+        of "sepChars".on, "separatorChars".on:
           c.sepChars = {}
           for ch in v2.getElems.mapIt(it.getStr[0]): c.sepChars.incl(ch)
-        of "reqsep", "requireseparator": c.reqSep = v2.getBool
-        of "argendsopts" : c.argEndsOpts = v2.getBool
-        of "endopts"     : c.endOpts     = v2.getBool
-        of "oneperarg"   : c.onePerArg   = v2.getBool
-        of "valued"      : c.valued      = v2.getBool
-        of "longprefixok": c.longPfxOk   = v2.getBool
-        of "stopprefixok": c.stopPfxOk   = v2.getBool
-        of "exact"       : c.exact       = v2.getBool
-        of "noshort"     : c.noShort     = v2.getBool
+        of "reqSep".on, "requireSeparator".on: c.reqSep = v2.getBool
+        of "argEndsOpts".on : c.argEndsOpts = v2.getBool
+        of "endOpts".on     : c.endOpts     = v2.getBool
+        of "onePerArg".on   : c.onePerArg   = v2.getBool
+        of "valued".on      : c.valued      = v2.getBool
+        of "longPrefixOk".on: c.longPfxOk   = v2.getBool
+        of "stopPrefixOk".on: c.stopPfxOk   = v2.getBool
+        of "exact".on       : c.exact       = v2.getBool
+        of "noShort".on     : c.noShort     = v2.getBool
         else: uk k1, k2
-    of "color":
+    of "color".on:
       if not plain:
         for k2, v2 in v1.getTable.pairs:
           let val = v2.getStr
@@ -79,43 +81,45 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
           else:
             on = textAttrOn(val.strip.split, plain); off = textAttrOff
           case k2.toLowerAscii
-          of "optkeys", "options", "switches", "optkey", "option", "switch":
+          of "optKeys".on, "options".on, "switches".on, "optKey".on,
+             "option".on, "switch".on:
             c.helpAttr["clOptKeys"] = on; c.helpAttrOff["clOptKeys"] = off
-          of "valtypes", "valuetypes", "types", "valtype", "valuetype", "type":
+          of "valTypes".on, "valueTypes".on, "types".on, "valType".on,
+             "valueType".on, "type".on:
             c.helpAttr["clValType"] = on; c.helpAttrOff["clValType"] = off
-          of "dflvals", "defaultvalues", "dflval", "defaultvalue":
+          of "dflVals".on, "defaultValues".on, "dflVal".on, "defaultValue".on:
             c.helpAttr["clDflVal"] = on; c.helpAttrOff["clDflVal"] = off
-          of "descrips", "descriptions", "paramdescriptions", "descrip",
-             "description", "paramdescription":
+          of "descrips".on, "descriptions".on, "paramDescriptions".on,
+             "descrip".on, "description".on, "paramDescription".on:
             c.helpAttr["clDescrip"] = on; c.helpAttrOff["clDescrip"] = off
-          of "cmd", "command", "cmdname", "commandname":
+          of "cmd".on, "command".on, "cmdName".on, "commandName".on:
             c.helpAttr["cmd"] = on; c.helpAttrOff["cmd"] = off
-          of "doc", "documentation", "overalldocumentation":
+          of "doc".on, "documentation".on, "overallDocumentation".on:
             c.helpAttr["doc"] = on; c.helpAttrOff["doc"] = off
-          of "args", "arguments", "argsonlinewithcmd":
+          of "args".on, "arguments".on, "argsOnlineWithCmd".on:
             c.helpAttr["args"] = on; c.helpAttrOff["args"] = off
-          of "bad", "errbad", "errorbad":
+          of "bad".on, "errBad".on, "errorBad".on:
             c.helpAttr["bad"] = on; c.helpAttrOff["bad"] = off
-          of "good", "errgood", "errorgood":
+          of "good".on, "errGood".on, "errorGood".on:
             c.helpAttr["good"] = on; c.helpAttrOff["good"] = off
           else: uk k1, k2
-    of "render":
+    of "render".on:
       for k2, v2 in v1.getTable.pairs:
         case k2.toLowerAscii
-        of "singlestar": rendOpts["singlestar"] = v2.getStr
-        of "doublestar": rendOpts["doublestar"] = v2.getStr
-        of "triplestar": rendOpts["triplestar"] = v2.getStr
-        of "singlebquo": rendOpts["singlebquo"] = v2.getStr
-        of "doublebquo": rendOpts["doublebquo"] = v2.getStr
+        of "singleStar".on: rendOpts["singlestar"] = v2.getStr
+        of "doubleStar".on: rendOpts["doublestar"] = v2.getStr
+        of "tripleStar".on: rendOpts["triplestar"] = v2.getStr
+        of "singleBQuo".on: rendOpts["singlebquo"] = v2.getStr
+        of "doubleBQuo".on: rendOpts["doublebquo"] = v2.getStr
         else: uk k1, k2
-    of "templates":
+    of "templates".on:
       for k2, v2 in v1.getTable.pairs:
         let templStr = v2.getStr.strip
         case k2.toLowerAscii
-        of "usageheader", "usehdr" : c.useHdr     = hl(templStr)
-        of "usage", "use"          : c.use        = hl(templStr)
-        of "usagemulti", "usemulti": c.useMulti   = hl(templStr)
-        of "helpsyntax"            : c.helpSyntax = hl(templStr)
+        of "usageHeader".on, "useHdr".on : c.useHdr     = hl(templStr)
+        of "usage".on, "use".on          : c.use        = hl(templStr)
+        of "usageMulti".on, "useMulti".on: c.useMulti   = hl(templStr)
+        of "helpSyntax".on            : c.helpSyntax = hl(templStr)
         else: uk k1, k2
     else: E &"{cfgFile}: unknown keyword {k1}\n"
   if rendOpts.len > 0:
