@@ -42,7 +42,7 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
     helpAttrOff*: Table[string, string] ## Text attr offs for each help area
-    noHelpHelp*: bool            ## Elide --help, --help-syntax from help table
+    noHelpHelp*: bool            ## Elide --help, --helpsyntax from help table
     useHdr*:      string         ## Override of const usage header template
     use*:         string         ## Override of const usage template
     useMulti*:    string         ## Override of const subcmd table template
@@ -458,7 +458,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
   let vsnSh = if "version" in shOpt: $shOpt["version"] else: "\0"
   let prefixId = ident("prefix")        # local help prefix param
   let prsOnlyId = ident("parseOnly")    # flag to only produce a parse vector
-  let skipHelp = ident("skipHelp")      # flag to control --help/--help-syntax
+  let skipHelp = ident("skipHelp")      # flag to control --help/--helpsyntax
   let noHdrId = ident("noHdr")          # flag to control using `clUseHdr`
   let pId = ident("p")                  # local OptParser result handle
   let allId = ident("allParams")        # local list of all parameters
@@ -504,7 +504,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
 
   let helpHelp = helps.getOrDefault("help",
                    ("help", "print this cligen-erated help"))
-  let helpSyn = helps.getOrDefault("helpsyntax", ("help-syntax",
+  let helpSyn = helps.getOrDefault("helpsyntax", ("helpsyntax",
                   "advanced: prepend,plurals,.."))
   let helpVsn = helps.getOrDefault("version", ("version", "print version"))
 
@@ -516,11 +516,11 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       `apId`.val4req = `cf`.hTabVal4req
       let shortH = `shortHlp`
       var `allId`: seq[string] =
-        if `cf`.helpSyntax.len > 0: @[ "help", "help-syntax" ] else: @[ "help" ]
+        if `cf`.helpSyntax.len > 0: @[ "help", "helpsyntax" ] else: @[ "help" ]
       var `cbId`: CritBitTree[string]
       `cbId`.incl(optionNormalize("help"), "help")
       if `cf`.helpSyntax.len > 0:
-        `cbId`.incl(optionNormalize("help-syntax"), "help-syntax")
+        `cbId`.incl(optionNormalize("helpsyntax"), "helpsyntax")
       var `mandId`: seq[string]
       var `tabId`: TextTab = @[]
       let helpHelpRow = @[ "-"&shortH&", --help", "", "", `helpHelp`[1] ]
@@ -533,7 +533,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
          not `skipHelp`:
         `tabId`.add(@[ "--" & `helpSyn`[0], "", "", `helpSyn`[1] ])
       `apId`.shortNoVal = { shortH[0] }               # argHelp(bool) updates
-      `apId`.longNoVal = @[ "help", "help-syntax" ]   # argHelp(bool) appends
+      `apId`.longNoVal = @[ "help", "helpsyntax" ]    # argHelp(bool) appends
       `apId`.minStrQuoting = `cf`.minStrQuoting
       `apId`.trueDefaultStr = `cf`.trueDefaultStr
       `apId`.falseDefaultStr = `cf`.falseDefaultStr
@@ -761,7 +761,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       let ks = `cbId`.valsWithPfx(p.key)
       let msg=("Ambiguous long option prefix \"" & `b0` & "$1" & `b1`  & "\"" &
        " matches:\n  " & `g0` & "$2" & `g1` & " ")%[`pId`.key,ks.join("\n  ")] &
-       "\nRun with " & `g0` & "--help" & `g1` & " for more details.\n"
+       "\nRun with " & `g0` & "--help=on" & `g1` & " for more details.\n"
       if cast[pointer](`setByParseId`) != cgSetByParseNil:
         `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
@@ -779,7 +779,7 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         if sugg.len > 0: mb &= "Maybe you meant one of:\n\t" & `g0` &
                                join(sugg, " ") & `g1` & "\n\n"
       let msg=("Unknown "&k&" option: \"" & `b0` & `pId`.key & `b1` & "\"\n\n" &
-               mb & "Run with " & `g0` & "--help" & `g1` & " for full usage.\n")
+            mb & "Run with " & `g0` & "--help=on" & `g1` & " for full usage.\n")
       if cast[pointer](`setByParseId`) != cgSetByParseNil:
         `setByParseId`[].add((move(`pId`.key), move(`pId`.val), msg, clBadKey))
       if not `prsOnlyId`:
@@ -1099,12 +1099,12 @@ macro dispatchMultiGen*(procBkts: varargs[untyped]): untyped =
         echo ("  $1 $2 {SUBCMD} [subsubcommand-opts & args]\n" &
               "    where subsubcommand syntax is:") % [ `cmd`, `prefix` ]
       else:
-       echo ("${doc}This is a multi-dispatch command. -h/--help/--help-syntax" &
+       echo ("${doc}This is a multi-dispatch command. -h/--help/--helpsyntax" &
              " is available\nfor top-level/all subcommands. Usage is like:\n" &
              "    $1 {SUBCMD} [subcommand-opts & args]\n" &
              "where subcommand syntaxes are as follows:") % [
                "cmd", `cmd`, "doc", `doc`], clCfg.subRowSep
-      let `dashHelpId` = @[ "--help" ]
+      let `dashHelpId` = @[ "--help=on" ]
       let `helpSCmdId` = @[ "help" ]
       `helpDump`
     else:
@@ -1186,7 +1186,7 @@ macro dispatchMulti*(procBrackets: varargs[untyped]): untyped =
      elif ps.len > 0 and ps0.len == 0:
        ambigSubcommand(`subMchsId`, ps[0])
      elif ps.len == 2 and ps0 == "help":
-       if ps1 in `subMchsId`: cligenQuit(`subsDispId`(@[ ps1, "--help" ]))
+       if ps1 in `subMchsId`: cligenQuit(`subsDispId`(@[ ps1, "--help=on" ]))
        elif ps1.len == 0: ambigSubcommand(`subMchsId`, ps[1])
        else: unknownSubcommand(ps[1], `subCmdsId`)
      else:

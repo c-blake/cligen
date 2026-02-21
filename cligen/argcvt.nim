@@ -4,7 +4,7 @@
 
 when (NimMajor,NimMinor,NimPatch) > (0,20,2):
   {.push warning[UnusedImport]: off.} # This is only for gcarc
-import std/[strformat, sets,critbits, strutils, options], textUt,gcarc,parseopt3
+import std/[strformat,sets,critbits,strutils,options,os], textUt,gcarc,parseopt3
 from parseutils import parseBiggestInt, parseBiggestUInt, parseBiggestFloat
 when (NimMajor,NimMinor,NimPatch) <= (0,19,8): import typetraits #$T -> system
 when not declared(assert): import std/[assertions, formatfloat]; export `$`
@@ -15,11 +15,15 @@ type
                         clEnumVal       ## an enum value name identifier
   Ce = CatchableError
 
+var cls = "CLSYNTAX".getEnv
+if "strict" in cls: cls="kvSepnoMixendOpt,typedknown,noFoldvalued,fullexactlong"
+let (sfExact, sfFull) = ("exact" in cls, "full" in cls)
+
 proc helpCase*(inp: string, context: ClHelpContext = clSubCmd): string =
   ##This is a string-to-string transformer hook to convert whatever the native
   ##Nim code identifier casing is into a string for presentation to CLI users.
   ##By default it converts snake_case to kebab-case.
-  result = inp.replace('_', '-')
+  if sfExact: inp else: inp.replace('_', '-')
 
 proc nimEscape*(s: string, quote='"'): string =
   ## Until strutils gets a nimStringEscape that is not deprecated
@@ -107,7 +111,7 @@ proc argHelp*(dfl: char; a: var ArgcvtParams): seq[string] =
 
 # enums
 proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
-  let valNorm = optionNormalize(a.val)      #Normalized strings
+  let valNorm = if sfExact:a.val else: a.val.optionNormalize #Normalized strings
   var allNorm: seq[string]
   var allCanon: seq[string]                 #Canonical/helpCased string
   type EnumCanon[T] = tuple[e: T; canon: string]
@@ -115,18 +119,19 @@ proc argParse*[T: enum](dst: var T, dfl: T, a: var ArgcvtParams): bool =
   for e in low(T)..high(T):
     let canon = helpCase($e, clEnumVal)
     allCanon.add canon
-    let norm = optionNormalize(canon)
+    let norm = if sfExact: canon else: canon.optionNormalize
     allNorm.add(norm)
     crbt[norm] = (e, canon)
   var ks: seq[string]; var es: seq[T]
   if valNorm in crbt:
     dst = crbt[valNorm].e; return true
-  for v in crbt.valuesWithPrefix(valNorm):
-    ks.add(v.canon)
-    es.add(v.e)
-  if ks.len == 1:
-    dst = es[0]
-    return true
+  if not sfFull:
+    for v in crbt.valuesWithPrefix(valNorm):
+      ks.add(v.canon)
+      es.add(v.e)
+    if ks.len == 1:
+      dst = es[0]
+      return true
   if ks.len > 1:
     a.msg = ("Ambiguous enum value prefix for option \"$1\".  " &
              "\"$2\" matches:\n  $3$4") % [ a.key, a.val, ks.join("\n  "),

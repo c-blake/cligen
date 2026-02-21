@@ -1,12 +1,20 @@
 #[ This text should be iterated upon until questions stop.  In particular, it's
    hard to know how much Nim (or beyond general shell) knowledge to assume. ]#
 
+when defined cgNoNorm: (const sensitivity = """
+ * Long option, subcommands & enum values must be spelled as help/error messages
+   indicate (enum can be relaxed if "exact" notin CLSYNTAX).
+""")
+else: (const sensitivity = """
+ * Long option, subcommands & enum values are "CLI-style-insensitive", meaning
+   that the case of the 1st letter matters, but [_-] do not; --bar == --b_A-r.
+""")
+
 const syntaxHelp = """
 BASIC CHEAT SHEET:
  * "--foo=val" is same as "--foo:val" and "--foo val".
  * Likewise with -f instead of --foo; in addition -fval|-f=val|-f:val also work
- * Long option,enum values and subcommands are "CLI-style-insensitive", meaning
-   that the case of the 1st letter matters, but [_-] do not; --bar == --b_A-r.
+""" & sensitivity & """
  * Any unambiguous prefix is enough for long options, enum values & subcommands
  * "bool" values for flags "foo", "bar" with short options 'f', 'b':
      default value false: -f | --foo sets the flag to true
@@ -17,6 +25,7 @@ BASIC CHEAT SHEET:
  * Multiple bool flags can combine: "-bfgVAL" means "-b -f -gVAL"
  * Non-option numbers < 0 are ok but so are digital keys.  -f1 == -f -1 != -f-1.
    `--` end-of-opts indicator before non-options of unknown sign is also useful.
+ * cligen commands support the https://github.com/c-blake/clsyntax convention.
 
 Unlike most CLI frameworks, cligen directly supports managing PLURAL TYPES like
 "strings" with UPDATING OPERATIONS: prepend ("^="), subtract/delete ("-="), as
