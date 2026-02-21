@@ -77,7 +77,7 @@ proc descape(s: string): string =
 
 {.push hint[GlobalVar]: off.}
 var cls = "CLSYNTAX".getEnv
-if "all" in cls: cls="kvSep,noMix,endOpt,typed,known,noFold,valuedfullexactlong"
+if "strict" in cls: cls="kvSepnoMixendOpt,typedknown,noFoldvalued,fullexactlong"
 var clCfg* = ClCfg(
   version:     "",
   hTabCols:    @[ clOptKeys, clValType, clDflVal, clDescrip ],
