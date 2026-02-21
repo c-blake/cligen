@@ -47,6 +47,20 @@ noShort      = true  # block short option syntax entirely; Must say --alpha
   i.e. post-1st char-case-folded, underscore & dash/hypen stripped.  This also
   induced canonical spellings for all cligen config file keys in that mode.
 
+  - `cligen/argcvt.argParse[T: enum]` however *does* handle run-time toggling of
+  both `optionNormalize` & abbreviation.  Here, and for spelling suggestions in
+  general, there is a need to choose one canonical / unnormalized spelling.  The
+  compile-time `helpCase` hook decides that (also based upon run-time values of
+  `"exact" in $CLSYNTAX`) which controls rendering of all keys (even though
+  `cgNoNorm` controls parsing).  E.g., `CLSYNTAX=exact test/Enums -c green`
+  fails, but `test/Enums -c gre-en` works since the test program spells its
+  `enum` string "gre-en" (weirdly spelled *because* it's a test program).  When
+  compiled w/`-d:cgNoNorm` error msgs do match needed case/-/\_-spelling's, but 
+  to achieve this `help-syntax` had to be canonically re-spelled `helpsyntax`
+  (this actually saves a terminal column a lot per test/ref changes).  Other
+  help/error output has changed to use mode-portable `--help=on` spellings.
+  The default `cligen/syntaxHelp.nim` was also updated to reflect all this.
+
   - It's unlikely to be a problem { I couldn't find one Nimbleverse instance },
   but a theoretical BREAKING CHANGE in this release is that compilation fails
   IF you had code initializing a `cligen/parseopt3.OptParser` with constructor
