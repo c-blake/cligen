@@ -17,7 +17,7 @@ type
 
 var cls = "CLSYNTAX".getEnv
 if "strict" in cls: cls="kvSepnoMixendOpt,typedknown,noFoldvalued,fullexactlong"
-let (sfExact, sfFull) = ("exact" in cls, "full" in cls)
+let (sfExact,sfFull,sfValued) = ("exact" in cls, "full" in cls, "valued" in cls)
 
 proc helpCase*(inp: string, context: ClHelpContext = clSubCmd): string =
   ##This is a string-to-string transformer hook to convert whatever the native
@@ -77,6 +77,9 @@ proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
       a.msg = "Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
               [ a.key, a.val, a.help ]
       return false
+  elif sfValued:
+    a.msg = "Bool option \"$1\", empty string argument \n$2" % [ a.key, a.help ]
+    return false # Disallow empty string ("")
   else:               # No option arg => reverse of default (usually, ..
     dst = not dfl     #.. but not always this means false->true)
   return true
