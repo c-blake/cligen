@@ -1,8 +1,8 @@
-##[ This module provides a Nim command line parser that is mostly API compatible
-with the Nim standard library parseopt (and the code derives from that).  It
-supports a convenience iterator over all command line options & some lower-level
-features.  Default supported command syntax (here `=|:` may be any char in
-`sepChars`):
+##[ This module provides a Nim command (cmd) parser that is mostly API
+compatible with Nim `std/parseopt` (and code deriving from that), but is far
+more flexible.  It has a convenience iterator over all cmd parameters & some
+lower-level features.  Default supported cmd syntax (here `=|:` may be any char
+in `sepChars`) with an empty `set[SyntaxFlag]` is very flexible:
 
 1. short option bundles: `-abx`  (where a, b, x *are in* `shortNoVal`)
 
@@ -14,17 +14,17 @@ features.  Default supported command syntax (here `=|:` may be any char in
 
 2a. long options without vals: `--baz` (where `baz` is in `longNoVal`)
 
-3. command parameters: everything else | anything after "--" or a stop word.
+3. cmd arguments: anything else | anything after "--" or a stop word.
 
-The above is a *superset* of usual POSIX command syntax - it should accept most
+The above is a *superset* of usual POSIX cmd syntax - it should accept most
 POSIX-inspired input, but also accepts more forms/styles. (POSIX is iffy about
 this http://pubs.opengroup.org/onlinepubs/009604499/basedefs/xbd_chap12.html)
 
-When `optionNormalize(key)` is used, command authors provide command users
-additional flexibility to `--spell_multi-word_options -aVarietyOfWays
---as-Per_User-Preference`.  This is similar to Nim style-insensitive identifier
-syntax, but by default allows dash ('-') as well as underscore ('_') word
-separation.
+When `optionNormalize(key)` is used (i.e. when `cgNoNorm` is undefined), cmd
+authors provide cmd users additional flexibility to `--spell_multiWord_options
+-various-ways --as-Per_User-Preference`.  This is like Nim style-insensitive
+identifier syntax, but by default allows dash ('-') as well as underscore ('_')
+or case-variation for word separation.
 
 "Separator-free" forms above require appropriate `shortNoVal` and `longNoVal`
 lists to designate option keys that take no value (as well as `requireSeparator
@@ -32,38 +32,38 @@ lists to designate option keys that take no value (as well as `requireSeparator
 
 A notable subtlety is when the first char of an option value is in `sepChars`.
 Even if `requireSeparator` is `false`, passing such option values requires
-either A) putting the value in the next command parameter, as in `"-c :"` or B)
+either A) putting the value in the next cmd parameter, as in `"-c :"` or B)
 prefixing the value with an element of `sepChars`, as in `-c=:` or `-c::`.  Both
 choices fit into common quoting styles.  It seems likely a POSIX-habituated
 end-user's second guess (after `"-c:"` errored out with "argument expected")
 would just work as they expected.  POSIX itself encourages authors & users to
 use the `"-c :"` form anyway.  This small deviation lets this parser accept
-valid invocations with the original Nim option parser command syntax (with the
-same semantics), easing cross-compatibility.
+valid invocations with the original Nim option parser cmd syntax (with the same
+semantics), easing cross-compatibility.
 
-To ease "nested" command-line parsing (such as with "git" where there may be
-early global options, a subcommand and later subcommand options), this parser
-also supports a set of "stop words" - special whole command parameters that
-prevent subsequent parameters being interpreted as options.  This feature makes
-it easy to fully process a command line and then re-process its tail rather than
-mandating breaking out at a stop word with a manual test.  I.e., stop words are
-like a POSIX "--" (which this parser also does - even if "--" is not in
-`stopWords`).  Such stop words (or "--") can still be **values** of option keys
-with no effect.  Only usage of a stop word as a non-option command parameter
-acts to stop possible option-treatment of later parameters.
+To ease "nested" cmd-line parsing (such as with "git" where there may be early
+global options, a subcmd and later subcmd options), this parser also supports a
+set of "stop words" - special whole cmd parameters that prevent subsequent
+parameters being interpreted as options.  This feature makes it easy to fully
+process a cmd line and then re-process its tail rather than mandating breaking
+out at a stop word with a manual test.  I.e., stop words are like a POSIX "--"
+(which this parser also does - even if "--" is not in `stopWords`).  Such stop
+words (or "--") can still be **values** of option keys with no effect.  Only
+usage of a stop word as a non-option cmd parameter acts to stop possible
+option-treatment of later parameters.
 
 To facilitate syntax for operations beyond simple assignment, `opChars` is a set
-of chars that may prefix an element of `sepChars`. The `sep` member of
-`OptParser` is any actual separator used for the current option.  E.g, a user
-entering "="  causes `sep == "="` while entering "+=" gets `sep == "+="`, and
-"+/-+=" gets `sep == "+/-+="`.
+of chars that may prefix an element of `sepChars`.  `OptParser.sep` is any
+actual separator used for the current option.  E.g, a user entering "="  causes
+`.sep == "="` while entering "+=" => `sep == "+="` & "+/-=" => `sep == "+/-="`.
 
-This module also enables run-time selection of modes of varying strictness to
+This module also supports run-time selection of modes of varying strictness to
 support either user-preferences or enforcing various scripting styles.  This is
 done with a `set[SyntaxFlag]` type to control key-value separation with symbol
 tables, whether various kinds of abbreviation are allowed, whether the first
 `cmdArgument` ends treatment as possible options (like stop words), whether flag
-folding is allowed, and whether short options are even allowed at all. ]##
+folding is allowed, whether short options are even allowed, etc.  For more, see
+`SyntaxFlag` documentation | https://github.com/c-blake/clsyntax ]##
 
 import std/[os, strutils, critbits]
 
@@ -172,7 +172,7 @@ type
 proc requireSep*(p:OptParser):bool = sfRequireSep in p.flags ## Chk sfRequireSep
 proc longPfxOk*(p: OptParser):bool = sfLongPfxOk  in p.flags ## Chk sfLongPfxOk
 proc stopPfxOk*(p: OptParser):bool = sfStopPfxOk  in p.flags ## Chk sfStopPfxOk
-proc no(flags: set[SyntaxFlag]): bool = sfExact in flags
+proc no(flags: set[SyntaxFlag]): bool = sfExact in flags  # not O)ptN)orm = n)o)
     
 const laxFlags*: set[SyntaxFlag] = {}
 
