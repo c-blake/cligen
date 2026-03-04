@@ -649,31 +649,40 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
       newStrLitNode("help"), shortHlp).add(
         quote do:
           if cast[pointer](`setByParseId`) != cgSetByParseNil:
-            `setByParseId`[].add(("help", "", `apId`.help, clHelpOnly))
+            `setByParseId`[].add ("help", p.val[0..^1], `apId`.help, clHelpOnly)
           if not `prsOnlyId`:
-            stdout.write(`apId`.help); raise newException(HelpOnly, "")))
+            if `cf`.valued and p.val notin apBoolA:
+              stderr.write "Expecting --help & one of: ", apBoolS, '\n'
+            if not `cf`.valued or p.val in apBoolT:
+              stdout.write(`apId`.help); raise newException(HelpOnly, "")))
     result.add(newNimNode(nnkOfBranch).add(
       newStrLitNode("helpsyntax")).add(
         quote do:
           if cast[pointer](`setByParseId`) != cgSetByParseNil:
-            `setByParseId`[].add(("helpsyntax","", #COPY
+            `setByParseId`[].add(("helpsyntax", p.val[0..^1], #COPY
                                   `cf`.helpSyntax[0..^1], clHelpOnly))
           if not `prsOnlyId`:
-            stdout.write(`cf`.helpSyntax); raise newException(HelpOnly, "")))
+            if `cf`.valued and p.val notin apBoolA:
+              stderr.write "Expecting --helpsyntax & one of: ", apBoolS, '\n'
+            if not `cf`.valued or p.val in apBoolT:
+              stdout.write(`cf`.helpSyntax); raise newException(HelpOnly, "")))
     if not hasVsn:
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode("version"), newStrLitNode(vsnSh)).add(
           quote do:
             if cast[pointer](`setByParseId`) != cgSetByParseNil:
-              `setByParseId`[].add(("version", "", #COPY
+              `setByParseId`[].add(("version", p.val[0..^1], #COPY
                                     `cf`.version[0..^1], clVersionOnly))
             if not `prsOnlyId`:
-              if `cf`.version.len > 0:
-                stdout.write(`cf`.version, "\n")
-                raise newException(VersionOnly, "")
-              else:
-                stdout.write("Unknown version\n")
-                raise newException(VersionOnly, "")))
+              if `cf`.valued and p.val notin apBoolA:
+                stderr.write "Expecting --version & one of: ", apBoolS, '\n'
+              if not `cf`.valued or p.val in apBoolT:
+                if `cf`.version.len > 0:
+                  stdout.write(`cf`.version, "\n")
+                  raise newException(VersionOnly, "")
+                else:
+                  stdout.write("Unknown version\n")
+                  raise newException(VersionOnly, "")))
     if aliasDefL.strVal.len > 0 and aliasRefL.strVal.len > 0: #CL user aliases
       result.add(newNimNode(nnkOfBranch).add(
         newStrLitNode(aliasDefN), aliasDefS).add(

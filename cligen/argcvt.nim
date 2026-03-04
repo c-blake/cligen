@@ -68,11 +68,15 @@ proc argDf*(a: ArgcvtParams, dv: string): string {.deprecated:
   ## Deprecated since v0.9.24; No longer needed.  Remove call.
 
 # bools
+const apBoolT* = [ "t", "true" , "yes", "y", "1", "on"  ] ## true spellings
+const apBoolF* = [ "f", "false", "no" , "n", "0", "off" ] ## false spellings
+const apBoolA* = @apBoolT & @apBoolF                      ## all bool spellings
+const apBoolS* = "t true yes y 1 on | f false no n 0 off" ## bool value help
 proc argParse*(dst: var bool, dfl: bool, a: var ArgcvtParams): bool =
   if len(a.val) > 0:
     case a.val.toLowerAscii  # Like `strutils.parseBool` but we also accept t&f
-    of "t", "true" , "yes", "y", "1", "on" : dst = true
-    of "f", "false", "no" , "n", "0", "off": dst = false
+    of apBoolT: dst = true
+    of apBoolF: dst = false
     else:
       a.msg = "Bool option \"$1\" non-boolean argument (\"$2\")\n$3" %
               [ a.key, a.val, a.help ]
