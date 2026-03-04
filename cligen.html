@@ -314,27 +314,33 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 
 </ul>
 <ul class="simple nested-toc-section">dispatch
-  <li><a class="reference" href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D" title="dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
+  <li><a class="reference" href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D" title="dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
          short: typed = {}; usage = clUse; echoResult = false;
          noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];
          implicitDefault: seq[string] = @[]; vars: seq[string] = @[];
          dispatchName = &quot;&quot;; mergeNames: seq[string] = @[];
-         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped">dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
+         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false;
+         docs: ptr var seq[string] = cgVarSeqStrNil;
+         setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped">dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
          short: typed = {}; usage = clUse; echoResult = false;
          noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];
          implicitDefault: seq[string] = @[]; vars: seq[string] = @[];
          dispatchName = &quot;&quot;; mergeNames: seq[string] = @[];
-         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped</a></li>
+         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false;
+         docs: ptr var seq[string] = cgVarSeqStrNil;
+         setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">dispatchCf
-  <li><a class="reference" href="#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D" title="dispatchCf(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
+  <li><a class="reference" href="#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D" title="dispatchCf(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
            short: typed = {}; usage = clUse; cf: ClCfg = clCfg;
            echoResult = false; noAutoEcho = false; positional = AUTO;
            suppress: seq[string] = @[]; implicitDefault: seq[string] = @[];
            vars: seq[string] = @[]; dispatchName = &quot;&quot;;
            mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];
            stopWords: seq[string] = @[]; noHdr = false;
+           docs: ptr var seq[string] = cgVarSeqStrNil;
+           setByParse: ptr var seq[ClParse] = cgSetByParseNil;
            cmdLine = commandLineParams()): untyped">dispatchCf(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
            short: typed = {}; usage = clUse; cf: ClCfg = clCfg;
            echoResult = false; noAutoEcho = false; positional = AUTO;
@@ -342,6 +348,8 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
            vars: seq[string] = @[]; dispatchName = &quot;&quot;;
            mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];
            stopWords: seq[string] = @[]; noHdr = false;
+           docs: ptr var seq[string] = cgVarSeqStrNil;
+           setByParse: ptr var seq[ClParse] = cgSetByParseNil;
            cmdLine = commandLineParams()): untyped</a></li>
 
 </ul>
@@ -985,15 +993,16 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 
 </div>
 <div id="dispatch-templates-all">
-  <div id="dispatch.t,,string,string,typed,typed,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]">
-  <dt><pre><span class="Keyword">template</span> <a href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D"><span class="Identifier">dispatch</span></a><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
+  <div id="dispatch.t,,string,string,typed,typed,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string],ptr.seq[string],ptr.seq[ClParse]">
+  <dt><pre><span class="Keyword">template</span> <a href="#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D"><span class="Identifier">dispatch</span></a><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
                   <span class="Identifier">short</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">usage</span> <span class="Other">=</span> <span class="Identifier">clUse</span><span class="Other">;</span> <span class="Identifier">echoResult</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
                   <span class="Identifier">noAutoEcho</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">positional</span> <span class="Other">=</span> <span class="Identifier">AUTO</span><span class="Other">;</span>
                   <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                   <span class="Identifier">implicitDefault</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vars</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                   <span class="Identifier">dispatchName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">mergeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                   <span class="Identifier">alias</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="cligen.html#ClAlias"><span class="Identifier">ClAlias</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
-                  <span class="Identifier">noHdr</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+                  <span class="Identifier">noHdr</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">docs</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">cgVarSeqStrNil</span><span class="Other">;</span>
+                  <span class="Identifier">setByParse</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">cgSetByParseNil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
     Convenience <tt class="docutils literal"><span class="pre"><span class="Identifier">dispatchCf</span></span></tt> wrapper to silence bogus GcUnsafe warnings at verbosity:2.  Parameters are the same as <tt class="docutils literal"><span class="pre"><span class="Identifier">dispatchCf</span></span></tt> (except for no <tt class="docutils literal"><span class="pre"><span class="Identifier">cf</span></span></tt>).
@@ -1003,8 +1012,8 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
 
 </div>
 <div id="dispatchCf-templates-all">
-  <div id="dispatchCf.t,,string,string,typed,typed,ClCfg,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string]">
-  <dt><pre><span class="Keyword">template</span> <a href="#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D"><span class="Identifier">dispatchCf</span></a><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
+  <div id="dispatchCf.t,,string,string,typed,typed,ClCfg,seq[string],seq[string],seq[string],string,seq[string],seq[ClAlias],seq[string],ptr.seq[string],ptr.seq[ClParse]">
+  <dt><pre><span class="Keyword">template</span> <a href="#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D"><span class="Identifier">dispatchCf</span></a><span class="Other">(</span><span class="Identifier">pro</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">{</span><span class="Identifier">nkSym</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">cmdName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">doc</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span>
                     <span class="Identifier">short</span><span class="Other">:</span> <span class="Identifier">typed</span> <span class="Other">=</span> <span class="Other">{</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">usage</span> <span class="Other">=</span> <span class="Identifier">clUse</span><span class="Other">;</span> <span class="Identifier">cf</span><span class="Other">:</span> <a href="cligen.html#ClCfg"><span class="Identifier">ClCfg</span></a> <span class="Other">=</span> <span class="Identifier">clCfg</span><span class="Other">;</span>
                     <span class="Identifier">echoResult</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">noAutoEcho</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">positional</span> <span class="Other">=</span> <span class="Identifier">AUTO</span><span class="Other">;</span>
                     <span class="Identifier">suppress</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
@@ -1012,6 +1021,8 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
                     <span class="Identifier">vars</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dispatchName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                     <span class="Identifier">mergeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">alias</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="cligen.html#ClAlias"><span class="Identifier">ClAlias</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                     <span class="Identifier">stopWords</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">noHdr</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+                    <span class="Identifier">docs</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">cgVarSeqStrNil</span><span class="Other">;</span>
+                    <span class="Identifier">setByParse</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="cligen.html#ClParse"><span class="Identifier">ClParse</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">cgSetByParseNil</span><span class="Other">;</span>
                     <span class="Identifier">cmdLine</span> <span class="Other">=</span> <span class="Identifier">commandLineParams</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
   <dd>
     
@@ -1079,7 +1090,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-03 15:03:03 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-04 14:35:59 UTC</small>
       </div>
     </div>
   </div>

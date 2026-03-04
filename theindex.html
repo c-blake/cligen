@@ -635,12 +635,16 @@
          noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];
          implicitDefault: seq[string] = @[]; vars: seq[string] = @[];
          dispatchName = &quot;&quot;; mergeNames: seq[string] = @[];
-         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped" href="cligen.html#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D">cligen: template dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
+         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false;
+         docs: ptr var seq[string] = cgVarSeqStrNil;
+         setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped" href="cligen.html#dispatch.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D">cligen: template dispatch(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
          short: typed = {}; usage = clUse; echoResult = false;
          noAutoEcho = false; positional = AUTO; suppress: seq[string] = @[];
          implicitDefault: seq[string] = @[]; vars: seq[string] = @[];
          dispatchName = &quot;&quot;; mergeNames: seq[string] = @[];
-         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false): untyped</a></li>
+         alias: seq[ClAlias] = @[]; stopWords: seq[string] = @[]; noHdr = false;
+         docs: ptr var seq[string] = cgVarSeqStrNil;
+         setByParse: ptr var seq[ClParse] = cgSetByParseNil): untyped</a></li>
           </ul></dd>
 <dt><a name="dispatchCf" href="#dispatchCf"><span>dispatchCf:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -651,13 +655,17 @@
            vars: seq[string] = @[]; dispatchName = &quot;&quot;;
            mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];
            stopWords: seq[string] = @[]; noHdr = false;
-           cmdLine = commandLineParams()): untyped" href="cligen.html#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D">cligen: template dispatchCf(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
+           docs: ptr var seq[string] = cgVarSeqStrNil;
+           setByParse: ptr var seq[ClParse] = cgSetByParseNil;
+           cmdLine = commandLineParams()): untyped" href="cligen.html#dispatchCf.t%2C%2Cstring%2Cstring%2Ctyped%2Ctyped%2CClCfg%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cseq%5Bstring%5D%2Cstring%2Cseq%5Bstring%5D%2Cseq%5BClAlias%5D%2Cseq%5Bstring%5D%2Cptr.seq%5Bstring%5D%2Cptr.seq%5BClParse%5D">cligen: template dispatchCf(pro: typed{nkSym}; cmdName = &quot;&quot;; doc = &quot;&quot;; help: typed = {};
            short: typed = {}; usage = clUse; cf: ClCfg = clCfg;
            echoResult = false; noAutoEcho = false; positional = AUTO;
            suppress: seq[string] = @[]; implicitDefault: seq[string] = @[];
            vars: seq[string] = @[]; dispatchName = &quot;&quot;;
            mergeNames: seq[string] = @[]; alias: seq[ClAlias] = @[];
            stopWords: seq[string] = @[]; noHdr = false;
+           docs: ptr var seq[string] = cgVarSeqStrNil;
+           setByParse: ptr var seq[ClParse] = cgSetByParseNil;
            cmdLine = commandLineParams()): untyped</a></li>
           </ul></dd>
 <dt><a name="dispatchGen" href="#dispatchGen"><span>dispatchGen:</span></a></dt><dd><ul class="simple">
@@ -3408,7 +3416,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-03 15:03:03 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-04 14:35:59 UTC</small>
       </div>
     </div>
   </div>
