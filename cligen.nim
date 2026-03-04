@@ -802,13 +802,13 @@ macro dispatchGen*(pro: typed{nkSym}, cmdName: string="", doc: string="",
         `apId`.parCount = 1
         let msg = "Cannot parse " & `apId`.key
         if cast[pointer](`setByParseId`) != cgSetByParseNil:
-          if argParse(`tmpId`,`tmpId`,`apId`):
+          if argParse(`tmpId`, `tmpId`, `apId`):
             `setByParseId`[].add((move(`apId`.key), move(`apId`.val), "",
                                   clPositional))
           else:
             `setByParseId`[].add((move(`apId`.key), move(`apId`.val), msg,
                                   clBadVal))
-        if not `prsOnlyId` and not argParse(`tmpId`, `tmpId`, `apId`):
+        elif not `prsOnlyId` and not argParse(`tmpId`, `tmpId`, `apId`):
             stderr.write `apId`.msg
             raise newException(ParseError, msg)
         `posId`.add(`tmpId`)))
