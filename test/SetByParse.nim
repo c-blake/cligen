@@ -2,7 +2,7 @@ when not declared(addFloat): import std/formatfloat
 # export `$` in cligen generates a deprecation warning; export just `$`(float)?
 import cligen
 
-var fooParse: seq[ClParse]
+var fooParse: seq[ClParse]  # This captures whole cligen/parseopt3 parse
 
 proc foo(alpha = 1.0, beta = 2, rest: seq[int]) =
   if "alpha" in fooParse:
@@ -16,5 +16,4 @@ proc foo(alpha = 1.0, beta = 2, rest: seq[int]) =
   echo "alpha: ", alpha, " beta: ", beta
   echo "fooParse: ", fooParse
 
-dispatchGen(foo, setByParse = fooParse.addr)
-cligenQuit(dispatchfoo())
+dispatch foo, setByParse=fooParse.addr

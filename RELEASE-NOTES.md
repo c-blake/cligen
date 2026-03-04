@@ -72,6 +72,11 @@ noShort      = true  # block short option syntax entirely; Must say --alpha
   - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
   `[include_CG_STRICT]` but with `CG_STRICT` unset).
 
+  - Fix if -> elif bug calling `argParse` twice in `nonOpt0`
+
+  - Fix long-standing oversight to not pass `docs` and `setByParse` through from
+  high level `dispatch` interface.  Simplify `test/SetByParse.nim` accordingly.
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have

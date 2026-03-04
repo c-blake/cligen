@@ -924,26 +924,29 @@ template dispatchCf*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse, cf:ClCfg=clCfg,echoResult=false,noAutoEcho=false,
  positional=AUTO, suppress:seq[string] = @[], implicitDefault:seq[string] = @[],
  vars: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
- alias: seq[ClAlias] = @[], stopWords:seq[string] = @[], noHdr=false,
- cmdLine=commandLineParams()): untyped =
+ alias: seq[ClAlias] = @[], stopWords: seq[string] = @[], noHdr=false,
+ docs: ptr var seq[string]=cgVarSeqStrNil, setByParse:
+ ptr var seq[ClParse]=cgSetByParseNil, cmdLine=commandLineParams()): untyped =
   ## A convenience wrapper to both generate a command-line dispatcher and then
   ## call the dispatcher & exit; Params are same as the ``dispatchGen`` macro.
   dispatchGen(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, vars, dispatchName,
-              mergeNames, alias, stopWords, noHdr)
+              mergeNames, alias, stopWords, noHdr, docs, setByParse)
   cligenQuitAux(cmdLine, dispatchName, cmdName, pro, echoResult, noAutoEcho)
 
 template dispatch*(pro: typed{nkSym}, cmdName="", doc="", help: typed={},
  short:typed={},usage=clUse,echoResult=false,noAutoEcho=false,positional=AUTO,
  suppress: seq[string] = @[], implicitDefault: seq[string] = @[],
  vars: seq[string] = @[], dispatchName="", mergeNames: seq[string] = @[],
- alias: seq[ClAlias] = @[], stopWords: seq[string] = @[], noHdr=false): untyped=
+ alias: seq[ClAlias] = @[], stopWords: seq[string] = @[], noHdr=false,
+ docs: ptr var seq[string]=cgVarSeqStrNil,
+ setByParse: ptr var seq[ClParse]=cgSetByParseNil): untyped =
   ## Convenience `dispatchCf` wrapper to silence bogus GcUnsafe warnings at
   ## verbosity:2.  Parameters are the same as `dispatchCf` (except for no `cf`).
   proc cligenScope(cf: ClCfg) =
    dispatchCf(pro, cmdName, doc, help, short, usage, cf, echoResult, noAutoEcho,
               positional, suppress, implicitDefault, vars, dispatchName,
-              mergeNames, alias, stopWords, noHdr)
+              mergeNames, alias, stopWords, noHdr, docs, setByParse)
   cligenScope(clCfg)
 
 proc subCmdName(p: NimNode): string =
