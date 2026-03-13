@@ -37,7 +37,8 @@ type    # Main defns CLI authors need be aware of (besides top-level API calls)
     reqSep*, argEndsOpts*, endOpts*, #SyntaxFlags: DELIMITING kv,opt-positionals
      onePerArg*, valued*,           # BOOL FLAGS: combining explicitValue
      longPfxOk*, stopPfxOk*,        # KEY SPELL: noAbbrev sensitive long-only
-     exact*, noShort*: bool      ## ``parseopt3.initOptParser`` parameters
+     exact*, noShort*,              # OPT HEADER: -* or --*, only -*
+     or12*, just1*: bool         ## ``parseopt3.initOptParser`` parameters
     subRowSep*:   string         ## separates full help dump subcmds; Eg.: "\n"
     hTabSuppress*: string        ## Magic val for per-param help to suppress
     helpAttr*:    Table[string, string] ## Text attrs for each help area
@@ -69,8 +70,10 @@ proc sfFlags*(cf: ClCfg): set[SyntaxFlag] = # CLSYNTAX:known,typed always on
   if cf.valued:      result.incl sfValued      # CLSYNTAX:valued
   if cf.longPfxOk:   result.incl sfLongPfxOk   # CLSYNTAX:full
   if cf.stopPfxOk:   result.incl sfStopPfxOk   # CLSYNTAX:full
-  if cf.exact :      result.incl sfExact       # CLSYNTAX:exact
+  if cf.exact:       result.incl sfExact       # CLSYNTAX:exact
   if cf.noShort:     result.incl sfNoShort     # CLSYNTAX:long
+  if cf.or12:        result.incl sfOr12        # CLSYNTAX:or12
+  if cf.just1:       result.incl sfJust1       # CLSYNTAX:just1
 
 proc descape(s: string): string =
   for c, escaped in s.descape: result.add c
@@ -89,9 +92,10 @@ var clCfg* = ClCfg(
   opChars:     { '+', '-', '*', '/', '%', '@', ',', '.', '&',
                  '|', '~', '^', '$', '#', '<', '>', '?' },
   reqSep   : "kvSep"in cls, argEndsOpts: "noMix"in cls,endOpts: "endOpt" in cls,
-  onePerArg: "noFold"in cls, valued: "valued"in cls,     #^DELIMITING,BOOL FLAGS
+  onePerArg: "noFold" in cls, valued: "valued" in cls,   #^DELIMITING,BOOL FLAGS
   longPfxOk: "full" notin cls, stopPfxOk: "full" notin cls, # KEY SPELLING
-  exact    : "exact"in cls, noShort: "long"in cls,
+  exact    : "exact" in cls, noShort: "long" in cls,  # KEY PRECISION
+  or12     : "or12" in cls, just1: "just1" in cls, # IS-AN-OPTION HEADER
   subRowSep:   "",
   hTabSuppress: "CLIGEN-NOHELP",
   helpAttr:    initTable[string,string](),

@@ -20,7 +20,10 @@ valued       = on    # `bool` flags require explicit values (`--flag=on`)
 
 longPrefixOk = false # deny/allow unique prefix match for long options
 stopPrefixOk = false # deny/allow unique prefix match for subcommand names
+
 noShort      = true  # block short option syntax entirely; Must say --alpha
+or12         = true  # if long-only, allow -long or --long \
+# just1        = true  # if long-only, require -long       /
 ```
   Then in `$HOME/.config/cligen/config`, include an `[include__CG_STRICT]` line
   after your probably more human keyboard entry-friendly defaults.  Then,
@@ -64,8 +67,8 @@ noShort      = true  # block short option syntax entirely; Must say --alpha
   - It's unlikely to be a problem { I couldn't find one Nimbleverse instance },
   but a theoretical BREAKING CHANGE in this release is that compilation fails
   IF you had code initializing a `cligen/parseopt3.OptParser` with constructor
-  syntax { i.e. `OptParser(name: true)` } AND it used any of `requireSep`,
-  `longPfxOk`, `stopPfxOk` for `name`.  Use `initOptParser` instead.
+  syntax { i.e. `OptParser(name: true)` } AND that init used any of `longPfxOk`,
+  `stopPfxOk`, `requireSep`, for `name`.  Fix: use `initOptParser` instead.
 
   - `cligen/puSig.nim` grows u1, u2 short aliases for usr1, usr2 signal names.
 

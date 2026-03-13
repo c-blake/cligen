@@ -88,10 +88,12 @@ proc apply(c: var ClCfg, path: string, plain=false) =
         of "stopPrefixOk".on: c.stopPfxOk   = e.value.optionNormalize in yes
         of "exact".on       : c.exact       = e.value.optionNormalize in yes
         of "noShort".on     : c.noShort     = e.value.optionNormalize in yes
+        of "or12".on        : c.or12        = e.value.optionNormalize in yes
+        of "just1".on       : c.just1       = e.value.optionNormalize in yes
         else:
           stderr.write path&":"&" unexpected setting "&e.key&"\nExpecting: "&
             "requireSeparator separatorChars longPrefixOk stopPrefixOk\n" &
-            "argEndsOpts endOpts onePerArg valued exact noShort\n"
+            "argEndsOpts endOpts onePerArg valued exact noShort or12 just1\n"
       of "color".on:
         if not plain:
           var on = ""; var off = textAttrOff

@@ -67,6 +67,8 @@ proc apply(c: var ClCfg, cfgFile: string, plain=false) =
         of "stopPrefixOk".on: c.stopPfxOk   = v2.getBool
         of "exact".on       : c.exact       = v2.getBool
         of "noShort".on     : c.noShort     = v2.getBool
+        of "or12".on        : c.or12        = v2.getBool
+        of "just1".on       : c.just1       = v2.getBool
         else: uk k1, k2
     of "color".on:
       if not plain:
