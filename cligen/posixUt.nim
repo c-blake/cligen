@@ -153,7 +153,7 @@ proc getgroups*(gids: var HashSet[Gid]) =
   proc getgroups(a1: cint, a2: ptr UncheckedArray[Gid]): cint {.importc,
     header: "<unistd.h>".}      #posix.getgroups bounds this at 0..255, but
   let n = getgroups(0, nil)     #..much larger num.grps easily supported by
-  var myGids = newSeq[Gid](n)   #..2 calls - one to see size, 2nd to populate.
+  var myGids = newSeq[Gid](n.int) #..2 calls - one to see size, 2nd to populate.
   let m = getgroups(n, cast[ptr UncheckedArray[Gid]](addr(myGids[0])))
   for i in 0 ..< m:             #Could check m == n, but eh.
     gids.incl(myGids[i])

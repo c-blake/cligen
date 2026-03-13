@@ -97,7 +97,7 @@ else:
   var j = 1
   for i in 1..len(s) - 1:
     if s[i] in {'A'..'Z'}:
-      result[j] = chr(ord(s[i]) + (ord('a') - ord('A')))
+      result[j] = char(uint8(s[i]) or 0b0010_0000'u8)
       inc j
     elif s[i] notin wordSeps:
       result[j] = s[i]

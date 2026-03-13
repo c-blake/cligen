@@ -473,7 +473,7 @@ iterator unescaped*(s: string): char =
     of '\\':
       if i+1 >= s.len: raise newException(ValueError, "incomplete escaped char")
       case s[i+1]
-      of '0' .. '7': yield chr(ord(s[i+1]) - ord('0')); inc i, 2
+      of '0' .. '6': yield char(ord(s[i+1]) - ord('0')); inc i, 2
       of 'a': yield chr(0x07); inc i, 2 # bell
       of 'b': yield chr(0x08); inc i, 2 # backspace
       of 't': yield chr(0x09); inc i, 2 # horizontal tab

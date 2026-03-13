@@ -195,7 +195,7 @@ func uint64toDecimal*(res: var openArray[char], x: uint64): int =
     res[result - 2] = d3[index    ]
     dec result, 3
   if num < 10:          # process last 1 digit
-    res[result] = chr(ord('0') + num)
+    res[result] = char(ord('0') + num)
   elif num < 100:       # process last 2 digits
     let index = num * 3
     res[result    ] = d3[index + 2]
@@ -268,7 +268,7 @@ proc ecvtM(s: var string; x: float; i, e: var int; bumped: var bool; p=17;
     i0 = uint64toDecimal(decs, frac)
     nDec = 24 - i0
   if dig > 9: dig = 1; inc e; bumped = x != 1.0 # Adjust for perfect po10 scl|x
-  s[i] = chr(ord('0') + dig); inc i     # format D
+  s[i] = char(ord('0') + dig); inc i    # format D
   if p > 0:                             # format .PPP => '.'&lead0&digits&trail0
     s[i] = '.'; inc i
     copyMem s[i].addr, zeros[0].unsafeAddr, min(zeros.len, p - nDec)
@@ -287,18 +287,18 @@ proc ecvtE(s: var string; i, e: var int; opts={fcPad0}) {.inline.} = # EXPONENT
     elif fcExpPlus in opts: s[i] = '+'; inc i
   if fcExp23 in opts:                   # Nums with >2 dig exps can be rare
     eSign
-    if   e < 10 : s[i] = '0'      ; s[i+1] = chr(ord('0') + e); inc i, 2
+    if   e < 10 : s[i] = '0'      ; s[i+1] = char(ord('0') + e); inc i, 2
     elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
     else      : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]; inc i, 3
   elif fcExp3 in opts:                  # Folks can want same .len guarantees
     eSign
-    if   e < 10 : s[i] = '0'    ; s[i+1] = '0'      ; s[i+2] = chr(ord('0') + e)
+    if   e < 10 : s[i] = '0'    ; s[i+1] = '0'      ; s[i+2] = char(ord('0')+e)
     elif e < 100: s[i] = '0'    ; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e + 2]
     else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2]
     inc i, 3
   else:                                 # but many times 1e-9..1e9 is fine
     eSign
-    if   e < 10 : s[i] = chr(ord('0') + e); inc i
+    if   e < 10 : s[i] = char(ord('0') + e); inc i
     elif e < 100: s[i] = d3[3*e+1]; s[i+1] = d3[3*e + 2]; inc i, 2
     else        : s[i] = d3[3*e]; s[i+1] = d3[3*e+1]; s[i+2] = d3[3*e+2];inc i,3
 
@@ -384,7 +384,7 @@ proc nearUnity4*(f: float): string =
   elif g <  9999.5:  fcvt(s, g, 0, {})  #.. at the bottom of this very module.
   elif g <  99.5e9: (ecvt(s, g, 1);
                      s[1] = s[2]; s[2] = 'e';
-                     s[3] = if s.len==6: '9' else: chr(ord(s[4]) - 1);
+                     s[3] = if s.len==6: '9' else: char(ord(s[4]) - 1);
                      s.setLen 4)        # D.De10 -> DDe9
   elif g <  9.5e99:  ecvt(s, g, 0)
   else: s = "inf"
@@ -414,7 +414,7 @@ proc toString*(s: openArray[char]): string =
 proc add*(result: var string; a: openArray[char]) = (for c in a: result.add c)
 
 proc makeOther(): array[256, char] =    # make a little pairing table
-  for i in 0 ..< 256: result[i] = chr(i)          # identity for "'`..
+  for i in 0 ..< 256: result[i] = char(i)         # identity for "'`..
   result[ord('(')] = ')'; result[ord(')')] = '('  #..paired like [] OR ][ ..
   result[ord('[')] = ']'; result[ord(']')] = '['  #..Latter kinda questionable.
   result[ord('{')] = '}'; result[ord('}')] = '{'

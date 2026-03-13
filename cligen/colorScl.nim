@@ -8,7 +8,7 @@ type                                    # Map a float "intensity" to RGB colors
                  sPm3D    = "pm3d",     ## Popularized by OS/2PresMgr | Gnuplot
                  sViridis = "viridis"   ## Very popular, maps well to gray outs
 
-proc gray(x: UnitR): UnitR = 0.15 + 0.7*x # Tries to keep top & bottom readable
+proc gray(x: UnitR): UnitR = UnitR(0.15 + 0.7*x) # Keep top & bottom mid-range
 
 proc hsv2rgb*(hsv: Color3): Color3 =
   ## Convert from hue-saturation-value to red-green-blue color system.
@@ -109,7 +109,7 @@ proc parseColorScl*(s: MSlice | openArray[char] | string;
       if nTmp < t.len and t[nTmp] == ',':         # Account for ',' & update `t`
         inc nParsed; t.mem = s[nParsed].unsafeAddr; t.len = s.len - nParsed
         val = t.parseFloat(nTmp); inc nParsed, nTmp # parse float & update
-    result = rgb(x, scl, sat, val)      # Finally dispatch to `rgb`
+    result = rgb(x.UnitR, scl, sat.UnitR, val.UnitR) # Finally dispatch to `rgb`
 
 const helpColorScl* = "{fbu}sNAME<0.-1>[,..]: element of NAME: " &
                       "viridis hue[,s,v] wLen[,s,v] gray pm3d"
@@ -131,8 +131,10 @@ when isMainModule:
         for (p,s,v)in [("\e[40;38;2", 0.70, 0.90), ("\e[107;38;2", 0.70, 0.75),
                        ("\e[30;48;2", 0.60, 0.90), ("\e[97;48;2" , 0.70, 0.65)]:
           if x == -1.0: # ^^Fix BG, vary FG; then fix FG, vary BG^^
-            for k in 0 ..< n: outp p, scl, k.float/(n - 1).float, s, v
-          else: outp p, scl, x, sat, val # Fully user specified: ignore `ns`,s,v
+            for k in 0 ..< n:
+              outp p, scl, UnitR(k.float/(n - 1).float), s.UnitR, v.UnitR
+          else:         # Fully user specified: ignore `ns`,s,v
+            outp p, scl, x.UnitR, sat.UnitR, val.UnitR
           if not nLoop: stdout.write "\n"
           else: stdout.write ' '.repeat(ns.b - n)
         if nLoop: stdout.write "\n"

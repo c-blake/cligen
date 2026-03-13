@@ -162,10 +162,10 @@ template forPath*(root: string; maxDepth: int; lstats, follow, xdev, eof0: bool;
           var nB = culong(0)
           for i, d in dirp: nB.inc
           if nB == 0: break
-          var dts = newSeq[int8](nB)
-          var sts = newSeq[Statx](nB)
-          var bat = newSeq[SysCall](nB)
-          var rvs = newSeq[clong](nB)
+          var dts = newSeq[int8](nB.int)
+          var sts = newSeq[Statx](nB.int)
+          var bat = newSeq[SysCall](nB.int)
+          var rvs = newSeq[clong](nB.int)
           for i, d in dirp:
             dts[i]        = d.d_type
             bat[i].nr     = cshort(SYS_statx)

@@ -209,7 +209,7 @@ True color: {fbu}RRGGBB with RGB hex digits""" & ".\n" & helpColorScl
     var dts: string
     if '/' in cols[0]:
       let div_dec = cols[0].split('/')
-      let dec = parseInt(div_dec[1])
+      let dec = range[-1..32](parseInt(div_dec[1]))
       dts = formatFloat(dt.float / parseInt(div_dec[0]).float, ffDecimal, dec)
     else:
       dts = $int(dt.float / parseInt(cols[0]).float)

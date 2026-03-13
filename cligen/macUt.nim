@@ -46,9 +46,9 @@ proc toInt*(n: NimNode): int =
     error "expecting only static/const expression not `" & $n & "`"
   if n.kind == nnkSym: n.getImpl.intVal.int else: n.intVal.int
 
-proc toStrIni*(c: range[0 .. 255]): NimNode =
+proc toStrIni*(c: BiggestInt): NimNode =
   ## Transform a literal 'x' into string literal initializer "x"
-  newStrLitNode($chr(c))
+  newStrLitNode($char(c))
 
 proc toStrSeq*(strSeqInitializer: NimNode): seq[string] =
   ## Transform a literal `@[ "a", .. ]` into compile-time `seq[string]`
