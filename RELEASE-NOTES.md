@@ -80,6 +80,8 @@ or12         = true  # if long-only, allow -long or --long \
   - Fix long-standing oversight to not pass `docs` and `setByParse` through from
   high level `dispatch` interface.  Simplify `test/SetByParse.nim` accordingly.
 
+  - Address some `ImplicitRangeConversion` warnings with explicitness.
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have
