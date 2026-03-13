@@ -90,7 +90,9 @@
   sfLongPfxOk,              ## true=&gt;unique prefix is ok for longOpts
   sfStopPfxOk,              ## true=&gt;unique prefix is ok for stopWords
   sfExact,                  ## true=&gt;option keys are case&amp;style-sensitive
-  sfNoShort                  ## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)">SyntaxFlag</a></li>
+  sfNoShort,                ## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)
+  sfOr12,                   ## true=&gt;run-time allow either -long|--long
+  sfJust1                    ## true=&gt;run-time allow ONLY -long">SyntaxFlag</a></li>
 
     </ul>
   </details>
@@ -262,7 +264,9 @@
   <span class="Identifier">sfLongPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for longOpts</span>
   <span class="Identifier">sfStopPfxOk</span><span class="Other">,</span>              <span class="Comment">## true=&gt;unique prefix is ok for stopWords</span>
   <span class="Identifier">sfExact</span><span class="Other">,</span>                  <span class="Comment">## true=&gt;option keys are case&amp;style-sensitive</span>
-  <span class="Identifier">sfNoShort</span>                  <span class="Comment">## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)</span></pre></dt>
+  <span class="Identifier">sfNoShort</span><span class="Other">,</span>                <span class="Comment">## true=&gt;run-time disallow short (vs. compTime-&quot;&quot;)</span>
+  <span class="Identifier">sfOr12</span><span class="Other">,</span>                   <span class="Comment">## true=&gt;run-time allow either -long|--long</span>
+  <span class="Identifier">sfJust1</span>                    <span class="Comment">## true=&gt;run-time allow ONLY -long</span></pre></dt>
   <dd>
     
     Command-Line Option Syntax Flags
@@ -467,7 +471,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-04 23:25:26 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-13 13:31:35 UTC</small>
       </div>
     </div>
   </div>

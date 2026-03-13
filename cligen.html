@@ -70,7 +70,7 @@
   sepChars*: set[char]       ## ``parseopt3.initOptParser`` parameter
   opChars*: set[char]        ## ``parseopt3.initOptParser`` parameter
   reqSep*, argEndsOpts*, endOpts*, onePerArg*, valued*, longPfxOk*, stopPfxOk*,
-  exact*, noShort*: bool     ## ``parseopt3.initOptParser`` parameters
+  exact*, noShort*, or12*, just1*: bool ## ``parseopt3.initOptParser`` parameters
   subRowSep*: string         ## separates full help dump subcmds; Eg.: &quot;\n&quot;
   hTabSuppress*: string      ## Magic val for per-param help to suppress
   helpAttr*: Table[string, string] ## Text attrs for each help area
@@ -132,6 +132,7 @@
               longPfxOk: not contains(cls, &quot;full&quot;),
               stopPfxOk: not contains(cls, &quot;full&quot;),
               exact: contains(cls, &quot;exact&quot;), noShort: contains(cls, &quot;long&quot;),
+              or12: contains(cls, &quot;or12&quot;), just1: contains(cls, &quot;just1&quot;),
               subRowSep: &quot;&quot;, hTabSuppress: &quot;CLIGEN-NOHELP&quot;,
               helpAttr: initTable(32), helpAttrOff: initTable(32),
               helpSyntax: syntaxHelp, render: descape, widthEnv: &quot;CLIGEN_WIDTH&quot;,
@@ -424,7 +425,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
   <span class="Identifier">sepChars</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>       <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
   <span class="Identifier">opChars</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">char</span><span class="Other">]</span>        <span class="Comment">## ``parseopt3.initOptParser`` parameter</span>
   <span class="Identifier">reqSep</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">argEndsOpts</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">endOpts</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">onePerArg</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">valued</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">longPfxOk</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">stopPfxOk</span><span class="Operator">*</span><span class="Other">,</span>
-  <span class="Identifier">exact</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">noShort</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>     <span class="Comment">## ``parseopt3.initOptParser`` parameters</span>
+  <span class="Identifier">exact</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">noShort</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">or12</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">just1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Comment">## ``parseopt3.initOptParser`` parameters</span>
   <span class="Identifier">subRowSep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>         <span class="Comment">## separates full help dump subcmds; Eg.: &quot;\n&quot;</span>
   <span class="Identifier">hTabSuppress</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## Magic val for per-param help to suppress</span>
   <span class="Identifier">helpAttr</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">]</span> <span class="Comment">## Text attrs for each help area</span>
@@ -554,6 +555,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
               <span class="Identifier">longPfxOk</span><span class="Other">:</span> <span class="Identifier">not</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;full&quot;</span><span class="Other">)</span><span class="Other">,</span>
               <span class="Identifier">stopPfxOk</span><span class="Other">:</span> <span class="Identifier">not</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;full&quot;</span><span class="Other">)</span><span class="Other">,</span>
               <span class="Identifier">exact</span><span class="Other">:</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;exact&quot;</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">noShort</span><span class="Other">:</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;long&quot;</span><span class="Other">)</span><span class="Other">,</span>
+              <span class="Identifier">or12</span><span class="Other">:</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;or12&quot;</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">just1</span><span class="Other">:</span> <span class="Identifier">contains</span><span class="Other">(</span><span class="Identifier">cls</span><span class="Other">,</span> <span class="StringLit">&quot;just1&quot;</span><span class="Other">)</span><span class="Other">,</span>
               <span class="Identifier">subRowSep</span><span class="Other">:</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="Identifier">hTabSuppress</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN-NOHELP&quot;</span><span class="Other">,</span>
               <span class="Identifier">helpAttr</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">helpAttrOff</span><span class="Other">:</span> <span class="Identifier">initTable</span><span class="Other">(</span><span class="DecNumber">32</span><span class="Other">)</span><span class="Other">,</span>
               <span class="Identifier">helpSyntax</span><span class="Other">:</span> <span class="Identifier">syntaxHelp</span><span class="Other">,</span> <span class="Identifier">render</span><span class="Other">:</span> <span class="Identifier">descape</span><span class="Other">,</span> <span class="Identifier">widthEnv</span><span class="Other">:</span> <span class="StringLit">&quot;CLIGEN_WIDTH&quot;</span><span class="Other">,</span>
@@ -1090,7 +1092,7 @@ Run &quot;$command help&quot; to get *comprehensive* help.${ifVersion}&quot;&quo
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-04 23:25:26 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-03-13 13:31:35 UTC</small>
       </div>
     </div>
   </div>
