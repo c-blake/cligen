@@ -4,7 +4,7 @@ nim	findByName	cligen/macUt.html#findByName,NimNode,NimNode	proc findByName(parI
 nim	collectComments	cligen/macUt.html#collectComments,string,NimNode,int	proc collectComments(buf: var string; n: NimNode; depth: int = 0)		24
 nim	toString	cligen/macUt.html#toString,NimNode	proc toString(n: NimNode): string		34
 nim	toInt	cligen/macUt.html#toInt,NimNode	proc toInt(n: NimNode): int		43
-nim	toStrIni	cligen/macUt.html#toStrIni,range[]	proc toStrIni(c: range[0 .. 255]): NimNode		49
+nim	toStrIni	cligen/macUt.html#toStrIni,BiggestInt	proc toStrIni(c: BiggestInt): NimNode		49
 nim	toStrSeq	cligen/macUt.html#toStrSeq,NimNode	proc toStrSeq(strSeqInitializer: NimNode): seq[string]		53
 nim	toIdSeq	cligen/macUt.html#toIdSeq,NimNode	proc toIdSeq(strSeqInitializer: NimNode): seq[NimNode]		59
 nim	has	cligen/macUt.html#has,seq[NimNode],NimNode	proc has(ns: seq[NimNode]; n: NimNode): bool		71
