@@ -149,7 +149,9 @@ type
     sfLongPfxOk,              ## true=>unique prefix is ok for longOpts
     sfStopPfxOk,              ## true=>unique prefix is ok for stopWords
     sfExact,                  ## true=>option keys are case&style-sensitive
-    sfNoShort                 ## true=>run-time disallow short (vs. compTime-"")
+    sfNoShort,                ## true=>run-time disallow short (vs. compTime-"")
+    sfOr12,                   ## true=>run-time allow either -long|--long
+    sfJust1                   ## true=>run-time allow ONLY -long
   OptParser* = object of RootObj  ## object to implement the command line parser
     cmd*: seq[string]         ## command line being parsed
     pos*: int                 ## current command parameter to inspect
@@ -279,21 +281,21 @@ proc doShort(p: var OptParser) =
     p.kind = cmdError
     p.message = "`bool` flag `" & p.key & "` requires explicit value"
 
-proc doLong(p: var OptParser) =
+proc doLong(p: var OptParser, koff=2) =
   p.kind = cmdLongOption
   p.val = ""
   let param = p.cmd[p.pos]
   p.pos += 1                            # always consume at least 1 param
   let sep = find(param, p.sepChars)     # only very first occurrence of delim
-  if sep > 2:
+  if sep > koff:
     var op = sep
-    while op > 2 and param[op-1] in p.opChars:
+    while op > koff and param[op-1] in p.opChars:
       dec(op)
-    p.key = param[2 .. op-1]
+    p.key = param[koff .. op-1]
     p.sep = param[op .. sep]
     p.val = param[sep+1..^1]
     return
-  p.key = param[2..^1]                  # no sep; key is whole param past "--"
+  p.key = param[koff..^1]               # no sep; key is whole param past "--"
   let k = p.longNoVal.lengthen(optionNormalize(p.key,no=p.flags.no),p.longPfxOk)
   if k in p.longNoVal:
     return                              # No argument; done
@@ -336,6 +338,7 @@ proc next*(p: var OptParser) =
       p.optsDone = true                 # should only hit Step3 henceforth
     p.pos += 1
     return
+  # assert p.cmd[p.pos]startsWith("-")  # since above `if` is `or not -*`
   if p.cmd[p.pos].startsWith("--"):     #Step5: "--*"
     if p.cmd[p.pos].len == 2:           # terminating "--" => pure param mode
       p.optsDone = true                 # should only hit Step3 henceforth
@@ -343,7 +346,11 @@ proc next*(p: var OptParser) =
       p.pos += 1                        # skip the "--" itself, unlike stopWords
       next(p)                           # do next one so each parent next()..
       return                            #..yields exactly 1 opt+arg|cmdparam
-    doLong(p)
+    elif sfJust1 in p.flags:
+      p.kind = cmdError
+      p.message = "`--` option run-time disallowed at `" & p.cmd[p.pos] & "`"
+      return
+    doLong(p, 2)
   else:                                 #Step6: "-" but not "--" => short opt
     if p.cmd[p.pos].len == 1:           #Step6a: simply "-" => non-option param
       if sfEndOpts in p.flags and not p.ended:
@@ -354,8 +361,11 @@ proc next*(p: var OptParser) =
       p.val = ""
       p.pos += 1
     else:                               #Step6b: maybe a block of short options
-      p.off = 1                         # skip the initial "-"
-      doShort(p)
+      if sfNoShort in p.flags and (sfOr12 in p.flags or sfJust1 in p.flags):
+        doLong(p, 1)
+      else:
+        p.off = 1                       # skip the initial "-"
+        doShort(p)
 {.pop.}
 
 type
