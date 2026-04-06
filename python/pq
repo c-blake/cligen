@@ -6,9 +6,9 @@ def fim(s): return [i for i,p in enumerate(s) if i%2==0 and len(p)] #FieldIdxMap
 
 def toDef(fields, delim, genF, rex):
   nms = set()       # Prevent duplicate def errors & warn users about collision.
-  result = [f"pqNmFields = {repr(fields)}"]
   if rex: fs = re_split(delim, fields, maxsplit=0); js = fim(fs)
   else: fs = fields.split(delim); js = [j for j in range(len(fs))]
+  result = [f"pqNmFields = {repr(fs)}"]
   for j in js:      #Q: Parse injected code for max used field to infer MaxCols?
     nm = genF % fs[j].rstrip(r"""(<)=[*>\!+?]{",@^|#-_}$.`~%/&:';""")
     if nm not in nms: result.append(f"{nm} = {j}"); nms.add(nm)
@@ -16,7 +16,8 @@ def toDef(fields, delim, genF, rex):
   return ';'.join(result)
 
 def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
- fields="", MaxCols=-1, genF="%s", input="", rex="", uncheck=False, src=False):
+       fields="", MaxCols=-1, genF="%s", input="", rex="", uncheck=False,
+       normSpc=False, src=False):
   delim = None if delim == "None" else delim
   da = "print(row)"
   if rex:           # Adjust da (default action), delim & MaxCols defaults
@@ -29,17 +30,19 @@ def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
     begin = [f'pqRx = re_compile("{match}")'] + begin
     check = "if not pqRx.search(row): nr += 1; continue\n    "
   if len(fields) > 0 and not uncheck:
+    ns = """s = [" " if x.strip()=="" else x for x in s]""" if normSpc else ""
     check += """if nr == 0:                     # "Type check" SV input
-      if row == pqNmFields: nr+=1; continue; # [fields] [!uncheck]
-      else: e(f"row0 {repr(row)} != {repr(pqNmFields)}\\n"); exit(1)\n    """
+      """ + ns + """
+      if s == pqNmFields: nr+=1; continue; # [fields] [!uncheck]
+      else: e(f"row0 {repr(s)} != {repr(pqNmFields)}\\n"); exit(1)"""
   if len(stmts) == 0: stmts = [da]
   if len(input) == 0:   # null input eases invokes like: pq -b'print(2)'
     nul = 'NUL:' if os.name=="nt" else '/dev/null'
     inp = f'open("{nul}")' if stdin.isatty() else "stdin"
   else: inp = f"open({input})"
   if len(fields) > 0: fields = toDef(fields, delim, genF, rex)
-  doS=f"{check}s = re_split({repr(delim)},row,maxsplit={MaxCols});{rex}=fim(s)"\
-    if rex else f"{check}s = row.split({repr(delim)}, {MaxCols})"
+  doS=f"s = re_split({repr(delim)},row,maxsplit={MaxCols});{rex}=fim(s)"\
+    if rex else f"s = row.split({repr(delim)}, {MaxCols})"
   prog = f"""def main():
   from sys import stdin
   {ji(prelude, 2)} # end of [pre]
@@ -52,13 +55,14 @@ def pq(*stmts, prelude=[],begin=[],match="",where="True",epilog=[],delim=None,
   for row in {inp}: # [input] from `input`
     row = row.rstrip('\\n')
     {doS}
+    {check}
     nf = len(s)
     if {where}: # [where] auto ()s?\n"""
   for i, stmt in enumerate(stmts):
     if stmt=="da": prog+="      " + da + " # [stmt" + str(i) + "]; DefaultAct\n"
     else         : prog+="      " + stmt + " # [stmt" + str(i) + "]\n"
   prog +=  f"    nr += 1\n  {ji(epilog, 2)} # [epilog]\nmain()\n"
-  if src: print(prog, end=''); exit(0)
+  if src: print(prog, end='', file=stderr); exit(0)
   exec(prog)    # Can we tell PyPy to spend more time compiling this?
 
 if __name__ == '__main__': cg.dispatch(pq,
@@ -97,4 +101,5 @@ types={"prelude": (str, -1), "begin": (str, -1), "epilog": (str, -1),
    "genF"   : "field name format; Eg c_%%s",
    "input"  : 'path to process; ""=`stdin`',
    "uncheck": "Don't check&skip hdrRow V.``fields``",
-   "src"    : 'print gen.code & exit'})
+   "normSpc": "normalize space to check headers",
+   "src"    : 'print gen.code to stderr & exit'})
