@@ -480,6 +480,10 @@
   <li><a class="reference" href="#mSlices.i%2CMSlice%2Cchar%2Cchar" title="mSlices(mslc: MSlice; sep = ' '; eat = '\x00'): MSlice">mSlices(mslc: MSlice; sep = ' '; eat = '\x00'): MSlice</a></li>
 
 </ul>
+<ul class="simple nested-toc-section">mSlicesReversed
+  <li><a class="reference" href="#mSlicesReversed.i%2CMSlice%2Cchar" title="mSlicesReversed(ms: MSlice; term: char = '\n'): MSlice">mSlicesReversed(ms: MSlice; term: char = '\n'): MSlice</a></li>
+
+</ul>
 <ul class="simple nested-toc-section">pairs
   <li><a class="reference" href="#pairs.i%2CMSlice" title="pairs(a: MSlice): tuple[ix: int, c: char]">pairs(a: MSlice): tuple[ix: int, c: char]</a></li>
 
@@ -1677,6 +1681,18 @@
 </div>
 
 </div>
+<div id="mSlicesReversed-iterators-all">
+  <div id="mSlicesReversed.i,MSlice,char">
+  <dt><pre><span class="Keyword">iterator</span> <a href="#mSlicesReversed.i%2CMSlice%2Cchar"><span class="Identifier">mSlicesReversed</span></a><span class="Other">(</span><span class="Identifier">ms</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">;</span> <span class="Identifier">term</span><span class="Other">:</span> <span class="Identifier">char</span> <span class="Other">=</span> <span class="CharLit">'\n'</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Return <tt class="docutils literal"><span class="pre"><span class="Identifier">term</span></span></tt>-terminated records in reverse.
+    
+  </dd>
+</div>
+
+</div>
 <div id="pairs-iterators-all">
   <div id="pairs.i,MSlice">
   <dt><pre><span class="Keyword">iterator</span> <a href="#pairs.i%2CMSlice"><span class="Identifier">pairs</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">ix</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">]</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1724,7 +1740,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-04-06 11:18:59 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-04-21 10:27:13 UTC</small>
       </div>
     </div>
   </div>
