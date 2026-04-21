@@ -82,6 +82,8 @@ or12         = true  # if long-only, allow -long or --long \
 
   - Address some `ImplicitRangeConversion` warnings with explicitness.
 
+  - Add `cligen.mslice.mSlicesReversed` iterator
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have

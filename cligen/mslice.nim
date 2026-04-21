@@ -363,6 +363,21 @@ proc firstN*(ms: MSlice, n=1, term='\n'): MSlice =
       break
     inc i
 
+iterator mSlicesReversed*(ms: MSlice, term: char = '\n'): MSlice =
+  ## Return `term`-terminated records in reverse.
+  var n = ms.len; var m = 0
+  if ms[ms.len - 1] == term: dec n  # Unterminated record@EOF ok
+  while n > 0:
+    var p = cmemrchr(ms.mem, term, n.csize)
+    if p.isNil:
+      yield MSlice(mem: ms.mem, len: n)
+      n = 0
+    else:
+      p = p +! 1
+      m = ms.mem +! n -! p
+      yield MSlice(mem: p, len: m)
+      dec n, m + 1
+
 const wspace* = {' ', '\t', '\v', '\r', '\n', '\f'}  ## == strutils.Whitespace
 
 proc charEq(x, c: char): bool {.inline.} = x == c
