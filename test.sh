@@ -2,7 +2,7 @@
 exec < /dev/null
 export COLUMNS="80" CLIGEN_WIDTH="80" CLIGEN=/dev/null PATH=/bin:/usr/bin:$PATH
 rm -rf $HOME/.cache/nim/*
-: ${v:="--verbosity:2"}
+: ${v:="--verbosity:1"}
 h="--hint:Path:off --hint:Conf:off --hint:Processing:off --hint:CC:off"
 h="$h --hint:Exec:off --hint:Source:off --hint:Link:off --hint:SuccessX:off"
 h="$h --hint:GCStats:off --colors:off --styleCheck:off"
