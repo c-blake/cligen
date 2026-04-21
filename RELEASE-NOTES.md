@@ -82,7 +82,9 @@ or12         = true  # if long-only, allow -long or --long \
 
   - Address some `ImplicitRangeConversion` warnings with explicitness.
 
-  - Add `cligen.mslice.mSlicesReversed` iterator
+  - Add `cligen.mslice.mSlicesReversed` iterator.
+
+  - Tracking GNU coreutils-9.11 allow `TERM=dumb` to also disable SGR/colors.
 
 Version: 1.9.6
 --------------

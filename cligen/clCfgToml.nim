@@ -133,7 +133,8 @@ let cfNm = getEnv("CLIGEN",(let cg = getConfigDir()/"cligen";
                             if cg.dirExists: cg/cgConfigFileBaseName else: cg))
 if cfNm.fileExists:
   clCfg.apply(cfNm, existsEnv("NO_COLOR") and
-              getEnv("NO_COLOR") notin ["0", "no", "off", "false"])
+              getEnv("NO_COLOR") notin ["0", "no", "off", "false"] or
+              getEnv("TERM", "") == "dumb")
 
 # Any given end CL user likely wants just one global system of color aliases.
 # Default to leaving initial ones defined, but clear if an env.var says to.
