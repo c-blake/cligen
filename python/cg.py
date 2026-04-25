@@ -36,7 +36,8 @@ taNames = { "off": "", "none": "",  # Regular but for -bold=22v21, -BLINK=25v26
  "on_blue" : "44", "on_purple": "45", "on_cyan"  : "46", "on_white" : "47",
  "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
  "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107",
- "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "NONE": ""}
+ "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "-under"   :"24" ,
+ "NONE": ""}
 def taParse(s):
   result = ""
   if len(s) == 0: return result

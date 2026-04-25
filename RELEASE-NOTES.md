@@ -86,6 +86,9 @@ or12         = true  # if long-only, allow -long or --long \
 
   - Tracking GNU coreutils-9.11 allow `TERM=dumb` to also disable SGR/colors.
 
+  - Add "-under" as alias for "-underline" since it turns off all "under*"
+  (though it'd probably be nicer to just make any-prefix matching work there).
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have
