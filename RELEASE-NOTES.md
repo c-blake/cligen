@@ -87,7 +87,9 @@ or12         = true  # if long-only, allow -long or --long \
   - Tracking GNU coreutils-9.11 allow `TERM=dumb` to also disable SGR/colors.
 
   - Add "-under" as alias for "-underline" since it turns off all "under*"
-  (though it'd probably be nicer to just make any-prefix matching work there).
+  (though it'd probably be nicer to just make any-prefix matching work there)
+  and "undernone" for just reset of underline style to nothing.  (The former
+  works on more terminals/is more general).
 
 Version: 1.9.6
 --------------

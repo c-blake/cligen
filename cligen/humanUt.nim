@@ -91,7 +91,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
  "on_BLACK":"100", "on_RED"   :"101", "on_GREEN" :"102", "on_YELLOW":"103",#LiB
  "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107",
  "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "-under"   : "24",
- "NONE": ""}.toTable
+ "undernone": "4:0", "NONE": ""}.toTable
  var textAttrAliases = initTable[string, string]()
 
  proc textAttrAlias*(name, value: string) =
