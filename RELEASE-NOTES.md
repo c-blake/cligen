@@ -91,6 +91,13 @@ or12         = true  # if long-only, allow -long or --long \
   and "undernone" for just reset of underline style to nothing.  (The former
   works on more terminals/is more general).
 
+  - Change default True Color Delimiters from ';' to ':' as per ISO-8613-6.
+  Almost all modern terminals support this (usually after initial flirtation
+  with ';', much like xterm itself).  `st` needs patching but xterm/ghostty/etc
+  work fine.)  For backward compatibility, if you use true colors and/or color
+  undercurl/underEtc and you use an uncooperative terminal, you may need to set
+  `TERM_TCD=';'` in your command shell initialization to restore old behavior.
+
 Version: 1.9.6
 --------------
   - Add `cligen/trie`-like `match` capability to `cligen/tern` & have

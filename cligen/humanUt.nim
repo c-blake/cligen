@@ -66,7 +66,7 @@ iterator descape*(s: string, escape='\\'): tuple[c: char; escaped: bool] =
     else: yield (c, false)
 
 when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
- import std/tables, cligen/colorScl
+ import std/[tables, envvars], cligen/colorScl
  when not declared(stderr): import std/syncio
 
  when not declared(fromHex):
@@ -105,6 +105,7 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
     if cols.len == 2:
       textAttrAlias(cols[0].strip, cols[1].strip)
 
+ var S = getEnv("TERM_TCD", ":") # True Color Delimiter - ":" or ";"
  proc textAttrParse*(s: string): string =
   if s.len == 0: return
   var s = s
@@ -114,26 +115,26 @@ when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
   except KeyError:
     if s.len >= 2:
       let prefix = case s[0].toUpperAscii
-                   of 'F': "38;"
-                   of 'B': "48;"
-                   of 'U': "58;"
+                   of 'F': "38" & S
+                   of 'B': "48" & S
+                   of 'U': "58" & S
                    else  : ""
-      if   s.len <= 3: result = prefix & "5;" & $(232 + parseInt(s[1..^1]))
+      if   s.len <= 3: result = prefix & "5" & S & $(232 + parseInt(s[1..^1]))
       elif s[1] == 's': # color scale: [fFbBuU]s[gwpv]<float>[,..]
         if (var nP: int; let c = s[2..^1].parseColorScl(nP); nP == s.len - 2):
-          result = prefix & (if s[0] == s[0].toUpperAscii: "5;" & c.xt256 else:
-                             "2;" & c.ttc) # Leading uppercase => xt256
+          result = prefix & (if s[0] == s[0].toUpperAscii: "5"&S&c.xt256 else:
+                             "2" & S & c.ttc) # Leading uppercase => xt256
         else: raise newException(ValueError, "bad color scale \"" & s & "\"")
       elif s.len == 4: # Above, xt256 grey scl, Below xt256 6*6*6 color cube
         let r = min(5, ord(s[1]) - ord('0'))
         let g = min(5, ord(s[2]) - ord('0'))
         let b = min(5, ord(s[3]) - ord('0'))
-        result = prefix & "5;" & $(16 + 36*r + 6*g + b)
+        result = prefix & "5" & S & $(16 + 36*r + 6*g + b)
       elif s.len == 7: # True color
         let r = fromHex[int](s[1..2])
         let g = fromHex[int](s[3..4])
         let b = fromHex[int](s[5..6])
-        result = prefix & "2;" & $r & ";" & $g & ";" & $b
+        result = prefix & "2" & S & $r & S & $g & S & $b
     if result.len == 0:
       raise newException(ValueError, "bad text attr spec \"" & s & "\"")
 

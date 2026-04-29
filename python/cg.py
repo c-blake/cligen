@@ -38,6 +38,7 @@ taNames = { "off": "", "none": "",  # Regular but for -bold=22v21, -BLINK=25v26
  "on_BLUE" :"104", "on_PURPLE":"105", "on_CYAN"  :"106", "on_WHITE" :"107",
  "-fg"     : "39", "-bg"      : "49", "plain"    :  "0", "-under"   :"24" ,
  "undernone":"4:0", "NONE": ""}
+S = os.environ.get("TERM_TCD", ":") # True Color Delimiter.  Use ';' for legacy.
 def taParse(s):
   result = ""
   if len(s) == 0: return result
@@ -46,22 +47,22 @@ def taParse(s):
   except KeyError:
     if len(s) >= 2:
       s0 = s[0].upper()
-      if   s0 == 'F': prefix = "38;"
-      elif s0 == 'B': prefix = "48;"
-      elif s0 == 'U': prefix = "58;"
+      if   s0 == 'F': prefix = "38" + S
+      elif s0 == 'B': prefix = "48" + S
+      elif s0 == 'U': prefix = "58" + S
       else          : prefix = ""
-      if   len(s) <= 3: result = prefix + "5;" + str(232 + int(s[1:]))
+      if   len(s) <= 3: result = prefix + "5" + S + str(232 + int(s[1:]))
       elif s[1] == 's': e("cg.py does not support cligen/colorScl\n")
       elif len(s) == 4: # Above, xt256 grey scl, Below xt256 6*6*6 color cube
         r = min(5, ord(s[1]) - ord('0'))
         g = min(5, ord(s[2]) - ord('0'))
         b = min(5, ord(s[3]) - ord('0'))
-        result = prefix + "5;" & str(16 + 36*r + 6*g + b)
+        result = prefix + "5" + S + str(16 + 36*r + 6*g + b)
       elif len(s) == 7: # True color
         r = int(s[1:3], 16)
         g = int(s[3:5], 16)
         b = int(s[5:7], 16)
-        result = prefix + "2;" + str(r) + ";" + str(g) + ";" + str(b)
+        result = prefix + "2" + S + str(r) + S + str(g) + S + str(b)
     if len(result) == 0: raise ValueError('bad text attr spec "%s"' % s)
   return result
 
