@@ -1,4 +1,4 @@
-import std/[strutils, bitops, math], cligen/[mslice, unsafeAddr]
+import std/[strutils, bitops, math, envvars], cligen/[mslice, unsafeAddr]
 type                                    # Map a float "intensity" to RGB colors
   UnitR*  = range[0.0 .. 1.0]
   Color3* = (UnitR, UnitR, UnitR)
@@ -75,10 +75,11 @@ proc hex*(rgb: Color3, lim: range[5..1024] = 256): string =
   result.add scaledCompon(rgb[1], lim).toHex(dig)
   result.add scaledCompon(rgb[2], lim).toHex(dig)
 
+let S = getEnv("TERM_TCD", ":") # True Color Delimiter - ":" or ";"
 proc ttc*(rgb: Color3, lim: range[5..1024] = 256): string =
   ## Produce decimal R;G;B string for a Terminal True Color specification.
-  result.add $scaledCompon(rgb[0], lim); result.add ';'
-  result.add $scaledCompon(rgb[1], lim); result.add ';'
+  result.add $scaledCompon(rgb[0], lim); result.add S
+  result.add $scaledCompon(rgb[1], lim); result.add S
   result.add $scaledCompon(rgb[2], lim)
 
 proc xt256*(rgb: Color3, lim: range[5..1024] = 256): string =
@@ -122,14 +123,15 @@ when isMainModule:
     ## `colorScl -n8 g h w p v`; Look@"color edges" in `colorScl -n6..17 w p v`.
     ## Test just one color with e.g. `colorScl -x.75 -s.7 -v.95 wLen|head -n1`.
     proc outp(p: string, scl: Scale; x, s, v: UnitR) =
-      stdout.write p, ";", rgb(x, scl, s, v).ttc, "m", text, "\e[m"
+      stdout.write p, S, rgb(x, scl, s, v).ttc, "m", text, "\e[m"
     let nLoop = ns.b > ns.a
+    let c2 = S & "2"
     for scl in (if scales.len > 0: scales else: @[sWLen]):
       for n in ns:
         if nLoop: stdout.write align($n, 2), " "
         if scales.len > 1: stdout.write $scl, ": ", if nLoop: "" else: "\n"
-        for (p,s,v)in [("\e[40;38;2", 0.70, 0.90), ("\e[107;38;2", 0.70, 0.75),
-                       ("\e[30;48;2", 0.60, 0.90), ("\e[97;48;2" , 0.70, 0.65)]:
+        for (p,s,v)in [("\e[40;38"&c2, 0.70, 0.90), ("\e[107;38"&c2, 0.70, 0.75),
+                       ("\e[30;48"&c2, 0.60, 0.90), ("\e[97;48"&c2 , 0.70, 0.65)]:
           if x == -1.0: # ^^Fix BG, vary FG; then fix FG, vary BG^^
             for k in 0 ..< n:
               outp p, scl, UnitR(k.float/(n - 1).float), s.UnitR, v.UnitR
