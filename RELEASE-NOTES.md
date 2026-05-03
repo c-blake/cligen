@@ -36,11 +36,11 @@ or12         = true  # if long-only, allow -long or --long \
   - The above method still works and shows how `cligen` was able to do run-time
   syntax (at least for separators) since 0.9.46, but this release also adds a
   probably simpler to use `CLSYNTAX` environmental variable that can activate
-  strictness through a whole family tree of processes launching commands in all
-  sorts of lexical contexts (shell, python, Nim, etc.).  As this variable is of
-  potentially broad enough interest to apply to command-line parsing libs in all
-  sorts of programming languages, it deserved motivation & documentation in its
-  very own, non-Nim-specific repository which is here:
+  strictness throughout a whole family tree of processes launching commands in
+  all sorts of lexical contexts (shell, python, Nim, etc.).  As this variable is
+  of potentially broad enough interest to apply to command-line parsing libs in
+  all sorts of programming languages, it deserved motivation & documentation in
+  its very own, non-Nim-specific repository which is here:
     https://github.com/c-blake/clsyntax
 
   - Presently, for case-label-const-ness reasons (grounded in C int-switch label
@@ -68,7 +68,7 @@ or12         = true  # if long-only, allow -long or --long \
   but a theoretical BREAKING CHANGE in this release is that compilation fails
   IF you had code initializing a `cligen/parseopt3.OptParser` with constructor
   syntax { i.e. `OptParser(name: true)` } AND that init used any of `longPfxOk`,
-  `stopPfxOk`, `requireSep`, for `name`.  Fix: use `initOptParser` instead.
+  `stopPfxOk`, `requireSep`, for `name`.  FIX: use `initOptParser` instead.
 
   - `cligen/puSig.nim` grows u1, u2 short aliases for usr1, usr2 signal names.
 
@@ -84,7 +84,8 @@ or12         = true  # if long-only, allow -long or --long \
 
   - Add `cligen.mslice.mSlicesReversed` iterator.
 
-  - Tracking GNU coreutils-9.11 allow `TERM=dumb` to also disable SGR/colors.
+  - Tracking GNU coreutils-9.11 allow `TERM=dumb` to disable SGR/colors along
+  with long-standing & more specific/targeted NO_COLOR.
 
   - Add "-under" as alias for "-underline" since it turns off all "under*"
   (though it'd probably be nicer to just make any-prefix matching work there)
