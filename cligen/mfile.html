@@ -94,7 +94,12 @@
 
 </ul>
 <ul class="simple nested-toc-section">[]
-  <li><a class="reference" href="#%5B%5D%2CMFile%2CHSlice%5BA%2CB%5D" title="`[]`[A, B](mf: MFile; s: HSlice[A, B]): MSlice">`[]`[A, B](mf: MFile; s: HSlice[A, B]): MSlice</a></li>
+  <li><a class="reference" href="#%5B%5D%2CMFile%2Cint" title="`[]`(mf: MFile; i: int): char">`[]`(mf: MFile; i: int): char</a></li>
+<li><a class="reference" href="#%5B%5D%2CMFile%2CHSlice%5BA%2CB%5D" title="`[]`[A, B](mf: MFile; s: HSlice[A, B]): MSlice">`[]`[A, B](mf: MFile; s: HSlice[A, B]): MSlice</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">[]=
+  <li><a class="reference" href="#%5B%5D%3D%2CMFile%2Cint%2Cchar" title="`[]=`(mf: MFile; i: int; c: char)">`[]=`(mf: MFile; i: int; c: char)</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">add
@@ -278,8 +283,28 @@
 
 </div>
 <div id="[]-procs-all">
-  <div id="[],MFile,HSlice[A,B]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CMFile%2CHSlice%5BA%2CB%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">A</span><span class="Other">,</span> <span class="Identifier">B</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">mf</span><span class="Other">:</span> <a href="mfile.html#MFile"><span class="Identifier">MFile</span></a><span class="Other">;</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">A</span><span class="Other">,</span> <span class="Identifier">B</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a></pre></dt>
+  <div id="[],MFile,int">
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CMFile%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">mf</span><span class="Other">:</span> <a href="mfile.html#MFile"><span class="Identifier">MFile</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">char</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+<div id="[],MFile,HSlice[A,B]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CMFile%2CHSlice%5BA%2CB%5D"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">A</span><span class="Other">,</span> <span class="Identifier">B</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">mf</span><span class="Other">:</span> <a href="mfile.html#MFile"><span class="Identifier">MFile</span></a><span class="Other">;</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">A</span><span class="Other">,</span> <span class="Identifier">B</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dd>
+    
+    
+    
+  </dd>
+</div>
+
+</div>
+<div id="[]=-procs-all">
+  <div id="[]=,MFile,int,char">
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%3D%2CMFile%2Cint%2Cchar"><span class="Identifier">`[]=`</span></a><span class="Other">(</span><span class="Identifier">mf</span><span class="Other">:</span> <a href="mfile.html#MFile"><span class="Identifier">MFile</span></a><span class="Other">;</span> <span class="Identifier">i</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -571,7 +596,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-05 12:37:42 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-12 08:43:24 UTC</small>
       </div>
     </div>
   </div>
