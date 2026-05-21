@@ -73,7 +73,7 @@ or12         = true  # if long-only, allow -long or --long \
   - `cligen/puSig.nim` grows u1, u2 short aliases for usr1, usr2 signal names.
 
   - fix a `cg.py` bug to do nothing for `[include__UNSETVAR]` (e.g.
-  `[include_CG_STRICT]` but with `CG_STRICT` unset).
+  `[include_CG_STRICT]` but with `CG_STRICT` unset) & add SIGPIPE suppression.
 
   - Fix if -> elif bug calling `argParse` twice in `nonOpt0`
 
