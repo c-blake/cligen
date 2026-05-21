@@ -94,12 +94,13 @@ for k,vs in [("optKey", ("optkeys", "options", "optkey", "option")),
     ("good"   , ("good", "errgood", "errorgood"))]:
   for v in vs: colorSection[v] = k
 
+sigPIPE = "isOk"        # Demons (SIGPIPE less likely) may want raise/pass
 def apply(cf=dict(), path="", plain=False):
   try   : defs = load(open(path, "rb"))
   except: e("problem reading/parsing '%s'\n" % path); return
   kind, rend = {}, {}
   for k,v in defs.items():
-    if len(v) == 0 and k.startswith("include__"):
+    if len(v) == 0 and k.startswith("include__"): # DO NOT .lower() before this
       relTo = os.path.dirname(path) + '/'
       sub  = k[9:]
       subs = sub.split("__")    # Allow include__VAR_NAME__DEFAULT[__..IGNOR]
@@ -110,15 +111,17 @@ def apply(cf=dict(), path="", plain=False):
     else:                       #TODO Could perhaps also handle [layout]
       if k in ("global", "aliases"):
         for K,V in v.items():
+          K = K.lower()         # Easy to do; Nim does much optionNormalize()
           if K=="colors":
             for x in V: cs=x.split('=');taAliases[cs[0].strip()] = cs[1].strip()
-      elif k in "color":
+          elif K == "sigpipe": global sigPIPE; sigPIPE = V[0]
+      elif k == "color":
         if plain: continue
         for K,V in v.items():
           (on, off) = taOnOff(V[0], plain)
           try: cs = colorSection[K.lower()]; kind[cs] = (on, off)
           except: pass
-      elif k in "render":
+      elif k == "render":
         if plain: continue
         for K,V in v.items():
           K = K.lower()
@@ -137,8 +140,7 @@ try:
   cf = apply({}, cgPath, "NO_COLOR" in os.environ and \
              os.environ["NO_COLOR"] not in ["0", "no", "off", "false"] or \
              os.environ.get("TERM", "") == "dumb")
-
-except: e("\x1b[1mcg.py: PROBLEM WITH %s\x1b[m\n" % cgPath)
+except Exception as x:e("\x1b[1mcg.py: %s PROBLEM: %s\x1b[m\n"%(cgPath,type(x)))
 
 def uMark(s): # micro-mark is just font changing (-> SGR on terminals).
   if s is None: return s
@@ -244,8 +246,12 @@ def dispatch(func, help={}, short={}, types={}, wKTDv=42, **kw):
     p.add_argument(V, nargs='*', default=[], help=help.get(V, "set "+V))
   fn = func.__name__
   mrg = merge(p, "CONFIG_" + fn.upper(), fn, wKTDv)
-  if sys.version[0] != '2':
-    va = mrg.get(V)
-    if va is not None and len(va) > 0: return func(*va, **dictBut(mrg, V))
-    else: return func(**dictBut(mrg, V))
-  else: return func(*tuple([mrg[k] for k in A] + mrg.get(V, [])))
+  try:
+    if sys.version[0] != '2':
+      va = mrg.get(V)
+      if va is not None and len(va) > 0: return func(*va, **dictBut(mrg, V))
+      else: return func(**dictBut(mrg, V))
+    else: return func(*tuple([mrg[k] for k in A] + mrg.get(V, [])))
+  except BrokenPipeError:
+    if   sigPIPE == "raise": raise                # Caller has own ideas
+    else: sys.exit(0 if sigPIPE!="pass" else 141) # Nix|Unix Default 128+SIG=13
