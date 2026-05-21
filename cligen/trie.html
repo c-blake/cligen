@@ -16,13 +16,16 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.8">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.10">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.2.8"></script>
+<script type="text/javascript" src="../dochack.js?v=2.2.10"></script>
 </head>
 <body>
   <div class="document" id="documentId">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <label for="nav-toggle" id="nav-burger">&#9776;</label>
+    <label for="nav-toggle" id="nav-overlay"></label>
     <div class="container">
       <h1 class="title">cligen/trie</h1>
       <div class="row">
@@ -226,7 +229,7 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="Node">
-  <dt><pre><a href="trie.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Identifier">NodeOb</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><a href="#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Identifier">NodeOb</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -234,8 +237,8 @@
   </dd>
 </div>
 <div id="Trie">
-  <dt><pre><a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">root</span><span class="Operator">*</span><span class="Other">:</span> <a href="trie.html#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
+  <dt><pre><a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">root</span><span class="Operator">*</span><span class="Other">:</span> <a href="#Node"><span class="Identifier">Node</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
   <span class="Identifier">depth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
   <dd>
     
@@ -251,7 +254,7 @@
   <dl class="item">
     <div id="$-procs-all">
   <div id="$,Trie[T]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%24%2CTrie%5BT%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%24%2CTrie%5BT%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Return string form of <tt class="docutils literal"><span class="pre">t</span></tt>; <tt class="docutils literal"><span class="pre">{A,B,..}</span></tt> if <tt class="docutils literal"><span class="pre">T</span></tt> is <tt class="docutils literal"><span class="pre">void</span></tt> or else <tt class="docutils literal"><span class="pre">{A: valA, B: valB}</span></tt>.
@@ -262,7 +265,7 @@
 </div>
 <div id="[]-procs-all">
   <div id="[],Trie[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CTrie%5BT%5D%2Cstring"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CTrie%5BT%5D%2Cstring"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Retrieves value at <tt class="docutils literal"><span class="pre">t[key]</span></tt> or raises <tt class="docutils literal"><span class="pre">KeyError</span></tt> if missing.
@@ -270,7 +273,7 @@
   </dd>
 </div>
 <div id="[],Trie[T],string_2">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CTrie%5BT%5D%2Cstring_2"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CTrie%5BT%5D%2Cstring_2"><span class="Identifier">`[]`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Retrieves modifiable value at <tt class="docutils literal"><span class="pre">t[key]</span></tt> or raises <tt class="docutils literal"><span class="pre">KeyError</span></tt> if missing.
@@ -281,7 +284,7 @@
 </div>
 <div id="[]=-procs-all">
   <div id="[]=,Trie[T],string,T">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%3D%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">`[]=`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%3D%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">`[]=`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Inserts <tt class="docutils literal"><span class="pre">key</span></tt>, <tt class="docutils literal"><span class="pre">val</span></tt>-pair into <tt class="docutils literal"><span class="pre">t</span></tt>, overwriting if present.
@@ -292,7 +295,7 @@
 </div>
 <div id="contains-procs-all">
   <div id="contains,Trie[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#contains%2CTrie%5BT%5D%2Cstring"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#contains%2CTrie%5BT%5D%2Cstring"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     
@@ -303,7 +306,7 @@
 </div>
 <div id="containsOrIncl-procs-all">
   <div id="containsOrIncl,Trie[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#containsOrIncl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">containsOrIncl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#containsOrIncl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">containsOrIncl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Returns true iff <tt class="docutils literal"><span class="pre">t</span></tt> contains <tt class="docutils literal"><span class="pre">key</span></tt> or inserts into <tt class="docutils literal"><span class="pre">t</span></tt> if missing.
@@ -311,7 +314,7 @@
   </dd>
 </div>
 <div id="containsOrIncl,Trie[T],string,T">
-  <dt><pre><span class="Keyword">proc</span> <a href="#containsOrIncl%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">containsOrIncl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#containsOrIncl%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">containsOrIncl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Returns true iff <tt class="docutils literal"><span class="pre">t</span></tt> contains <tt class="docutils literal"><span class="pre">key</span></tt> or does <tt class="docutils literal"><span class="pre">t[key]=val</span></tt> if missing.
@@ -322,7 +325,7 @@
 </div>
 <div id="excl-procs-all">
   <div id="excl,Trie[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#excl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">excl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#excl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">excl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Remove <tt class="docutils literal"><span class="pre">key</span></tt> (and any associated value) from <tt class="docutils literal"><span class="pre">t</span></tt> or do nothing.
@@ -333,7 +336,7 @@
 </div>
 <div id="inc-procs-all">
   <div id="inc,Trie[T],string,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#inc%2CTrie%5BT%5D%2Cstring%2Cint"><span class="Identifier">inc</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#inc%2CTrie%5BT%5D%2Cstring%2Cint"><span class="Identifier">inc</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Increments <tt class="docutils literal"><span class="pre">t[key]</span></tt> by <tt class="docutils literal"><span class="pre">val</span></tt> (starting from 0 if missing).
@@ -344,7 +347,7 @@
 </div>
 <div id="incl-procs-all">
   <div id="incl,Trie[void],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#incl%2CTrie%5Bvoid%5D%2Cstring"><span class="Identifier">incl</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">void</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#incl%2CTrie%5Bvoid%5D%2Cstring"><span class="Identifier">incl</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">void</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -353,7 +356,7 @@
   </dd>
 </div>
 <div id="incl,Trie[T],string,T">
-  <dt><pre><span class="Keyword">proc</span> <a href="#incl%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">incl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#incl%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">incl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Inserts <tt class="docutils literal"><span class="pre">key</span></tt> with value <tt class="docutils literal"><span class="pre">val</span></tt> into <tt class="docutils literal"><span class="pre">t</span></tt>, overwriting if present
@@ -364,7 +367,7 @@
 </div>
 <div id="len-procs-all">
   <div id="len,Trie[T]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#len%2CTrie%5BT%5D"><span class="Identifier">len</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#len%2CTrie%5BT%5D"><span class="Identifier">len</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     
@@ -375,7 +378,7 @@
 </div>
 <div id="match-procs-all">
   <div id="match,Trie[T],string,int,char,char">
-  <dt><pre><span class="Keyword">proc</span> <a href="#match%2CTrie%5BT%5D%2Cstring%2Cint%2Cchar%2Cchar"><span class="Identifier">match</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">pat</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">limit</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">a1</span> <span class="Other">=</span> <span class="CharLit">'?'</span><span class="Other">;</span> <span class="Identifier">aN</span> <span class="Other">=</span> <span class="CharLit">'*'</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#match%2CTrie%5BT%5D%2Cstring%2Cint%2Cchar%2Cchar"><span class="Identifier">match</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">pat</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">limit</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">a1</span> <span class="Other">=</span> <span class="CharLit">'?'</span><span class="Other">;</span> <span class="Identifier">aN</span> <span class="Other">=</span> <span class="CharLit">'*'</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Return up to <tt class="docutils literal"><span class="pre"><span class="Identifier">limit</span></span></tt> matches of shell <tt class="docutils literal"><span class="pre"><span class="Punctuation">[</span><span class="Operator">?*</span><span class="Punctuation">]</span></span></tt> glob pattern <tt class="docutils literal"><span class="pre"><span class="Identifier">pat</span></span></tt> in <tt class="docutils literal"><span class="pre"><span class="Identifier">t</span></span></tt>.
@@ -386,7 +389,7 @@
 </div>
 <div id="mgetOrPut-procs-all">
   <div id="mgetOrPut,Trie[T],string,T">
-  <dt><pre><span class="Keyword">proc</span> <a href="#mgetOrPut%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">mgetOrPut</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#mgetOrPut%2CTrie%5BT%5D%2Cstring%2CT"><span class="Identifier">mgetOrPut</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     Retrieves modifiable value at <tt class="docutils literal"><span class="pre">t[key]</span></tt> or inserts if missing.
@@ -397,7 +400,7 @@
 </div>
 <div id="missingOrExcl-procs-all">
   <div id="missingOrExcl,Trie[T],string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#missingOrExcl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">missingOrExcl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#missingOrExcl%2CTrie%5BT%5D%2Cstring"><span class="Identifier">missingOrExcl</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span>.}</pre></dt>
   <dd>
     
     <tt class="docutils literal"><span class="pre">t.excl(key)</span></tt> if present in <tt class="docutils literal"><span class="pre">t</span></tt> and return true else just return false.
@@ -408,7 +411,7 @@
 </div>
 <div id="nearLev-procs-all">
   <div id="nearLev,Trie[T],string,int,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#nearLev%2CTrie%5BT%5D%2Cstring%2Cint%2Cint"><span class="Identifier">nearLev</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dmax</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">limit</span> <span class="Other">=</span> <span class="DecNumber">6</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#nearLev%2CTrie%5BT%5D%2Cstring%2Cint%2Cint"><span class="Identifier">nearLev</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dmax</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">limit</span> <span class="Other">=</span> <span class="DecNumber">6</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
     <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">d</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">k</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -432,7 +435,7 @@
 </div>
 <div id="toTrie-procs-all">
   <div id="toTrie,openArray[string]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toTrie%2CopenArray%5Bstring%5D"><span class="Identifier">toTrie</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">void</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toTrie%2CopenArray%5Bstring%5D"><span class="Identifier">toTrie</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">void</span><span class="Other">]</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -453,7 +456,7 @@
   </dd>
 </div>
 <div id="uniquePfxPat,Trie[T],string,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#uniquePfxPat%2CTrie%5BT%5D%2Cstring%2Cstring"><span class="Identifier">uniquePfxPat</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">sep</span> <span class="Other">=</span> <span class="StringLit">&quot;*&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#uniquePfxPat%2CTrie%5BT%5D%2Cstring%2Cstring"><span class="Identifier">uniquePfxPat</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">sep</span> <span class="Other">=</span> <span class="StringLit">&quot;*&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Return shortest unique prefix pattern for <tt class="docutils literal"><span class="pre">key</span></tt> known to be in <tt class="docutils literal"><span class="pre">t</span></tt>. Unlike a shortest unique prefix string, this is well-defined for all sets. <tt class="docutils literal"><span class="pre">sep</span></tt> is only used if it can shrink total rendered space.
@@ -482,7 +485,7 @@
   <dl class="item">
     <div id="items-iterators-all">
   <div id="items.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CTrie%5BT%5D"><span class="Identifier">items</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CTrie%5BT%5D"><span class="Identifier">items</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     yields all keys in lexicographical order.
@@ -493,7 +496,7 @@
 </div>
 <div id="keys-iterators-all">
   <div id="keys.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#keys.i%2CTrie%5BT%5D"><span class="Identifier">keys</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#keys.i%2CTrie%5BT%5D"><span class="Identifier">keys</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     yields all keys in lexicographical order.
@@ -504,7 +507,7 @@
 </div>
 <div id="keysWithPrefix-iterators-all">
   <div id="keysWithPrefix.i,Trie[T],string">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#keysWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">keysWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#keysWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">keysWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Yields all keys starting with <tt class="docutils literal"><span class="pre"><span class="Identifier">prefix</span></span></tt>.
@@ -515,7 +518,7 @@
 </div>
 <div id="mpairs-iterators-all">
   <div id="mpairs.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#mpairs.i%2CTrie%5BT%5D"><span class="Identifier">mpairs</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#mpairs.i%2CTrie%5BT%5D"><span class="Identifier">mpairs</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     yields all (key, value)-pairs of <tt class="docutils literal"><span class="pre"><span class="Identifier">t</span></span></tt>. The yielded values can be modified.
@@ -526,7 +529,7 @@
 </div>
 <div id="mpairsWithPrefix-iterators-all">
   <div id="mpairsWithPrefix.i,Trie[T],string">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#mpairsWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">mpairsWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#mpairsWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">mpairsWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span>
     <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -538,7 +541,7 @@
 </div>
 <div id="mvalues-iterators-all">
   <div id="mvalues.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#mvalues.i%2CTrie%5BT%5D"><span class="Identifier">mvalues</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#mvalues.i%2CTrie%5BT%5D"><span class="Identifier">mvalues</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
     yields all values of <tt class="docutils literal"><span class="pre"><span class="Identifier">t</span></span></tt> in the lexicographical order of the corresponding keys. The values can be modified.
@@ -549,7 +552,7 @@
 </div>
 <div id="mvaluesWithPrefix-iterators-all">
   <div id="mvaluesWithPrefix.i,Trie[T],string">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#mvaluesWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">mvaluesWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#mvaluesWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">mvaluesWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
     Yields all values of <tt class="docutils literal"><span class="pre">t</span></tt> for keys starting with <tt class="docutils literal"><span class="pre">prefix</span></tt>.  The values can be modified.
@@ -560,7 +563,7 @@
 </div>
 <div id="pairs-iterators-all">
   <div id="pairs.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#pairs.i%2CTrie%5BT%5D"><span class="Identifier">pairs</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#pairs.i%2CTrie%5BT%5D"><span class="Identifier">pairs</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     yields all (key, value)-pairs of <tt class="docutils literal"><span class="pre"><span class="Identifier">t</span></span></tt>.
@@ -571,7 +574,7 @@
 </div>
 <div id="pairsWithPrefix-iterators-all">
   <div id="pairsWithPrefix.i,Trie[T],string">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#pairsWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">pairsWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#pairsWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">pairsWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span>
     <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -583,7 +586,7 @@
 </div>
 <div id="values-iterators-all">
   <div id="values.i,Trie[T]">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#values.i%2CTrie%5BT%5D"><span class="Identifier">values</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#values.i%2CTrie%5BT%5D"><span class="Identifier">values</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
     yields all values of <tt class="docutils literal"><span class="pre"><span class="Identifier">t</span></span></tt> in the lexicographical order of the corresponding keys.
@@ -594,7 +597,7 @@
 </div>
 <div id="valuesWithPrefix-iterators-all">
   <div id="valuesWithPrefix.i,Trie[T],string">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#valuesWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">valuesWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="trie.html#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#valuesWithPrefix.i%2CTrie%5BT%5D%2Cstring"><span class="Identifier">valuesWithPrefix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#Trie"><span class="Identifier">Trie</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">prefix</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">longest</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
   <dd>
     
     Yields all values of <tt class="docutils literal"><span class="pre">t</span></tt> for keys starting with <tt class="docutils literal"><span class="pre">prefix</span></tt>.
@@ -613,7 +616,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-12 08:43:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-21 08:57:01 UTC</small>
       </div>
     </div>
   </div>

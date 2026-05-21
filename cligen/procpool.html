@@ -16,13 +16,16 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.8">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.10">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.2.8"></script>
+<script type="text/javascript" src="../dochack.js?v=2.2.10"></script>
 </head>
 <body>
   <div class="document" id="documentId">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <label for="nav-toggle" id="nav-burger">&#9776;</label>
+    <label for="nav-toggle" id="nav-overlay"></label>
     <div class="container">
       <h1 class="title">cligen/procpool</h1>
       <div class="row">
@@ -205,7 +208,7 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="Filter">
-  <dt><pre><a href="procpool.html#Filter"><span class="Identifier">Filter</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <dt><pre><a href="#Filter"><span class="Identifier">Filter</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">fd0</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">fd1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">cint</span>           <span class="Comment">## PARENT VIEW of request|input &amp; reply|output file handles</span>
   <span class="Identifier">buf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## current read buffer</span>
   <span class="Identifier">off</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>                  <span class="Comment">## byte offset into `buf` to read new data into</span>
@@ -218,7 +221,7 @@
   </dd>
 </div>
 <div id="Frames">
-  <dt><pre><a href="procpool.html#Frames"><span class="Identifier">Frames</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a></pre></dt>
+  <dt><pre><a href="#Frames"><span class="Identifier">Frames</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a></pre></dt>
   <dd>
     
     
@@ -226,7 +229,7 @@
   </dd>
 </div>
 <div id="ProcPool">
-  <dt><pre><a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a> <span class="Other">=</span> <span class="Keyword">object</span></pre></dt>
+  <dt><pre><a href="#ProcPool"><span class="Identifier">ProcPool</span></a> <span class="Other">=</span> <span class="Keyword">object</span></pre></dt>
   <dd>
     
     A process pool to do work on multiple cores
@@ -241,7 +244,7 @@
   <dl class="item">
     <div id="close-procs-all">
   <div id="close,ProcPool,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#close%2CProcPool%2Cint"><span class="Identifier">close</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">;</span> <span class="Identifier">kid</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#close%2CProcPool%2Cint"><span class="Identifier">close</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <a href="#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">;</span> <span class="Identifier">kid</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -252,7 +255,7 @@
 </div>
 <div id="frames0-procs-all">
   <div id="frames0,Filter">
-  <dt><pre><span class="Keyword">proc</span> <a href="#frames0%2CFilter"><span class="Identifier">frames0</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#frames0%2CFilter"><span class="Identifier">frames0</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;use `frames0term`&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     <div class="deprecation-message">
@@ -267,7 +270,7 @@
 </div>
 <div id="frames0term-procs-all">
   <div id="frames0term,Filter">
-  <dt><pre><span class="Keyword">proc</span> <a href="#frames0term%2CFilter"><span class="Identifier">frames0term</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#frames0term%2CFilter"><span class="Identifier">frames0term</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -279,7 +282,7 @@
 </div>
 <div id="framesLenPfx-procs-all">
   <div id="framesLenPfx,Filter">
-  <dt><pre><span class="Keyword">proc</span> <a href="#framesLenPfx%2CFilter"><span class="Identifier">framesLenPfx</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#framesLenPfx%2CFilter"><span class="Identifier">framesLenPfx</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -291,7 +294,7 @@
 </div>
 <div id="framesLines-procs-all">
   <div id="framesLines,Filter">
-  <dt><pre><span class="Keyword">proc</span> <a href="#framesLines%2CFilter"><span class="Identifier">framesLines</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#framesLines%2CFilter"><span class="Identifier">framesLines</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -303,7 +306,7 @@
 </div>
 <div id="framesOb-procs-all">
   <div id="framesOb,Filter">
-  <dt><pre><span class="Keyword">proc</span> <a href="#framesOb%2CFilter"><span class="Identifier">framesOb</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#framesOb%2CFilter"><span class="Identifier">framesOb</span></a><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Filter"><span class="Identifier">Filter</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">iterator</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -315,8 +318,8 @@
 </div>
 <div id="initProcPool-procs-all">
   <div id="initProcPool,proc(cint,cint),Frames,int,int,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#initProcPool%2Cproc%28cint%2Ccint%29%2CFrames%2Cint%2Cint%2Cint"><span class="Identifier">initProcPool</span></a><span class="Other">(</span><span class="Identifier">work</span><span class="Other">:</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">r</span><span class="Other">,</span> <span class="Identifier">w</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">frames</span><span class="Other">:</span> <a href="procpool.html#Frames"><span class="Identifier">Frames</span></a><span class="Other">;</span> <span class="Identifier">jobs</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">aux</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                  <span class="Identifier">toR</span> <span class="Other">=</span> <span class="Identifier">to0</span><span class="Other">;</span> <span class="Identifier">toW</span> <span class="Other">=</span> <span class="Identifier">to0</span><span class="Other">;</span> <span class="Identifier">raiseCtrlC</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">bufSz</span> <span class="Other">=</span> <span class="DecNumber">8192</span><span class="Other">)</span><span class="Other">:</span> <a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#initProcPool%2Cproc%28cint%2Ccint%29%2CFrames%2Cint%2Cint%2Cint"><span class="Identifier">initProcPool</span></a><span class="Other">(</span><span class="Identifier">work</span><span class="Other">:</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">r</span><span class="Other">,</span> <span class="Identifier">w</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">frames</span><span class="Other">:</span> <a href="#Frames"><span class="Identifier">Frames</span></a><span class="Other">;</span> <span class="Identifier">jobs</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">aux</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+                  <span class="Identifier">toR</span> <span class="Other">=</span> <span class="Identifier">to0</span><span class="Other">;</span> <span class="Identifier">toW</span> <span class="Other">=</span> <span class="Identifier">to0</span><span class="Other">;</span> <span class="Identifier">raiseCtrlC</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">bufSz</span> <span class="Other">=</span> <span class="DecNumber">8192</span><span class="Other">)</span><span class="Other">:</span> <a href="#ProcPool"><span class="Identifier">ProcPool</span></a> {.
     <span class="Identifier">noinit</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
@@ -329,7 +332,7 @@
 </div>
 <div id="len-procs-all">
   <div id="len,ProcPool">
-  <dt><pre><span class="Keyword">proc</span> <a href="#len%2CProcPool"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#len%2CProcPool"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <a href="#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -369,7 +372,7 @@
   <dl class="item">
     <div id="finalReplies-iterators-all">
   <div id="finalReplies.i,ProcPool">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#finalReplies.i%2CProcPool"><span class="Identifier">finalReplies</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#finalReplies.i%2CProcPool"><span class="Identifier">finalReplies</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -381,7 +384,7 @@
 </div>
 <div id="readyReplies-iterators-all">
   <div id="readyReplies.i,ProcPool">
-  <dt><pre><span class="Keyword">iterator</span> <a href="#readyReplies.i%2CProcPool"><span class="Identifier">readyReplies</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="procpool.html#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">iterator</span> <a href="#readyReplies.i%2CProcPool"><span class="Identifier">readyReplies</span></a><span class="Other">(</span><span class="Identifier">pp</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ProcPool"><span class="Identifier">ProcPool</span></a><span class="Other">)</span><span class="Other">:</span> <a href="mslice.html#MSlice"><span class="Identifier">MSlice</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -502,7 +505,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-12 08:43:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-21 08:57:01 UTC</small>
       </div>
     </div>
   </div>

@@ -16,13 +16,16 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.8">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.10">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.2.8"></script>
+<script type="text/javascript" src="../dochack.js?v=2.2.10"></script>
 </head>
 <body>
   <div class="document" id="documentId">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <label for="nav-toggle" id="nav-burger">&#9776;</label>
+    <label for="nav-toggle" id="nav-overlay"></label>
     <div class="container">
       <h1 class="title">cligen/statx</h1>
       <div class="row">
@@ -332,7 +335,7 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="Statx">
-  <dt><pre><a href="statx.html#Statx"><span class="Identifier">Statx</span></a> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;struct statx&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;&lt;sys/stat.h&gt;&quot;</span><span class="Other">,</span> <span class="Identifier">final</span><span class="Other">,</span> <span class="Identifier">pure</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
+  <dt><pre><a href="#Statx"><span class="Identifier">Statx</span></a> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;struct statx&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;&lt;sys/stat.h&gt;&quot;</span><span class="Other">,</span> <span class="Identifier">final</span><span class="Other">,</span> <span class="Identifier">pure</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">stx_mask</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint32</span>          <span class="Comment">## Mask of bits indicating filled fields</span>
   <span class="Identifier">stx_blksize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint32</span>       <span class="Comment">## Block size for filesystem I/O</span>
   <span class="Identifier">stx_attributes</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint64</span>    <span class="Comment">## Extra file attribute indicators</span>
@@ -344,10 +347,10 @@
   <span class="Identifier">stx_size</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint64</span>          <span class="Comment">## Total size in bytes</span>
   <span class="Identifier">stx_blocks</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint64</span>        <span class="Comment">## Number of 512B blocks allocated</span>
   <span class="Identifier">stx_attributes_mask</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint64</span> <span class="Comment">## Mask showing supported by stx_attributes</span>
-  <span class="Identifier">stx_atime</span><span class="Operator">*</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last access</span>
-  <span class="Identifier">stx_btime</span><span class="Operator">*</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Birth/Creation</span>
-  <span class="Identifier">stx_ctime</span><span class="Operator">*</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last status change</span>
-  <span class="Identifier">stx_mtime</span><span class="Operator">*</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last modification</span>
+  <span class="Identifier">stx_atime</span><span class="Operator">*</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last access</span>
+  <span class="Identifier">stx_btime</span><span class="Operator">*</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Birth/Creation</span>
+  <span class="Identifier">stx_ctime</span><span class="Operator">*</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last status change</span>
+  <span class="Identifier">stx_mtime</span><span class="Operator">*</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a>        <span class="Comment">## Last modification</span>
   <span class="Identifier">stx_rdev_major</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint32</span>    <span class="Comment">## Major ID if file is a device</span>
   <span class="Identifier">stx_rdev_minor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint32</span>    <span class="Comment">## Minor ID if file is a device</span>
   <span class="Identifier">stx_dev_major</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint32</span>     <span class="Comment">## Major ID of dev of FS where file resides</span>
@@ -359,7 +362,7 @@
   </dd>
 </div>
 <div id="StatxTs">
-  <dt><pre><a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;struct statx_timestamp&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;&lt;sys/stat.h&gt;&quot;</span><span class="Other">,</span> <span class="Identifier">final</span><span class="Other">,</span> <span class="Identifier">pure</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
+  <dt><pre><a href="#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;struct statx_timestamp&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;&lt;sys/stat.h&gt;&quot;</span><span class="Other">,</span> <span class="Identifier">final</span><span class="Other">,</span> <span class="Identifier">pure</span>.} <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">tv_sec</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int64</span>
   <span class="Identifier">tv_nsec</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int32</span></pre></dt>
   <dd>
@@ -375,7 +378,7 @@
   <h1><a class="toc-backref" href="#8">Vars</a></h1>
   <dl class="item">
     <div id="statxFlags">
-  <dt><pre><a href="statx.html#statxFlags"><span class="Identifier">statxFlags</span></a> <span class="Other">=</span> <a href="statx.html#AT_STATX_DONT_SYNC"><span class="Identifier">AT_STATX_DONT_SYNC</span></a></pre></dt>
+  <dt><pre><a href="#statxFlags"><span class="Identifier">statxFlags</span></a> <span class="Other">=</span> <a href="#AT_STATX_DONT_SYNC"><span class="Identifier">AT_STATX_DONT_SYNC</span></a></pre></dt>
   <dd>
     
     
@@ -383,7 +386,7 @@
   </dd>
 </div>
 <div id="statxMask">
-  <dt><pre><a href="statx.html#statxMask"><span class="Identifier">statxMask</span></a> <span class="Other">=</span> <a href="statx.html#STATX_ALL"><span class="Identifier">STATX_ALL</span></a></pre></dt>
+  <dt><pre><a href="#statxMask"><span class="Identifier">statxMask</span></a> <span class="Other">=</span> <a href="#STATX_ALL"><span class="Identifier">STATX_ALL</span></a></pre></dt>
   <dd>
     
     
@@ -397,7 +400,7 @@
   <h1><a class="toc-backref" href="#9">Lets</a></h1>
   <dl class="item">
     <div id="AT_STATX_DONT_SYNC">
-  <dt><pre><a href="statx.html#AT_STATX_DONT_SYNC"><span class="Identifier">AT_STATX_DONT_SYNC</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_DONT_SYNC</span></pre></dt>
+  <dt><pre><a href="#AT_STATX_DONT_SYNC"><span class="Identifier">AT_STATX_DONT_SYNC</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_DONT_SYNC</span></pre></dt>
   <dd>
     
     
@@ -405,7 +408,7 @@
   </dd>
 </div>
 <div id="AT_STATX_FORCE_SYNC">
-  <dt><pre><a href="statx.html#AT_STATX_FORCE_SYNC"><span class="Identifier">AT_STATX_FORCE_SYNC</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_FORCE_SYNC</span></pre></dt>
+  <dt><pre><a href="#AT_STATX_FORCE_SYNC"><span class="Identifier">AT_STATX_FORCE_SYNC</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_FORCE_SYNC</span></pre></dt>
   <dd>
     
     
@@ -413,7 +416,7 @@
   </dd>
 </div>
 <div id="AT_STATX_SYNC_AS_STAT">
-  <dt><pre><a href="statx.html#AT_STATX_SYNC_AS_STAT"><span class="Identifier">AT_STATX_SYNC_AS_STAT</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_SYNC_AS_STAT</span></pre></dt>
+  <dt><pre><a href="#AT_STATX_SYNC_AS_STAT"><span class="Identifier">AT_STATX_SYNC_AS_STAT</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_SYNC_AS_STAT</span></pre></dt>
   <dd>
     
     
@@ -421,7 +424,7 @@
   </dd>
 </div>
 <div id="AT_STATX_SYNC_TYPE">
-  <dt><pre><a href="statx.html#AT_STATX_SYNC_TYPE"><span class="Identifier">AT_STATX_SYNC_TYPE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_SYNC_TYPE</span></pre></dt>
+  <dt><pre><a href="#AT_STATX_SYNC_TYPE"><span class="Identifier">AT_STATX_SYNC_TYPE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locAT_STATX_SYNC_TYPE</span></pre></dt>
   <dd>
     
     
@@ -429,7 +432,7 @@
   </dd>
 </div>
 <div id="STATX_ALL">
-  <dt><pre><a href="statx.html#STATX_ALL"><span class="Identifier">STATX_ALL</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ALL</span></pre></dt>
+  <dt><pre><a href="#STATX_ALL"><span class="Identifier">STATX_ALL</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ALL</span></pre></dt>
   <dd>
     
     
@@ -437,7 +440,7 @@
   </dd>
 </div>
 <div id="STATX_ATIME">
-  <dt><pre><a href="statx.html#STATX_ATIME"><span class="Identifier">STATX_ATIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATIME</span></pre></dt>
+  <dt><pre><a href="#STATX_ATIME"><span class="Identifier">STATX_ATIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATIME</span></pre></dt>
   <dd>
     
     
@@ -445,7 +448,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_APPEND">
-  <dt><pre><a href="statx.html#STATX_ATTR_APPEND"><span class="Identifier">STATX_ATTR_APPEND</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_APPEND</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_APPEND"><span class="Identifier">STATX_ATTR_APPEND</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_APPEND</span></pre></dt>
   <dd>
     
     
@@ -453,7 +456,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_AUTOMOUNT">
-  <dt><pre><a href="statx.html#STATX_ATTR_AUTOMOUNT"><span class="Identifier">STATX_ATTR_AUTOMOUNT</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_AUTOMOUNT</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_AUTOMOUNT"><span class="Identifier">STATX_ATTR_AUTOMOUNT</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_AUTOMOUNT</span></pre></dt>
   <dd>
     
     
@@ -461,7 +464,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_COMPRESSED">
-  <dt><pre><a href="statx.html#STATX_ATTR_COMPRESSED"><span class="Identifier">STATX_ATTR_COMPRESSED</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_COMPRESSED</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_COMPRESSED"><span class="Identifier">STATX_ATTR_COMPRESSED</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_COMPRESSED</span></pre></dt>
   <dd>
     
     
@@ -469,7 +472,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_ENCRYPTED">
-  <dt><pre><a href="statx.html#STATX_ATTR_ENCRYPTED"><span class="Identifier">STATX_ATTR_ENCRYPTED</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_ENCRYPTED</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_ENCRYPTED"><span class="Identifier">STATX_ATTR_ENCRYPTED</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_ENCRYPTED</span></pre></dt>
   <dd>
     
     
@@ -477,7 +480,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_IMMUTABLE">
-  <dt><pre><a href="statx.html#STATX_ATTR_IMMUTABLE"><span class="Identifier">STATX_ATTR_IMMUTABLE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_IMMUTABLE</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_IMMUTABLE"><span class="Identifier">STATX_ATTR_IMMUTABLE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_IMMUTABLE</span></pre></dt>
   <dd>
     
     
@@ -485,7 +488,7 @@
   </dd>
 </div>
 <div id="STATX_ATTR_NODUMP">
-  <dt><pre><a href="statx.html#STATX_ATTR_NODUMP"><span class="Identifier">STATX_ATTR_NODUMP</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_NODUMP</span></pre></dt>
+  <dt><pre><a href="#STATX_ATTR_NODUMP"><span class="Identifier">STATX_ATTR_NODUMP</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_ATTR_NODUMP</span></pre></dt>
   <dd>
     
     
@@ -493,7 +496,7 @@
   </dd>
 </div>
 <div id="STATX_BASIC_STATS">
-  <dt><pre><a href="statx.html#STATX_BASIC_STATS"><span class="Identifier">STATX_BASIC_STATS</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BASIC_STATS</span></pre></dt>
+  <dt><pre><a href="#STATX_BASIC_STATS"><span class="Identifier">STATX_BASIC_STATS</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BASIC_STATS</span></pre></dt>
   <dd>
     
     
@@ -501,7 +504,7 @@
   </dd>
 </div>
 <div id="STATX_BLOCKS">
-  <dt><pre><a href="statx.html#STATX_BLOCKS"><span class="Identifier">STATX_BLOCKS</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BLOCKS</span></pre></dt>
+  <dt><pre><a href="#STATX_BLOCKS"><span class="Identifier">STATX_BLOCKS</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BLOCKS</span></pre></dt>
   <dd>
     
     
@@ -509,7 +512,7 @@
   </dd>
 </div>
 <div id="STATX_BTIME">
-  <dt><pre><a href="statx.html#STATX_BTIME"><span class="Identifier">STATX_BTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BTIME</span></pre></dt>
+  <dt><pre><a href="#STATX_BTIME"><span class="Identifier">STATX_BTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_BTIME</span></pre></dt>
   <dd>
     
     
@@ -517,7 +520,7 @@
   </dd>
 </div>
 <div id="STATX_CTIME">
-  <dt><pre><a href="statx.html#STATX_CTIME"><span class="Identifier">STATX_CTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_CTIME</span></pre></dt>
+  <dt><pre><a href="#STATX_CTIME"><span class="Identifier">STATX_CTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_CTIME</span></pre></dt>
   <dd>
     
     
@@ -525,7 +528,7 @@
   </dd>
 </div>
 <div id="STATX_GID">
-  <dt><pre><a href="statx.html#STATX_GID"><span class="Identifier">STATX_GID</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_GID</span></pre></dt>
+  <dt><pre><a href="#STATX_GID"><span class="Identifier">STATX_GID</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_GID</span></pre></dt>
   <dd>
     
     
@@ -533,7 +536,7 @@
   </dd>
 </div>
 <div id="STATX_INO">
-  <dt><pre><a href="statx.html#STATX_INO"><span class="Identifier">STATX_INO</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_INO</span></pre></dt>
+  <dt><pre><a href="#STATX_INO"><span class="Identifier">STATX_INO</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_INO</span></pre></dt>
   <dd>
     
     
@@ -541,7 +544,7 @@
   </dd>
 </div>
 <div id="STATX_MODE">
-  <dt><pre><a href="statx.html#STATX_MODE"><span class="Identifier">STATX_MODE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_MODE</span></pre></dt>
+  <dt><pre><a href="#STATX_MODE"><span class="Identifier">STATX_MODE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_MODE</span></pre></dt>
   <dd>
     
     
@@ -549,7 +552,7 @@
   </dd>
 </div>
 <div id="STATX_MTIME">
-  <dt><pre><a href="statx.html#STATX_MTIME"><span class="Identifier">STATX_MTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_MTIME</span></pre></dt>
+  <dt><pre><a href="#STATX_MTIME"><span class="Identifier">STATX_MTIME</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_MTIME</span></pre></dt>
   <dd>
     
     
@@ -557,7 +560,7 @@
   </dd>
 </div>
 <div id="STATX_NLINK">
-  <dt><pre><a href="statx.html#STATX_NLINK"><span class="Identifier">STATX_NLINK</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_NLINK</span></pre></dt>
+  <dt><pre><a href="#STATX_NLINK"><span class="Identifier">STATX_NLINK</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_NLINK</span></pre></dt>
   <dd>
     
     
@@ -565,7 +568,7 @@
   </dd>
 </div>
 <div id="STATX_SIZE">
-  <dt><pre><a href="statx.html#STATX_SIZE"><span class="Identifier">STATX_SIZE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_SIZE</span></pre></dt>
+  <dt><pre><a href="#STATX_SIZE"><span class="Identifier">STATX_SIZE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_SIZE</span></pre></dt>
   <dd>
     
     
@@ -573,7 +576,7 @@
   </dd>
 </div>
 <div id="STATX_TYPE">
-  <dt><pre><a href="statx.html#STATX_TYPE"><span class="Identifier">STATX_TYPE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_TYPE</span></pre></dt>
+  <dt><pre><a href="#STATX_TYPE"><span class="Identifier">STATX_TYPE</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_TYPE</span></pre></dt>
   <dd>
     
     
@@ -581,7 +584,7 @@
   </dd>
 </div>
 <div id="STATX_UID">
-  <dt><pre><a href="statx.html#STATX_UID"><span class="Identifier">STATX_UID</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_UID</span></pre></dt>
+  <dt><pre><a href="#STATX_UID"><span class="Identifier">STATX_UID</span></a> {.<span class="Identifier">inject</span>.} <span class="Other">=</span> <span class="Identifier">locSTATX_UID</span></pre></dt>
   <dd>
     
     
@@ -595,7 +598,7 @@
   <h1><a class="toc-backref" href="#10">Consts</a></h1>
   <dl class="item">
     <div id="haveStatx">
-  <dt><pre><a href="statx.html#haveStatx"><span class="Identifier">haveStatx</span></a> <span class="Other">=</span> <span class="DecNumber">true</span></pre></dt>
+  <dt><pre><a href="#haveStatx"><span class="Identifier">haveStatx</span></a> <span class="Other">=</span> <span class="DecNumber">true</span></pre></dt>
   <dd>
     
     
@@ -610,7 +613,7 @@
   <dl class="item">
     <div id="&lt;-procs-all">
   <div id="<,StatxTs,StatxTs">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%3C%2CStatxTs%2CStatxTs"><span class="Identifier">`&lt;`</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%3C%2CStatxTs%2CStatxTs"><span class="Identifier">`&lt;`</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -621,7 +624,7 @@
 </div>
 <div id="&lt;=-procs-all">
   <div id="<=,StatxTs,StatxTs">
-  <dt><pre><span class="Keyword">proc</span> <a href="#%3C%3D%2CStatxTs%2CStatxTs"><span class="Identifier">`&lt;=`</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#%3C%3D%2CStatxTs%2CStatxTs"><span class="Identifier">`&lt;=`</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -632,7 +635,7 @@
 </div>
 <div id="doStat-procs-all">
   <div id="doStat,cint,string,int,Statx,bool,bool">
-  <dt><pre><span class="Keyword">proc</span> <a href="#doStat%2Ccint%2Cstring%2Cint%2CStatx%2Cbool%2Cbool"><span class="Identifier">doStat</span></a><span class="Other">(</span><span class="Identifier">dfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">nmAt</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">st</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#doStat%2Ccint%2Cstring%2Cint%2CStatx%2Cbool%2Cbool"><span class="Identifier">doStat</span></a><span class="Other">(</span><span class="Identifier">dfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">nmAt</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">st</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
             <span class="Identifier">Deref</span><span class="Other">,</span> <span class="Identifier">quiet</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
                                         <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
@@ -654,7 +657,7 @@
   </dd>
 </div>
 <div id="fileTime,Statx,char,int">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fileTime%2CStatx%2Cchar%2Cint"><span class="Identifier">fileTime</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dir</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#fileTime%2CStatx%2Cchar%2Cint"><span class="Identifier">fileTime</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dir</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -666,7 +669,7 @@
 </div>
 <div id="fstat-procs-all">
   <div id="fstat,cint,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fstat%2Ccint%2CStatx"><span class="Identifier">fstat</span></a><span class="Other">(</span><span class="Identifier">fd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#fstat%2Ccint%2CStatx"><span class="Identifier">fstat</span></a><span class="Other">(</span><span class="Identifier">fd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -678,7 +681,7 @@
 </div>
 <div id="fstatat-procs-all">
   <div id="fstatat,cint,cstring,Statx,cint">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fstatat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">fstatat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#fstatat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">fstatat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -690,7 +693,7 @@
 </div>
 <div id="fstatx-procs-all">
   <div id="fstatx,cint,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#fstatx%2Ccint%2CStatx"><span class="Identifier">fstatx</span></a><span class="Other">(</span><span class="Identifier">fd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">0x00001000</span> <span class="Keyword">or</span> <a href="statx.html#statxFlags"><span class="Identifier">statxFlags</span></a><span class="Other">)</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#fstatx%2Ccint%2CStatx"><span class="Identifier">fstatx</span></a><span class="Other">(</span><span class="Identifier">fd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">0x00001000</span> <span class="Keyword">or</span> <a href="#statxFlags"><span class="Identifier">statxFlags</span></a><span class="Other">)</span><span class="Other">;</span>
             <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -710,7 +713,7 @@
   </dd>
 </div>
 <div id="getBirthTimeNsec,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getBirthTimeNsec%2CStatx"><span class="Identifier">getBirthTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym52</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getBirthTimeNsec%2CStatx"><span class="Identifier">getBirthTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym52</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -722,7 +725,7 @@
 </div>
 <div id="getCreationTimeNsec-procs-all">
   <div id="getCreationTimeNsec,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNsec%2CStatx"><span class="Identifier">getCreationTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym51</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getCreationTimeNsec%2CStatx"><span class="Identifier">getCreationTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym51</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -734,7 +737,7 @@
 </div>
 <div id="getLastAccTimeNsec-procs-all">
   <div id="getLastAccTimeNsec,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNsec%2CStatx"><span class="Identifier">getLastAccTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym49</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastAccTimeNsec%2CStatx"><span class="Identifier">getLastAccTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym49</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -746,7 +749,7 @@
 </div>
 <div id="getLastModTimeNsec-procs-all">
   <div id="getLastModTimeNsec,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNsec%2CStatx"><span class="Identifier">getLastModTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym50</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getLastModTimeNsec%2CStatx"><span class="Identifier">getLastModTimeNsec</span></a><span class="Other">(</span><span class="Identifier">stx`gensym50</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -758,7 +761,7 @@
 </div>
 <div id="lstat-procs-all">
   <div id="lstat,cstring,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#lstat%2Ccstring%2CStatx"><span class="Identifier">lstat</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#lstat%2Ccstring%2CStatx"><span class="Identifier">lstat</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -770,8 +773,8 @@
 </div>
 <div id="lstatx-procs-all">
   <div id="lstatx,cstring,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#lstatx%2Ccstring%2CStatx"><span class="Identifier">lstatx</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
-            <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Other">(</span><a href="statx.html#statxFlags"><span class="Identifier">statxFlags</span></a> <span class="Keyword">or</span> <a href="posixUt.html#AT_SYMLINK_NOFOLLOW"><span class="Identifier">AT_SYMLINK_NOFOLLOW</span></a><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#lstatx%2Ccstring%2CStatx"><span class="Identifier">lstatx</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
+            <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Other">(</span><a href="#statxFlags"><span class="Identifier">statxFlags</span></a> <span class="Keyword">or</span> <a href="posixUt.html#AT_SYMLINK_NOFOLLOW"><span class="Identifier">AT_SYMLINK_NOFOLLOW</span></a><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -783,7 +786,7 @@
 </div>
 <div id="lstatxat-procs-all">
   <div id="lstatxat,cint,cstring,Statx,cint">
-  <dt><pre><span class="Keyword">proc</span> <a href="#lstatxat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">lstatxat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#lstatxat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">lstatxat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -795,7 +798,7 @@
 </div>
 <div id="st_atim-procs-all">
   <div id="st_atim,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_atim%2CStatx"><span class="Identifier">st_atim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_atim%2CStatx"><span class="Identifier">st_atim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -806,7 +809,7 @@
 </div>
 <div id="st_blksize-procs-all">
   <div id="st_blksize,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_blksize%2CStatx"><span class="Identifier">st_blksize</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Blksize</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_blksize%2CStatx"><span class="Identifier">st_blksize</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Blksize</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -817,7 +820,7 @@
 </div>
 <div id="st_blocks-procs-all">
   <div id="st_blocks,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_blocks%2CStatx"><span class="Identifier">st_blocks</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Blkcnt</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_blocks%2CStatx"><span class="Identifier">st_blocks</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Blkcnt</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -828,7 +831,7 @@
 </div>
 <div id="st_btim-procs-all">
   <div id="st_btim,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_btim%2CStatx"><span class="Identifier">st_btim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_btim%2CStatx"><span class="Identifier">st_btim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -839,7 +842,7 @@
 </div>
 <div id="st_ctim-procs-all">
   <div id="st_ctim,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_ctim%2CStatx"><span class="Identifier">st_ctim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_ctim%2CStatx"><span class="Identifier">st_ctim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -850,7 +853,7 @@
 </div>
 <div id="st_dev-procs-all">
   <div id="st_dev,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_dev%2CStatx"><span class="Identifier">st_dev</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_dev%2CStatx"><span class="Identifier">st_dev</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -861,7 +864,7 @@
 </div>
 <div id="st_gid-procs-all">
   <div id="st_gid,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_gid%2CStatx"><span class="Identifier">st_gid</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Gid</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_gid%2CStatx"><span class="Identifier">st_gid</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Gid</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -872,7 +875,7 @@
 </div>
 <div id="st_ino-procs-all">
   <div id="st_ino,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_ino%2CStatx"><span class="Identifier">st_ino</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ino</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_ino%2CStatx"><span class="Identifier">st_ino</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Ino</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -905,7 +908,7 @@
 </div>
 <div id="st_mode-procs-all">
   <div id="st_mode,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_mode%2CStatx"><span class="Identifier">st_mode</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Mode</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_mode%2CStatx"><span class="Identifier">st_mode</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Mode</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -916,7 +919,7 @@
 </div>
 <div id="st_mtim-procs-all">
   <div id="st_mtim,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_mtim%2CStatx"><span class="Identifier">st_mtim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_mtim%2CStatx"><span class="Identifier">st_mtim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -927,7 +930,7 @@
 </div>
 <div id="st_nlink-procs-all">
   <div id="st_nlink,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_nlink%2CStatx"><span class="Identifier">st_nlink</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Nlink</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_nlink%2CStatx"><span class="Identifier">st_nlink</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Nlink</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -938,7 +941,7 @@
 </div>
 <div id="st_nlink=-procs-all">
   <div id="st_nlink=,Statx,Nlink">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_nlink%3D%2CStatx%2CNlink"><span class="Identifier">st_nlink=</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">Nlink</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_nlink%3D%2CStatx%2CNlink"><span class="Identifier">st_nlink=</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">n</span><span class="Other">:</span> <span class="Identifier">Nlink</span><span class="Other">)</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -950,7 +953,7 @@
 </div>
 <div id="st_rmaj-procs-all">
   <div id="st_rmaj,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_rmaj%2CStatx"><span class="Identifier">st_rmaj</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_rmaj%2CStatx"><span class="Identifier">st_rmaj</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -961,7 +964,7 @@
 </div>
 <div id="st_rmin-procs-all">
   <div id="st_rmin,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_rmin%2CStatx"><span class="Identifier">st_rmin</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_rmin%2CStatx"><span class="Identifier">st_rmin</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Dev</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -972,7 +975,7 @@
 </div>
 <div id="st_size-procs-all">
   <div id="st_size,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_size%2CStatx"><span class="Identifier">st_size</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Off</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_size%2CStatx"><span class="Identifier">st_size</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Off</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -983,7 +986,7 @@
 </div>
 <div id="st_uid-procs-all">
   <div id="st_uid,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_uid%2CStatx"><span class="Identifier">st_uid</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Uid</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_uid%2CStatx"><span class="Identifier">st_uid</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Uid</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -994,7 +997,7 @@
 </div>
 <div id="st_vtim-procs-all">
   <div id="st_vtim,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#st_vtim%2CStatx"><span class="Identifier">st_vtim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#st_vtim%2CStatx"><span class="Identifier">st_vtim</span></a><span class="Other">(</span><span class="Identifier">st</span><span class="Other">:</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -1005,7 +1008,7 @@
 </div>
 <div id="stat-procs-all">
   <div id="stat,cstring,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#stat%2Ccstring%2CStatx"><span class="Identifier">stat</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#stat%2Ccstring%2CStatx"><span class="Identifier">stat</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1017,7 +1020,7 @@
 </div>
 <div id="statx-procs-all">
   <div id="statx,cint,cstring,cint,cint,ptr.Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2Ccint%2Ccint%2Cptr.Statx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">mask</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">ptr</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2Ccint%2Ccint%2Cptr.Statx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">mask</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">ptr</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span class="Identifier">importc</span><span class="Other">:</span> <span class="StringLit">&quot;statx&quot;</span><span class="Other">,</span> <span class="Identifier">header</span><span class="Other">:</span> <span class="StringLit">&quot;&lt;sys/stat.h&gt;&quot;</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1026,7 +1029,7 @@
   </dd>
 </div>
 <div id="statx,cint,cstring,cint,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2Ccint%2CStatx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2Ccint%2CStatx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span>
            <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1035,7 +1038,7 @@
   </dd>
 </div>
 <div id="statx,cint,cstring,Statx,cint">
-  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span>
            <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1044,7 +1047,7 @@
   </dd>
 </div>
 <div id="statx,cstring,Statx">
-  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccstring%2CStatx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Identifier">statxFlags</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#statx%2Ccstring%2CStatx"><span class="Identifier">statx</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span> <span class="Other">=</span> <span class="Identifier">statxFlags</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">statxMask</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1056,7 +1059,7 @@
 </div>
 <div id="statxat-procs-all">
   <div id="statxat,cint,cstring,Statx,cint">
-  <dt><pre><span class="Keyword">proc</span> <a href="#statxat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">statxat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="statx.html#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#statxat%2Ccint%2Ccstring%2CStatx%2Ccint"><span class="Identifier">statxat</span></a><span class="Other">(</span><span class="Identifier">dirfd</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">stx</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#Statx"><span class="Identifier">Statx</span></a><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1068,7 +1071,7 @@
 </div>
 <div id="toInt64-procs-all">
   <div id="toInt64,StatxTs">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toInt64%2CStatxTs"><span class="Identifier">toInt64</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toInt64%2CStatxTs"><span class="Identifier">toInt64</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     64-bits represents +-292 years from 1970 exactly &amp; conveniently.
@@ -1079,7 +1082,7 @@
 </div>
 <div id="toStatxTs-procs-all">
   <div id="toStatxTs,int64">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toStatxTs%2Cint64"><span class="Identifier">toStatxTs</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">)</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toStatxTs%2Cint64"><span class="Identifier">toStatxTs</span></a><span class="Other">(</span><span class="Identifier">t</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">)</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
     
@@ -1087,7 +1090,7 @@
   </dd>
 </div>
 <div id="toStatxTs,Timespec">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toStatxTs%2CTimespec"><span class="Identifier">toStatxTs</span></a><span class="Other">(</span><span class="Identifier">ts</span><span class="Other">:</span> <span class="Identifier">Timespec</span><span class="Other">)</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toStatxTs%2CTimespec"><span class="Identifier">toStatxTs</span></a><span class="Other">(</span><span class="Identifier">ts</span><span class="Other">:</span> <span class="Identifier">Timespec</span><span class="Other">)</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                         <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1099,7 +1102,7 @@
 </div>
 <div id="toTimespec-procs-all">
   <div id="toTimespec,StatxTs">
-  <dt><pre><span class="Keyword">proc</span> <a href="#toTimespec%2CStatxTs"><span class="Identifier">toTimespec</span></a><span class="Other">(</span><span class="Identifier">ts</span><span class="Other">:</span> <a href="statx.html#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#toTimespec%2CStatxTs"><span class="Identifier">toTimespec</span></a><span class="Other">(</span><span class="Identifier">ts</span><span class="Other">:</span> <a href="#StatxTs"><span class="Identifier">StatxTs</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Timespec</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1125,7 +1128,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-12 08:43:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-21 08:57:01 UTC</small>
       </div>
     </div>
   </div>

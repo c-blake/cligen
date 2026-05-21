@@ -16,13 +16,16 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.8">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.10">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.2.8"></script>
+<script type="text/javascript" src="../dochack.js?v=2.2.10"></script>
 </head>
 <body>
   <div class="document" id="documentId">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <label for="nav-toggle" id="nav-burger">&#9776;</label>
+    <label for="nav-toggle" id="nav-overlay"></label>
     <div class="container">
       <h1 class="title">cligen/argcvt</h1>
       <div class="row">
@@ -202,7 +205,7 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="ArgcvtParams">
-  <dt><pre><a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <dt><pre><a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">key</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## key actually used for this option</span>
   <span class="Identifier">val</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## value actually given by user</span>
   <span class="Identifier">sep</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>               <span class="Comment">## separator actually used (including before '=' text)</span>
@@ -227,7 +230,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="ClHelpContext">
-  <dt><pre><a href="argcvt.html#ClHelpContext"><span class="Identifier">ClHelpContext</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <dt><pre><a href="#ClHelpContext"><span class="Identifier">ClHelpContext</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">clLongOpt</span><span class="Other">,</span>                <span class="Comment">## a long option identifier</span>
   <span class="Identifier">clSubCmd</span><span class="Other">,</span>                 <span class="Comment">## a sub-command name identifier</span>
   <span class="Identifier">clEnumVal</span>                  <span class="Comment">## an enum value name identifier</span></pre></dt>
@@ -238,7 +241,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="ElementError">
-  <dt><pre><a href="argcvt.html#ElementError"><span class="Identifier">ElementError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">ValueError</span></pre></dt>
+  <dt><pre><a href="#ElementError"><span class="Identifier">ElementError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">ValueError</span></pre></dt>
   <dd>
     
     
@@ -252,7 +255,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   <h1><a class="toc-backref" href="#10">Consts</a></h1>
   <dl class="item">
     <div id="apBoolA">
-  <dt><pre><a href="argcvt.html#apBoolA"><span class="Identifier">apBoolA</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;t&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;yes&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;y&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;1&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;on&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;f&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;no&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;n&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">,</span>
+  <dt><pre><a href="#apBoolA"><span class="Identifier">apBoolA</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;t&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;yes&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;y&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;1&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;on&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;f&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;no&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;n&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">,</span>
            <span class="StringLit">&quot;off&quot;</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -261,7 +264,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="apBoolF">
-  <dt><pre><a href="argcvt.html#apBoolF"><span class="Identifier">apBoolF</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;f&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;no&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;n&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;off&quot;</span><span class="Other">]</span></pre></dt>
+  <dt><pre><a href="#apBoolF"><span class="Identifier">apBoolF</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;f&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;false&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;no&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;n&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;off&quot;</span><span class="Other">]</span></pre></dt>
   <dd>
     
     false spellings
@@ -269,7 +272,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="apBoolS">
-  <dt><pre><a href="argcvt.html#apBoolS"><span class="Identifier">apBoolS</span></a> <span class="Other">=</span> <span class="StringLit">&quot;t true yes y 1 on | f false no n 0 off&quot;</span></pre></dt>
+  <dt><pre><a href="#apBoolS"><span class="Identifier">apBoolS</span></a> <span class="Other">=</span> <span class="StringLit">&quot;t true yes y 1 on | f false no n 0 off&quot;</span></pre></dt>
   <dd>
     
     bool value help
@@ -277,7 +280,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="apBoolT">
-  <dt><pre><a href="argcvt.html#apBoolT"><span class="Identifier">apBoolT</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;t&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;yes&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;y&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;1&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;on&quot;</span><span class="Other">]</span></pre></dt>
+  <dt><pre><a href="#apBoolT"><span class="Identifier">apBoolT</span></a> <span class="Other">=</span> <span class="Other">[</span><span class="StringLit">&quot;t&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;true&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;yes&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;y&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;1&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;on&quot;</span><span class="Other">]</span></pre></dt>
   <dd>
     
     true spellings
@@ -304,7 +307,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argAggSplit-procs-all">
   <div id="argAggSplit,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argAggSplit%2CArgcvtParams"><span class="Identifier">argAggSplit</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">split</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argAggSplit%2CArgcvtParams"><span class="Identifier">argAggSplit</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">split</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Split DPSV (e.g. &quot;,hello,world&quot;) into a parsed <tt class="docutils literal"><span class="pre"><span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">T</span><span class="Punctuation">]</span></span></tt>.
@@ -315,7 +318,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argDf-procs-all">
   <div id="argDf,ArgcvtParams,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argDf%2CArgcvtParams%2Cstring"><span class="Identifier">argDf</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">dv</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argDf%2CArgcvtParams%2Cstring"><span class="Identifier">argDf</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">dv</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;Deprecated since v0.9.24; No longer needed.&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
@@ -331,7 +334,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argHelp-procs-all">
   <div id="argHelp,bool,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cbool%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cbool%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -340,7 +343,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,char,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cchar%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cchar%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -349,7 +352,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,cstring,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Ccstring%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Ccstring%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -358,7 +361,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,string,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cstring%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cstring%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -367,7 +370,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,HSlice[T,U],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CHSlice%5BT%2CU%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CHSlice%5BT%2CU%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -375,7 +378,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,T,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CT%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CT%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -383,7 +386,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,T,ArgcvtParams_2">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CT%2CArgcvtParams_2"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">SomeNumber</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CT%2CArgcvtParams_2"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">SomeNumber</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -391,7 +394,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,HashSet[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CHashSet%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2CHashSet%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -399,7 +402,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,Option[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -407,7 +410,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,seq[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -415,7 +418,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argHelp,set[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cset%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argHelp%2Cset%5BT%5D%2CArgcvtParams"><span class="Identifier">argHelp</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -426,7 +429,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argKeys-procs-all">
   <div id="argKeys,ArgcvtParams,string">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argKeys%2CArgcvtParams%2Cstring"><span class="Identifier">argKeys</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">argSep</span> <span class="Other">=</span> <span class="StringLit">&quot;=&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argKeys%2CArgcvtParams%2Cstring"><span class="Identifier">argKeys</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">;</span> <span class="Identifier">argSep</span> <span class="Other">=</span> <span class="StringLit">&quot;=&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -438,7 +441,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argParse-procs-all">
   <div id="argParse,bool,bool,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cbool%2Cbool%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cbool%2Cbool%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -447,7 +450,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,char,char,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cchar%2Cchar%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cchar%2Cchar%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -456,7 +459,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,cstring,cstring,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Ccstring%2Ccstring%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Ccstring%2Ccstring%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -465,7 +468,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,string,string,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cstring%2Cstring%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cstring%2Cstring%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -475,7 +478,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="argParse,HSlice[T,U],HSlice[T,U],ArgcvtParams">
   <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CHSlice%5BT%2CU%5D%2CHSlice%5BT%2CU%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HSlice</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">U</span><span class="Other">]</span><span class="Other">;</span>
-                    <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+                    <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     Parse i (=== i..i) | a:b (exclusive) | a..b (inclusive) into <tt class="docutils literal"><span class="pre"><span class="Identifier">HSlice</span></span></tt>. Call site must interpret, but missing LHS -&gt; <tt class="docutils literal"><span class="pre"><span class="DecNumber">0</span></span></tt> &amp; missing RHS -&gt; <tt class="docutils literal"><span class="pre"><span class="Identifier">U</span><span class="Operator">.</span><span class="Identifier">high</span></span></tt>. No operator at all (e.g. &quot;1&quot;) parses to the unit-length slice 1..1.
@@ -483,7 +486,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,T,T,ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CT%2CT%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CT%2CT%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -491,7 +494,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,T,T,ArgcvtParams_2">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CT%2CT%2CArgcvtParams_2"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">SomeNumber</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CT%2CT%2CArgcvtParams_2"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">SomeNumber</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -499,7 +502,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,HashSet[T],HashSet[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2CHashSet%5BT%5D%2CHashSet%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -507,7 +510,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,Option[T],Option[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2COption%5BT%5D%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2COption%5BT%5D%2COption%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -515,7 +518,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,seq[T],seq[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cseq%5BT%5D%2Cseq%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -523,7 +526,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
   </dd>
 </div>
 <div id="argParse,set[T],set[T],ArgcvtParams">
-  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cset%5BT%5D%2Cset%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="argcvt.html#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#argParse%2Cset%5BT%5D%2Cset%5BT%5D%2CArgcvtParams"><span class="Identifier">argParse</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dst</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">dfl</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">a</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="#ArgcvtParams"><span class="Identifier">ArgcvtParams</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -556,7 +559,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
 </div>
 <div id="helpCase-procs-all">
   <div id="helpCase,string,ClHelpContext">
-  <dt><pre><span class="Keyword">proc</span> <a href="#helpCase%2Cstring%2CClHelpContext"><span class="Identifier">helpCase</span></a><span class="Other">(</span><span class="Identifier">inp</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <a href="argcvt.html#ClHelpContext"><span class="Identifier">ClHelpContext</span></a> <span class="Other">=</span> <span class="Identifier">clSubCmd</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
+  <dt><pre><span class="Keyword">proc</span> <a href="#helpCase%2Cstring%2CClHelpContext"><span class="Identifier">helpCase</span></a><span class="Other">(</span><span class="Identifier">inp</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <a href="#ClHelpContext"><span class="Identifier">ClHelpContext</span></a> <span class="Other">=</span> <span class="Identifier">clSubCmd</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -621,7 +624,7 @@ Abstraction of non-param-type arguments to <tt class="docutils literal"><span cl
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-12 08:43:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-21 08:57:01 UTC</small>
       </div>
     </div>
   </div>
