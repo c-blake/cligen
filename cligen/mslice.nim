@@ -69,9 +69,11 @@ proc toMSlice*(a: string, keep=false): MSlice =
     copyMem result.mem, a.cstring, result.len
   else: result.mem = a.cstring
 
-proc toCstr*(p: pointer): cstring {.inline.} =
+proc toCstr*(p: pointer): cstring {.inline.} = cast[cstring](p)
   ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
-  cast[cstring](p)
+
+proc toCstr*(ms: MSlice): cstring {.inline.} = cast[cstring](ms.mem)
+  ## PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
 
 template `^^`(s, i: untyped): untyped =
   (when i is BackwardsIndex: s.len - int(i) else: int(i))
