@@ -429,7 +429,8 @@
 
 </ul>
 <ul class="simple nested-toc-section">toCstr
-  <li><a class="reference" href="#toCstr%2Cpointer" title="toCstr(p: pointer): cstring">toCstr(p: pointer): cstring</a></li>
+  <li><a class="reference" href="#toCstr%2CMSlice" title="toCstr(ms: MSlice): cstring">toCstr(ms: MSlice): cstring</a></li>
+<li><a class="reference" href="#toCstr%2Cpointer" title="toCstr(p: pointer): cstring">toCstr(p: pointer): cstring</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">toMSlice
@@ -1522,7 +1523,15 @@
 
 </div>
 <div id="toCstr-procs-all">
-  <div id="toCstr,pointer">
+  <div id="toCstr,MSlice">
+  <dt><pre><span class="Keyword">proc</span> <a href="#toCstr%2CMSlice"><span class="Identifier">toCstr</span></a><span class="Other">(</span><span class="Identifier">ms</span><span class="Other">:</span> <a href="#MSlice"><span class="Identifier">MSlice</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cstring</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    PROBABLY UNTERMINATED cstring.  BE VERY CAREFUL.
+    
+  </dd>
+</div>
+<div id="toCstr,pointer">
   <dt><pre><span class="Keyword">proc</span> <a href="#toCstr%2Cpointer"><span class="Identifier">toCstr</span></a><span class="Other">(</span><span class="Identifier">p</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cstring</span> {.<span class="Identifier">inline</span><span class="Other">,</span> <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
   <dd>
     
@@ -1743,7 +1752,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2026-05-21 08:57:01 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-06-18 17:09:15 UTC</small>
       </div>
     </div>
   </div>
