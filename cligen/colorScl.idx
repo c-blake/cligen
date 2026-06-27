@@ -1,17 +1,17 @@
 nimTitle	colorScl	cligen/colorScl.html	module cligen/colorScl		0
-nim	UnitR	cligen/colorScl.html#UnitR	type UnitR		3
-nim	Color3	cligen/colorScl.html#Color3	type Color3		4
-nim	sGray	cligen/colorScl.html#sGray	Scale.sGray		5
-nim	sHue	cligen/colorScl.html#sHue	Scale.sHue		5
-nim	sWLen	cligen/colorScl.html#sWLen	Scale.sWLen		5
-nim	sPm3D	cligen/colorScl.html#sPm3D	Scale.sPm3D		5
-nim	sViridis	cligen/colorScl.html#sViridis	Scale.sViridis		5
-nim	Scale	cligen/colorScl.html#Scale	enum Scale		5
-nim	hsv2rgb	cligen/colorScl.html#hsv2rgb,Color3	proc hsv2rgb(hsv: Color3): Color3		13
-nim	rgb	cligen/colorScl.html#rgb,UnitR	proc rgb(x: UnitR; scale = sWLen; sat = UnitR(0.7); val = UnitR(0.9)): Color3		56
-nim	scaledCompon	cligen/colorScl.html#scaledCompon,float,range[]	proc scaledCompon(x: float; lim: range[4 .. 1024] = 256): int		67
-nim	hex	cligen/colorScl.html#hex,Color3,range[]	proc hex(rgb: Color3; lim: range[5 .. 1024] = 256): string		70
-nim	ttc	cligen/colorScl.html#ttc,Color3,range[]	proc ttc(rgb: Color3; lim: range[5 .. 1024] = 256): string		79
-nim	xt256	cligen/colorScl.html#xt256,Color3,range[]	proc xt256(rgb: Color3; lim: range[5 .. 1024] = 256): string		85
-nim	parseColorScl	cligen/colorScl.html#parseColorScl,,int	proc parseColorScl(s: MSlice | openArray[char] | string; nParsed: var int = doNotUse): Color3		93
-nim	helpColorScl	cligen/colorScl.html#helpColorScl	const helpColorScl		115
+nim	UnitR	cligen/colorScl.html#UnitR	type UnitR		5
+nim	Color3	cligen/colorScl.html#Color3	type Color3		6
+nim	sGray	cligen/colorScl.html#sGray	Scale.sGray		7
+nim	sHue	cligen/colorScl.html#sHue	Scale.sHue		7
+nim	sWLen	cligen/colorScl.html#sWLen	Scale.sWLen		7
+nim	sPm3D	cligen/colorScl.html#sPm3D	Scale.sPm3D		7
+nim	sViridis	cligen/colorScl.html#sViridis	Scale.sViridis		7
+nim	Scale	cligen/colorScl.html#Scale	enum Scale		7
+nim	hsv2rgb	cligen/colorScl.html#hsv2rgb,Color3	proc hsv2rgb(hsv: Color3): Color3		15
+nim	rgb	cligen/colorScl.html#rgb,UnitR	proc rgb(x: UnitR; scale = sWLen; sat = UnitR(0.7); val = UnitR(0.9)): Color3		58
+nim	scaledCompon	cligen/colorScl.html#scaledCompon,float,range[]	proc scaledCompon(x: float; lim: range[4 .. 1024] = 256): int		69
+nim	hex	cligen/colorScl.html#hex,Color3,range[]	proc hex(rgb: Color3; lim: range[5 .. 1024] = 256): string		72
+nim	ttc	cligen/colorScl.html#ttc,Color3,range[]	proc ttc(rgb: Color3; lim: range[5 .. 1024] = 256): string		81
+nim	xt256	cligen/colorScl.html#xt256,Color3,range[]	proc xt256(rgb: Color3; lim: range[5 .. 1024] = 256): string		87
+nim	parseColorScl	cligen/colorScl.html#parseColorScl,,int	proc parseColorScl(s: MSlice | openArray[char] | string; nParsed: var int = doNotUse): Color3		95
+nim	helpColorScl	cligen/colorScl.html#helpColorScl	const helpColorScl		117
