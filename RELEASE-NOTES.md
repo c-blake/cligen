@@ -1,8 +1,8 @@
 RELEASE NOTES
 =============
 
-Version: 1.11
--------------
+Version: 1.10.1
+---------------
  - Fix backward compatibility to older Nim versions Re: std/envvars
 
  - In a somewhat version-watershed event, move .nimble dependency forward
