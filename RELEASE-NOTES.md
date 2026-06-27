@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 1.11
+-------------
+ - Fix backward compatibility to older Nim versions Re: std/envvars
+
+ - In a somewhat version-watershed event, move .nimble dependency forward
+   from 0.20.2 to 1.4.0.  At this point 1.4 is still very old, and it's
+   hard to imagine this impacting any current users much/at all.
+
 Version: 1.10
 -------------
   - add new ways to be strict to `cligen/parseopt3.nim`, bubbling up that

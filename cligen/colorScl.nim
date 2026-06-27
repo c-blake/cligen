@@ -1,4 +1,6 @@
-import std/[strutils, bitops, math, envvars], cligen/[mslice, unsafeAddr]
+when (NimMajor,NimMinor,NimPatch) >= (2,0,0): import std/envvars
+else: import std/os
+import std/[strutils, bitops, math], cligen/[mslice, unsafeAddr]
 type                                    # Map a float "intensity" to RGB colors
   UnitR*  = range[0.0 .. 1.0]
   Color3* = (UnitR, UnitR, UnitR)

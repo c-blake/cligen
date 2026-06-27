@@ -66,7 +66,9 @@ iterator descape*(s: string, escape='\\'): tuple[c: char; escaped: bool] =
     else: yield (c, false)
 
 when not (defined(cgCfgNone) and defined(cgNoColor)): # need BOTH to elide
- import std/[tables, envvars], cligen/colorScl
+ when (NimMajor,NimMinor,NimPatch) >= (2,0,0): import std/envvars
+ else: import std/os
+ import std/tables, cligen/colorScl
  when not declared(stderr): import std/syncio
 
  when not declared(fromHex):
