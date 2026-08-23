@@ -63,8 +63,9 @@ can also be **spelled flexibly**, e.g. `--dry-run`|`--dryRun`, like Nim's
 style-insensitive identifiers, but with extra "kebab-case-insensitivity".
 The exact spelling of the key in `help` controls the look of printed help.
 
-Layout details like column spacing and help colorization are controlled [by a
-CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
+Layout details like column spacing and help colorization and [most relevant CL
+syntax choice](https://github.com/c-blake/clsyntax) are run-time adjustable [by
+a CL user config file](https://github.com/c-blake/cligen/tree/master/configs).
 Here are screenshots of example
 [night](https://raw.githubusercontent.com/c-blake/cligen/master/screenshots/dirqHelpNight.png)
 and
