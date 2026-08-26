@@ -267,9 +267,9 @@ proc match[T](a: var HashSet[string]; key: var string; n: Node[T]; pat="";
   if n.isNil: return
   if i >= pat.len:
     if n.ch == NUL:
-      if key.len > 0:           # De-dup matches w/HashSet and if too may use..
+      if key.len > 0:           # De-dup matches w/HashSet & if too many use..
         a.incl key              #..exceptions to end the whole recursion.
-        if a.len >= lim: IO !! "done"
+        if a.len >= lim: EOF !! "done"
     else:                       # Due to NUL-termination, chase chain @EOPat
       var nn = n; var nK = nK
       while nn.ch != NUL:
@@ -308,5 +308,5 @@ proc match*[T](t: Tern[T], pat="", lim=0, a1='?', aN='*'): seq[string] =
   var s: HashSet[string]
   let pat = pat.simplifyPattern(a1, aN)
   try: s.match(key, t.root, pat, 0, 0, a1, aN, if lim == 0: t.len else: lim)
-  except IOError: discard
+  except EOFError: discard
   for x in s.items: result.add x
