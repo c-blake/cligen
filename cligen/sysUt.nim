@@ -14,7 +14,7 @@ proc delete*(x: var string, i: Natural) {.noSideEffect.} =
   ## Just like ``delete(var seq[T], i)`` but for ``string``.
   let xl = x.len
   for j in i.int .. xl-2:
-    x[j] = move x[j+1]
+    x[j] = x[j+1]
   setLen(x, xl-1)
 
 when not defined(isNimSkull):  # No OpenMP `||` iterator | for-loop macros
