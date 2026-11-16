@@ -1,6 +1,14 @@
 RELEASE NOTES
 =============
 
+Version: 1.11.1
+---------------
+ - close https://github.com/c-blake/cligen/issues/251
+
+Version: 1.11.0
+---------------
+ - No real changes
+
 Version: 1.10.1
 ---------------
  - Fix backward compatibility to older Nim versions Re: std/envvars
